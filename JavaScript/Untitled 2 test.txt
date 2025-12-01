@@ -1,0 +1,83 @@
+
+Index.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Live Input Display</title>
+</head>
+<body>
+  <h2>Enter Your Values</h2>
+    Just some text 251118 <br>
+  <input type="text" id="input1" placeholder="1 position"><br><br>
+  <input type="text" id="input2" placeholder="2 skill 1"><br><br>
+  <input type="text" id="input3" placeholder="3 skill 2"><br><br>
+  <input type="text" id="input4" placeholder="4 skill 3"><br><br>
+  <input type="text" id="input5" placeholder="5 company"><br><br>
+
+  <!-- <p id="output"></p>
+  -->
+
+  <pre id="output"></pre>
+
+  <script>
+    // grab all input elements
+    const inputs = [
+      document.getElementById("input1"),
+      document.getElementById("input2"),
+      document.getElementById("input3"),
+      document.getElementById("input4"),
+      document.getElementById("input5")
+    ];
+    const skills = [
+      ]
+
+    function createSkill(){
+      for (let i=0: i<5 i++){
+
+      }      
+      const temp${s1} = new Skills();
+    }
+
+    class Skills {
+      constructor(){
+        this.name = name;
+        this.id = id;
+        this.textContent = '< Insert ${this.name} text here >'
+      }
+    }
+
+    const output = document.getElementById("output");
+    const message = '-- empty by default --';
+
+    // function to update paragraph
+    function updateParagraph() {
+      const [var1, var2, var3, var4, var5] = inputs.map(input => input.value);
+      //output.textContent = `You entered: ${var1}, ${var2}, ${var3}, ${var4}, and ${var5}.`;
+
+      message1 = `Referred by: ${var6} (LinkedIn)
+
+To Personnel,
+I am excited to apply for the ${var1} position at Coinbase. With a B.S. degree in Web Technology, a passion for creating dynamic, user-friendly web applications, and a background in full-stack development. I am eager to contribute my skills to your projects.
+
+Previously at J. Consulting Group, I developed websites optimized for user engagement. My proficiency in ${var2}, ${var3}, ${var4}, and frameworks like React and Node.js. Enable me to build scalable, efficient applications. You’ll find extensive database experience with SQL Server, Oracle, and MySQL. However, I’m transitioning to primary Dev-Engineering roles.
+
+I thrive in collaborative environments; am a people person, enjoy problem-solving, pristine work, and accept no excuses. To further technical growth, I'm pursuing certification as a Full-Stack Developer with IBM.
+
+I look forward to partnering with ${var5} and discussing how my skills align with your team's goals. 
+
+John Mitchell
+j3mitchell@gmail.com
+`
+      output.textContent = message1
+    }
+
+    // attach input event listener to each input
+    inputs.forEach(input => input.addEventListener('input', updateParagraph));
+
+    output.textContent = message
+  </script>
+</body>
+</html>
+index.html
+Displaying index.html.
