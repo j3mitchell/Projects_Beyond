@@ -1,0 +1,46 @@
+251128 McleanCV pseudo
+
+Scenario ---------------------------------------
+<Write your Journal Entry response here>
+
+Scenario 1: Cover Letter from upload or pasted text
+- Select document type = cover letter (CV)
+- Paste url of targeted job and input other data fields
+- Source select: User selects from local file dialog, extracting text into document field.
+- Show results (realtime live)
+- Drag and drop (insert) the data fields into the document text locations
+- Edit document text
+- User approves current version (Saves session)
+- User downloads generated file locally
+
+
+Scenario 2: AI Assisted Cover Letter
+- Select document type = cover letter (CV)
+- Paste url of targeted job and input other data fields
+- Source select: AI 
+- AI prompts user for context, tone and positional interest. Generates initial document
+- Show results (realtime live)...
+
+Pseudo -----------------------------------------
+Mclean Pseudo: Linear
+
+Welcome screen
+Prompt for document type
+Initialize document class
+Show main screen with data fields in right column
+Prompt for url of targeted job
+Prompt for document source text: Paste, file, AI, session
+
+Function: Source_Text
+	doc_text = "pasted text"
+
+Function: Source_File
+	input = file_dialog
+	extract text from file
+	populate doc_text with extracted text
+
+Function: AI_generated
+	Prompt to upload existing resume
+	input =
+
+
