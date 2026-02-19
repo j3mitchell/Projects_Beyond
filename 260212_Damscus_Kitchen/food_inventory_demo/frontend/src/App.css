@@ -107,22 +107,22 @@ body {
   grid-row: 2;
 }
 
-.ingredient-grid .field-reorder {
+.ingredient-grid .field-cost-unit {
   grid-column: 4;
   grid-row: 2;
 }
 
-.ingredient-grid .field-shelf-life {
+.ingredient-grid .field-expiration {
   grid-column: 1;
   grid-row: 3;
 }
 
-.ingredient-grid .field-expiration {
+.ingredient-grid .field-shelf-life {
   grid-column: 2;
   grid-row: 3;
 }
 
-.ingredient-grid .field-cost-unit {
+.ingredient-grid .field-reorder {
   grid-column: 3;
   grid-row: 3;
 }
@@ -138,12 +138,52 @@ body {
   gap: 8px;
 }
 
+.meal-meta-row {
+  display: flex;
+  gap: 8px;
+}
+
+.meal-meta-row .meal-type-select,
+.meal-meta-row .meal-restrictions-select {
+  width: 50%;
+}
+
+.meal-meta-row .meal-restrictions-select {
+  min-height: 38px;
+  max-height: 38px;
+  overflow-y: hidden;
+  transition: max-height 0.18s ease, min-height 0.18s ease;
+}
+
+.meal-meta-row .meal-restrictions-select:hover,
+.meal-meta-row .meal-restrictions-select:focus,
+.meal-meta-row .meal-restrictions-select:focus-visible,
+.meal-meta-row .meal-restrictions-select:active {
+  min-height: 140px;
+  max-height: 140px;
+  overflow-y: auto;
+}
+
 input,
 select,
 button {
   padding: 8px;
   border-radius: 6px;
   border: 1px solid #bcc2c8;
+}
+
+.optional-field {
+  background: #f2f4f7;
+  color: #667085;
+  border-color: #d0d5dd;
+}
+
+.optional-field:focus,
+.optional-field:not(:placeholder-shown),
+.optional-field.has-value {
+  background: #ffffff;
+  color: #1f2933;
+  border-color: #98a2b3;
 }
 
 button {
@@ -178,6 +218,16 @@ td {
 
   .line {
     grid-template-columns: 1fr;
+  }
+
+  .meal-meta-row {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .meal-meta-row .meal-type-select,
+  .meal-meta-row .meal-restrictions-select {
+    width: 100%;
   }
 
   .ingredient-grid {

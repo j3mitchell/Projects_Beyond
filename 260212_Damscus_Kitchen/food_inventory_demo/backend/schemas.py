@@ -77,7 +77,7 @@ class IngredientBase(BaseModel):
     unit: str
     quantity_on_hand: float = Field(ge=0)  # ge means "greater than or equal to".
     reorder_level: float = Field(ge=0)
-    shelf_life_days: int = Field(ge=1)
+    shelf_life_days: Optional[int] = Field(default=None, ge=1)
     expiration_date: Optional[date] = None
     default_unit_cost: Optional[float] = Field(default=None, ge=0)
     cost_unit: Optional[str] = None
@@ -100,6 +100,8 @@ class IngredientUpdate(BaseModel):
 # Response schema for ingredients.
 class IngredientOut(IngredientBase):
     id: int
+    shelf_life_days: int
+    category_id: Optional[str] = None
     demo_days_to_expiry: Optional[int] = None
 
     class Config:

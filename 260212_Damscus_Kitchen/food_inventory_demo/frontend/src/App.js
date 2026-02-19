@@ -56,15 +56,15 @@ function App() {
   // Form state for creating a new ingredient.
   const [ingredientForm, setIngredientForm] = useState({
     name: "",
-    category: "Produce",
+    category: "",
     barcode: "",
     unit: "lb",
-    quantity_on_hand: 0,
-    reorder_level: 0,
-    shelf_life_days: 30,
+    quantity_on_hand: "",
+    reorder_level: "",
+    shelf_life_days: "",
     expiration_date: "",
     default_unit_cost: "",
-    cost_unit: "USD / lb",
+    cost_unit: "lb",
   });
 
   // Form state for logging an arrival scan by barcode.
@@ -73,13 +73,14 @@ function App() {
     quantity_received: 0,
     expiration_date: "",
     unit_cost: "",
-    cost_unit: "USD / lb",
+    cost_unit: "lb",
   });
 
   // Form state for creating a meal + ingredient lines.
   const [mealForm, setMealForm] = useState({
     name: "",
     meal_type: "Lunch",
+    restriction_ids: [],
     ingredients: [{ ingredient_id: "", quantity_per_serving: "" }],
   });
 
@@ -90,7 +91,7 @@ function App() {
   const [poForm, setPoForm] = useState({
     supplier: "FreshFields Produce",
     status: "Draft",
-    items: [{ ingredient_id: "", quantity_ordered: "", unit_cost: "", cost_unit: "USD / lb" }],
+    items: [{ ingredient_id: "", quantity_ordered: "", unit_cost: "", cost_unit: "lb" }],
   });
 
   // Form state for recording deliveries to site/client.
@@ -110,6 +111,26 @@ function App() {
   const apiPost = async (path, payload) =>
     axios.post(`${API_BASE_URL}${path}`, payload, { headers });
 
+  const toErrorMessage = (err, fallback) => {
+    const detail = err?.response?.data?.detail;
+    if (typeof detail === "string" && detail.trim()) return detail;
+    if (Array.isArray(detail)) {
+      const msgs = detail
+        .map((item) => item?.msg || (typeof item === "string" ? item : null))
+        .filter(Boolean);
+      if (msgs.length) return msgs.join(" | ");
+    }
+    if (detail && typeof detail === "object") {
+      if (typeof detail.msg === "string") return detail.msg;
+      try {
+        return JSON.stringify(detail);
+      } catch {
+        return fallback;
+      }
+    }
+    return fallback;
+  };
+
   const getDatasetLabels = (key) => (datasets[key] || []).map((item) => item.label);
 
   const loadDatasets = async () => {
@@ -128,11 +149,20 @@ function App() {
   // Keep category selection valid after category list loads/changes.
   useEffect(() => {
     if (!ingredientCategories.length) return;
-    const names = ingredientCategories.map((category) => category.name);
-    if (!names.includes(ingredientForm.category)) {
-      setIngredientForm((prev) => ({ ...prev, category: names[0] }));
+    const ids = ingredientCategories.map((category) => String(category.id));
+    if (!ids.includes(String(ingredientForm.category))) {
+      setIngredientForm((prev) => ({ ...prev, category: ids[0] }));
     }
   }, [ingredientCategories]);
+
+  // Keep derived barcode in sync with ingredient name.
+  useEffect(() => {
+    setIngredientForm((prev) => {
+      const nextBarcode = buildDefaultBarcode(prev.name);
+      if (prev.barcode === nextBarcode) return prev;
+      return { ...prev, barcode: nextBarcode };
+    });
+  }, [ingredientForm.name, ingredients]);
 
   // Add custom option to a dataset and return label.
   const addCustomDatasetOption = async (datasetKey, label) => {
@@ -156,9 +186,76 @@ function App() {
     const custom = window.prompt("Add custom ingredient category:");
     const trimmed = (custom || "").trim();
     if (!trimmed) return "";
-    await apiPost("/ingredient-categories", { name: trimmed });
+    const response = await apiPost("/ingredient-categories", { name: trimmed });
     await loadDatasets();
-    return trimmed;
+    return response?.data?.id ? String(response.data.id) : "";
+  };
+
+  const ensureUndefinedIngredientCategoryId = async () => {
+    const existing = (ingredientCategories || []).find(
+      (row) => String(row?.name || "").trim().toLowerCase() === "undefined"
+    );
+    if (existing?.id) return String(existing.id);
+    const response = await apiPost("/ingredient-categories", { name: "undefined" });
+    await loadDatasets();
+    return response?.data?.id ? String(response.data.id) : "";
+  };
+
+  const parseCurrencyValue = (raw) => {
+    const cleaned = String(raw ?? "").replace(/[^0-9.-]/g, "");
+    const num = Number(cleaned);
+    return Number.isFinite(num) ? num : NaN;
+  };
+
+  const formatCurrencyValue = (raw) => {
+    const num = parseCurrencyValue(raw);
+    if (!Number.isFinite(num)) return "";
+    return `$ ${num.toFixed(2)}`;
+  };
+
+  const normalizeUnitCostOption = (raw) => {
+    const num = parseCurrencyValue(raw);
+    if (!Number.isFinite(num)) return "";
+    return num.toFixed(2);
+  };
+
+  const nextBarcodeSequence = (prefix) => {
+    const seqs = ingredients
+      .map((row) => {
+        const code = String(row?.barcode || "");
+        if (!code.startsWith(`${prefix}-`)) return 0;
+        const parts = code.split("-");
+        if (parts.length < 2) return 0;
+        const n = Number(parts[parts.length - 1]);
+        return Number.isFinite(n) ? n : 0;
+      })
+      .filter((n) => n > 0);
+    const maxSeq = seqs.length ? Math.max(...seqs) : 0;
+    return String(maxSeq + 1).padStart(3, "0");
+  };
+
+  const buildDefaultBarcode = (name) => {
+    const cleaned = String(name || "")
+      .replace(/[^A-Za-z0-9]/g, "")
+      .toUpperCase();
+    const prefix = (cleaned.slice(0, 4) || "").padEnd(4, "_");
+    return `${prefix}-${nextBarcodeSequence(prefix)}`;
+  };
+
+  const persistUnitCostOption = async (value) => {
+    const trimmed = normalizeUnitCostOption(value);
+    if (!trimmed) return;
+    if (!["Root", "Mgmt"].includes(role)) return;
+    const exists = getDatasetLabels("unit_cost_options").some(
+      (item) => normalizeUnitCostOption(item) === trimmed
+    );
+    if (exists) return;
+    try {
+      await addCustomDatasetOption("unit_cost_options", trimmed);
+    } catch (err) {
+      // Keep typed value usable even if saving custom option fails.
+      console.warn("Unable to persist unit cost option", err);
+    }
   };
 
   // Load all dashboard data in parallel for speed.
@@ -209,7 +306,7 @@ function App() {
       setDeliveries(deliveryRes.data);
       setDemoTime(demoTimeRes.data);
     } catch (err) {
-      setError(err?.response?.data?.detail || "Failed to load dashboard data");
+      setError(toErrorMessage(err, "Failed to load dashboard data"));
     }
   };
 
@@ -240,7 +337,7 @@ function App() {
       await loadData();
     } catch (err) {
       setDemoCheckStatus("Demo checks failed.");
-      setError(err?.response?.data?.detail || "Failed demo checks");
+      setError(toErrorMessage(err, "Failed demo checks"));
     }
   };
 
@@ -261,48 +358,85 @@ function App() {
   const addIngredient = async (e) => {
     // Prevent browser page refresh on form submit.
     e.preventDefault();
+    const buildIngredientPayload = (nameOverride = null) => ({
+      ...ingredientForm,
+      ...(nameOverride ? { name: nameOverride } : {}),
+      ...(Number.isFinite(parseCurrencyValue(ingredientForm.default_unit_cost))
+        ? { default_unit_cost: parseCurrencyValue(ingredientForm.default_unit_cost) }
+        : { default_unit_cost: null }),
+      quantity_on_hand: Number(ingredientForm.quantity_on_hand || 0),
+      reorder_level: Number(ingredientForm.reorder_level || 0),
+      shelf_life_days: ingredientForm.shelf_life_days ? Number(ingredientForm.shelf_life_days) : null,
+      expiration_date: ingredientForm.expiration_date || null,
+    });
+
     try {
-      // Convert text inputs to numbers where needed.
-      await apiPost("/ingredients", {
-        ...ingredientForm,
-        quantity_on_hand: Number(ingredientForm.quantity_on_hand),
-        reorder_level: Number(ingredientForm.reorder_level),
-        shelf_life_days: Number(ingredientForm.shelf_life_days),
-        expiration_date: ingredientForm.expiration_date || null,
-        default_unit_cost: ingredientForm.default_unit_cost
-          ? Number(ingredientForm.default_unit_cost)
-          : null,
-      });
+      setError("");
+      if (ingredientForm.default_unit_cost) {
+        await persistUnitCostOption(ingredientForm.default_unit_cost);
+      }
+      await apiPost("/ingredients", buildIngredientPayload());
 
       // Reset form after success.
       setIngredientForm({
         name: "",
-        category: "Produce",
+        category: ingredientCategories.length ? String(ingredientCategories[0].id) : "",
         barcode: "",
         unit: "lb",
-        quantity_on_hand: 0,
-        reorder_level: 0,
-        shelf_life_days: 30,
+        quantity_on_hand: "",
+        reorder_level: "",
+        shelf_life_days: "",
         expiration_date: "",
         default_unit_cost: "",
-        cost_unit: "USD / lb",
+        cost_unit: "lb",
       });
+      setError("");
       // Refresh tables/cards.
       loadData();
     } catch (err) {
-      setError(err?.response?.data?.detail || "Failed to create ingredient");
+      const detail = err?.response?.data?.detail || "";
+      if (err?.response?.status === 409 && String(detail).includes("Ingredient name already exists")) {
+        const overwrite = window.confirm(
+          "Ingredient name already exists. Click OK to overwrite existing ingredient, or Cancel to create a new name."
+        );
+        try {
+          if (overwrite) {
+            await apiPost("/ingredients?overwrite=true", buildIngredientPayload());
+          } else {
+            const newName = window.prompt("Enter a different ingredient name:", `${ingredientForm.name} Copy`);
+            const trimmed = (newName || "").trim();
+            if (!trimmed) {
+          setError("Create canceled. Enter a new name to save as a separate ingredient.");
+          return;
+            }
+            await apiPost("/ingredients", buildIngredientPayload(trimmed));
+            setIngredientForm((prev) => ({ ...prev, name: trimmed }));
+          }
+          setError("");
+          loadData();
+          return;
+        } catch (retryErr) {
+          setError(toErrorMessage(retryErr, "Failed to create ingredient"));
+          return;
+        }
+      }
+      setError(toErrorMessage(err, "Failed to create ingredient"));
     }
   };
 
   const scanArrival = async (e) => {
     e.preventDefault();
     try {
+      if (arrivalForm.unit_cost) {
+        await persistUnitCostOption(arrivalForm.unit_cost);
+      }
       // Sends barcode scan and quantity; backend updates inventory.
+      const arrivalUnitCost = parseCurrencyValue(arrivalForm.unit_cost);
       await apiPost("/arrivals/scan", {
         barcode: arrivalForm.barcode,
         quantity_received: Number(arrivalForm.quantity_received),
         expiration_date: arrivalForm.expiration_date || null,
-        unit_cost: arrivalForm.unit_cost ? Number(arrivalForm.unit_cost) : null,
+        unit_cost: Number.isFinite(arrivalUnitCost) ? arrivalUnitCost : null,
         cost_unit: arrivalForm.cost_unit || null,
       });
       setArrivalForm({
@@ -310,11 +444,11 @@ function App() {
         quantity_received: 0,
         expiration_date: "",
         unit_cost: "",
-        cost_unit: "USD / lb",
+        cost_unit: "lb",
       });
       loadData();
     } catch (err) {
-      setError(err?.response?.data?.detail || "Failed to scan arrival");
+      setError(toErrorMessage(err, "Failed to scan arrival"));
     }
   };
 
@@ -335,28 +469,71 @@ function App() {
     });
   };
 
+  const onMealIngredientSelect = async (index, value) => {
+    if (value !== "__custom__") {
+      updateMealLine(index, "ingredient_id", value);
+      return;
+    }
+    const customName = window.prompt("Enter custom ingredient name:");
+    const trimmed = (customName || "").trim();
+    if (!trimmed) {
+      updateMealLine(index, "ingredient_id", "");
+      return;
+    }
+
+    let nextCategory = ingredientForm.category;
+    if (!nextCategory) {
+      try {
+        nextCategory = await ensureUndefinedIngredientCategoryId();
+      } catch {
+        nextCategory = "";
+      }
+    }
+
+    setIngredientForm((prev) => ({
+      ...prev,
+      name: trimmed,
+      category: prev.category || nextCategory,
+    }));
+    updateMealLine(index, "ingredient_id", "");
+    const addIngredientCard = document.querySelector(".ingredient-grid");
+    if (addIngredientCard?.scrollIntoView) {
+      addIngredientCard.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  };
+
   const createMeal = async (e) => {
     e.preventDefault();
     try {
       // Keep only complete lines, then convert IDs/quantities to numbers.
+      const preparedLines = mealForm.ingredients
+        .filter((line) => line.ingredient_id && line.quantity_per_serving)
+        .map((line) => ({
+          ingredient_id: Number(line.ingredient_id),
+          quantity_per_serving: Number(line.quantity_per_serving),
+        }));
+      if (preparedLines.length === 0) {
+        setError("Add at least one ingredient line before creating the meal.");
+        return;
+      }
       await apiPost("/meals", {
         name: mealForm.name,
         meal_type: mealForm.meal_type,
-        ingredients: mealForm.ingredients
-          .filter((line) => line.ingredient_id && line.quantity_per_serving)
-          .map((line) => ({
-            ingredient_id: Number(line.ingredient_id),
-            quantity_per_serving: Number(line.quantity_per_serving),
-          })),
+        restriction:
+          mealForm.restriction_ids.length > 0
+            ? mealForm.restriction_ids.join(",")
+            : "01",
+        ingredients: preparedLines,
       });
       setMealForm({
         name: "",
         meal_type: "Lunch",
+        restriction_ids: [],
         ingredients: [{ ingredient_id: "", quantity_per_serving: "" }],
       });
       loadData();
     } catch (err) {
-      setError(err?.response?.data?.detail || "Failed to create meal");
+      setError(toErrorMessage(err, "Failed to create meal"));
     }
   };
 
@@ -371,26 +548,33 @@ function App() {
       setProductionForm({ meal_id: "", servings: 1 });
       loadData();
     } catch (err) {
-      setError(err?.response?.data?.detail || "Failed to record meal production");
+      setError(toErrorMessage(err, "Failed to record meal production"));
     }
   };
 
   const addPoLine = () => {
     // Add another line to purchase order form.
     setPoForm((prev) => ({
-      ...prev,
-      items: [
-        ...prev.items,
-        { ingredient_id: "", quantity_ordered: "", unit_cost: "", cost_unit: "USD / lb" },
-      ],
-    }));
+        ...prev,
+        items: [
+          ...prev.items,
+          { ingredient_id: "", quantity_ordered: "", unit_cost: "", cost_unit: "lb" },
+        ],
+      }));
   };
 
   const updatePoLine = (index, key, value) => {
     // Update one PO line by index.
     setPoForm((prev) => {
       const itemsCopy = [...prev.items];
-      itemsCopy[index] = { ...itemsCopy[index], [key]: value };
+      const nextLine = { ...itemsCopy[index], [key]: value };
+      if (key === "ingredient_id") {
+        const ingredient = ingredients.find((row) => String(row.id) === String(value));
+        if (ingredient?.unit) {
+          nextLine.cost_unit = ingredient.unit;
+        }
+      }
+      itemsCopy[index] = nextLine;
       return { ...prev, items: itemsCopy };
     });
   };
@@ -400,8 +584,8 @@ function App() {
     const items = lowStock.map((ingredient) => ({
       ingredient_id: String(ingredient.id),
       quantity_ordered: String(Math.max(ingredient.reorder_level - ingredient.quantity_on_hand, 1)),
-      unit_cost: ingredient.default_unit_cost ? String(ingredient.default_unit_cost) : "",
-      cost_unit: ingredient.cost_unit || "USD / lb",
+      unit_cost: ingredient.default_unit_cost ? formatCurrencyValue(ingredient.default_unit_cost) : "",
+      cost_unit: ingredient.unit || "lb",
     }));
     if (items.length > 0) {
       setPoForm((prev) => ({ ...prev, items }));
@@ -411,27 +595,34 @@ function App() {
   const createPO = async (e) => {
     e.preventDefault();
     try {
+      const newUnitCosts = [...new Set(poForm.items.map((line) => (line.unit_cost || "").trim()).filter(Boolean))];
+      for (const value of newUnitCosts) {
+        await persistUnitCostOption(value);
+      }
       // Create PO header + lines.
       await apiPost("/purchase-orders", {
         supplier: poForm.supplier,
-        status: poForm.status,
+        po_status: poForm.status,
         items: poForm.items
           .filter((line) => line.ingredient_id && line.quantity_ordered)
-          .map((line) => ({
-            ingredient_id: Number(line.ingredient_id),
-            quantity_ordered: Number(line.quantity_ordered),
-            unit_cost: line.unit_cost ? Number(line.unit_cost) : null,
-            cost_unit: line.cost_unit || null,
-          })),
+          .map((line) => {
+            const unitCost = parseCurrencyValue(line.unit_cost);
+            return {
+              ingredient_id: Number(line.ingredient_id),
+              quantity_ordered: Number(line.quantity_ordered),
+              unit_cost: Number.isFinite(unitCost) ? unitCost : null,
+              cost_unit: line.cost_unit || null,
+            };
+          }),
       });
       setPoForm({
         supplier: "FreshFields Produce",
         status: "Draft",
-        items: [{ ingredient_id: "", quantity_ordered: "", unit_cost: "", cost_unit: "USD / lb" }],
+        items: [{ ingredient_id: "", quantity_ordered: "", unit_cost: "", cost_unit: "lb" }],
       });
       loadData();
     } catch (err) {
-      setError(err?.response?.data?.detail || "Failed to create purchase order");
+      setError(toErrorMessage(err, "Failed to create purchase order"));
     }
   };
 
@@ -448,7 +639,7 @@ function App() {
       setDeliveryForm({ meal_id: "", site_id: "", client_id: "", quantity: 1 });
       loadData();
     } catch (err) {
-      setError(err?.response?.data?.detail || "Failed to create delivery record");
+      setError(toErrorMessage(err, "Failed to create delivery record"));
     }
   };
 
@@ -508,11 +699,13 @@ function App() {
             <input
               className="field-name"
               placeholder="Name"
+              title="Ingredient name."
               value={ingredientForm.name}
               onChange={(e) => setIngredientForm({ ...ingredientForm, name: e.target.value })}
             />
             <select
               className="field-category"
+              title="Ingredient category."
               value={ingredientForm.category}
               onChange={async (e) => {
                 const value = await resolveIngredientCategoryValue(e.target.value);
@@ -521,20 +714,15 @@ function App() {
             >
               <option value="__custom__">+ Add custom category</option>
               {ingredientCategories.map((category) => (
-                <option key={category.id} value={category.name}>
+                <option key={category.id} value={category.id}>
                   {category.name}
                 </option>
               ))}
-              {ingredientCategories.length === 0 &&
-                getDatasetLabels("ingredient_categories").map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-                ))}
             </select>
             <input
               className="field-barcode"
               placeholder="Barcode"
+              title="Ingredient barcode identifier."
               value={ingredientForm.barcode}
               onChange={(e) => setIngredientForm({ ...ingredientForm, barcode: e.target.value })}
             />
@@ -542,7 +730,8 @@ function App() {
               className="field-amount"
               type="number"
               step="0.01"
-              placeholder="Amount On Hand"
+              placeholder="Quantity"
+              title="Current quantity available in inventory."
               value={ingredientForm.quantity_on_hand}
               onChange={(e) =>
                 setIngredientForm({ ...ingredientForm, quantity_on_hand: e.target.value })
@@ -550,10 +739,11 @@ function App() {
             />
             <select
               className="field-unit"
+              title="Ingredient unit of measure (for example: lb, oz, count)."
               value={ingredientForm.unit}
               onChange={async (e) => {
                 const value = await resolveDropdownValue("measurement_units", e.target.value);
-                if (value) setIngredientForm({ ...ingredientForm, unit: value });
+                if (value) setIngredientForm({ ...ingredientForm, unit: value, cost_unit: value });
               }}
             >
               <option value="__custom__">+ Add custom unit</option>
@@ -563,65 +753,78 @@ function App() {
                 </option>
               ))}
             </select>
-            <select
+            <input
               className="field-unit-cost"
+              type="text"
+              inputMode="decimal"
+              placeholder="Avg Unit Cost"
+              title="Average dollar cost per unit. Example: $4.50 for 1 lb."
               value={ingredientForm.default_unit_cost}
+              list="unit-cost-options-list"
+              onChange={(e) => {
+                setIngredientForm({ ...ingredientForm, default_unit_cost: e.target.value });
+              }}
+              onBlur={async (e) => {
+                setIngredientForm((prev) => ({
+                  ...prev,
+                  default_unit_cost: formatCurrencyValue(e.target.value),
+                }));
+                await persistUnitCostOption(e.target.value);
+              }}
+            />
+            <select
+              className="field-cost-unit"
+              title="Unit that the unit cost applies to (cost per this unit)."
+              value={ingredientForm.cost_unit || ""}
               onChange={async (e) => {
-                const value = await resolveDropdownValue("unit_cost_options", e.target.value);
-                if (value !== "") setIngredientForm({ ...ingredientForm, default_unit_cost: value });
+                const value = await resolveDropdownValue("measurement_units", e.target.value);
+                if (value) setIngredientForm({ ...ingredientForm, cost_unit: value });
               }}
             >
-              <option value="__custom__">+ Add custom unit cost</option>
-              <option value="">Unit Cost (optional)</option>
-              {getDatasetLabels("unit_cost_options").map((option) => (
+              <option value="__custom__">+ Add custom unit</option>
+              {getDatasetLabels("measurement_units").map((option) => (
                 <option key={option} value={option}>
                   {option}
                 </option>
               ))}
             </select>
+            <datalist id="unit-cost-options-list">
+              {getDatasetLabels("unit_cost_options").map((option) => (
+                <option key={option} value={formatCurrencyValue(option) || option}>
+                </option>
+              ))}
+            </datalist>
             <input
-              className="field-reorder"
-              type="number"
-              step="0.01"
-              placeholder="Reorder Level"
-              value={ingredientForm.reorder_level}
+              className="field-expiration"
+              type="date"
+              title="Expiration date for current stock (optional)."
+              value={ingredientForm.expiration_date}
               onChange={(e) =>
-                setIngredientForm({ ...ingredientForm, reorder_level: e.target.value })
+                setIngredientForm({ ...ingredientForm, expiration_date: e.target.value })
               }
             />
             <input
               className="field-shelf-life"
               type="number"
               placeholder="Shelf Life (days)"
+              title="Typical shelf life in days."
               value={ingredientForm.shelf_life_days}
               onChange={(e) =>
                 setIngredientForm({ ...ingredientForm, shelf_life_days: e.target.value })
               }
             />
             <input
-              className="field-expiration"
-              type="date"
-              value={ingredientForm.expiration_date}
+              className="field-reorder"
+              type="number"
+              step="0.01"
+              placeholder="Restock Point"
+              title="Minimum quantity before this ingredient should be reordered."
+              value={ingredientForm.reorder_level}
               onChange={(e) =>
-                setIngredientForm({ ...ingredientForm, expiration_date: e.target.value })
+                setIngredientForm({ ...ingredientForm, reorder_level: e.target.value })
               }
             />
-            <select
-              className="field-cost-unit"
-              value={ingredientForm.cost_unit || ""}
-              onChange={async (e) => {
-                const value = await resolveDropdownValue("cost_units", e.target.value);
-                if (value) setIngredientForm({ ...ingredientForm, cost_unit: value });
-              }}
-            >
-              <option value="__custom__">+ Add custom cost unit</option>
-              {getDatasetLabels("cost_units").map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-            <button className="field-submit" type="submit">Create Ingredient</button>
+            <button className="field-submit" type="submit" title="Save this ingredient to inventory.">Create Ingredient</button>
           </form>
         </article>
 
@@ -649,30 +852,34 @@ function App() {
                 setArrivalForm({ ...arrivalForm, expiration_date: e.target.value })
               }
             />
-            <select
+            <input
+              type="text"
+              inputMode="decimal"
               value={arrivalForm.unit_cost}
-              onChange={async (e) => {
-                const value = await resolveDropdownValue("unit_cost_options", e.target.value);
-                if (value !== "") setArrivalForm({ ...arrivalForm, unit_cost: value });
+              placeholder="Unit Cost (opt)"
+              title="Dollar cost per received unit for this arrival."
+              list="unit-cost-options-list"
+              onChange={(e) => {
+                setArrivalForm({ ...arrivalForm, unit_cost: e.target.value });
               }}
-            >
-              <option value="__custom__">+ Add custom unit cost</option>
-              <option value="">Unit Cost (optional)</option>
-              {getDatasetLabels("unit_cost_options").map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
+              onBlur={async (e) => {
+                setArrivalForm((prev) => ({
+                  ...prev,
+                  unit_cost: formatCurrencyValue(e.target.value),
+                }));
+                await persistUnitCostOption(e.target.value);
+              }}
+            />
             <select
               value={arrivalForm.cost_unit || ""}
+              title="Unit that the arrival unit cost applies to."
               onChange={async (e) => {
-                const value = await resolveDropdownValue("cost_units", e.target.value);
+                const value = await resolveDropdownValue("measurement_units", e.target.value);
                 if (value) setArrivalForm({ ...arrivalForm, cost_unit: value });
               }}
             >
-              <option value="__custom__">+ Add custom cost unit</option>
-              {getDatasetLabels("cost_units").map((option) => (
+              <option value="__custom__">+ Add custom unit</option>
+              {getDatasetLabels("measurement_units").map((option) => (
                 <option key={option} value={option}>
                   {option}
                 </option>
@@ -693,27 +900,52 @@ function App() {
               value={mealForm.name}
               onChange={(e) => setMealForm({ ...mealForm, name: e.target.value })}
             />
-            <select
-              value={mealForm.meal_type}
-              onChange={async (e) => {
-                const value = await resolveDropdownValue("meal_types", e.target.value);
-                if (value) setMealForm({ ...mealForm, meal_type: value });
-              }}
-            >
-              <option value="__custom__">+ Add custom meal type</option>
-              {getDatasetLabels("meal_types").map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
+            <div className="meal-meta-row">
+              <select
+                className="meal-type-select"
+                value={mealForm.meal_type}
+                title="Meal type (Breakfast, Lunch, Dinner, Special Occasion)."
+                onChange={async (e) => {
+                  const value = await resolveDropdownValue("meal_types", e.target.value);
+                  if (value) setMealForm({ ...mealForm, meal_type: value });
+                }}
+              >
+                <option value="__custom__">+ Add custom meal type</option>
+                {getDatasetLabels("meal_types").map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+              <select
+                className="meal-restrictions-select"
+                multiple
+                title="Select one or more food restrictions that cannot eat this meal."
+                value={mealForm.restriction_ids}
+                onChange={(e) => {
+                  const selected = Array.from(e.target.selectedOptions).map((option) => option.value);
+                  setMealForm({ ...mealForm, restriction_ids: selected });
+                }}
+              >
+                {(datasets.food_restrictions || [])
+                  .filter((option) => String(option.id) !== "1")
+                  .map((option) => (
+                    <option key={option.id} value={String(option.id).padStart(2, "0")}>
+                      {String(option.id).padStart(2, "0")} - {option.label}
+                    </option>
+                  ))}
+              </select>
+            </div>
             {mealForm.ingredients.map((line, index) => (
               <div className="line" key={index}>
                 <select
                   value={line.ingredient_id}
-                  onChange={(e) => updateMealLine(index, "ingredient_id", e.target.value)}
+                  onChange={async (e) => {
+                    await onMealIngredientSelect(index, e.target.value);
+                  }}
                 >
                   <option value="">Ingredient</option>
+                  <option value="__custom__">+ Add custom ingredient</option>
                   {ingredients.map((ingredient) => (
                     <option key={ingredient.id} value={ingredient.id}>
                       {ingredient.name}
@@ -820,30 +1052,31 @@ function App() {
                   value={line.quantity_ordered}
                   onChange={(e) => updatePoLine(index, "quantity_ordered", e.target.value)}
                 />
-                <select
+                <input
+                  type="text"
+                  inputMode="decimal"
+                  placeholder="Unit Cost"
+                  title="Dollar cost per unit for this PO line."
                   value={line.unit_cost}
-                  onChange={async (e) => {
-                    const value = await resolveDropdownValue("unit_cost_options", e.target.value);
-                    if (value !== "") updatePoLine(index, "unit_cost", value);
+                  list="unit-cost-options-list"
+                  onChange={(e) => {
+                    updatePoLine(index, "unit_cost", e.target.value);
                   }}
-                >
-                  <option value="__custom__">+ Custom cost</option>
-                  <option value="">Unit Cost</option>
-                  {getDatasetLabels("unit_cost_options").map((option) => (
-                    <option key={option} value={option}>
-                      {option}
-                    </option>
-                  ))}
-                </select>
+                  onBlur={async (e) => {
+                    updatePoLine(index, "unit_cost", formatCurrencyValue(e.target.value));
+                    await persistUnitCostOption(e.target.value);
+                  }}
+                />
                 <select
                   value={line.cost_unit || ""}
+                  title="Unit that the PO line cost applies to."
                   onChange={async (e) => {
-                    const value = await resolveDropdownValue("cost_units", e.target.value);
+                    const value = await resolveDropdownValue("measurement_units", e.target.value);
                     if (value) updatePoLine(index, "cost_unit", value);
                   }}
                 >
-                  <option value="__custom__">+ Custom cost unit</option>
-                  {getDatasetLabels("cost_units").map((option) => (
+                  <option value="__custom__">+ Custom unit</option>
+                  {getDatasetLabels("measurement_units").map((option) => (
                     <option key={option} value={option}>
                       {option}
                     </option>

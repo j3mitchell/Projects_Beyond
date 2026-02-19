@@ -30,6 +30,29 @@ stop_pid_file_if_running() {
   fi
 }
 
+stop_port_if_in_use() {
+  local port="$1"
+  if ! command -v lsof >/dev/null 2>&1; then
+    return
+  fi
+  local pids
+  pids="$(lsof -ti tcp:"$port" || true)"
+  if [[ -z "$pids" ]]; then
+    return
+  fi
+  echo "Stopping processes on tcp:$port ($pids)..."
+  for pid in $pids; do
+    kill "$pid" >/dev/null 2>&1 || true
+  done
+  sleep 1
+  pids="$(lsof -ti tcp:"$port" || true)"
+  if [[ -n "$pids" ]]; then
+    for pid in $pids; do
+      kill -9 "$pid" >/dev/null 2>&1 || true
+    done
+  fi
+}
+
 wait_for_http() {
   local url="$1"
   local name="$2"
@@ -71,6 +94,8 @@ fi
 
 stop_pid_file_if_running "$RUN_DIR/backend.pid"
 stop_pid_file_if_running "$RUN_DIR/frontend.pid"
+stop_port_if_in_use 8000
+stop_port_if_in_use 4000
 
 echo "Starting backend (FastAPI on 127.0.0.1:8000)..."
 nohup "$VENV_DIR/bin/python" -m uvicorn backend.main:app --host 127.0.0.1 --port 8000 >"$RUN_DIR/backend.log" 2>&1 &

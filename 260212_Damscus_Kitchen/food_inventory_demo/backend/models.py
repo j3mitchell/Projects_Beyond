@@ -25,6 +25,20 @@ class Unit(Base):
     name = Column(String, unique=True, nullable=False, index=True)
 
 
+class CostUnit(Base):
+    __tablename__ = "cost_units"
+
+    id = Column(String(2), primary_key=True, index=True)
+    name = Column(String, unique=True, nullable=False, index=True)
+
+
+class UnitCostOption(Base):
+    __tablename__ = "unit_cost_options"
+
+    id = Column(String(2), primary_key=True, index=True)
+    name = Column(String, unique=True, nullable=False, index=True)
+
+
 class Supplier(Base):
     __tablename__ = "suppliers"
 

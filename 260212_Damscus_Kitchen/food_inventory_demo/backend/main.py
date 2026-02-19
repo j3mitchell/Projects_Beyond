@@ -1,13 +1,14 @@
 # Core date helpers for expiration math and seeded demo data.
 from datetime import date, datetime, timedelta
 # Typing for response lists.
-from typing import List
+from typing import List, Optional
 
 # FastAPI gives API routing/dependencies; CORS allows frontend-backend communication.
 from fastapi import Depends, FastAPI, Header, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 # SQL helpers for aggregate reports and schema inspection.
-from sqlalchemy import func, inspect
+from sqlalchemy import func, inspect, text
+from sqlalchemy.exc import IntegrityError, InvalidRequestError
 from sqlalchemy.orm import Session, joinedload
 
 # Database session/engine objects.
@@ -15,6 +16,7 @@ from backend.database import Base, SessionLocal, engine
 # SQLAlchemy table classes.
 from backend.models import (
     Client,
+    CostUnit,
     FoodArrival,
     FoodRestriction,
     Ingredient,
@@ -31,6 +33,7 @@ from backend.models import (
     Site,
     Supplier,
     Unit,
+    UnitCostOption,
     User,
 )
 from backend.schemas import (
@@ -125,10 +128,13 @@ def ensure_schema():
     Base.metadata.create_all(bind=engine)
     migrate_drop_is_custom()
     migrate_ingredient_category_ids()
+    migrate_ingredient_category_values_to_ids()
     migrate_client_food_restrictions()
     migrate_meal_type_to_restriction()
     migrate_po_status()
     migrate_purchase_orders_po_status_fk()
+    migrate_ingredients_enforce_non_null_pk()
+    migrate_meals_enforce_non_null_ids()
 
 
 def migrate_drop_is_custom():
@@ -203,6 +209,32 @@ def migrate_ingredient_category_ids():
         )
         conn.exec_driver_sql("DROP TABLE ingredient_categories")
         conn.exec_driver_sql("ALTER TABLE ingredient_categories_new RENAME TO ingredient_categories")
+
+
+def migrate_ingredient_category_values_to_ids():
+    # Store category IDs in ingredients.category (legacy data may contain names).
+    with engine.begin() as conn:
+        inspector = inspect(conn)
+        existing_tables = set(inspector.get_table_names())
+        if "ingredients" not in existing_tables or "ingredient_categories" not in existing_tables:
+            return
+
+        conn.exec_driver_sql(
+            """
+            UPDATE ingredients
+            SET category = (
+                SELECT ic.id
+                FROM ingredient_categories ic
+                WHERE lower(trim(ic.name)) = lower(trim(ingredients.category))
+                LIMIT 1
+            )
+            WHERE EXISTS (
+                SELECT 1
+                FROM ingredient_categories ic
+                WHERE lower(trim(ic.name)) = lower(trim(ingredients.category))
+            )
+            """
+        )
 
 
 def migrate_client_food_restrictions():
@@ -460,11 +492,196 @@ def migrate_purchase_orders_po_status_fk():
         conn.exec_driver_sql('CREATE INDEX IF NOT EXISTS ix_purchase_orders_po_status ON purchase_orders ("po_status")')
 
 
+def migrate_ingredients_enforce_non_null_pk():
+    # SQLite does not enforce NOT NULL for TEXT PK unless explicitly set.
+    # Rebuild ingredients so id is guaranteed non-null and repair any existing null IDs.
+    with engine.begin() as conn:
+        inspector = inspect(conn)
+        if "ingredients" not in set(inspector.get_table_names()):
+            return
+
+        table_info = conn.exec_driver_sql("PRAGMA table_info(ingredients)").fetchall()
+        id_info = next((row for row in table_info if row[1] == "id"), None)
+        id_is_not_null = bool(id_info and int(id_info[3]) == 1)
+
+        # First repair any existing NULL/blank IDs.
+        rows = conn.exec_driver_sql("SELECT rowid, id FROM ingredients ORDER BY rowid").fetchall()
+        used_ids = set()
+        for _, raw_id in rows:
+            try:
+                if raw_id is not None and str(raw_id).strip() != "":
+                    used_ids.add(int(str(raw_id)))
+            except (TypeError, ValueError):
+                continue
+
+        next_id = (max(used_ids) if used_ids else 0) + 1
+        for rowid, raw_id in rows:
+            if raw_id is not None and str(raw_id).strip() != "":
+                continue
+            while next_id in used_ids:
+                next_id += 1
+            conn.exec_driver_sql(
+                "UPDATE ingredients SET id = ? WHERE rowid = ?",
+                (f"{next_id:02d}", rowid),
+            )
+            used_ids.add(next_id)
+            next_id += 1
+
+        # If already enforced by schema, no rebuild needed.
+        if id_is_not_null:
+            return
+
+        conn.exec_driver_sql("PRAGMA foreign_keys=OFF")
+        conn.exec_driver_sql(
+            """
+            CREATE TABLE ingredients_new (
+              id TEXT NOT NULL PRIMARY KEY,
+              name VARCHAR NOT NULL UNIQUE,
+              category VARCHAR NOT NULL,
+              barcode VARCHAR NOT NULL UNIQUE,
+              unit VARCHAR NOT NULL,
+              quantity_on_hand FLOAT NOT NULL,
+              reorder_level FLOAT NOT NULL,
+              shelf_life_days TEXT NOT NULL,
+              expiration_date DATE,
+              default_unit_cost FLOAT,
+              cost_unit VARCHAR,
+              ingredient_code TEXT,
+              shelf_life TEXT
+            )
+            """
+        )
+        conn.exec_driver_sql(
+            """
+            INSERT INTO ingredients_new (
+              id, name, category, barcode, unit, quantity_on_hand, reorder_level,
+              shelf_life_days, expiration_date, default_unit_cost, cost_unit, ingredient_code, shelf_life
+            )
+            SELECT
+              id, name, category, barcode, unit, quantity_on_hand, reorder_level,
+              shelf_life_days, expiration_date, default_unit_cost, cost_unit, ingredient_code, shelf_life
+            FROM ingredients
+            WHERE id IS NOT NULL AND TRIM(CAST(id AS TEXT)) <> ''
+            """
+        )
+        conn.exec_driver_sql("DROP TABLE ingredients")
+        conn.exec_driver_sql("ALTER TABLE ingredients_new RENAME TO ingredients")
+        conn.exec_driver_sql("CREATE INDEX IF NOT EXISTS ix_ingredients_id ON ingredients (id)")
+        conn.exec_driver_sql("CREATE UNIQUE INDEX IF NOT EXISTS ix_ingredients_name ON ingredients (name)")
+        conn.exec_driver_sql("CREATE UNIQUE INDEX IF NOT EXISTS ix_ingredients_barcode ON ingredients (barcode)")
+        conn.exec_driver_sql("PRAGMA foreign_keys=ON")
+
+
+def migrate_meals_enforce_non_null_ids():
+    # Enforce NOT NULL IDs on meals/meal_ingredients and repair legacy NULL IDs.
+    with engine.begin() as conn:
+        inspector = inspect(conn)
+        existing_tables = set(inspector.get_table_names())
+        if "meals" not in existing_tables or "meal_ingredients" not in existing_tables:
+            return
+
+        # Repair NULL/blank meal IDs.
+        meal_rows = conn.exec_driver_sql("SELECT rowid, id FROM meals ORDER BY rowid").fetchall()
+        used_meal_ids = set()
+        for _, raw_id in meal_rows:
+            try:
+                if raw_id is not None and str(raw_id).strip() != "":
+                    used_meal_ids.add(int(str(raw_id)))
+            except (TypeError, ValueError):
+                continue
+        next_meal_id = (max(used_meal_ids) if used_meal_ids else 0) + 1
+        for rowid, raw_id in meal_rows:
+            if raw_id is not None and str(raw_id).strip() != "":
+                continue
+            while next_meal_id in used_meal_ids:
+                next_meal_id += 1
+            conn.exec_driver_sql("UPDATE meals SET id = ? WHERE rowid = ?", (f"{next_meal_id:02d}", rowid))
+            used_meal_ids.add(next_meal_id)
+            next_meal_id += 1
+
+        # Repair NULL/blank meal_ingredients IDs.
+        mi_rows = conn.exec_driver_sql("SELECT rowid, id FROM meal_ingredients ORDER BY rowid").fetchall()
+        used_mi_ids = set()
+        for _, raw_id in mi_rows:
+            try:
+                if raw_id is not None and str(raw_id).strip() != "":
+                    used_mi_ids.add(int(str(raw_id)))
+            except (TypeError, ValueError):
+                continue
+        next_mi_id = (max(used_mi_ids) if used_mi_ids else 0) + 1
+        for rowid, raw_id in mi_rows:
+            if raw_id is not None and str(raw_id).strip() != "":
+                continue
+            while next_mi_id in used_mi_ids:
+                next_mi_id += 1
+            conn.exec_driver_sql("UPDATE meal_ingredients SET id = ? WHERE rowid = ?", (f"{next_mi_id:02d}", rowid))
+            used_mi_ids.add(next_mi_id)
+            next_mi_id += 1
+
+        meal_info = conn.exec_driver_sql("PRAGMA table_info(meals)").fetchall()
+        mi_info = conn.exec_driver_sql("PRAGMA table_info(meal_ingredients)").fetchall()
+        meal_id_not_null = bool(next((row for row in meal_info if row[1] == "id" and int(row[3]) == 1), None))
+        mi_id_not_null = bool(next((row for row in mi_info if row[1] == "id" and int(row[3]) == 1), None))
+        if meal_id_not_null and mi_id_not_null:
+            return
+
+        conn.exec_driver_sql("PRAGMA foreign_keys=OFF")
+        conn.exec_driver_sql(
+            """
+            CREATE TABLE meals_new (
+                id TEXT NOT NULL PRIMARY KEY,
+                name VARCHAR NOT NULL UNIQUE,
+                restriction VARCHAR NOT NULL
+            )
+            """
+        )
+        conn.exec_driver_sql(
+            """
+            INSERT INTO meals_new (id, name, restriction)
+            SELECT id, name, restriction
+            FROM meals
+            WHERE id IS NOT NULL AND TRIM(CAST(id AS TEXT)) <> ''
+            """
+        )
+        conn.exec_driver_sql("DROP TABLE meals")
+        conn.exec_driver_sql("ALTER TABLE meals_new RENAME TO meals")
+        conn.exec_driver_sql("CREATE INDEX IF NOT EXISTS ix_meals_id ON meals (id)")
+        conn.exec_driver_sql("CREATE UNIQUE INDEX IF NOT EXISTS ix_meals_name ON meals (name)")
+
+        conn.exec_driver_sql(
+            """
+            CREATE TABLE meal_ingredients_new (
+              id TEXT NOT NULL PRIMARY KEY CHECK(length(id)=2 AND id GLOB '[0-9][0-9]'),
+              meal_id TEXT NOT NULL,
+              ingredient_id TEXT NOT NULL,
+              quantity_per_serving FLOAT NOT NULL,
+              FOREIGN KEY(meal_id) REFERENCES meals(id),
+              FOREIGN KEY(ingredient_id) REFERENCES ingredients(id)
+            )
+            """
+        )
+        conn.exec_driver_sql(
+            """
+            INSERT INTO meal_ingredients_new (id, meal_id, ingredient_id, quantity_per_serving)
+            SELECT id, meal_id, ingredient_id, quantity_per_serving
+            FROM meal_ingredients
+            WHERE id IS NOT NULL AND TRIM(CAST(id AS TEXT)) <> ''
+            """
+        )
+        conn.exec_driver_sql("DROP TABLE meal_ingredients")
+        conn.exec_driver_sql("ALTER TABLE meal_ingredients_new RENAME TO meal_ingredients")
+        conn.exec_driver_sql("CREATE INDEX IF NOT EXISTS ix_meal_ingredients_meal_id ON meal_ingredients (meal_id)")
+        conn.exec_driver_sql(
+            "CREATE INDEX IF NOT EXISTS ix_meal_ingredients_ingredient_id ON meal_ingredients (ingredient_id)"
+        )
+        conn.exec_driver_sql("PRAGMA foreign_keys=ON")
+
+
 # Run schema check once when module starts.
 ensure_schema()
 
 # Create FastAPI app instance with API docs title and version.
-app = FastAPI(title="Kitchen Food Inventory API", version="1.3.0")
+app = FastAPI(title="Kitchen Food Inventory API", version="1.3.5")
 
 # Allow browser apps on other ports (like localhost:4000) to call this API.
 app.add_middleware(
@@ -518,23 +735,60 @@ def get_demo_date() -> date:
     return date.today() + timedelta(days=get_demo_days_elapsed())
 
 
-def ingredient_to_schema(ingredient: Ingredient, ref_date: date) -> IngredientOut:
+def parse_currency_to_float(value) -> Optional[float]:
+    # Accept floats/ints and "$ 12.34" style strings from legacy seeded data.
+    if value is None:
+        return None
+    if isinstance(value, (int, float)):
+        return float(value)
+    raw = str(value).strip()
+    if not raw:
+        return None
+    cleaned = raw.replace("$", "").replace(",", "").strip()
+    try:
+        return float(cleaned)
+    except ValueError:
+        return None
+
+
+def resolve_ingredient_category_id(raw_value: str, db: Session) -> str:
+    # Accept either a category ID (e.g. "01") or category name (e.g. "Produce").
+    value = (raw_value or "").strip()
+    if not value:
+        raise HTTPException(status_code=400, detail="Ingredient category is required")
+
+    by_id = db.query(IngredientCategory).filter(IngredientCategory.id == value).first()
+    if by_id:
+        return by_id.id
+
+    by_name = db.query(IngredientCategory).filter(func.lower(IngredientCategory.name) == value.lower()).first()
+    if by_name:
+        return by_name.id
+
+    raise HTTPException(status_code=400, detail=f"Invalid ingredient category: {raw_value}")
+
+
+def ingredient_to_schema(ingredient: Ingredient, ref_date: date, db: Session) -> IngredientOut:
     # Convert SQLAlchemy Ingredient object into API response object.
     days = None
     if ingredient.expiration_date:
         days = (ingredient.expiration_date - ref_date).days
+    category_id = str(ingredient.category or "")
+    category_row = db.query(IngredientCategory).filter(IngredientCategory.id == category_id).first()
+    category_name = category_row.name if category_row else category_id
 
     return IngredientOut(
         id=ingredient.id,
         name=ingredient.name,
-        category=ingredient.category,
+        category=category_name,
+        category_id=category_id or None,
         barcode=ingredient.barcode,
         unit=ingredient.unit,
         quantity_on_hand=ingredient.quantity_on_hand,
         reorder_level=ingredient.reorder_level,
         shelf_life_days=ingredient.shelf_life_days,
         expiration_date=ingredient.expiration_date,
-        default_unit_cost=ingredient.default_unit_cost,
+        default_unit_cost=parse_currency_to_float(ingredient.default_unit_cost),
         cost_unit=ingredient.cost_unit,
         demo_days_to_expiry=days,
     )
@@ -590,7 +844,7 @@ def purchase_order_to_schema(po: PurchaseOrder) -> PurchaseOrderOut:
                 ingredient_id=item.ingredient_id,
                 ingredient_name=item.ingredient.name,
                 quantity_ordered=item.quantity_ordered,
-                unit_cost=item.unit_cost,
+                unit_cost=parse_currency_to_float(item.unit_cost),
                 cost_unit=item.cost_unit,
             )
             for item in po.items
@@ -612,11 +866,53 @@ def next_lookup_id(db: Session, model) -> str:
     return f"{next_id:02d}"
 
 
+def repair_null_ingredient_ids(db: Session):
+    # Defensive repair for legacy rows where SQLite allowed NULL on TEXT PK.
+    null_rows = db.query(Ingredient).filter(Ingredient.id.is_(None)).order_by(Ingredient.name.asc()).all()
+    if not null_rows:
+        return
+
+    used_ids = set()
+    for (raw_id,) in db.query(Ingredient.id).filter(Ingredient.id.isnot(None)).all():
+        try:
+            used_ids.add(int(str(raw_id)))
+        except (TypeError, ValueError):
+            continue
+
+    next_id = (max(used_ids) if used_ids else 0) + 1
+    for row in null_rows:
+        while next_id in used_ids:
+            next_id += 1
+        db.query(Ingredient).filter(Ingredient.barcode == row.barcode, Ingredient.id.is_(None)).update(
+            {Ingredient.id: f"{next_id:02d}"},
+            synchronize_session=False,
+        )
+        used_ids.add(next_id)
+        next_id += 1
+    db.commit()
+
+
 def ensure_units(db: Session):
     for name in DEFAULT_DATASETS["measurement_units"]:
         exists = db.query(Unit).filter(Unit.name == name).first()
         if not exists:
             db.add(Unit(id=next_lookup_id(db, Unit), name=name))
+            db.flush()
+
+
+def ensure_cost_units(db: Session):
+    for name in DEFAULT_DATASETS["cost_units"]:
+        exists = db.query(CostUnit).filter(CostUnit.name == name).first()
+        if not exists:
+            db.add(CostUnit(id=next_lookup_id(db, CostUnit), name=name))
+            db.flush()
+
+
+def ensure_unit_cost_options(db: Session):
+    for name in DEFAULT_DATASETS["unit_cost_options"]:
+        exists = db.query(UnitCostOption).filter(UnitCostOption.name == name).first()
+        if not exists:
+            db.add(UnitCostOption(id=next_lookup_id(db, UnitCostOption), name=name))
             db.flush()
 
 
@@ -828,7 +1124,7 @@ def seed_ingredients(db: Session):
         db.add(
             Ingredient(
                 name=name,
-                category=category,
+                category=resolve_ingredient_category_id(category, db),
                 barcode=barcode,
                 unit=unit,
                 quantity_on_hand=qty,
@@ -885,6 +1181,8 @@ def seed_users(db: Session):
 def seed_if_empty(db: Session):
     # Seed all core datasets and demo data if first run.
     ensure_units(db)
+    ensure_cost_units(db)
+    ensure_unit_cost_options(db)
     ensure_order_statuses(db)
     ensure_meal_types(db)
     ensure_suppliers(db)
@@ -904,6 +1202,8 @@ def startup_seed():
     db = SessionLocal()
     try:
         seed_if_empty(db)
+        repair_null_ingredient_ids(db)
+        migrate_meals_enforce_non_null_ids()
     finally:
         db.close()
 
@@ -1006,11 +1306,17 @@ def read_dataset_options(
             DatasetOptionOut(id=int(row.id), dataset_key=dataset_key, label=row.name, value=row.name)
             for row in rows
         ]
-    if dataset_key in {"cost_units", "unit_cost_options"}:
-        labels = DEFAULT_DATASETS.get(dataset_key, [])
+    if dataset_key == "cost_units":
+        rows = db.query(CostUnit).order_by(CostUnit.id.asc()).all()
         return [
-            DatasetOptionOut(id=i, dataset_key=dataset_key, label=label, value=label)
-            for i, label in enumerate(labels, start=1)
+            DatasetOptionOut(id=int(row.id), dataset_key=dataset_key, label=row.name, value=row.name)
+            for row in rows
+        ]
+    if dataset_key == "unit_cost_options":
+        rows = db.query(UnitCostOption).order_by(UnitCostOption.id.asc()).all()
+        return [
+            DatasetOptionOut(id=int(row.id), dataset_key=dataset_key, label=row.name, value=row.name)
+            for row in rows
         ]
     return []
 
@@ -1033,7 +1339,11 @@ def add_dataset_option(
             return DatasetOptionOut(id=int(exists.id), dataset_key=dataset_key, label=exists.name, value=exists.name)
         row = Unit(id=next_lookup_id(db, Unit), name=label)
         db.add(row)
-        db.commit()
+        try:
+            db.commit()
+        except IntegrityError as exc:
+            db.rollback()
+            raise HTTPException(status_code=400, detail=f"Unable to save ingredient: {exc.orig}")
         db.refresh(row)
         return DatasetOptionOut(id=int(row.id), dataset_key=dataset_key, label=row.name, value=row.name)
 
@@ -1062,6 +1372,26 @@ def add_dataset_option(
         if exists:
             return DatasetOptionOut(id=int(exists.id), dataset_key=dataset_key, label=exists.name, value=exists.name)
         row = MealType(id=next_lookup_id(db, MealType), name=label)
+        db.add(row)
+        db.commit()
+        db.refresh(row)
+        return DatasetOptionOut(id=int(row.id), dataset_key=dataset_key, label=row.name, value=row.name)
+
+    if dataset_key == "cost_units":
+        exists = db.query(CostUnit).filter(CostUnit.name == label).first()
+        if exists:
+            return DatasetOptionOut(id=int(exists.id), dataset_key=dataset_key, label=exists.name, value=exists.name)
+        row = CostUnit(id=next_lookup_id(db, CostUnit), name=label)
+        db.add(row)
+        db.commit()
+        db.refresh(row)
+        return DatasetOptionOut(id=int(row.id), dataset_key=dataset_key, label=row.name, value=row.name)
+
+    if dataset_key == "unit_cost_options":
+        exists = db.query(UnitCostOption).filter(UnitCostOption.name == label).first()
+        if exists:
+            return DatasetOptionOut(id=int(exists.id), dataset_key=dataset_key, label=exists.name, value=exists.name)
+        row = UnitCostOption(id=next_lookup_id(db, UnitCostOption), name=label)
         db.add(row)
         db.commit()
         db.refresh(row)
@@ -1099,14 +1429,18 @@ def create_site(
         address=address,
     )
     db.add(row)
-    db.commit()
+    try:
+        db.commit()
+    except IntegrityError as exc:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=f"Unable to save ingredient: {exc.orig}")
     db.refresh(row)
     return row
 
 
 @app.get("/clients", response_model=List[ClientOut])
 def read_clients(
-    site_id: int | None = Query(default=None),
+    site_id: Optional[int] = Query(default=None),
     db: Session = Depends(get_db),
     _: str = Depends(authorize("Rep")),
 ):
@@ -1144,29 +1478,96 @@ def read_clients(
 @app.get("/ingredients", response_model=List[IngredientOut])
 def read_ingredients(db: Session = Depends(get_db), _: str = Depends(authorize("Rep"))):
     # Full inventory list.
+    repair_null_ingredient_ids(db)
     ref_date = get_demo_date()
-    rows = db.query(Ingredient).order_by(Ingredient.name).all()
-    return [ingredient_to_schema(row, ref_date) for row in rows]
+    rows = db.query(Ingredient).filter(Ingredient.id.isnot(None)).order_by(Ingredient.name).all()
+    result: list[IngredientOut] = []
+    for row in rows:
+        if row is None or getattr(row, "id", None) in (None, ""):
+            continue
+        result.append(ingredient_to_schema(row, ref_date, db))
+    return result
 
 
 @app.post("/ingredients", response_model=IngredientOut)
 def create_ingredient(
     payload: IngredientCreate,
+    overwrite: bool = Query(default=False),
     db: Session = Depends(get_db),
     _: str = Depends(authorize("Mgmt")),
 ):
-    # Prevent duplicate names and barcodes.
-    if db.query(Ingredient).filter(Ingredient.name == payload.name).first():
-        raise HTTPException(status_code=400, detail="Ingredient name already exists")
-    if db.query(Ingredient).filter(Ingredient.barcode == payload.barcode).first():
+    repair_null_ingredient_ids(db)
+    existing_by_name = db.query(Ingredient).filter(Ingredient.name == payload.name).first()
+    existing_by_barcode = db.query(Ingredient).filter(Ingredient.barcode == payload.barcode).first()
+
+    # If name exists, only overwrite when explicitly requested.
+    if existing_by_name:
+        if not overwrite:
+            raise HTTPException(
+                status_code=409,
+                detail="Ingredient name already exists. Use overwrite=true or submit a different name.",
+            )
+        if existing_by_barcode and existing_by_barcode.id != existing_by_name.id:
+            raise HTTPException(status_code=400, detail="Barcode already exists")
+
+        payload_data = payload.dict()
+        payload_data["category"] = resolve_ingredient_category_id(payload_data.get("category", ""), db)
+        payload_data["shelf_life_days"] = payload_data.get("shelf_life_days") or 30
+        for key, value in payload_data.items():
+            setattr(existing_by_name, key, value)
+        db.commit()
+        try:
+            db.refresh(existing_by_name)
+            row = existing_by_name
+        except InvalidRequestError:
+            # Fallback for legacy SQLite PK type drift (TEXT id vs ORM Integer id).
+            row = db.query(Ingredient).filter(Ingredient.name == payload.name).first()
+        if row is None:
+            raise HTTPException(status_code=500, detail="Failed to load saved ingredient row")
+        return ingredient_to_schema(row, get_demo_date(), db)
+
+    # New ingredient path still enforces unique barcode.
+    if existing_by_barcode:
         raise HTTPException(status_code=400, detail="Barcode already exists")
 
-    # Build and save new ingredient.
-    ingredient = Ingredient(**payload.dict())
-    db.add(ingredient)
+    payload_data = payload.dict()
+    payload_data["category"] = resolve_ingredient_category_id(payload_data.get("category", ""), db)
+    payload_data["shelf_life_days"] = payload_data.get("shelf_life_days") or 30
+    new_id = next_lookup_id(db, Ingredient)
+    # Use explicit SQL insert so id is always written even under ORM/SQLite PK type drift.
+    db.execute(
+        text(
+            """
+            INSERT INTO ingredients (
+                id, name, category, barcode, unit, quantity_on_hand, reorder_level,
+                shelf_life_days, expiration_date, default_unit_cost, cost_unit
+            ) VALUES (
+                :id, :name, :category, :barcode, :unit, :quantity_on_hand, :reorder_level,
+                :shelf_life_days, :expiration_date, :default_unit_cost, :cost_unit
+            )
+            """
+        ),
+        {
+            "id": new_id,
+            "name": payload_data["name"],
+            "category": payload_data["category"],
+            "barcode": payload_data["barcode"],
+            "unit": payload_data["unit"],
+            "quantity_on_hand": payload_data["quantity_on_hand"],
+            "reorder_level": payload_data["reorder_level"],
+            "shelf_life_days": payload_data["shelf_life_days"],
+            "expiration_date": payload_data["expiration_date"],
+            "default_unit_cost": payload_data["default_unit_cost"],
+            "cost_unit": payload_data["cost_unit"],
+        },
+    )
     db.commit()
-    db.refresh(ingredient)
-    return ingredient_to_schema(ingredient, get_demo_date())
+    row = db.query(Ingredient).filter(Ingredient.barcode == payload.barcode).first()
+    if row is None:
+        row = db.query(Ingredient).filter(Ingredient.name == payload.name).first()
+    if row is None:
+        raise HTTPException(status_code=500, detail="Ingredient saved but could not be reloaded")
+    return ingredient_to_schema(row, get_demo_date(), db)
 
 
 @app.patch("/ingredients/{ingredient_id}", response_model=IngredientOut)
@@ -1183,24 +1584,36 @@ def update_ingredient(
 
     # Only update fields user actually sent.
     updates = payload.dict(exclude_unset=True)
+    if "category" in updates:
+        updates["category"] = resolve_ingredient_category_id(updates["category"], db)
     for key, value in updates.items():
         setattr(ingredient, key, value)
 
     db.commit()
-    db.refresh(ingredient)
-    return ingredient_to_schema(ingredient, get_demo_date())
+    try:
+        db.refresh(ingredient)
+        row = ingredient
+    except InvalidRequestError:
+        row = db.query(Ingredient).filter(Ingredient.barcode == ingredient.barcode).first()
+    return ingredient_to_schema(row, get_demo_date(), db)
 
 
 @app.get("/inventory/low", response_model=List[IngredientOut])
 def read_low_inventory(db: Session = Depends(get_db), _: str = Depends(authorize("Rep"))):
     # Ingredients at or below reorder threshold.
+    repair_null_ingredient_ids(db)
     rows = (
         db.query(Ingredient)
-        .filter(Ingredient.quantity_on_hand <= Ingredient.reorder_level)
+        .filter(Ingredient.id.isnot(None), Ingredient.quantity_on_hand <= Ingredient.reorder_level)
         .order_by(Ingredient.quantity_on_hand.asc())
         .all()
     )
-    return [ingredient_to_schema(row, get_demo_date()) for row in rows]
+    result: list[IngredientOut] = []
+    for row in rows:
+        if row is None or getattr(row, "id", None) in (None, ""):
+            continue
+        result.append(ingredient_to_schema(row, get_demo_date(), db))
+    return result
 
 
 @app.get("/inventory/expiring", response_model=List[IngredientOut])
@@ -1212,22 +1625,29 @@ def read_expiring_inventory(
     _: str = Depends(authorize("Rep")),
 ):
     # Show ingredients expiring by days or months, with optional fast demo clock.
+    repair_null_ingredient_ids(db)
     ref_date = get_demo_date() if demo_clock else date.today()
     days = increment_value if increment_type == "days" else increment_value * 30
     cutoff = ref_date + timedelta(days=days)
 
     rows = (
         db.query(Ingredient)
-        .filter(Ingredient.expiration_date.isnot(None), Ingredient.expiration_date <= cutoff)
+        .filter(Ingredient.id.isnot(None), Ingredient.expiration_date.isnot(None), Ingredient.expiration_date <= cutoff)
         .order_by(Ingredient.expiration_date.asc())
         .all()
     )
-    return [ingredient_to_schema(row, ref_date) for row in rows]
+    result: list[IngredientOut] = []
+    for row in rows:
+        if row is None or getattr(row, "id", None) in (None, ""):
+            continue
+        result.append(ingredient_to_schema(row, ref_date, db))
+    return result
 
 
 @app.get("/meals", response_model=List[MealOut])
 def read_meals(db: Session = Depends(get_db), _: str = Depends(authorize("Rep"))):
     # joinedload avoids many tiny queries when reading nested ingredient lines.
+    migrate_meals_enforce_non_null_ids()
     meals = db.query(Meal).options(joinedload(Meal.ingredients).joinedload(MealIngredient.ingredient)).all()
     return [meal_to_schema(meal) for meal in meals]
 
@@ -1238,9 +1658,12 @@ def create_meal(
     db: Session = Depends(get_db),
     _: str = Depends(authorize("Mgmt")),
 ):
+    migrate_meals_enforce_non_null_ids()
     # Avoid duplicate meal names.
     if db.query(Meal).filter(Meal.name == payload.name).first():
         raise HTTPException(status_code=400, detail="Meal name already exists")
+    if not payload.ingredients:
+        raise HTTPException(status_code=400, detail="At least one ingredient line is required")
 
     # Validate that all ingredient IDs exist.
     ingredient_ids = [line.ingredient_id for line in payload.ingredients]
@@ -1248,28 +1671,45 @@ def create_meal(
     if len(found_ingredients) != len(set(ingredient_ids)):
         raise HTTPException(status_code=400, detail="One or more ingredient IDs are invalid")
 
-    # Create meal header first.
+    # Create meal header + lines using explicit IDs to avoid ORM/SQLite PK drift.
     restriction = normalize_meal_restriction_ids(payload.restriction, db)
-    meal = Meal(name=payload.name, restriction=restriction)
-    db.add(meal)
-    db.flush()
-
-    # Then create each recipe line.
+    meal_id = next_lookup_id(db, Meal)
+    db.execute(
+        text(
+            """
+            INSERT INTO meals (id, name, restriction)
+            VALUES (:id, :name, :restriction)
+            """
+        ),
+        {"id": meal_id, "name": payload.name, "restriction": restriction},
+    )
     for line in payload.ingredients:
-        db.add(
-            MealIngredient(
-                meal_id=meal.id,
-                ingredient_id=line.ingredient_id,
-                quantity_per_serving=line.quantity_per_serving,
-            )
+        line_id = next_lookup_id(db, MealIngredient)
+        db.execute(
+            text(
+                """
+                INSERT INTO meal_ingredients (id, meal_id, ingredient_id, quantity_per_serving)
+                VALUES (:id, :meal_id, :ingredient_id, :quantity_per_serving)
+                """
+            ),
+            {
+                "id": line_id,
+                "meal_id": meal_id,
+                "ingredient_id": f"{int(line.ingredient_id):02d}",
+                "quantity_per_serving": line.quantity_per_serving,
+            },
         )
+    try:
+        db.commit()
+    except IntegrityError as exc:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=f"Unable to save meal: {exc.orig}")
 
-    db.commit()
     # Re-read with relationships loaded for clean response.
     meal = (
         db.query(Meal)
         .options(joinedload(Meal.ingredients).joinedload(MealIngredient.ingredient))
-        .filter(Meal.id == meal.id)
+        .filter(Meal.id == meal_id)
         .first()
     )
     return meal_to_schema(meal)
@@ -1287,7 +1727,7 @@ def read_arrivals(db: Session = Depends(get_db), _: str = Depends(authorize("Rep
             barcode=row.barcode,
             quantity_received=row.quantity_received,
             expiration_date=row.expiration_date,
-            unit_cost=row.unit_cost,
+            unit_cost=parse_currency_to_float(row.unit_cost),
             cost_unit=row.cost_unit,
             arrived_at=row.arrived_at,
         )
@@ -1334,7 +1774,7 @@ def scan_arrival(
         barcode=arrival.barcode,
         quantity_received=arrival.quantity_received,
         expiration_date=arrival.expiration_date,
-        unit_cost=arrival.unit_cost,
+        unit_cost=parse_currency_to_float(arrival.unit_cost),
         cost_unit=arrival.cost_unit,
         arrived_at=arrival.arrived_at,
     )
