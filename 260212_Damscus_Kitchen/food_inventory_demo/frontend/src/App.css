@@ -33,6 +33,20 @@ body {
   font-weight: 700;
 }
 
+.progress-wrap {
+  width: 100%;
+  height: 16px;
+  background: #e5e7eb;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #16a34a, #22c55e);
+  transition: width 0.25s ease;
+}
+
 .card-grid {
   display: grid;
   gap: 12px;
@@ -59,9 +73,68 @@ body {
   gap: 8px;
 }
 
+.ingredient-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.ingredient-grid .field-name {
+  grid-column: 1 / span 2;
+  grid-row: 1;
+}
+
+.ingredient-grid .field-category {
+  grid-column: 3;
+  grid-row: 1;
+}
+
+.ingredient-grid .field-barcode {
+  grid-column: 4;
+  grid-row: 1;
+}
+
+.ingredient-grid .field-amount {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.ingredient-grid .field-unit {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.ingredient-grid .field-unit-cost {
+  grid-column: 3;
+  grid-row: 2;
+}
+
+.ingredient-grid .field-reorder {
+  grid-column: 4;
+  grid-row: 2;
+}
+
+.ingredient-grid .field-shelf-life {
+  grid-column: 1;
+  grid-row: 3;
+}
+
+.ingredient-grid .field-expiration {
+  grid-column: 2;
+  grid-row: 3;
+}
+
+.ingredient-grid .field-cost-unit {
+  grid-column: 3;
+  grid-row: 3;
+}
+
+.ingredient-grid .field-submit {
+  grid-column: 1 / -1;
+  grid-row: 4;
+}
+
 .line {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px;
 }
 
@@ -105,6 +178,24 @@ td {
 
   .line {
     grid-template-columns: 1fr;
+  }
+
+  .ingredient-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ingredient-grid .field-name,
+  .ingredient-grid .field-category,
+  .ingredient-grid .field-barcode,
+  .ingredient-grid .field-amount,
+  .ingredient-grid .field-unit,
+  .ingredient-grid .field-unit-cost,
+  .ingredient-grid .field-reorder,
+  .ingredient-grid .field-shelf-life,
+  .ingredient-grid .field-expiration,
+  .ingredient-grid .field-cost-unit,
+  .ingredient-grid .field-submit {
+    grid-column: 1;
   }
 
   .card-grid.two {

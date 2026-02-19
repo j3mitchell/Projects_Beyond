@@ -8,8 +8,13 @@ import { DraggableBox } from "./DraggableBox";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
 
+// Utility to get caret range from x,y coordinates
 function getRangeFromPoint(x, y) {
-  if (document.caretRangeFromPoint) return document.caretRangeFromPoint(x, y);
+  // Different browsers have different methods for the range from point
+  if (document.caretRangeFromPoint) 
+    return document.caretRangeFromPoint(x, y);
+
+  // Firefox version
   if (document.caretPositionFromPoint) {
     const pos = document.caretPositionFromPoint(x, y);
     const r = document.createRange();
@@ -20,36 +25,52 @@ function getRangeFromPoint(x, y) {
   return null;
 }
 
+// Main App Component
 function AppInner() {
   const editableRef = useRef(null);
+
+  // State to hold uploaded file content and input fields
   const [fileContent, setFileContent] = useState("");
-  const [inputs, setInputs] = useState(Array(10).fill(""));
+
+  // State for draggable box inputs and how many
+  const [inputs, setInputs] = useState(Array(15).fill(""));
 
   // ----------- FILE UPLOAD -----------
   const handleFileUpload = async (e) => {
     const file = e.target.files[0];
+    
+    // no file selected
     if (!file) return;
     const reader = new FileReader();
-
+    
+    // handle text files
     if (file.type === "text/plain") {
       reader.onload = (ev) => {
         const clean = ev.target.result
+          // Normalize line endings
           .replace(/\r\n/g, "\n")
           .replace(/\n/g, "<br>");
+        // set file content state to clean
         setFileContent(clean);
       };
+      // readAsText() reads bytes and decodes them into a string.
       reader.readAsText(file);
       return;
     }
 
+    // handle PDF files
     if (file.type === "application/pdf") {
       reader.onload = async (ev) => {
+        // Read PDF data
         const pdfData = new Uint8Array(ev.target.result);
+        // Load PDF document from binary data
         const pdf = await pdfjsLib.getDocument({ data: pdfData }).promise;
         let text = "";
+        // Extract text from each page, line breaks as <br>
         for (let i = 1; i <= pdf.numPages; i++) {
           const page = await pdf.getPage(i);
           const content = await page.getTextContent();
+          // Concatenate text items with spaces
           text += content.items.map((it) => it.str).join(" ") + "<br>";
         }
         text = text.replace(/(<br>\s*){2,}/g, "<br>");
@@ -61,6 +82,7 @@ function AppInner() {
   };
 
   // ----------- EDITABLE SYNC -----------
+  // Update the React state when editable content changes
   const onEditableInput = () => setFileContent(editableRef.current.innerHTML);
 
   const clearCaret = () => {
@@ -118,7 +140,7 @@ function AppInner() {
         range.collapse(false);
       }
 
-      insertAtRange(range, `}}${item.text}{{`);
+      insertAtRange(range, `${item.text}`);
 
       setTimeout(() => setFileContent(editableRef.current.innerHTML), 10);
     },
@@ -134,9 +156,7 @@ function AppInner() {
     return html
       .replace(/<br>/g, "\n")
       .replace(/\n{2,}/g, "\n")
-      .replace(/^<br>/gm, "")
-      .replace(/}}/g, "")
-      .replace(/{{/g, "");
+      .replace(/^<br>/gm, "");
   };
 
   const download = (clean = false) => {
