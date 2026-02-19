@@ -464,7 +464,7 @@ def migrate_purchase_orders_po_status_fk():
 ensure_schema()
 
 # Create FastAPI app instance with API docs title and version.
-app = FastAPI(title="Kitchen Food Inventory API", version="1.2.0")
+app = FastAPI(title="Kitchen Food Inventory API", version="1.3.0")
 
 # Allow browser apps on other ports (like localhost:4000) to call this API.
 app.add_middleware(
