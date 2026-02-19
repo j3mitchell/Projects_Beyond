@@ -1,0 +1,113 @@
+body {
+  margin: 0;
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+  background: linear-gradient(160deg, #f9f3ea 0%, #ebe9dc 100%);
+  color: #1f2933;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.app-shell {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.toolbar-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.error {
+  color: #9f1239;
+  font-weight: 700;
+}
+
+.card-grid {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.card-grid.stats {
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+
+.card-grid.two {
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #d3d5d1;
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.form-grid {
+  display: grid;
+  gap: 8px;
+}
+
+.line {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+
+input,
+select,
+button {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #bcc2c8;
+}
+
+button {
+  border: none;
+  background: #1d4ed8;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  border-bottom: 1px solid #e5e7eb;
+  padding: 6px;
+  text-align: left;
+}
+
+@media (max-width: 640px) {
+  .toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .line {
+    grid-template-columns: 1fr;
+  }
+
+  .card-grid.two {
+    grid-template-columns: 1fr;
+  }
+}

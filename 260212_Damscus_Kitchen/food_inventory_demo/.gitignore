@@ -1,0 +1,20 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Node
+frontend/node_modules/
+
+# Runtime files
+.run/
+*.log
+*.pid
+
+# Local database
+food_inventory.db
