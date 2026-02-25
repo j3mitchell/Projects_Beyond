@@ -962,19 +962,23 @@ function extractTopSkillsFromText(rawText) {
 
 async function fetchJobInsightsFromUrl(rawUrl) {
   // Run title lookup and mirror lookup at the same time so we do not stack delays.
-  const titlePromise = fetchJobTitleFromUrl(rawUrl);
-  const mirrorPromise = withTimeout(5000, async () => {
-    const mirror = await fetch(`https://r.jina.ai/${rawUrl}`);
-    if (!mirror.ok) throw new Error("mirror not ok");
-    return mirror.text();
-  });
+  // Use allSettled so any rejection is consumed and never bubbles as an uncaught promise.
+  const [titleResult, mirrorResult] = await Promise.allSettled([
+    fetchJobTitleFromUrl(rawUrl),
+    withTimeout(5000, async () => {
+      const mirror = await fetch(`https://r.jina.ai/${rawUrl}`);
+      if (!mirror.ok) throw new Error("mirror not ok");
+      return mirror.text();
+    }),
+  ]);
 
-  const title = await titlePromise;
+  const title = titleResult.status === "fulfilled" ? titleResult.value : titleFromUrlPath(rawUrl);
   let company = "";
   let skills = [];
 
   try {
-    const content = await mirrorPromise;
+    if (mirrorResult.status !== "fulfilled") throw new Error("mirror unavailable");
+    const content = mirrorResult.value;
     skills = extractTopSkillsFromText(content);
     company = extractCompanyFromContent(content, rawUrl, title);
   } catch {
