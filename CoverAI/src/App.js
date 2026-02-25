@@ -249,6 +249,11 @@ function extractTopSkillsFromText(rawText) {
 
   const skills = [];
   const seen = new Set();
+  const sectionHeaderPattern =
+    /(requirements?|required skills?|required experience|qualifications?|desired skills?|you(?:'|’)ll have|you will have)/i;
+  const stopSectionPattern =
+    /^(overview|about us|job description|responsibilities|benefits|security clearance|education|travel|equal opportunity)/i;
+  const bulletPattern = /^[-*•\d.)\s]/;
   const addSkill = (line) => {
     const cleaned = cleanSkillLine(line);
     if (cleaned.length < 16 || cleaned.length > 180) return;
@@ -258,13 +263,31 @@ function extractTopSkillsFromText(rawText) {
     skills.push(cleaned);
   };
 
-  // Prefer lines under qualification/requirement sections.
+  // Primary pass: from section headers, take the first 2 bullet/list entries.
   for (let i = 0; i < lines.length; i += 1) {
-    if (!/(qualifications|requirements|required experience|required skills)/i.test(lines[i])) continue;
+    if (!sectionHeaderPattern.test(lines[i])) continue;
+    let bulletsCollected = 0;
+
+    for (let j = i + 1; j < Math.min(lines.length, i + 35); j += 1) {
+      const current = lines[j];
+      if (stopSectionPattern.test(current)) break;
+
+      if (bulletPattern.test(current)) {
+        addSkill(current);
+        bulletsCollected += 1;
+        if (skills.length >= 3) return skills.slice(0, 3);
+        if (bulletsCollected >= 2) break;
+      }
+    }
+  }
+
+  // Secondary pass: broader scan under the same preferred sections.
+  for (let i = 0; i < lines.length; i += 1) {
+    if (!sectionHeaderPattern.test(lines[i])) continue;
     for (let j = i + 1; j < Math.min(lines.length, i + 40); j += 1) {
       const current = lines[j];
-      if (/^(overview|job description|responsibilities|desired skills|benefits|security clearance)/i.test(current)) break;
-      if (/^[-*•\d.)\s]/.test(current)) addSkill(current);
+      if (stopSectionPattern.test(current)) break;
+      if (bulletPattern.test(current)) addSkill(current);
       if (skills.length >= 3) return skills.slice(0, 3);
     }
   }
