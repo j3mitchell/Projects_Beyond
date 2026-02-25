@@ -468,7 +468,10 @@ function washJobTitle(rawTitle) {
     "system",
     "information",
     "security",
+    "clinical",
   ]);
+  const levelPrefixSet = new Set(["jr", "sr", "senior", "lead", "principal", "staff"]);
+  const levelSuffixSet = new Set(["i", "ii", "iii", "iv", "v", "1", "2", "3", "4", "5"]);
 
   const normalized = title
     .replace(/[()]/g, " ")
@@ -476,22 +479,47 @@ function washJobTitle(rawTitle) {
     .replace(/\s+/g, " ")
     .trim();
   const words = normalized.split(" ").filter(Boolean);
+  if (words.length === 2) return toTitleCasePhrase(words.join(" "));
   if (words.length <= 3) return toTitleCasePhrase(words.join(" "));
 
-  // Find first noun anchor and collect up to 2 useful words before it.
+  // Find first noun anchor and collect compact adjective + noun (+ optional level).
   let nounIndex = words.findIndex((word) => nounSet.has(word.toLowerCase()));
   if (nounIndex < 0) nounIndex = words.length - 1;
 
   const picked = [];
-  for (let i = Math.max(0, nounIndex - 2); i < nounIndex; i += 1) {
-    const w = words[i].toLowerCase();
-    if (adjectiveSet.has(w) || w.length > 3) picked.push(words[i]);
+  const before = words.slice(0, nounIndex);
+
+  // Prefer one level prefix (Lead/Jr/Sr/etc.) when present.
+  const levelPrefix = before.find((w) => levelPrefixSet.has(w.toLowerCase()));
+  if (levelPrefix) picked.push(levelPrefix);
+
+  // Prefer one strong adjective closest to noun.
+  let adjectiveCandidate = "";
+  for (let i = before.length - 1; i >= 0; i -= 1) {
+    const w = before[i].toLowerCase();
+    if (adjectiveSet.has(w) || w.length > 3) {
+      adjectiveCandidate = before[i];
+      break;
+    }
   }
+  if (adjectiveCandidate && !picked.some((w) => w.toLowerCase() === adjectiveCandidate.toLowerCase())) {
+    picked.push(adjectiveCandidate);
+  }
+
+  // Core noun (Engineer, Developer, Nurse, etc.).
   picked.push(words[nounIndex]);
 
-  // Keep only 2-3 words max.
-  const compact = picked.slice(-3);
-  return toTitleCasePhrase(compact.join(" "));
+  // Optional level suffix right after noun: II/III/2/etc.
+  const nextWord = words[nounIndex + 1];
+  if (nextWord && levelSuffixSet.has(nextWord.toLowerCase())) {
+    picked.push(nextWord.toUpperCase());
+  }
+
+  // Final title: prefer 2-3 words. Allow 4 only when level suffix is present and role needs it.
+  const compact = picked.filter(Boolean);
+  const hasSuffix = compact.length > 0 && levelSuffixSet.has(compact[compact.length - 1].toLowerCase());
+  const maxWords = hasSuffix ? 4 : 3;
+  return toTitleCasePhrase(compact.slice(0, maxWords).join(" "));
 }
 
 function extractTopSkillsFromText(rawText) {
