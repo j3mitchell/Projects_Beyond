@@ -240,6 +240,82 @@ function cleanSkillLine(line) {
     .trim();
 }
 
+function toTitleCasePhrase(value) {
+  const hardAcronyms = new Set(["OOP", "SQL", "JELC", "IT", "AI", "C2"]);
+  return value
+    .split(" ")
+    .filter(Boolean)
+    .map((word) => {
+      const upper = word.toUpperCase();
+      if (hardAcronyms.has(upper)) return upper;
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    })
+    .join(" ");
+}
+
+function washSkillToShortPhrase(rawSkill) {
+  const cleaned = cleanSkillLine(rawSkill)
+    .replace(/[()]/g, " ")
+    .replace(/[^\w\s/-]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (!cleaned) return "";
+
+  const mapped = [
+    { regex: /\bobject[- ]oriented programming\b/i, phrase: "OOP" },
+    { regex: /\bdata structures?\b/i, phrase: "Data Structures" },
+    { regex: /\balgorithms?\b/i, phrase: "Algorithms" },
+    { regex: /\bproject management\b/i, phrase: "Project Management" },
+    { regex: /\bprogram management\b/i, phrase: "Program Management" },
+    { regex: /\boperations planning\b/i, phrase: "Operations Planning" },
+    { regex: /\bexercise planning\b/i, phrase: "Exercise Planning" },
+    { regex: /\bjoint exercise life cycle\b|\bjelc\b/i, phrase: "JELC" },
+    { regex: /\bstakeholder management\b/i, phrase: "Stakeholder Management" },
+    { regex: /\bcommunication\b/i, phrase: "Team Communication" },
+    { regex: /\bcoordination\b/i, phrase: "Team Coordination" },
+    { regex: /\banalysis\b/i, phrase: "Data Analysis" },
+    { regex: /\brisk management\b/i, phrase: "Risk Management" },
+    { regex: /\bcybersecurity\b|\binformation security\b/i, phrase: "Cybersecurity" },
+    { regex: /\bsoftware development\b/i, phrase: "Software Development" },
+  ];
+  for (const entry of mapped) {
+    if (entry.regex.test(cleaned)) return entry.phrase;
+  }
+
+  // Fallback: strip filler words and keep 2-3 meaningful words.
+  const filler = new Set([
+    "strong",
+    "knowledge",
+    "experience",
+    "ability",
+    "understanding",
+    "including",
+    "required",
+    "requirements",
+    "qualification",
+    "qualifications",
+    "skills",
+    "skill",
+    "with",
+    "of",
+    "in",
+    "and",
+    "the",
+    "to",
+    "for",
+  ]);
+
+  const words = cleaned
+    .split(/\s+/)
+    .map((w) => w.replace(/[^a-z0-9/-]/gi, ""))
+    .filter(Boolean)
+    .filter((w) => !filler.has(w.toLowerCase()));
+
+  if (words.length === 0) return toTitleCasePhrase(cleaned.split(/\s+/).slice(0, 3).join(" "));
+  const kept = words.slice(0, Math.min(3, Math.max(2, words.length)));
+  return toTitleCasePhrase(kept.join(" "));
+}
+
 function extractTopSkillsFromText(rawText) {
   if (!rawText) return [];
   const lines = rawText
@@ -652,13 +728,18 @@ function App() {
         .filter(Boolean)
         .filter((skill, index, arr) => arr.findIndex((x) => x.toLowerCase() === skill.toLowerCase()) === index)
         .slice(0, 3);
+      const washedSkills = mergedSkills
+        .map((skill) => washSkillToShortPhrase(skill))
+        .filter(Boolean)
+        .filter((skill, index, arr) => arr.findIndex((x) => x.toLowerCase() === skill.toLowerCase()) === index)
+        .slice(0, 3);
 
       setFieldLabelAndValueByKey("job_listing_ref_title", title);
       setFieldLabelAndValueByKey("position_title", title);
       if (company) setFieldLabelAndValueByKey("company_name", company);
-      if (mergedSkills[0]) setFieldLabelAndValueByKey("pos_skill_1", mergedSkills[0]);
-      if (mergedSkills[1]) setFieldLabelAndValueByKey("pos_skill_2", mergedSkills[1]);
-      if (mergedSkills[2]) setFieldLabelAndValueByKey("pos_skill_3", mergedSkills[2]);
+      if (washedSkills[0]) setFieldLabelAndValueByKey("pos_skill_1", washedSkills[0]);
+      if (washedSkills[1]) setFieldLabelAndValueByKey("pos_skill_2", washedSkills[1]);
+      if (washedSkills[2]) setFieldLabelAndValueByKey("pos_skill_3", washedSkills[2]);
       setNotice("Job details populated from URL.");
       setError("");
     } catch {
