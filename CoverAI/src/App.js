@@ -40,6 +40,7 @@ const DEFAULT_FIELDS = [
   { id: "f14", key: "additional_exp_1", label: "", value: "" },
   { id: "f15", key: "additional_exp_2", label: "", value: "" },
   { id: "f16", key: "my_signature", label: "", value: "" },
+  { id: "f17", key: "ref", label: "", value: "" },
 ];
 
 // Starter letter template that includes tokens wrapped in {{ }}.
@@ -67,6 +68,7 @@ const FIELD_SUGGESTIONS = {
   job_url: "e.g., https://company.com/careers/job-123",
   job_listing_ref_title: "e.g., Senior Product Operations Manager",
   job_listing_ref_url: "e.g., https://company.com/careers/job-123",
+  ref: "e.g., Kelli Quinn (Smyrna, GA) (LinkedIn)",
   prev_company: "e.g., Google",
   my_skill_1: "e.g., Cross-functional leadership",
   my_skill_2: "e.g., Process improvement",
@@ -86,6 +88,7 @@ const FIELD_LABEL_SUGGESTIONS = {
   job_url: "Job URL",
   job_listing_ref_title: "Ref Title",
   job_listing_ref_url: "Ref URL",
+  ref: "Ref",
   prev_company: "Prev Company",
   my_skill_1: "My Skill 1",
   my_skill_2: "My Skill 2",
@@ -163,6 +166,21 @@ function renderEditorNodes(templateText, labelByKey) {
   }
 
   return fragment;
+}
+
+// Ensure saved/imported projects always include the current default field set.
+function mergeFieldsWithDefaults(inputFields) {
+  const incoming = Array.isArray(inputFields) ? inputFields : [];
+  const byKey = new Map(incoming.map((field) => [field.key, field]));
+  return DEFAULT_FIELDS.map((defaultField) => {
+    const matched = byKey.get(defaultField.key);
+    if (!matched) return { ...defaultField };
+    return {
+      ...defaultField,
+      ...matched,
+      id: matched.id || defaultField.id,
+    };
+  });
 }
 
 function extractTokenKey(rawToken) {
@@ -905,6 +923,37 @@ function downloadTextFile(text, name) {
   URL.revokeObjectURL(link.href);
 }
 
+// Save JSON with a real file dialog when available.
+// Falls back to a simple file-name prompt + browser download.
+async function saveJsonWithDialog(text, suggestedName) {
+  try {
+    if (window.showSaveFilePicker) {
+      const handle = await window.showSaveFilePicker({
+        suggestedName,
+        types: [
+          {
+            description: "JSON Files",
+            accept: { "application/json": [".json"] },
+          },
+        ],
+      });
+      const writable = await handle.createWritable();
+      await writable.write(text);
+      await writable.close();
+      return true;
+    }
+  } catch (error) {
+    if (error?.name === "AbortError") return false;
+  }
+
+  const response = window.prompt("Template file name:", suggestedName);
+  if (response === null) return false;
+  const trimmed = response.trim();
+  const fileName = trimmed ? (trimmed.toLowerCase().endsWith(".json") ? trimmed : `${trimmed}.json`) : suggestedName;
+  downloadTextFile(text, fileName);
+  return true;
+}
+
 // Basic word counter used for quick stats in the UI.
 function toWordCount(text) {
   const words = text.trim().split(/\s+/).filter(Boolean);
@@ -1078,7 +1127,7 @@ function App() {
       const parsed = JSON.parse(raw);
       if (typeof parsed.template === "string") setTemplate(parsed.template);
       if (Array.isArray(parsed.fields) && parsed.fields.length > 0) {
-        setFields(parsed.fields);
+        setFields(mergeFieldsWithDefaults(parsed.fields));
       }
     } catch {
       setError("Autosave data could not be loaded.");
@@ -1112,16 +1161,6 @@ function App() {
     const base = Object.fromEntries(
       fields.map((field) => [field.key.toLowerCase(), field.value.trim() || field.label.trim()])
     );
-    const rawJobUrl = base.job_url;
-    const refTitle = base.job_listing_ref_title;
-    const refUrl = base.job_listing_ref_url && isHttpUrl(base.job_listing_ref_url) ? base.job_listing_ref_url : rawJobUrl;
-    const fallbackTitle = rawJobUrl && isHttpUrl(rawJobUrl) ? titleFromUrlPath(rawJobUrl) : "";
-    const refLabel = refTitle || fallbackTitle;
-    const shortRefLabel = refUrl && isHttpUrl(refUrl) ? toLinkLabel(refUrl) : "";
-    if (shortRefLabel && refUrl && isHttpUrl(refUrl)) base.ref = `[${shortRefLabel}](${refUrl})`;
-    else if (refLabel && refUrl && isHttpUrl(refUrl)) base.ref = `[${refLabel}](${refUrl})`;
-    else if (refLabel) base.ref = refLabel;
-    else if (refUrl && isHttpUrl(refUrl)) base.ref = refUrl;
     return base;
   }, [fields]);
 
@@ -1134,10 +1173,6 @@ function App() {
       const labels = Object.fromEntries(
         fields.map((field) => [field.key.toLowerCase(), field.label || FIELD_LABEL_SUGGESTIONS[field.key] || field.key])
       );
-      const refUrl = labels.job_listing_ref_url && isHttpUrl(labels.job_listing_ref_url) ? labels.job_listing_ref_url : labels.job_url;
-      if (refUrl && isHttpUrl(refUrl)) {
-        labels.ref = toLinkLabel(refUrl);
-      }
       return labels;
     },
     [fields]
@@ -1405,7 +1440,7 @@ function App() {
 
   // Create a reusable template file for future jobs.
   // It keeps the current wording/tokens, but clears fields users usually change each application.
-  const createTemplateFile = () => {
+  const createTemplateFile = async () => {
     const fieldsToClear = new Set([
       "hiring_manager",
       "company_name",
@@ -1413,6 +1448,7 @@ function App() {
       "job_url",
       "job_listing_ref_title",
       "job_listing_ref_url",
+      "ref",
     ]);
 
     const templateFields = fields.map((field) => {
@@ -1431,9 +1467,13 @@ function App() {
       null,
       2
     );
-    downloadTextFile(payload, "cover-letter-template.json");
-    setNotice("Template JSON created.");
-    setError("");
+    const saved = await saveJsonWithDialog(payload, "cover-letter-template.json");
+    if (saved) {
+      setNotice("Template JSON created.");
+      setError("");
+    } else {
+      setNotice("Template save canceled.");
+    }
   };
 
   // Load a previously exported JSON project file.
@@ -1448,7 +1488,7 @@ function App() {
         throw new Error("Invalid project");
       }
       setTemplate(parsed.template);
-      setFields(parsed.fields);
+      setFields(mergeFieldsWithDefaults(parsed.fields));
       setNotice("Project imported.");
     } catch {
       setError("Invalid project file.");
