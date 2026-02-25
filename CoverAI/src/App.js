@@ -719,14 +719,26 @@ function App() {
           <div className="field-list">
             {fields.map((field) => (
               <div className="field-card" key={field.id}>
-                <input
-                  className="field-input field-label-input"
-                  value={field.label}
-                  onChange={(event) => updateField(field.id, "label", event.target.value)}
-                  onFocus={(event) => event.target.select()}
-                  disabled={!isReady}
-                  placeholder={getFieldLabelSuggestion(field.key)}
-                />
+                <div className="field-header">
+                  <input
+                    className="field-input field-label-input"
+                    value={field.label}
+                    onChange={(event) => updateField(field.id, "label", event.target.value)}
+                    onFocus={(event) => event.target.select()}
+                    disabled={!isReady}
+                    placeholder={getFieldLabelSuggestion(field.key)}
+                  />
+                  <button
+                    type="button"
+                    className="icon-button"
+                    aria-label="Delete field"
+                    title="Delete field"
+                    onClick={() => deleteField(field.id)}
+                    disabled={!isReady}
+                  >
+                    x
+                  </button>
+                </div>
                 {showAdvancedFields && (
                   <>
                     <input
@@ -745,18 +757,6 @@ function App() {
                     />
                   </>
                 )}
-                <button
-                  type="button"
-                  className="icon-button"
-                  aria-label="Delete field"
-                  title="Delete field"
-                  onClick={() => deleteField(field.id)}
-                  disabled={!isReady}
-                >
-                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                    <path d="M9 3h6l1 2h4v2H4V5h4l1-2zm1 6h2v8h-2V9zm4 0h2v8h-2V9zM7 9h2v8H7V9z" />
-                  </svg>
-                </button>
               </div>
             ))}
           </div>
