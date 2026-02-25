@@ -192,12 +192,110 @@ function titleFromUrlPath(rawUrl) {
   }
 }
 
+// Job-board models in priority order requested by user.
+const JOB_SITE_MODELS = [
+  {
+    name: "LinkedIn",
+    domains: ["linkedin.com"],
+    titlePatterns: [
+      /href="https:\/\/www\.linkedin\.com\/jobs\/view\/[^"]+"[^>]*>([^<]+)</i,
+      /<title>\s*([^<]+?)\s*\|\s*LinkedIn/i,
+      /^Title:\s*(.+)$/im,
+    ],
+  },
+  {
+    name: "Indeed",
+    domains: ["indeed.com"],
+    titlePatterns: [/<title>\s*([^<]+?)\s*-\s*Indeed/i, /^Title:\s*(.+)$/im],
+  },
+  {
+    name: "Glassdoor",
+    domains: ["glassdoor.com"],
+    titlePatterns: [/<title>\s*([^<]+?)\s*\|\s*Glassdoor/i, /^Title:\s*(.+)$/im],
+  },
+  {
+    name: "ZipRecruiter",
+    domains: ["ziprecruiter.com"],
+    titlePatterns: [/<title>\s*([^<]+?)\s*-\s*ZipRecruiter/i, /^Title:\s*(.+)$/im],
+  },
+  {
+    name: "Monster",
+    domains: ["monster.com"],
+    titlePatterns: [/<title>\s*([^<]+?)\s*-\s*Monster/i, /^Title:\s*(.+)$/im],
+  },
+  {
+    name: "Dice",
+    domains: ["dice.com"],
+    titlePatterns: [/<title>\s*([^<]+?)\s*-\s*Dice/i, /^Title:\s*(.+)$/im],
+  },
+  {
+    name: "AngelList Talent",
+    domains: ["wellfound.com", "angel.co"],
+    titlePatterns: [/<title>\s*([^<]+?)\s*-\s*(Wellfound|AngelList)/i, /^Title:\s*(.+)$/im],
+  },
+  {
+    name: "USAJOBS",
+    domains: ["usajobs.gov"],
+    titlePatterns: [/<title>\s*([^<]+?)\s*-\s*USAJOBS/i, /^Title:\s*(.+)$/im],
+  },
+  {
+    name: "FlexJobs",
+    domains: ["flexjobs.com"],
+    titlePatterns: [/<title>\s*([^<]+?)\s*-\s*FlexJobs/i, /^Title:\s*(.+)$/im],
+  },
+  {
+    name: "SimplyHired",
+    domains: ["simplyhired.com"],
+    titlePatterns: [/<title>\s*([^<]+?)\s*-\s*SimplyHired/i, /^Title:\s*(.+)$/im],
+  },
+];
+
+function getJobSiteModel(rawUrl) {
+  try {
+    const host = new URL(rawUrl).hostname.toLowerCase();
+    return JOB_SITE_MODELS.find((model) => model.domains.some((domain) => host.includes(domain))) || null;
+  } catch {
+    return null;
+  }
+}
+
+function normalizeTitleCandidate(rawTitle) {
+  if (!rawTitle) return "";
+  const text = rawTitle
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&quot;/g, "\"")
+    .replace(/&#39;/g, "'")
+    .replace(/\s+/g, " ")
+    .trim();
+  return text;
+}
+
+function extractTitleWithModel(content, siteModel) {
+  if (!content) return "";
+  if (!siteModel) {
+    const generic = content.match(/^Title:\s*(.+)$/im);
+    return normalizeTitleCandidate(generic?.[1] || "");
+  }
+
+  for (const pattern of siteModel.titlePatterns) {
+    const match = content.match(pattern);
+    const candidate = normalizeTitleCandidate(match?.[1] || "");
+    if (candidate) return candidate;
+  }
+  return "";
+}
+
 async function fetchJobTitleFromUrl(rawUrl) {
+  const siteModel = getJobSiteModel(rawUrl);
+
   try {
     // Try normal fetch first for sites that allow CORS.
     const direct = await fetch(rawUrl, { mode: "cors" });
     if (direct.ok) {
       const html = await direct.text();
+      const modelTitle = extractTitleWithModel(html, siteModel);
+      if (modelTitle) return modelTitle;
       const doc = new DOMParser().parseFromString(html, "text/html");
       const title = doc.querySelector("meta[property='og:title']")?.getAttribute("content") || doc.title;
       if (title?.trim()) return title.trim();
@@ -211,8 +309,8 @@ async function fetchJobTitleFromUrl(rawUrl) {
     const mirror = await fetch(`https://r.jina.ai/${rawUrl}`);
     if (mirror.ok) {
       const content = await mirror.text();
-      const matched = content.match(/^Title:\s*(.+)$/m);
-      if (matched?.[1]?.trim()) return matched[1].trim();
+      const siteSpecificTitle = extractTitleWithModel(content, siteModel);
+      if (siteSpecificTitle) return siteSpecificTitle;
     }
   } catch {
     // Ignore and use URL-derived fallback.
