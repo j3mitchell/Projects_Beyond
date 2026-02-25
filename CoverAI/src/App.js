@@ -1079,6 +1079,10 @@ function App() {
     const refTitle = base.job_listing_ref_title;
     const refUrl = base.job_listing_ref_url && isHttpUrl(base.job_listing_ref_url) ? base.job_listing_ref_url : rawJobUrl;
     const fallbackTitle = rawJobUrl && isHttpUrl(rawJobUrl) ? titleFromUrlPath(rawJobUrl) : "";
+    if (rawJobUrl && isHttpUrl(rawJobUrl)) {
+      // Show template-friendly text while keeping the destination URL.
+      base.job_url = `[Job posting](${rawJobUrl})`;
+    }
     const refLabel = refTitle || fallbackTitle;
     if (refLabel && refUrl && isHttpUrl(refUrl)) base.ref = `[${refLabel}](${refUrl})`;
     else if (refLabel) base.ref = refLabel;
