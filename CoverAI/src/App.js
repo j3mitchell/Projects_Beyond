@@ -701,6 +701,15 @@ function cleanSkillLine(line) {
     .trim();
 }
 
+// Normalize text before writing into a field card.
+// This keeps spacing consistent even when scraped pages contain odd whitespace.
+function normalizeFieldValue(raw) {
+  return (raw || "")
+    .replace(/[\u00A0\u2000-\u200B\u202F\u205F\u3000]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function toTitleCasePhrase(value) {
   const hardAcronyms = new Set(["OOP", "SQL", "JELC", "IT", "AI", "C2"]);
   return value
@@ -1276,9 +1285,10 @@ function App() {
   };
 
   const setFieldLabelAndValueByKey = (fieldKey, nextValue) => {
+    const normalized = normalizeFieldValue(nextValue);
     setFields((prev) =>
       prev.map((field) =>
-        field.key === fieldKey ? { ...field, label: nextValue, value: nextValue } : field
+        field.key === fieldKey ? { ...field, label: normalized, value: normalized } : field
       )
     );
   };
