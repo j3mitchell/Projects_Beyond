@@ -316,6 +316,86 @@ function washSkillToShortPhrase(rawSkill) {
   return toTitleCasePhrase(kept.join(" "));
 }
 
+function cleanJobTitleText(rawTitle) {
+  return (rawTitle || "")
+    .replace(/\s+/g, " ")
+    .replace(/[|].*$/, "")
+    .replace(/[-–]\s*(careers?|jobs?)$/i, "")
+    .trim();
+}
+
+function washJobTitle(rawTitle) {
+  const title = cleanJobTitleText(rawTitle);
+  if (!title) return "";
+
+  const nounSet = new Set([
+    "engineer",
+    "assistant",
+    "officer",
+    "administrator",
+    "developer",
+    "representative",
+    "manager",
+    "accountant",
+    "planner",
+    "analyst",
+    "specialist",
+    "coordinator",
+    "architect",
+    "technician",
+    "consultant",
+    "director",
+    "lead",
+  ]);
+
+  const adjectiveSet = new Set([
+    "database",
+    "software",
+    "web",
+    "mechanical",
+    "civil",
+    "administrative",
+    "executive",
+    "peoplesoft",
+    "oracle",
+    "full-stack",
+    "office",
+    "county",
+    "lead",
+    "jr",
+    "senior",
+    "sr",
+    "field",
+    "systems",
+    "system",
+    "information",
+    "security",
+  ]);
+
+  const normalized = title
+    .replace(/[()]/g, " ")
+    .replace(/[^\w\s/-]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  const words = normalized.split(" ").filter(Boolean);
+  if (words.length <= 3) return toTitleCasePhrase(words.join(" "));
+
+  // Find first noun anchor and collect up to 2 useful words before it.
+  let nounIndex = words.findIndex((word) => nounSet.has(word.toLowerCase()));
+  if (nounIndex < 0) nounIndex = words.length - 1;
+
+  const picked = [];
+  for (let i = Math.max(0, nounIndex - 2); i < nounIndex; i += 1) {
+    const w = words[i].toLowerCase();
+    if (adjectiveSet.has(w) || w.length > 3) picked.push(words[i]);
+  }
+  picked.push(words[nounIndex]);
+
+  // Keep only 2-3 words max.
+  const compact = picked.slice(-3);
+  return toTitleCasePhrase(compact.join(" "));
+}
+
 function extractTopSkillsFromText(rawText) {
   if (!rawText) return [];
   const lines = rawText
@@ -722,6 +802,7 @@ function App() {
     try {
       const { title, company, skills } = await fetchJobInsightsFromUrl(url);
       if (jobUrlLookupRef.current !== requestId) return;
+      const washedTitle = washJobTitle(title) || title;
       const fallbackSkills = inferSkillsFromTitle(title);
       const mergedSkills = [...skills, ...fallbackSkills]
         .map((s) => (s || "").trim())
@@ -734,8 +815,8 @@ function App() {
         .filter((skill, index, arr) => arr.findIndex((x) => x.toLowerCase() === skill.toLowerCase()) === index)
         .slice(0, 3);
 
-      setFieldLabelAndValueByKey("job_listing_ref_title", title);
-      setFieldLabelAndValueByKey("position_title", title);
+      setFieldLabelAndValueByKey("job_listing_ref_title", washedTitle);
+      setFieldLabelAndValueByKey("position_title", washedTitle);
       if (company) setFieldLabelAndValueByKey("company_name", company);
       if (washedSkills[0]) setFieldLabelAndValueByKey("pos_skill_1", washedSkills[0]);
       if (washedSkills[1]) setFieldLabelAndValueByKey("pos_skill_2", washedSkills[1]);
