@@ -221,6 +221,84 @@ async function fetchJobTitleFromUrl(rawUrl) {
   return titleFromUrlPath(rawUrl);
 }
 
+function companyFromUrl(rawUrl) {
+  try {
+    const parsed = new URL(rawUrl);
+    const hostParts = parsed.hostname.replace(/^www\./, "").split(".");
+    if (hostParts.length < 2) return "";
+    const root = hostParts[hostParts.length - 2] || "";
+    return root.toUpperCase();
+  } catch {
+    return "";
+  }
+}
+
+function cleanSkillLine(line) {
+  return line
+    .replace(/^[-*•\d.)\s]+/, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function extractTopSkillsFromText(rawText) {
+  if (!rawText) return [];
+  const lines = rawText
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  const skills = [];
+  const seen = new Set();
+  const addSkill = (line) => {
+    const cleaned = cleanSkillLine(line);
+    if (cleaned.length < 16 || cleaned.length > 180) return;
+    const key = cleaned.toLowerCase();
+    if (seen.has(key)) return;
+    seen.add(key);
+    skills.push(cleaned);
+  };
+
+  // Prefer lines under qualification/requirement sections.
+  for (let i = 0; i < lines.length; i += 1) {
+    if (!/(qualifications|requirements|required experience|required skills)/i.test(lines[i])) continue;
+    for (let j = i + 1; j < Math.min(lines.length, i + 40); j += 1) {
+      const current = lines[j];
+      if (/^(overview|job description|responsibilities|desired skills|benefits|security clearance)/i.test(current)) break;
+      if (/^[-*•\d.)\s]/.test(current)) addSkill(current);
+      if (skills.length >= 3) return skills.slice(0, 3);
+    }
+  }
+
+  // Fallback: keyword-based extraction from full text.
+  const skillKeywords =
+    /(experience|knowledge|ability|proficien|planning|management|coordination|analysis|communication|exercise|jelc|operations)/i;
+  for (const line of lines) {
+    if (!skillKeywords.test(line)) continue;
+    addSkill(line);
+    if (skills.length >= 3) break;
+  }
+
+  return skills.slice(0, 3);
+}
+
+async function fetchJobInsightsFromUrl(rawUrl) {
+  const title = await fetchJobTitleFromUrl(rawUrl);
+  const company = companyFromUrl(rawUrl);
+  let skills = [];
+
+  try {
+    const mirror = await fetch(`https://r.jina.ai/${rawUrl}`);
+    if (mirror.ok) {
+      const content = await mirror.text();
+      skills = extractTopSkillsFromText(content);
+    }
+  } catch {
+    // Keep best-effort behavior; title fallback already exists.
+  }
+
+  return { title, company, skills };
+}
+
 function getRangeFromPoint(x, y) {
   if (document.caretRangeFromPoint) {
     return document.caretRangeFromPoint(x, y);
@@ -515,10 +593,15 @@ function App() {
     setFieldValueByKey("job_url", url);
 
     try {
-      const title = await fetchJobTitleFromUrl(url);
+      const { title, company, skills } = await fetchJobInsightsFromUrl(url);
       if (jobUrlLookupRef.current !== requestId) return;
       setFieldValueByKey("job_listing_ref_title", title);
-      setNotice("Job title detected from URL.");
+      setFieldValueByKey("position_title", title);
+      if (company) setFieldValueByKey("company_name", company);
+      if (skills[0]) setFieldValueByKey("pos_skill_1", skills[0]);
+      if (skills[1]) setFieldValueByKey("pos_skill_2", skills[1]);
+      if (skills[2]) setFieldValueByKey("pos_skill_3", skills[2]);
+      setNotice("Job details populated from URL.");
       setError("");
     } catch {
       if (jobUrlLookupRef.current !== requestId) return;
