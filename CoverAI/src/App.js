@@ -299,6 +299,26 @@ async function fetchJobInsightsFromUrl(rawUrl) {
   return { title, company, skills };
 }
 
+function inferSkillsFromTitle(title) {
+  const t = (title || "").toLowerCase();
+  if (!t) return [];
+
+  if (/(security|cyber|infosec|isso)/.test(t)) {
+    return ["Cybersecurity", "Risk Management", "Compliance"];
+  }
+  if (/(training|exercise|planner|planning)/.test(t)) {
+    return ["Exercise Planning", "Operations Coordination", "Communication"];
+  }
+  if (/(software|developer|engineer|programmer)/.test(t)) {
+    return ["Software Development", "Data Structures", "Algorithms"];
+  }
+  if (/(manager|management|lead)/.test(t)) {
+    return ["Leadership", "Project Management", "Stakeholder Management"];
+  }
+
+  return ["Domain Knowledge", "Project Management", "Communication"];
+}
+
 function getRangeFromPoint(x, y) {
   if (document.caretRangeFromPoint) {
     return document.caretRangeFromPoint(x, y);
@@ -603,12 +623,19 @@ function App() {
     try {
       const { title, company, skills } = await fetchJobInsightsFromUrl(url);
       if (jobUrlLookupRef.current !== requestId) return;
+      const fallbackSkills = inferSkillsFromTitle(title);
+      const mergedSkills = [...skills, ...fallbackSkills]
+        .map((s) => (s || "").trim())
+        .filter(Boolean)
+        .filter((skill, index, arr) => arr.findIndex((x) => x.toLowerCase() === skill.toLowerCase()) === index)
+        .slice(0, 3);
+
       setFieldLabelAndValueByKey("job_listing_ref_title", title);
       setFieldLabelAndValueByKey("position_title", title);
       if (company) setFieldLabelAndValueByKey("company_name", company);
-      if (skills[0]) setFieldLabelAndValueByKey("pos_skill_1", skills[0]);
-      if (skills[1]) setFieldLabelAndValueByKey("pos_skill_2", skills[1]);
-      if (skills[2]) setFieldLabelAndValueByKey("pos_skill_3", skills[2]);
+      if (mergedSkills[0]) setFieldLabelAndValueByKey("pos_skill_1", mergedSkills[0]);
+      if (mergedSkills[1]) setFieldLabelAndValueByKey("pos_skill_2", mergedSkills[1]);
+      if (mergedSkills[2]) setFieldLabelAndValueByKey("pos_skill_3", mergedSkills[2]);
       setNotice("Job details populated from URL.");
       setError("");
     } catch {
