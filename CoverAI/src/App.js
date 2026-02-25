@@ -961,19 +961,24 @@ function extractTopSkillsFromText(rawText) {
 }
 
 async function fetchJobInsightsFromUrl(rawUrl) {
-  const title = await fetchJobTitleFromUrl(rawUrl);
+  // Run title lookup and mirror lookup at the same time so we do not stack delays.
+  const titlePromise = fetchJobTitleFromUrl(rawUrl);
+  const mirrorPromise = withTimeout(5000, async () => {
+    const mirror = await fetch(`https://r.jina.ai/${rawUrl}`);
+    if (!mirror.ok) throw new Error("mirror not ok");
+    return mirror.text();
+  });
+
+  const title = await titlePromise;
   let company = "";
   let skills = [];
 
   try {
-    const mirror = await fetch(`https://r.jina.ai/${rawUrl}`);
-    if (mirror.ok) {
-      const content = await mirror.text();
-      skills = extractTopSkillsFromText(content);
-      company = extractCompanyFromContent(content, rawUrl, title);
-    }
+    const content = await mirrorPromise;
+    skills = extractTopSkillsFromText(content);
+    company = extractCompanyFromContent(content, rawUrl, title);
   } catch {
-    // Keep best-effort behavior; title fallback already exists.
+    // Mirror can be slow or blocked; keep best-effort behavior.
   }
 
   if (!company) {
