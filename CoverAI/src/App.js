@@ -1768,9 +1768,6 @@ function App() {
           <button type="button" className="button" onClick={startCoverAI} disabled={isRunning}>
             Start CoverAI
           </button>
-          <button type="button" className="button secondary" onClick={createTemplateFile} disabled={!isReady}>
-            New Template
-          </button>
           <button
             type="button"
             className="button secondary"
@@ -1778,6 +1775,9 @@ function App() {
             disabled={startupPhase === "idle" || startupPhase === "stopped"}
           >
             Stop CoverAI
+          </button>
+          <button type="button" className="button secondary" onClick={createTemplateFile} disabled={!isReady}>
+            New Template
           </button>
           <label className="button secondary">
             Import Text
