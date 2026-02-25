@@ -198,6 +198,10 @@ function toSafeAnchor(url, title) {
   return `<a href="${safeUrl}" target="_blank" rel="noreferrer">${safeTitle}</a>`;
 }
 
+function renderPreviewHtml(text) {
+  return (text || "").replace(/\n/g, "<br />");
+}
+
 async function fetchJobTitleFromUrl(rawUrl) {
   try {
     // Try normal fetch first for sites that allow CORS.
@@ -372,12 +376,21 @@ function App() {
   // Memoized map keeps token lookups fast while typing.
   const valueByKey = useMemo(() => {
     const base = Object.fromEntries(fields.map((field) => [field.key.toLowerCase(), field.value.trim()]));
+    const rawJobUrl = base.job_url;
     const refTitle = base.job_listing_ref_title;
     const refUrl = base.job_listing_ref_url;
-    // Convenience tokens: {{ref}} and {{job_url}} become anchor links when title/url exist.
-    if (refTitle && refUrl) {
-      base.ref = toSafeAnchor(refUrl, refTitle);
-      base.job_url = toSafeAnchor(refUrl, refTitle);
+    const fallbackTitle = rawJobUrl && isHttpUrl(rawJobUrl) ? titleFromUrlPath(rawJobUrl) : "Job Listing";
+
+    // Always map {{job_url}} to a readable clickable link when URL is valid.
+    if (rawJobUrl && isHttpUrl(rawJobUrl)) {
+      base.job_url = toSafeAnchor(rawJobUrl, refTitle || fallbackTitle);
+    }
+
+    // {{ref}} prefers explicit ref title/url; otherwise it follows job_url fallback.
+    if (refUrl && isHttpUrl(refUrl)) {
+      base.ref = toSafeAnchor(refUrl, refTitle || fallbackTitle);
+    } else if (rawJobUrl && isHttpUrl(rawJobUrl)) {
+      base.ref = toSafeAnchor(rawJobUrl, refTitle || fallbackTitle);
     }
     return base;
   }, [fields]);
@@ -792,7 +805,7 @@ function App() {
               data-placeholder="Write your cover letter template here..."
             />
           ) : (
-            <pre className="preview">{rendered}</pre>
+            <div className="preview" dangerouslySetInnerHTML={{ __html: renderPreviewHtml(rendered) }} />
           )}
 
           <div className="panel-footer">
