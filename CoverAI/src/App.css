@@ -101,6 +101,7 @@
   border-color: #c3c8cf;
   background: var(--menu-fill-hover);
   box-shadow: none;
+  transform: none;
 }
 
 .style-select-button:focus-visible {
@@ -218,7 +219,7 @@
 
 .button {
   border: 1px solid #1f3b6d;
-  border-radius: 6px;
+  border-radius: 0;
   background: var(--menu-fill);
   color: #ffffff;
   height: var(--menu-height);
@@ -248,6 +249,7 @@
   border-color: #274a86;
   background: var(--menu-fill-hover);
   box-shadow: none;
+  transform: none;
 }
 
 .button:focus-visible {
@@ -260,8 +262,9 @@
 .button.danger:hover,
 .button.danger:focus-visible {
   background: transparent;
-  border-color: #4a4f56;
-  color: #b9462e;
+  border-color: #3f4349;
+  color: #b02d20;
+  font-weight: 700;
 }
 
 .button:disabled,
