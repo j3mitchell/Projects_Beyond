@@ -269,6 +269,20 @@ const JOB_SITE_MODELS = [
   },
 ];
 
+const JOB_BOARD_DOMAINS = [
+  "linkedin.com",
+  "indeed.com",
+  "glassdoor.com",
+  "ziprecruiter.com",
+  "monster.com",
+  "dice.com",
+  "wellfound.com",
+  "angel.co",
+  "usajobs.gov",
+  "flexjobs.com",
+  "simplyhired.com",
+];
+
 function getJobSiteModel(rawUrl) {
   try {
     const host = new URL(rawUrl).hostname.toLowerCase();
@@ -288,6 +302,45 @@ function normalizeTitleCandidate(rawTitle) {
     .replace(/\s+/g, " ")
     .trim();
   return text;
+}
+
+function isLikelyJobTitle(value) {
+  const text = normalizeTitleCandidate(value);
+  if (!text) return false;
+  if (text.length < 4 || text.length > 120) return false;
+  if (/https?:\/\//i.test(text)) return false;
+  if (/\b(reposted|clicked apply|responses managed|on-site|full-time|part-time)\b/i.test(text)) return false;
+  if (/\b[A-Za-z ]+,\s*[A-Z]{2}\b/.test(text)) return false; // likely location like "Silver Spring, MD"
+  return true;
+}
+
+function titleCandidateScore(rawValue) {
+  const text = normalizeTitleCandidate(rawValue);
+  if (!isLikelyJobTitle(text)) return -1000;
+  const nouns =
+    /\b(engineer|developer|administrator|manager|analyst|specialist|officer|nurse|planner|technician|representative|consultant|architect)\b/i;
+  const words = text.split(/\s+/).filter(Boolean);
+  let score = 0;
+  score += Math.min(words.length, 8);
+  if (nouns.test(text)) score += 20;
+  if (/-/.test(text)) score += 2;
+  if (/\bii|iii|iv|jr|sr|lead|senior|principal\b/i.test(text)) score += 4;
+  return score;
+}
+
+function bestTitleCandidate(candidates) {
+  const unique = [];
+  const seen = new Set();
+  for (const raw of candidates) {
+    const normalized = normalizeTitleCandidate(raw || "");
+    const key = normalized.toLowerCase();
+    if (!normalized || seen.has(key)) continue;
+    seen.add(key);
+    unique.push(normalized);
+  }
+  if (unique.length === 0) return "";
+  unique.sort((a, b) => titleCandidateScore(b) - titleCandidateScore(a));
+  return unique[0];
 }
 
 function safeJsonParse(raw) {
@@ -366,18 +419,27 @@ function extractTitleWithModel(content, siteModel) {
   if (siteModel?.name === "LinkedIn") {
     const linkedInJson = extractLinkedInJsonData(content);
     if (linkedInJson.title) return linkedInJson.title;
+
+    const linkedInCandidates = [
+      content.match(/<h1[^>]*>\s*([^<]+)\s*<\/h1>/i)?.[1],
+      content.match(/href="https:\/\/www\.linkedin\.com\/jobs\/view\/[^"]+"[^>]*>([^<]+)</i)?.[1],
+      content.match(/^Title:\s*(.+)$/im)?.[1],
+    ].filter(Boolean);
+    const topLinkedInTitle = bestTitleCandidate(linkedInCandidates);
+    if (topLinkedInTitle) return topLinkedInTitle;
   }
   if (!siteModel) {
     const generic = content.match(/^Title:\s*(.+)$/im);
-    return normalizeTitleCandidate(generic?.[1] || "");
+    return bestTitleCandidate([generic?.[1] || ""]);
   }
 
+  const collected = [];
   for (const pattern of siteModel.titlePatterns) {
     const match = content.match(pattern);
     const candidate = normalizeTitleCandidate(match?.[1] || "");
-    if (candidate) return candidate;
+    if (candidate) collected.push(candidate);
   }
-  return "";
+  return bestTitleCandidate(collected);
 }
 
 async function fetchJobTitleFromUrl(rawUrl) {
@@ -419,6 +481,8 @@ async function fetchJobTitleFromUrl(rawUrl) {
 function companyFromUrl(rawUrl) {
   try {
     const parsed = new URL(rawUrl);
+    const host = parsed.hostname.toLowerCase();
+    if (JOB_BOARD_DOMAINS.some((domain) => host.includes(domain))) return "";
     const hostParts = parsed.hostname.replace(/^www\./, "").split(".");
     if (hostParts.length < 2) return "";
     const root = hostParts[hostParts.length - 2] || "";
