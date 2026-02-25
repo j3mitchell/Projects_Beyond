@@ -910,6 +910,27 @@ function escapeHtml(value) {
     .replace(/'/g, "&#39;");
 }
 
+// Build a short readable label for links:
+// domain root + "..." + last path segment.
+function toLinkLabel(rawUrl) {
+  try {
+    const parsed = new URL(rawUrl);
+    const host = parsed.hostname.replace(/^www\./i, "").toLowerCase();
+    const domainMatch = host.match(/(?:^|\.)([^.]+)\.(com|org|gov)$/i);
+    const domainRoot = (domainMatch?.[1] || host.split(".")[0] || host).trim();
+
+    const lastPathSegment =
+      parsed.pathname
+        .split("/")
+        .filter(Boolean)
+        .pop() || domainRoot;
+
+    return `${domainRoot}...${decodeURIComponent(lastPathSegment)}`;
+  } catch {
+    return rawUrl;
+  }
+}
+
 // Build preview HTML with clickable links for URLs while preserving line breaks.
 function toPreviewHtml(text) {
   const source = text || "";
@@ -924,8 +945,9 @@ function toPreviewHtml(text) {
     const end = start + url.length;
 
     html += escapeHtml(source.slice(lastIndex, start)).replace(/\n/g, "<br />");
+    const label = toLinkLabel(url);
     html += `<a class="preview-link" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(
-      url
+      label
     )}</a>`;
 
     lastIndex = end;
