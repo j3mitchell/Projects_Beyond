@@ -1571,13 +1571,6 @@ function App() {
     setError("");
   };
 
-  // Save whole project (template + fields) as JSON.
-  const exportProject = () => {
-    const payload = JSON.stringify({ template, fields }, null, 2);
-    downloadTextFile(payload, "cover-letter-project.json");
-    setNotice("Project exported.");
-  };
-
   // Create a reusable template file for future jobs.
   // It keeps the current wording/tokens, but clears fields users usually change each application.
   const createTemplateFile = async () => {
@@ -1777,22 +1770,19 @@ function App() {
             Stop CoverAI
           </button>
           <button type="button" className="button secondary" onClick={createTemplateFile} disabled={!isReady}>
-            New Template
+            Export Session
           </button>
           <label className="button secondary">
             Import Text
             <input type="file" accept=".txt,.pdf" onChange={handleFileUpload} hidden disabled={!isReady} />
           </label>
-          <button type="button" className="button secondary" onClick={exportProject} disabled={!isReady}>
-            Export Project
-          </button>
           <button
             type="button"
             className="button secondary"
             onClick={() => importProjectRef.current?.click()}
             disabled={!isReady}
           >
-            Import Project
+            Import Session
           </button>
           <input
             ref={importProjectRef}
@@ -1861,14 +1851,6 @@ function App() {
               </button>
             </div>
             <div className="quick-actions">
-              <button
-                type="button"
-                className="button"
-                onClick={() => downloadTextFile(template, "cover-letter-template.txt")}
-                disabled={!isReady}
-              >
-                Download Template
-              </button>
               <button
                 type="button"
                 className="button"
