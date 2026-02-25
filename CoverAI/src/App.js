@@ -240,6 +240,77 @@ function cleanSkillLine(line) {
     .trim();
 }
 
+const SKILL_PATTERNS = [
+  { regex: /\bobject[- ]oriented programming\b/i, label: "OOP" },
+  { regex: /\bdata structures?\b/i, label: "Data Structures" },
+  { regex: /\balgorithms?\b/i, label: "Algorithms" },
+  { regex: /\bproject management\b/i, label: "Project Management" },
+  { regex: /\bprogram management\b/i, label: "Program Management" },
+  { regex: /\bstakeholder communication\b/i, label: "Communication" },
+  { regex: /\bcommunication skills?\b/i, label: "Communication" },
+  { regex: /\boperations planning\b/i, label: "Operations Planning" },
+  { regex: /\bexercise planning\b/i, label: "Exercise Planning" },
+  { regex: /\bjoint exercise life cycle\b|\bjelc\b/i, label: "JELC" },
+  { regex: /\bcybersecurity\b|\binformation security\b/i, label: "Cybersecurity" },
+  { regex: /\brisk management\b/i, label: "Risk Management" },
+  { regex: /\bcoordination\b/i, label: "Coordination" },
+  { regex: /\banalysis\b/i, label: "Analysis" },
+  { regex: /\bleadership\b/i, label: "Leadership" },
+];
+
+function toTitleCase(value) {
+  return value
+    .toLowerCase()
+    .split(" ")
+    .map((part) => (part ? part[0].toUpperCase() + part.slice(1) : part))
+    .join(" ");
+}
+
+function shortSkillsFromLine(rawLine) {
+  const line = cleanSkillLine(rawLine);
+  const output = [];
+  const seen = new Set();
+  const pushSkill = (skill) => {
+    const normalized = skill.trim();
+    if (!normalized) return;
+    const key = normalized.toLowerCase();
+    if (seen.has(key)) return;
+    seen.add(key);
+    output.push(normalized);
+  };
+
+  for (const pattern of SKILL_PATTERNS) {
+    if (pattern.regex.test(line)) pushSkill(pattern.label);
+  }
+
+  // If line says "including X, Y, and Z", break that list into short concepts.
+  const including = line.match(/including\s+(.+)$/i);
+  if (including?.[1]) {
+    const parts = including[1].split(/,| and /i);
+    for (const rawPart of parts) {
+      const part = cleanSkillLine(rawPart).replace(/\.$/, "");
+      if (!part) continue;
+      const words = part.split(/\s+/).filter(Boolean);
+      if (words.length <= 3) pushSkill(toTitleCase(part));
+    }
+  }
+
+  // Fallback: derive a short phrase (max 2 words) from the line.
+  if (output.length === 0) {
+    const scrubbed = line
+      .replace(/\b(strong|knowledge|experience|ability|understanding|of|in|with|including)\b/gi, " ")
+      .replace(/[^\w\s]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+    const words = scrubbed.split(" ").filter(Boolean);
+    if (words.length > 0) {
+      pushSkill(toTitleCase(words.slice(0, 2).join(" ")));
+    }
+  }
+
+  return output;
+}
+
 function extractTopSkillsFromText(rawText) {
   if (!rawText) return [];
   const lines = rawText
@@ -250,12 +321,16 @@ function extractTopSkillsFromText(rawText) {
   const skills = [];
   const seen = new Set();
   const addSkill = (line) => {
-    const cleaned = cleanSkillLine(line);
-    if (cleaned.length < 16 || cleaned.length > 180) return;
-    const key = cleaned.toLowerCase();
-    if (seen.has(key)) return;
-    seen.add(key);
-    skills.push(cleaned);
+    const shortCandidates = shortSkillsFromLine(line);
+    for (const candidate of shortCandidates) {
+      const wordCount = candidate.split(/\s+/).filter(Boolean).length;
+      if (wordCount > 3 && candidate !== "Project Management" && candidate !== "Program Management") continue;
+      const key = candidate.toLowerCase();
+      if (seen.has(key)) continue;
+      seen.add(key);
+      skills.push(candidate);
+      if (skills.length >= 3) return;
+    }
   };
 
   // Prefer lines under qualification/requirement sections.
