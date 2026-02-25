@@ -577,9 +577,17 @@ function App() {
     setFields((prev) => prev.map((field) => (field.id === id ? { ...field, [key]: value } : field)));
   };
 
-  const setFieldValueByKey = (fieldKey, value) => {
+  const setFieldLabelByKey = (fieldKey, label) => {
     setFields((prev) =>
-      prev.map((field) => (field.key === fieldKey ? { ...field, value } : field))
+      prev.map((field) => (field.key === fieldKey ? { ...field, label } : field))
+    );
+  };
+
+  const setFieldLabelAndValueByKey = (fieldKey, nextValue) => {
+    setFields((prev) =>
+      prev.map((field) =>
+        field.key === fieldKey ? { ...field, label: nextValue, value: nextValue } : field
+      )
     );
   };
 
@@ -590,17 +598,17 @@ function App() {
     const requestId = Date.now();
     jobUrlLookupRef.current = requestId;
     setIsResolvingJobTitle(true);
-    setFieldValueByKey("job_url", url);
+    setFieldLabelAndValueByKey("job_url", url);
 
     try {
       const { title, company, skills } = await fetchJobInsightsFromUrl(url);
       if (jobUrlLookupRef.current !== requestId) return;
-      setFieldValueByKey("job_listing_ref_title", title);
-      setFieldValueByKey("position_title", title);
-      if (company) setFieldValueByKey("company_name", company);
-      if (skills[0]) setFieldValueByKey("pos_skill_1", skills[0]);
-      if (skills[1]) setFieldValueByKey("pos_skill_2", skills[1]);
-      if (skills[2]) setFieldValueByKey("pos_skill_3", skills[2]);
+      setFieldLabelAndValueByKey("job_listing_ref_title", title);
+      setFieldLabelAndValueByKey("position_title", title);
+      if (company) setFieldLabelAndValueByKey("company_name", company);
+      if (skills[0]) setFieldLabelAndValueByKey("pos_skill_1", skills[0]);
+      if (skills[1]) setFieldLabelAndValueByKey("pos_skill_2", skills[1]);
+      if (skills[2]) setFieldLabelAndValueByKey("pos_skill_3", skills[2]);
       setNotice("Job details populated from URL.");
       setError("");
     } catch {
@@ -928,7 +936,8 @@ function App() {
                       const pasted = event.clipboardData.getData("text/plain") || "";
                       if (!isHttpUrl(pasted)) return;
                       event.preventDefault();
-                      updateField(field.id, "label", pasted.trim());
+                      const pastedUrl = pasted.trim();
+                      setFieldLabelByKey("job_url", pastedUrl);
                       resolveJobReferenceFromUrl(pasted);
                     }}
                     onBlur={(event) => {
