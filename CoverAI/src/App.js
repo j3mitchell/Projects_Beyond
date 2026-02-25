@@ -587,6 +587,7 @@ function App() {
                   className="field-input"
                   value={field.label}
                   onChange={(event) => updateField(field.id, "label", event.target.value)}
+                  onFocus={(event) => event.target.select()}
                   disabled={!isReady}
                   placeholder="Label"
                 />
