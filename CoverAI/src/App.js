@@ -168,6 +168,59 @@ function extractTokenKey(rawToken) {
   return match ? match[1].toLowerCase() : "";
 }
 
+function isHttpUrl(value) {
+  try {
+    const parsed = new URL(value.trim());
+    return parsed.protocol === "http:" || parsed.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
+function titleFromUrlPath(rawUrl) {
+  try {
+    const parsed = new URL(rawUrl);
+    const segment = parsed.pathname.split("/").filter(Boolean).pop();
+    if (!segment) return parsed.hostname.replace(/^www\./, "");
+    return segment
+      .replace(/[-_]+/g, " ")
+      .replace(/\.[a-z0-9]{2,4}$/i, "")
+      .replace(/\s+/g, " ")
+      .trim();
+  } catch {
+    return "Job Listing";
+  }
+}
+
+async function fetchJobTitleFromUrl(rawUrl) {
+  try {
+    // Try normal fetch first for sites that allow CORS.
+    const direct = await fetch(rawUrl, { mode: "cors" });
+    if (direct.ok) {
+      const html = await direct.text();
+      const doc = new DOMParser().parseFromString(html, "text/html");
+      const title = doc.querySelector("meta[property='og:title']")?.getAttribute("content") || doc.title;
+      if (title?.trim()) return title.trim();
+    }
+  } catch {
+    // Ignore and try fallback mirror below.
+  }
+
+  try {
+    // Fallback: text mirror often exposes "Title: ..." in plain text response.
+    const mirror = await fetch(`https://r.jina.ai/${rawUrl}`);
+    if (mirror.ok) {
+      const content = await mirror.text();
+      const matched = content.match(/^Title:\s*(.+)$/m);
+      if (matched?.[1]?.trim()) return matched[1].trim();
+    }
+  } catch {
+    // Ignore and use URL-derived fallback.
+  }
+
+  return titleFromUrlPath(rawUrl);
+}
+
 function getRangeFromPoint(x, y) {
   if (document.caretRangeFromPoint) {
     return document.caretRangeFromPoint(x, y);
@@ -258,6 +311,7 @@ function App() {
   const importProjectRef = useRef(null);
   const startupTimerRef = useRef(null);
   const isSyncingEditorRef = useRef(false);
+  const jobUrlLookupRef = useRef(0);
 
   // Main app state: template text, fields, UI mode, and status messages.
   const [template, setTemplate] = useState(DEFAULT_TEMPLATE);
@@ -268,6 +322,7 @@ function App() {
   const [isLoadingFile, setIsLoadingFile] = useState(false);
   const [notice, setNotice] = useState("");
   const [error, setError] = useState("");
+  const [isResolvingJobTitle, setIsResolvingJobTitle] = useState(false);
   // Demo startup state for the Start/Stop controls.
   const [startupPhase, setStartupPhase] = useState("idle");
   const [startupProgress, setStartupProgress] = useState(0);
@@ -438,6 +493,38 @@ function App() {
   // Update one property on one field card.
   const updateField = (id, key, value) => {
     setFields((prev) => prev.map((field) => (field.id === id ? { ...field, [key]: value } : field)));
+  };
+
+  const setFieldValueByKey = (fieldKey, value) => {
+    setFields((prev) =>
+      prev.map((field) => (field.key === fieldKey ? { ...field, value } : field))
+    );
+  };
+
+  const resolveJobReferenceFromUrl = async (rawUrl) => {
+    const url = rawUrl.trim();
+    if (!isHttpUrl(url)) return;
+
+    const requestId = Date.now();
+    jobUrlLookupRef.current = requestId;
+    setIsResolvingJobTitle(true);
+    setFieldValueByKey("job_url", url);
+    setFieldValueByKey("job_listing_ref_url", url);
+
+    try {
+      const title = await fetchJobTitleFromUrl(url);
+      if (jobUrlLookupRef.current !== requestId) return;
+      setFieldValueByKey("job_listing_ref_title", title);
+      setNotice("Job title detected from URL.");
+      setError("");
+    } catch {
+      if (jobUrlLookupRef.current !== requestId) return;
+      setError("Could not fetch job title from URL.");
+    } finally {
+      if (jobUrlLookupRef.current === requestId) {
+        setIsResolvingJobTitle(false);
+      }
+    }
   };
 
   // Return a field-specific suggestion to show as grey helper text.
@@ -778,6 +865,18 @@ function App() {
                       className="field-textarea"
                       value={field.value}
                       onChange={(event) => updateField(field.id, "value", event.target.value)}
+                      onPaste={(event) => {
+                        if (field.key !== "job_url") return;
+                        const pasted = event.clipboardData.getData("text/plain") || "";
+                        if (!isHttpUrl(pasted)) return;
+                        event.preventDefault();
+                        resolveJobReferenceFromUrl(pasted);
+                      }}
+                      onBlur={(event) => {
+                        if (field.key !== "job_url") return;
+                        if (!isHttpUrl(event.target.value)) return;
+                        resolveJobReferenceFromUrl(event.target.value);
+                      }}
                       disabled={!isReady}
                       placeholder={getFieldSuggestion(field.key)}
                     />
@@ -818,9 +917,10 @@ function App() {
       </main>
 
       {/* Small status area for success/error/loading feedback. */}
-      {(notice || error || isLoadingFile) && (
+      {(notice || error || isLoadingFile || isResolvingJobTitle) && (
         <div className="status-row" role="status" aria-live="polite">
           {isLoadingFile && <span>Loading file...</span>}
+          {isResolvingJobTitle && <span>Resolving job title...</span>}
           {notice && <span className="ok">{notice}</span>}
           {error && <span className="err">{error}</span>}
         </div>
