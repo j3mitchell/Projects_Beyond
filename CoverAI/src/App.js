@@ -370,7 +370,9 @@ function cleanCompanyName(raw) {
     normalized = normalized.replace(suffixPattern, "").trim();
   }
 
-  return normalized;
+  const words = normalized.split(/\s+/).filter(Boolean);
+  if (words.length <= 3) return normalized;
+  return words.slice(0, 3).join(" ");
 }
 
 function extractCompanyFromContent(content, rawUrl, titleHint = "") {
