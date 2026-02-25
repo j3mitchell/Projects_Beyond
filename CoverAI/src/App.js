@@ -935,27 +935,52 @@ function toLinkLabel(rawUrl) {
 // Build preview HTML with clickable links for URLs while preserving line breaks.
 function toPreviewHtml(text) {
   const source = text || "";
+  const markdownLinks = new Map();
+  let markdownIndex = 0;
+  const tokenized = source.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/gi, (_, label, url) => {
+    const token = `__MD_LINK_${markdownIndex}__`;
+    markdownLinks.set(token, { label, url });
+    markdownIndex += 1;
+    return token;
+  });
+
   const urlPattern = /https?:\/\/[^\s]+/gi;
-  let html = "";
-  let lastIndex = 0;
-  let match = urlPattern.exec(source);
+  const linkifySegment = (segment) => {
+    urlPattern.lastIndex = 0;
+    let html = "";
+    let lastIndex = 0;
+    let match = urlPattern.exec(segment);
 
-  while (match) {
-    const url = match[0];
-    const start = match.index;
-    const end = start + url.length;
+    while (match) {
+      const url = match[0];
+      const start = match.index;
+      const end = start + url.length;
 
-    html += escapeHtml(source.slice(lastIndex, start)).replace(/\n/g, "<br />");
-    const label = toLinkLabel(url);
-    html += `<a class="preview-link" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(
-      label
-    )}</a>`;
+      html += escapeHtml(segment.slice(lastIndex, start)).replace(/\n/g, "<br />");
+      const label = toLinkLabel(url);
+      html += `<a class="preview-link" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(
+        label
+      )}</a>`;
 
-    lastIndex = end;
-    match = urlPattern.exec(source);
-  }
+      lastIndex = end;
+      match = urlPattern.exec(segment);
+    }
 
-  html += escapeHtml(source.slice(lastIndex)).replace(/\n/g, "<br />");
+    html += escapeHtml(segment.slice(lastIndex)).replace(/\n/g, "<br />");
+    return html;
+  };
+
+  const tokenPattern = /(__MD_LINK_\d+__)/g;
+  const tokenParts = tokenized.split(tokenPattern);
+  const html = tokenParts
+    .map((part) => {
+      if (!markdownLinks.has(part)) return linkifySegment(part);
+      const markdownLink = markdownLinks.get(part);
+      return `<a class="preview-link" href="${escapeHtml(markdownLink.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(
+        markdownLink.label
+      )}</a>`;
+    })
+    .join("");
   return html;
 }
 
@@ -1047,9 +1072,12 @@ function App() {
     );
     const rawJobUrl = base.job_url;
     const refTitle = base.job_listing_ref_title;
+    const refUrl = base.job_listing_ref_url && isHttpUrl(base.job_listing_ref_url) ? base.job_listing_ref_url : rawJobUrl;
     const fallbackTitle = rawJobUrl && isHttpUrl(rawJobUrl) ? titleFromUrlPath(rawJobUrl) : "";
-    if (refTitle) base.ref = refTitle;
-    else if (fallbackTitle) base.ref = fallbackTitle;
+    const refLabel = refTitle || fallbackTitle;
+    if (refLabel && refUrl && isHttpUrl(refUrl)) base.ref = `[${refLabel}](${refUrl})`;
+    else if (refLabel) base.ref = refLabel;
+    else if (refUrl && isHttpUrl(refUrl)) base.ref = refUrl;
     return base;
   }, [fields]);
 
@@ -1200,6 +1228,7 @@ function App() {
     setIsResolvingJobTitle(true);
     startJobLookupProgress();
     setFieldLabelAndValueByKey("job_url", url);
+    setFieldLabelAndValueByKey("job_listing_ref_url", url);
     // Instant prefill from URL slug so the UI updates immediately.
     const instantTitleCandidate = titleFromUrlPath(url);
     const canUseInstantTitle = instantTitleCandidate && !isNumericOnlyTitle(instantTitleCandidate);
