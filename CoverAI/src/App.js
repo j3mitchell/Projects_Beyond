@@ -364,15 +364,6 @@ function collectJsonObjectsFromText(content) {
     jsonLdMatch = jsonLdRegex.exec(content);
   }
 
-  // Generic JSON snippets often found in mirrored content.
-  const inlineJsonRegex = /(\{[\s\S]*?"hiringOrganization"[\s\S]*?\})/gi;
-  let inlineMatch = inlineJsonRegex.exec(content);
-  while (inlineMatch) {
-    const parsed = safeJsonParse(inlineMatch[1].trim());
-    if (parsed) objects.push(parsed);
-    inlineMatch = inlineJsonRegex.exec(content);
-  }
-
   return objects;
 }
 
@@ -417,16 +408,19 @@ function extractLinkedInJsonData(content) {
 function extractTitleWithModel(content, siteModel) {
   if (!content) return "";
   if (siteModel?.name === "LinkedIn") {
-    const linkedInJson = extractLinkedInJsonData(content);
-    if (linkedInJson.title) return linkedInJson.title;
-
+    // Fast path first: common LinkedIn title containers.
     const linkedInCandidates = [
       content.match(/<h1[^>]*>\s*([^<]+)\s*<\/h1>/i)?.[1],
       content.match(/href="https:\/\/www\.linkedin\.com\/jobs\/view\/[^"]+"[^>]*>([^<]+)</i)?.[1],
+      content.match(/class="[^"]*job-details-jobs-unified-top-card__job-title[^"]*"[\s\S]*?<h1[^>]*>\s*([^<]+)\s*<\/h1>/i)?.[1],
       content.match(/^Title:\s*(.+)$/im)?.[1],
     ].filter(Boolean);
     const topLinkedInTitle = bestTitleCandidate(linkedInCandidates);
     if (topLinkedInTitle) return topLinkedInTitle;
+
+    // JSON-LD fallback only if fast HTML patterns missed.
+    const linkedInJson = extractLinkedInJsonData(content);
+    if (linkedInJson.title) return linkedInJson.title;
   }
   if (!siteModel) {
     const generic = content.match(/^Title:\s*(.+)$/im);
@@ -584,9 +578,7 @@ function extractCompanyFromContent(content, rawUrl, titleHint = "") {
 
   // LinkedIn-specific first pass.
   if (siteModel?.name === "LinkedIn") {
-    const linkedInJson = extractLinkedInJsonData(content);
-    if (linkedInJson.company) return linkedInJson.company;
-
+    // Fast path first: company link/name blocks and company slug.
     const slugCandidates = Array.from(
       content.matchAll(/href="https:\/\/www\.linkedin\.com\/company\/([^"?#/]+)[^"]*"/gi)
     )
@@ -604,6 +596,10 @@ function extractCompanyFromContent(content, rawUrl, titleHint = "") {
       .filter((value) => isValidCompanyCandidate(value));
     const topLinkedIn = bestCompanyCandidate([...slugCandidates, ...linkedInMatches]);
     if (topLinkedIn) return topLinkedIn;
+
+    // JSON-LD fallback only if fast HTML patterns missed.
+    const linkedInJson = extractLinkedInJsonData(content);
+    if (linkedInJson.company) return linkedInJson.company;
   }
 
   // Generic JSON-LD/metadata style matches.
