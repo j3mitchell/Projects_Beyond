@@ -1095,10 +1095,16 @@ function App() {
   const previewHtml = useMemo(() => toPreviewHtml(rendered), [rendered]);
   const tokensInTemplate = useMemo(() => extractTokens(template), [template]);
   const labelByKey = useMemo(
-    () =>
-      Object.fromEntries(
+    () => {
+      const labels = Object.fromEntries(
         fields.map((field) => [field.key.toLowerCase(), field.label || FIELD_LABEL_SUGGESTIONS[field.key] || field.key])
-      ),
+      );
+      const refUrl = labels.job_listing_ref_url && isHttpUrl(labels.job_listing_ref_url) ? labels.job_listing_ref_url : labels.job_url;
+      if (refUrl && isHttpUrl(refUrl)) {
+        labels.ref = toLinkLabel(refUrl);
+      }
+      return labels;
+    },
     [fields]
   );
 
