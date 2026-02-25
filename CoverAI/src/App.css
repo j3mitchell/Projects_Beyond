@@ -10,6 +10,9 @@
   --accent-2: #f1a64d;
   --danger: #b9462e;
   --shadow: 0 12px 36px rgba(26, 43, 47, 0.12);
+  --menu-fill: #3f4349;
+  --menu-fill-hover: #33373d;
+  --menu-height: 38px;
 }
 
 * {
@@ -69,10 +72,11 @@
 
 .style-select-button {
   border: 1px solid #1f3b6d;
-  border-radius: 12px;
-  background: transparent;
-  color: #343a40;
-  padding: 0.56rem 0.92rem;
+  border-radius: 6px;
+  background: var(--menu-fill);
+  color: #ffffff;
+  height: var(--menu-height);
+  padding: 0 0.92rem;
   font: 560 0.89rem/1 "IBM Plex Sans", "Segoe UI", sans-serif;
   letter-spacing: 0.01em;
   min-width: 184px;
@@ -84,6 +88,7 @@
 .style-select-button:hover {
   transform: translateY(-1px);
   border-color: #274a86;
+  background: var(--menu-fill-hover);
   box-shadow: 0 4px 12px rgba(31, 59, 109, 0.16);
 }
 
@@ -202,10 +207,11 @@
 
 .button {
   border: 1px solid #1f3b6d;
-  border-radius: 12px;
-  background: transparent;
-  color: #343a40;
-  padding: 0.56rem 0.92rem;
+  border-radius: 6px;
+  background: var(--menu-fill);
+  color: #ffffff;
+  height: var(--menu-height);
+  padding: 0 0.92rem;
   font: 560 0.89rem/1 "IBM Plex Sans", "Segoe UI", sans-serif;
   letter-spacing: 0.01em;
   cursor: pointer;
@@ -214,17 +220,18 @@
 }
 
 .button.secondary {
-  background: transparent;
+  background: var(--menu-fill);
 }
 
 .button.danger {
   border-color: #1f3b6d;
-  background: transparent;
+  background: var(--menu-fill);
 }
 
 .button:hover {
   transform: translateY(-1px);
   border-color: #274a86;
+  background: var(--menu-fill-hover);
   box-shadow: 0 4px 12px rgba(31, 59, 109, 0.16);
 }
 
