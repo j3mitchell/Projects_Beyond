@@ -745,8 +745,17 @@ function App() {
                     />
                   </>
                 )}
-                <button type="button" className="text-button" onClick={() => deleteField(field.id)} disabled={!isReady}>
-                  Remove
+                <button
+                  type="button"
+                  className="icon-button"
+                  aria-label="Delete field"
+                  title="Delete field"
+                  onClick={() => deleteField(field.id)}
+                  disabled={!isReady}
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                    <path d="M9 3h6l1 2h4v2H4V5h4l1-2zm1 6h2v8h-2V9zm4 0h2v8h-2V9zM7 9h2v8H7V9z" />
+                  </svg>
                 </button>
               </div>
             ))}

@@ -190,6 +190,7 @@
 
 .button:disabled,
 .text-button:disabled,
+.icon-button:disabled,
 .tab:disabled,
 .token:disabled {
   opacity: 0.52;
@@ -307,8 +308,8 @@
 }
 
 .field-list {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 0.7rem;
   max-height: 36vh;
   overflow: auto;
@@ -358,6 +359,25 @@
   font: 550 0.83rem/1 "IBM Plex Sans", "Segoe UI", sans-serif;
   cursor: pointer;
   padding: 0;
+}
+
+.icon-button {
+  width: 1.7rem;
+  height: 1.7rem;
+  border: 1px solid #d8c4bf;
+  border-radius: 8px;
+  background: #fff6f4;
+  color: var(--danger);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.icon-button svg {
+  width: 0.95rem;
+  height: 0.95rem;
+  fill: currentColor;
 }
 
 .add-field {
