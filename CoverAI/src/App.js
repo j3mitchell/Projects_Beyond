@@ -569,11 +569,14 @@ function cleanCompanyName(raw) {
   };
 
   const deSpaced = collapseSingleLetterRuns(cleaned);
+  // If collapse created glued CamelCase words (ex: "RobertHalf"),
+  // split them back to normal spacing.
+  const deSpacedWithWordBoundaries = deSpaced.replace(/([a-z])([A-Z])/g, "$1 $2");
 
   // Remove common legal/business suffixes at the end only.
   const suffixPattern =
     /\s*,?\s*(incorporated|inc|corporation|corp|company|co|llc|l\.l\.c|ltd|limited|plc|gmbh|s\.a\.|s\.a|ag)\.?$/i;
-  let normalized = deSpaced;
+  let normalized = deSpacedWithWordBoundaries;
   while (suffixPattern.test(normalized)) {
     normalized = normalized.replace(suffixPattern, "").trim();
   }
