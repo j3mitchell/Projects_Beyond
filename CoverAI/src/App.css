@@ -85,7 +85,7 @@
   width: 132px;
   margin-left: 0;
   height: var(--menu-height);
-  border: 1px solid #3f4349;
+  border: 1px solid #c7ccd3;
 }
 
 .style-inline label {
@@ -93,7 +93,7 @@
   align-items: center;
   justify-content: center;
   border: 0;
-  border-right: 1px solid #3f4349;
+  border-right: 1px solid #c7ccd3;
   background: transparent;
   color: #1f3b6d;
   font: 700 0.83rem/1 "IBM Plex Sans", "Segoe UI", sans-serif;
