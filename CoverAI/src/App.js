@@ -720,7 +720,7 @@ function App() {
             {fields.map((field) => (
               <div className="field-card" key={field.id}>
                 <input
-                  className="field-input"
+                  className="field-input field-label-input"
                   value={field.label}
                   onChange={(event) => updateField(field.id, "label", event.target.value)}
                   onFocus={(event) => event.target.select()}
