@@ -102,7 +102,7 @@
   letter-spacing: 0.01em;
   min-width: 0;
   width: 78px;
-  margin-left: -5px;
+  margin-left: -10px;
   cursor: pointer;
   box-shadow: none;
   transition: border-color 140ms ease, background 140ms ease;
