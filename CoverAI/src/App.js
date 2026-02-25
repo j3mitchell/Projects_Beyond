@@ -168,6 +168,21 @@ function extractTokenKey(rawToken) {
   return match ? match[1].toLowerCase() : "";
 }
 
+function getRangeFromPoint(x, y) {
+  if (document.caretRangeFromPoint) {
+    return document.caretRangeFromPoint(x, y);
+  }
+  if (document.caretPositionFromPoint) {
+    const position = document.caretPositionFromPoint(x, y);
+    if (!position) return null;
+    const range = document.createRange();
+    range.setStart(position.offsetNode, position.offset);
+    range.collapse(true);
+    return range;
+  }
+  return null;
+}
+
 // Turn human text into a safe token key (ex: "Top Skill" -> "top_skill").
 function slugify(input) {
   const normalized = input.toLowerCase().trim().replace(/[^a-z0-9]+/g, "_");
@@ -326,14 +341,20 @@ function App() {
   );
 
   // Insert a token chip at the current cursor position in the editor.
-  const insertTokenAtCursor = (fieldKey) => {
+  const insertTokenAtCursor = (fieldKey, explicitRange = null) => {
     const editor = editorRef.current;
     if (!editor) return;
     editor.focus();
     const selection = window.getSelection();
     if (!selection || selection.rangeCount === 0) return;
 
-    const range = selection.getRangeAt(0);
+    let range = explicitRange || selection.getRangeAt(0);
+    if (!editor.contains(range.startContainer)) {
+      range = document.createRange();
+      range.selectNodeContents(editor);
+      range.collapse(false);
+    }
+
     const chip = buildChipElement(fieldKey, labelByKey);
     range.deleteContents();
     range.insertNode(chip);
@@ -373,11 +394,16 @@ function App() {
   // On drop inside editor, pull token text and insert it at cursor.
   const handleEditorDrop = (event) => {
     event.preventDefault();
+    const editor = editorRef.current;
+    if (!editor) return;
+
     const droppedKey =
       event.dataTransfer.getData("application/x-coverai-token-key") ||
       extractTokenKey(event.dataTransfer.getData("text/plain"));
     if (!droppedKey) return;
-    insertTokenAtCursor(droppedKey);
+
+    const dropRange = getRangeFromPoint(event.clientX, event.clientY);
+    insertTokenAtCursor(droppedKey, dropRange);
   };
 
   // Upload template from .txt or .pdf file.
