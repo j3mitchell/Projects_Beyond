@@ -911,21 +911,22 @@ function escapeHtml(value) {
 }
 
 // Build a short readable label for links:
-// domain root + "..." + last path segment.
+// www.domain.tld + " ... /" + last path segment.
 function toLinkLabel(rawUrl) {
   try {
     const parsed = new URL(rawUrl);
     const host = parsed.hostname.replace(/^www\./i, "").toLowerCase();
-    const domainMatch = host.match(/(?:^|\.)([^.]+)\.(com|org|gov)$/i);
-    const domainRoot = (domainMatch?.[1] || host.split(".")[0] || host).trim();
+    const domainMatch = host.match(/(?:^|\.)([^.]+\.(com|org|gov))$/i);
+    const domain = (domainMatch?.[1] || host).trim();
 
     const lastPathSegment =
       parsed.pathname
         .split("/")
         .filter(Boolean)
-        .pop() || domainRoot;
+        .pop() || "";
 
-    return `${domainRoot}...${decodeURIComponent(lastPathSegment)}`;
+    if (!lastPathSegment) return `www.${domain}`;
+    return `www.${domain} ... /${decodeURIComponent(lastPathSegment)}`;
   } catch {
     return rawUrl;
   }
