@@ -290,8 +290,83 @@ function normalizeTitleCandidate(rawTitle) {
   return text;
 }
 
+function safeJsonParse(raw) {
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+function collectJsonObjectsFromText(content) {
+  const objects = [];
+  if (!content) return objects;
+
+  // JSON-LD blocks.
+  const jsonLdRegex = /<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
+  let jsonLdMatch = jsonLdRegex.exec(content);
+  while (jsonLdMatch) {
+    const parsed = safeJsonParse(jsonLdMatch[1].trim());
+    if (parsed) objects.push(parsed);
+    jsonLdMatch = jsonLdRegex.exec(content);
+  }
+
+  // Generic JSON snippets often found in mirrored content.
+  const inlineJsonRegex = /(\{[\s\S]*?"hiringOrganization"[\s\S]*?\})/gi;
+  let inlineMatch = inlineJsonRegex.exec(content);
+  while (inlineMatch) {
+    const parsed = safeJsonParse(inlineMatch[1].trim());
+    if (parsed) objects.push(parsed);
+    inlineMatch = inlineJsonRegex.exec(content);
+  }
+
+  return objects;
+}
+
+function findValuesDeep(node, key) {
+  const results = [];
+  const walk = (value) => {
+    if (!value || typeof value !== "object") return;
+    if (Array.isArray(value)) {
+      value.forEach(walk);
+      return;
+    }
+    for (const [k, v] of Object.entries(value)) {
+      if (k === key && typeof v === "string") results.push(v);
+      if (v && typeof v === "object") walk(v);
+    }
+  };
+  walk(node);
+  return results;
+}
+
+function extractLinkedInJsonData(content) {
+  const jsonObjects = collectJsonObjectsFromText(content);
+  const titleCandidates = [];
+  const companyCandidates = [];
+
+  for (const obj of jsonObjects) {
+    titleCandidates.push(...findValuesDeep(obj, "title"));
+    titleCandidates.push(...findValuesDeep(obj, "jobTitle"));
+    companyCandidates.push(...findValuesDeep(obj, "companyName"));
+    companyCandidates.push(...findValuesDeep(obj, "name"));
+
+    const hiringOrgValues = findValuesDeep(obj, "hiringOrganization");
+    companyCandidates.push(...hiringOrgValues);
+  }
+
+  const bestTitle = titleCandidates.map(normalizeTitleCandidate).find(Boolean) || "";
+  const bestCompany = bestCompanyCandidate(companyCandidates.map(cleanCompanyName).filter(Boolean));
+
+  return { title: bestTitle, company: bestCompany };
+}
+
 function extractTitleWithModel(content, siteModel) {
   if (!content) return "";
+  if (siteModel?.name === "LinkedIn") {
+    const linkedInJson = extractLinkedInJsonData(content);
+    if (linkedInJson.title) return linkedInJson.title;
+  }
   if (!siteModel) {
     const generic = content.match(/^Title:\s*(.+)$/im);
     return normalizeTitleCandidate(generic?.[1] || "");
@@ -431,6 +506,9 @@ function extractCompanyFromContent(content, rawUrl, titleHint = "") {
 
   // LinkedIn-specific first pass.
   if (siteModel?.name === "LinkedIn") {
+    const linkedInJson = extractLinkedInJsonData(content);
+    if (linkedInJson.company) return linkedInJson.company;
+
     const linkedInMatches = [
       content.match(/Company,\s*([^.<\n]+)\./i)?.[1],
       content.match(/href="https:\/\/www\.linkedin\.com\/company\/[^"]+"[^>]*>\s*([^<]+)\s*<\/a>/i)?.[1],
