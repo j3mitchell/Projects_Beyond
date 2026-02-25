@@ -793,7 +793,7 @@ async function fetchJobInsightsFromUrl(rawUrl) {
   const fallbackSafeTitle = isNumericOnlyTitle(fallbackTitle) ? "" : fallbackTitle;
   const title =
     titleCompanyResult.status === "fulfilled" ? titleCompanyResult.value.title || fallbackSafeTitle : fallbackSafeTitle;
-  const refTitle =
+  let refTitle =
     titleCompanyResult.status === "fulfilled" ? titleCompanyResult.value.refTitle || title : title;
   let company = titleCompanyResult.status === "fulfilled" ? titleCompanyResult.value.company || "" : "";
   let skills = [];
@@ -801,6 +801,9 @@ async function fetchJobInsightsFromUrl(rawUrl) {
   try {
     if (mirrorResult.status !== "fulfilled") throw new Error("mirror unavailable");
     const content = mirrorResult.value;
+    if (!refTitle) {
+      refTitle = extractTitleTag(content);
+    }
     skills = extractTopSkillsFromText(content);
     if (!company) {
       company = extractCompanyFromContent(content, rawUrl, title);
@@ -1267,7 +1270,8 @@ function App() {
       if (title && !isNumericOnlyTitle(title)) {
         setFieldLabelAndValueByKey("position_title", title);
       }
-      if (refTitle) setFieldLabelAndValueByKey("job_listing_ref_title", refTitle);
+      const resolvedRefTitle = refTitle || title || instantTitle;
+      if (resolvedRefTitle) setFieldLabelAndValueByKey("job_listing_ref_title", resolvedRefTitle);
       // Always update the company field so stale values do not stick.
       setFieldLabelAndValueByKey("company_name", company || "");
       if (washedSkills[0]) setFieldLabelAndValueByKey("pos_skill_1", washedSkills[0]);
