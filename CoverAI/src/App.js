@@ -390,6 +390,41 @@ function isValidCompanyCandidate(value) {
   return true;
 }
 
+function companyCandidateScore(rawValue) {
+  const value = cleanCompanyName(rawValue);
+  if (!isValidCompanyCandidate(value)) return -1000;
+
+  const words = value.split(/\s+/).filter(Boolean);
+  const singleLetterWords = words.filter((w) => w.length === 1).length;
+  const longWords = words.filter((w) => w.length >= 3).length;
+  const alphaChars = (value.match(/[a-z]/gi) || []).length;
+  const badArtifacts = /https?:\/\/|\]\(|\{|\}/i.test(value) ? 1 : 0;
+
+  // Heuristic: prefer normal human-readable names, penalize spaced-letter noise.
+  let score = 0;
+  score += Math.min(alphaChars, 40);
+  score += longWords * 8;
+  score -= singleLetterWords * 10;
+  score -= badArtifacts * 50;
+  if (words.length >= 2 && words.length <= 4) score += 20;
+  return score;
+}
+
+function bestCompanyCandidate(candidates) {
+  const unique = [];
+  const seen = new Set();
+  for (const candidate of candidates) {
+    const normalized = cleanCompanyName(candidate || "");
+    const key = normalized.toLowerCase();
+    if (!normalized || seen.has(key)) continue;
+    seen.add(key);
+    unique.push(normalized);
+  }
+  if (unique.length === 0) return "";
+  unique.sort((a, b) => companyCandidateScore(b) - companyCandidateScore(a));
+  return unique[0];
+}
+
 function extractCompanyFromContent(content, rawUrl, titleHint = "") {
   if (!content) return "";
   const siteModel = getJobSiteModel(rawUrl);
@@ -405,7 +440,8 @@ function extractCompanyFromContent(content, rawUrl, titleHint = "") {
     ]
       .map((value) => cleanCompanyName(value || ""))
       .filter((value) => isValidCompanyCandidate(value));
-    if (linkedInMatches.length > 0) return linkedInMatches[0];
+    const topLinkedIn = bestCompanyCandidate(linkedInMatches);
+    if (topLinkedIn) return topLinkedIn;
   }
 
   // Generic JSON-LD/metadata style matches.
@@ -416,7 +452,8 @@ function extractCompanyFromContent(content, rawUrl, titleHint = "") {
   ]
     .map((value) => cleanCompanyName(value || ""))
     .filter((value) => isValidCompanyCandidate(value));
-  if (genericMatches.length > 0) return genericMatches[0];
+  const topGeneric = bestCompanyCandidate(genericMatches);
+  if (topGeneric) return topGeneric;
 
   // Pull from title patterns like "... at Company" as last content-based step.
   const titleSource = titleHint || content.match(/^Title:\s*(.+)$/im)?.[1] || "";
