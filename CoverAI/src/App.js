@@ -1306,7 +1306,7 @@ function App() {
       setJobLookupProgress(88);
       setJobLookupStage("Applying results...");
       const titleParts = (refTitle || "")
-        .split("|")
+        .split(/[|/]/)
         .map((part) => part.trim())
         .filter(Boolean);
       const refFirstSegment = titleParts[0] || "";
