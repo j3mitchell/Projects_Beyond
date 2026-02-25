@@ -192,16 +192,6 @@ function titleFromUrlPath(rawUrl) {
   }
 }
 
-function toSafeAnchor(url, title) {
-  const safeUrl = (url || "").replace(/"/g, "&quot;");
-  const safeTitle = (title || "").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-  return `<a href="${safeUrl}" target="_blank" rel="noreferrer">${safeTitle}</a>`;
-}
-
-function renderPreviewHtml(text) {
-  return (text || "").replace(/\n/g, "<br />");
-}
-
 async function fetchJobTitleFromUrl(rawUrl) {
   try {
     // Try normal fetch first for sites that allow CORS.
@@ -381,20 +371,9 @@ function App() {
     );
     const rawJobUrl = base.job_url;
     const refTitle = base.job_listing_ref_title;
-    const refUrl = base.job_listing_ref_url;
-    const fallbackTitle = rawJobUrl && isHttpUrl(rawJobUrl) ? titleFromUrlPath(rawJobUrl) : "Job Listing";
-
-    // Always map {{job_url}} to a readable clickable link when URL is valid.
-    if (rawJobUrl && isHttpUrl(rawJobUrl)) {
-      base.job_url = toSafeAnchor(rawJobUrl, refTitle || fallbackTitle);
-    }
-
-    // {{ref}} prefers explicit ref title/url; otherwise it follows job_url fallback.
-    if (refUrl && isHttpUrl(refUrl)) {
-      base.ref = toSafeAnchor(refUrl, refTitle || fallbackTitle);
-    } else if (rawJobUrl && isHttpUrl(rawJobUrl)) {
-      base.ref = toSafeAnchor(rawJobUrl, refTitle || fallbackTitle);
-    }
+    const fallbackTitle = rawJobUrl && isHttpUrl(rawJobUrl) ? titleFromUrlPath(rawJobUrl) : "";
+    if (refTitle) base.ref = refTitle;
+    else if (fallbackTitle) base.ref = fallbackTitle;
     return base;
   }, [fields]);
 
@@ -534,7 +513,6 @@ function App() {
     jobUrlLookupRef.current = requestId;
     setIsResolvingJobTitle(true);
     setFieldValueByKey("job_url", url);
-    setFieldValueByKey("job_listing_ref_url", url);
 
     try {
       const title = await fetchJobTitleFromUrl(url);
@@ -808,7 +786,7 @@ function App() {
               data-placeholder="Write your cover letter template here..."
             />
           ) : (
-            <div className="preview" dangerouslySetInnerHTML={{ __html: renderPreviewHtml(rendered) }} />
+            <pre className="preview">{rendered}</pre>
           )}
 
           <div className="panel-footer">
@@ -876,6 +854,14 @@ function App() {
                       if (!isHttpUrl(entered)) return;
                       resolveJobReferenceFromUrl(entered);
                     }}
+                    onKeyDown={(event) => {
+                      if (field.key !== "job_url") return;
+                      if (event.key !== "Enter") return;
+                      const entered = event.currentTarget.value.trim();
+                      if (!isHttpUrl(entered)) return;
+                      event.preventDefault();
+                      resolveJobReferenceFromUrl(entered);
+                    }}
                     onFocus={(event) => event.target.select()}
                     disabled={!isReady}
                     placeholder={getFieldLabelSuggestion(field.key)}
@@ -915,6 +901,14 @@ function App() {
                         if (field.key !== "job_url") return;
                         if (!isHttpUrl(event.target.value)) return;
                         resolveJobReferenceFromUrl(event.target.value);
+                      }}
+                      onKeyDown={(event) => {
+                        if (field.key !== "job_url") return;
+                        if (event.key !== "Enter") return;
+                        const entered = event.currentTarget.value.trim();
+                        if (!isHttpUrl(entered)) return;
+                        event.preventDefault();
+                        resolveJobReferenceFromUrl(entered);
                       }}
                       disabled={!isReady}
                       placeholder={getFieldSuggestion(field.key)}
