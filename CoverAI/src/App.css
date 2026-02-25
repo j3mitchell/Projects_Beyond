@@ -62,31 +62,20 @@
   max-width: 35rem;
 }
 
-.style-picker {
-  display: grid;
-  gap: 0.3rem;
-  min-width: 220px;
+.style-select-button {
+  border: 0;
+  border-radius: 10px;
+  background: linear-gradient(140deg, #2f5e71 0%, #214754 100%);
+  color: #fff;
+  padding: 0.55rem 0.86rem;
+  font: 550 0.9rem/1 "IBM Plex Sans", "Segoe UI", sans-serif;
+  min-width: 184px;
+  cursor: pointer;
 }
 
-.style-picker label {
-  font: 600 0.74rem/1 "IBM Plex Sans", "Segoe UI", sans-serif;
-  color: #2f4d57;
-}
-
-.style-select,
-.style-code-input {
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: #fff;
-  color: var(--ink);
-  padding: 0.38rem 0.5rem;
-  font: 500 0.8rem/1 "IBM Plex Sans", "Segoe UI", sans-serif;
-}
-
-.style-custom-inputs {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.35rem;
+.style-select-button:disabled {
+  opacity: 0.52;
+  cursor: not-allowed;
 }
 
 .startup-panel {

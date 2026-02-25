@@ -1530,18 +1530,36 @@ function App() {
     return known[code] || code.toUpperCase();
   };
 
-  const applyStyleTemplate = (styleKey) => {
+  const applyStyleTemplate = (styleKey, customCodeOverride = "") => {
     const nextTemplate = STYLE_TEMPLATE_MAP[styleKey] || DEFAULT_TEMPLATE;
     const styleCode =
       styleKey === "custom_1"
-        ? sanitizeStyleCode(customStyle1Code, "cus1")
+        ? sanitizeStyleCode(customCodeOverride || customStyle1Code, "cus1")
         : styleKey === "custom_2"
-        ? sanitizeStyleCode(customStyle2Code, "cus2")
+        ? sanitizeStyleCode(customCodeOverride || customStyle2Code, "cus2")
         : styleKey;
     setSelectedStyle(styleKey);
     setTemplate(nextTemplate);
     setNotice(`Loaded ${getStyleLabelByCode(styleCode)} template.`);
     setError("");
+  };
+
+  const handleStyleSelectionChange = (styleKey) => {
+    if (styleKey === "custom_1") {
+      const response = window.prompt("Enter custom style code for slot 1:", customStyle1Code);
+      if (response !== null) setCustomStyle1Code(response);
+      const styleCode = sanitizeStyleCode(response ?? customStyle1Code, "cus1");
+      applyStyleTemplate(styleKey, styleCode);
+      return;
+    }
+    if (styleKey === "custom_2") {
+      const response = window.prompt("Enter custom style code for slot 2:", customStyle2Code);
+      if (response !== null) setCustomStyle2Code(response);
+      const styleCode = sanitizeStyleCode(response ?? customStyle2Code, "cus2");
+      applyStyleTemplate(styleKey, styleCode);
+      return;
+    }
+    applyStyleTemplate(styleKey);
   };
 
   // Restore template + fields to starter defaults.
@@ -1747,39 +1765,6 @@ function App() {
           <p className="subhead">Use smart placeholders, edit once, then export polished versions fast.</p>
         </div>
         <div className="header-actions">
-          <div className="style-picker">
-            <label htmlFor="style-select">Style</label>
-            <select
-              id="style-select"
-              className="style-select"
-              value={selectedStyle}
-              onChange={(event) => applyStyleTemplate(event.target.value)}
-              disabled={!isReady}
-            >
-              <option value="eng">eng - engineering</option>
-              <option value="cus">cus - customer service</option>
-              <option value="fin">fin - financial</option>
-              <option value="mgr">mgr - management</option>
-              <option value="custom_1">{sanitizeStyleCode(customStyle1Code, "cus1")} - custom 1</option>
-              <option value="custom_2">{sanitizeStyleCode(customStyle2Code, "cus2")} - custom 2</option>
-            </select>
-            <div className="style-custom-inputs">
-              <input
-                className="style-code-input"
-                value={customStyle1Code}
-                onChange={(event) => setCustomStyle1Code(event.target.value)}
-                placeholder="custom1 code"
-                disabled={!isReady}
-              />
-              <input
-                className="style-code-input"
-                value={customStyle2Code}
-                onChange={(event) => setCustomStyle2Code(event.target.value)}
-                placeholder="custom2 code"
-                disabled={!isReady}
-              />
-            </div>
-          </div>
           <button type="button" className="button" onClick={startCoverAI} disabled={isRunning}>
             Start CoverAI
           </button>
@@ -1820,6 +1805,22 @@ function App() {
           <button type="button" className="button danger" onClick={resetAll} disabled={!isReady}>
             Reset
           </button>
+          <select
+            id="style-select"
+            className="style-select-button"
+            value={selectedStyle}
+            onChange={(event) => handleStyleSelectionChange(event.target.value)}
+            disabled={!isReady}
+            aria-label="Template style"
+            title="Template style"
+          >
+            <option value="eng">eng - engineering</option>
+            <option value="cus">cus - customer service</option>
+            <option value="fin">fin - financial</option>
+            <option value="mgr">mgr - management</option>
+            <option value="custom_1">{sanitizeStyleCode(customStyle1Code, "cus1")} - custom 1</option>
+            <option value="custom_2">{sanitizeStyleCode(customStyle2Code, "cus2")} - custom 2</option>
+          </select>
         </div>
       </header>
 
