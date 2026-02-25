@@ -572,10 +572,10 @@ function App() {
                 draggable
                 onDragStart={(event) => handleTokenDragStart(event, field.key)}
                 onClick={() => insertTokenAtCursor(`{{${field.key}}}`)}
-                title={`Insert {{${field.key}}}`}
+                title={`Insert token {{${field.key}}}`}
                 disabled={!isReady}
               >
-                {`{{${field.key}}}`}
+                {field.label || field.key}
               </button>
             ))}
           </div>
