@@ -100,7 +100,9 @@ function buildChipElement(fieldKey, labelByKey) {
   chip.className = "editor-chip";
   chip.setAttribute("contenteditable", "false");
   chip.dataset.tokenKey = fieldKey;
-  chip.textContent = labelByKey[fieldKey] || fieldKey;
+  const rawLabel = labelByKey[fieldKey] || fieldKey;
+  // Show compact URL label in the template chip, while field data keeps full URL.
+  chip.textContent = fieldKey === "job_url" && isHttpUrl(rawLabel) ? toLinkLabel(rawLabel) : rawLabel;
   return chip;
 }
 
