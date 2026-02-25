@@ -369,6 +369,8 @@ function extractCompanyFromContent(content, rawUrl, titleHint = "") {
   if (siteModel?.name === "LinkedIn") {
     const linkedInMatches = [
       content.match(/Company,\s*([^.<\n]+)\./i)?.[1],
+      content.match(/href="https:\/\/www\.linkedin\.com\/company\/[^"]+"[^>]*>\s*([^<]+)\s*<\/a>/i)?.[1],
+      content.match(/job-details-jobs-unified-top-card__company-name[\s\S]*?<a[^>]*>\s*([^<]+)\s*<\/a>/i)?.[1],
       content.match(/company-name[^>]*>\s*<a[^>]*>\s*([^<]+)\s*</i)?.[1],
       content.match(/\bat\s+([A-Z][A-Za-z0-9&.\- ]{2,60})\b/)?.[1],
     ]
