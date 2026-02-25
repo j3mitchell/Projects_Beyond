@@ -1040,6 +1040,8 @@ function App() {
   const jobLookupTimerRef = useRef(null);
   const isSyncingEditorRef = useRef(false);
   const jobUrlLookupRef = useRef(0);
+  const activeJobLookupUrlRef = useRef("");
+  const lastJobLookupRef = useRef({ url: "", at: 0 });
 
   // Main app state: template text, fields, UI mode, and status messages.
   const [template, setTemplate] = useState(DEFAULT_TEMPLATE);
@@ -1260,9 +1262,15 @@ function App() {
   const resolveJobReferenceFromUrl = async (rawUrl) => {
     const url = rawUrl.trim();
     if (!isHttpUrl(url)) return;
+    const now = Date.now();
+    // Prevent duplicate triggers from paste + blur + enter for the same URL.
+    if (activeJobLookupUrlRef.current === url) return;
+    if (lastJobLookupRef.current.url === url && now - lastJobLookupRef.current.at < 1200) return;
+    lastJobLookupRef.current = { url, at: now };
 
     const requestId = Date.now();
     jobUrlLookupRef.current = requestId;
+    activeJobLookupUrlRef.current = url;
     setIsResolvingJobTitle(true);
     startJobLookupProgress();
     setFieldLabelAndValueByKey("job_url", url);
@@ -1274,7 +1282,6 @@ function App() {
     const instantSkills = canUseInstantTitle ? inferSkillsFromTitle(instantTitle).slice(0, 3) : [];
     if (canUseInstantTitle && instantTitle) {
       setFieldLabelAndValueByKey("job_listing_ref_title", instantTitle);
-      setFieldLabelAndValueByKey("position_title", instantTitle);
     }
     if (instantSkills[0]) setFieldLabelAndValueByKey("pos_skill_1", instantSkills[0]);
     if (instantSkills[1]) setFieldLabelAndValueByKey("pos_skill_2", instantSkills[1]);
@@ -1322,6 +1329,7 @@ function App() {
     } finally {
       if (jobUrlLookupRef.current === requestId) {
         setIsResolvingJobTitle(false);
+        activeJobLookupUrlRef.current = "";
       }
     }
   };
