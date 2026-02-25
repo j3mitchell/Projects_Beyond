@@ -95,7 +95,7 @@
   border: 0;
   border-right: 1px solid #c7ccd3;
   background: transparent;
-  color: #1f3b6d;
+  color: #000000;
   font: 700 0.83rem/1 "IBM Plex Sans", "Segoe UI", sans-serif;
 }
 
@@ -282,7 +282,7 @@
 .button.danger:focus-visible {
   background: transparent;
   border-color: #3f4349;
-  color: #1f3b6d;
+  color: #000000;
   font-weight: 700;
 }
 
