@@ -1403,6 +1403,39 @@ function App() {
     setNotice("Project exported.");
   };
 
+  // Create a reusable template file for future jobs.
+  // It keeps the current wording/tokens, but clears fields users usually change each application.
+  const createTemplateFile = () => {
+    const fieldsToClear = new Set([
+      "hiring_manager",
+      "company_name",
+      "position_title",
+      "job_url",
+      "job_listing_ref_title",
+      "job_listing_ref_url",
+    ]);
+
+    const templateFields = fields.map((field) => {
+      if (!fieldsToClear.has(field.key)) return field;
+      return { ...field, label: "", value: "" };
+    });
+
+    const payload = JSON.stringify(
+      {
+        type: "coverai_template",
+        version: 1,
+        createdAt: new Date().toISOString(),
+        template,
+        fields: templateFields,
+      },
+      null,
+      2
+    );
+    downloadTextFile(payload, "cover-letter-template.json");
+    setNotice("Template JSON created.");
+    setError("");
+  };
+
   // Load a previously exported JSON project file.
   const importProject = async (event) => {
     const file = event.target.files?.[0];
@@ -1555,6 +1588,9 @@ function App() {
           </label>
           <button type="button" className="button secondary" onClick={exportProject} disabled={!isReady}>
             Export Project
+          </button>
+          <button type="button" className="button secondary" onClick={createTemplateFile} disabled={!isReady}>
+            Create Template
           </button>
           <button
             type="button"
