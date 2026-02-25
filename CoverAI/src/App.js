@@ -900,6 +900,42 @@ function renderTemplate(template, valueByKey) {
   return { rendered, unresolved: [...unresolved] };
 }
 
+// Escape HTML so user-provided text is safe to inject into preview markup.
+function escapeHtml(value) {
+  return (value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+// Build preview HTML with clickable links for URLs while preserving line breaks.
+function toPreviewHtml(text) {
+  const source = text || "";
+  const urlPattern = /https?:\/\/[^\s]+/gi;
+  let html = "";
+  let lastIndex = 0;
+  let match = urlPattern.exec(source);
+
+  while (match) {
+    const url = match[0];
+    const start = match.index;
+    const end = start + url.length;
+
+    html += escapeHtml(source.slice(lastIndex, start)).replace(/\n/g, "<br />");
+    html += `<a class="preview-link" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(
+      url
+    )}</a>`;
+
+    lastIndex = end;
+    match = urlPattern.exec(source);
+  }
+
+  html += escapeHtml(source.slice(lastIndex)).replace(/\n/g, "<br />");
+  return html;
+}
+
 // Pull text out of every page in a PDF and combine into one string.
 async function readPdfAsText(file) {
   const pdfjsLib = await getPdfJs();
@@ -996,6 +1032,7 @@ function App() {
 
   // Recompute preview text and missing tokens whenever inputs change.
   const { rendered, unresolved } = useMemo(() => renderTemplate(template, valueByKey), [template, valueByKey]);
+  const previewHtml = useMemo(() => toPreviewHtml(rendered), [rendered]);
   const tokensInTemplate = useMemo(() => extractTokens(template), [template]);
   const labelByKey = useMemo(
     () =>
@@ -1492,7 +1529,7 @@ function App() {
               data-placeholder="Write your cover letter template here..."
             />
           ) : (
-            <pre className="preview">{rendered}</pre>
+            <div className="preview" dangerouslySetInnerHTML={{ __html: previewHtml }} />
           )}
 
           <div className="panel-footer">

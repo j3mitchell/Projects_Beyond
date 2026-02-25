@@ -241,6 +241,12 @@
   overflow: auto;
 }
 
+.preview-link {
+  color: #0a7f6f;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 .panel-footer {
   margin-top: 0.7rem;
   display: flex;
