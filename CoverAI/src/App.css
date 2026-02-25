@@ -281,6 +281,13 @@
   font: 700 1.45rem/1.1 "Fraunces", "Georgia", serif;
 }
 
+.side-top-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+
 .side-top p {
   margin: 0;
   color: var(--muted);
@@ -450,6 +457,11 @@
   padding: 0.3rem 0.4rem 0.35rem;
 }
 
+.job-lookup-progress.mini {
+  width: min(100%, 210px);
+  margin-top: 0.05rem;
+}
+
 .job-lookup-row {
   display: flex;
   justify-content: space-between;
@@ -460,6 +472,15 @@
 
 .job-lookup-progress .progress-track {
   height: 8px;
+}
+
+.job-lookup-progress.mini .job-lookup-row {
+  margin-bottom: 0.16rem;
+  font-size: 0.66rem;
+}
+
+.job-lookup-progress.mini .progress-track {
+  height: 6px;
 }
 
 .status-row .ok {

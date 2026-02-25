@@ -1509,7 +1509,20 @@ function App() {
         {/* Right side: token controls and editable field values. */}
         <aside className="panel side-panel">
           <div className="side-top">
-            <h2>Fields</h2>
+            <div className="side-top-header">
+              <h2>Fields</h2>
+              {jobLookupProgress > 0 && (
+                <div className="job-lookup-progress mini" aria-label="Job URL process status">
+                  <div className="job-lookup-row">
+                    <strong>{jobLookupStage || "Processing URL..."}</strong>
+                    <span>{jobLookupProgress}%</span>
+                  </div>
+                  <div className="progress-track">
+                    <div className="progress-fill" style={{ width: `${jobLookupProgress}%` }} />
+                  </div>
+                </div>
+              )}
+            </div>
             <p>Click or drag a token into the template.</p>
             <button
               type="button"
@@ -1657,21 +1670,10 @@ function App() {
       </main>
 
       {/* Small status area for success/error/loading feedback. */}
-      {(notice || error || isLoadingFile || isResolvingJobTitle || jobLookupProgress > 0) && (
+      {(notice || error || isLoadingFile || isResolvingJobTitle) && (
         <div className="status-row" role="status" aria-live="polite">
           {isLoadingFile && <span>Loading file...</span>}
           {isResolvingJobTitle && <span>Resolving job details...</span>}
-          {jobLookupProgress > 0 && (
-            <div className="job-lookup-progress" aria-label="Job URL process status">
-              <div className="job-lookup-row">
-                <strong>{jobLookupStage || "Processing URL..."}</strong>
-                <span>{jobLookupProgress}%</span>
-              </div>
-              <div className="progress-track">
-                <div className="progress-fill" style={{ width: `${jobLookupProgress}%` }} />
-              </div>
-            </div>
-          )}
           {notice && <span className="ok">{notice}</span>}
           {error && <span className="err">{error}</span>}
         </div>
