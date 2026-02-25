@@ -1769,7 +1769,7 @@ function App() {
             Start CoverAI
           </button>
           <button type="button" className="button secondary" onClick={createTemplateFile} disabled={!isReady}>
-            Create Template
+            New Template
           </button>
           <button
             type="button"
@@ -1780,7 +1780,7 @@ function App() {
             Stop CoverAI
           </button>
           <label className="button secondary">
-            Import .txt/.pdf
+            Import Text
             <input type="file" accept=".txt,.pdf" onChange={handleFileUpload} hidden disabled={!isReady} />
           </label>
           <button type="button" className="button secondary" onClick={exportProject} disabled={!isReady}>
