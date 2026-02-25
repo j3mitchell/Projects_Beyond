@@ -1552,14 +1552,12 @@ function App() {
       applyStyleTemplate(styleKey, styleCode);
       return;
     }
-    if (styleKey === "custom_2") {
-      const response = window.prompt("Enter custom style code for slot 2:", customStyle2Code);
-      if (response !== null) setCustomStyle2Code(response);
-      const styleCode = sanitizeStyleCode(response ?? customStyle2Code, "cus2");
-      applyStyleTemplate(styleKey, styleCode);
-      return;
-    }
     applyStyleTemplate(styleKey);
+  };
+
+  const openRecentSessions = () => {
+    setNotice("Recent sessions (5) is coming soon.");
+    setError("");
   };
 
   // Restore template + fields to starter defaults.
@@ -1758,32 +1756,71 @@ function App() {
           <p className="subhead">Use smart placeholders, edit once, then export polished versions fast.</p>
         </div>
         <div className="header-actions">
-          <button type="button" className="button" onClick={startCoverAI} disabled={isRunning}>
-            Start CoverAI
-          </button>
-          <button
-            type="button"
-            className="button secondary"
-            onClick={stopCoverAI}
-            disabled={startupPhase === "idle" || startupPhase === "stopped"}
-          >
-            Stop CoverAI
-          </button>
-          <button type="button" className="button secondary" onClick={createTemplateFile} disabled={!isReady}>
-            Export Session
-          </button>
-          <label className="button secondary">
-            Import Text
-            <input type="file" accept=".txt,.pdf" onChange={handleFileUpload} hidden disabled={!isReady} />
-          </label>
-          <button
-            type="button"
-            className="button secondary"
-            onClick={() => importProjectRef.current?.click()}
-            disabled={!isReady}
-          >
-            Import Session
-          </button>
+          <div className="menu-group">
+            <p className="menu-heading">CoverAI</p>
+            <div className="menu-row">
+              <button type="button" className="button" onClick={startCoverAI} disabled={isRunning}>
+                Start CoverAI
+              </button>
+              <button
+                type="button"
+                className="button secondary"
+                onClick={stopCoverAI}
+                disabled={startupPhase === "idle" || startupPhase === "stopped"}
+              >
+                Stop CoverAI
+              </button>
+            </div>
+          </div>
+
+          <div className="menu-group">
+            <p className="menu-heading">File</p>
+            <div className="menu-row">
+              <label className="button secondary">
+                Open
+                <input type="file" accept=".txt,.pdf" onChange={handleFileUpload} hidden disabled={!isReady} />
+              </label>
+              <button type="button" className="button secondary" onClick={openRecentSessions} disabled={!isReady}>
+                Recent (5)
+              </button>
+              <button
+                type="button"
+                className="button secondary"
+                onClick={() => importProjectRef.current?.click()}
+                disabled={!isReady}
+              >
+                Import Session
+              </button>
+              <button type="button" className="button secondary" onClick={createTemplateFile} disabled={!isReady}>
+                Export Session
+              </button>
+            </div>
+          </div>
+
+          <div className="menu-group">
+            <p className="menu-heading">Style</p>
+            <div className="menu-row">
+              <div className="style-inline">
+            <label htmlFor="style-select">Style</label>
+            <select
+              id="style-select"
+              className="style-select-button"
+              value={selectedStyle}
+              onChange={(event) => handleStyleSelectionChange(event.target.value)}
+              disabled={!isReady}
+              aria-label="Template style"
+              title="Template style"
+            >
+              <option value="eng">Engineer</option>
+              <option value="cus">Service</option>
+              <option value="fin">Financial</option>
+              <option value="mgr">Management</option>
+              <option value="custom_1">User Defined</option>
+            </select>
+          </div>
+            </div>
+          </div>
+
           <input
             ref={importProjectRef}
             type="file"
@@ -1795,25 +1832,6 @@ function App() {
           <button type="button" className="button danger" onClick={resetAll} disabled={!isReady}>
             Reset
           </button>
-          <div className="style-inline">
-            <label htmlFor="style-select">Style</label>
-            <select
-              id="style-select"
-              className="style-select-button"
-              value={selectedStyle}
-              onChange={(event) => handleStyleSelectionChange(event.target.value)}
-              disabled={!isReady}
-              aria-label="Template style"
-              title="Template style"
-            >
-              <option value="eng">Eng</option>
-              <option value="cus">Cus</option>
-              <option value="fin">Fin</option>
-              <option value="mgr">Mgr</option>
-              <option value="custom_1">{sanitizeStyleCode(customStyle1Code, "cus1")}</option>
-              <option value="custom_2">{sanitizeStyleCode(customStyle2Code, "cus2")}</option>
-            </select>
-          </div>
         </div>
       </header>
 
