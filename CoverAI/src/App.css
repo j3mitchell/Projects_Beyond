@@ -327,6 +327,8 @@
   display: flex;
   align-items: center;
   gap: 0.3rem;
+  border: 0;
+  background: transparent;
 }
 
 .field-input,
@@ -340,7 +342,10 @@
 }
 
 .field-label-input {
-  width: 50%;
+  width: 90%;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 /* Hide helper placeholder text as soon as the user clicks into a field. */
@@ -470,6 +475,6 @@
   }
 
   .field-label-input {
-    width: 100%;
+    width: 90%;
   }
 }
