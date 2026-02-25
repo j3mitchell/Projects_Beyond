@@ -192,6 +192,12 @@ function titleFromUrlPath(rawUrl) {
   }
 }
 
+function toSafeAnchor(url, title) {
+  const safeUrl = (url || "").replace(/"/g, "&quot;");
+  const safeTitle = (title || "").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  return `<a href="${safeUrl}" target="_blank" rel="noreferrer">${safeTitle}</a>`;
+}
+
 async function fetchJobTitleFromUrl(rawUrl) {
   try {
     // Try normal fetch first for sites that allow CORS.
@@ -368,8 +374,11 @@ function App() {
     const base = Object.fromEntries(fields.map((field) => [field.key.toLowerCase(), field.value.trim()]));
     const refTitle = base.job_listing_ref_title;
     const refUrl = base.job_listing_ref_url;
-    // Convenience token: {{ref}} becomes "[Title](URL)" when both fields are present.
-    if (refTitle && refUrl) base.ref = `[${refTitle}](${refUrl})`;
+    // Convenience tokens: {{ref}} and {{job_url}} become anchor links when title/url exist.
+    if (refTitle && refUrl) {
+      base.ref = toSafeAnchor(refUrl, refTitle);
+      base.job_url = toSafeAnchor(refUrl, refTitle);
+    }
     return base;
   }, [fields]);
 
