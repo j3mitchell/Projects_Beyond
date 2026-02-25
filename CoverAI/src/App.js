@@ -57,6 +57,25 @@ Reference: {{ref}}
 Sincerely,
 {{my_signature}}`;
 
+const FIELD_SUGGESTIONS = {
+  hiring_manager: "e.g., Jordan Lee",
+  company_name: "e.g., OpenAI",
+  position_title: "e.g., Product Operations Manager",
+  pos_skill_1: "e.g., Stakeholder communication",
+  pos_skill_2: "e.g., Project planning",
+  pos_skill_3: "e.g., Data analysis",
+  job_url: "e.g., https://company.com/careers/job-123",
+  job_listing_ref_title: "e.g., Senior Product Operations Manager",
+  job_listing_ref_url: "e.g., https://company.com/careers/job-123",
+  prev_company: "e.g., Google",
+  my_skill_1: "e.g., Cross-functional leadership",
+  my_skill_2: "e.g., Process improvement",
+  my_skill_3: "e.g., SQL reporting",
+  additional_exp_1: "e.g., Led onboarding redesign across 4 teams",
+  additional_exp_2: "e.g., Built KPI dashboard used by executives",
+  my_signature: "e.g., Jane Doe | jane@email.com",
+};
+
 // Turn human text into a safe token key (ex: "Top Skill" -> "top_skill").
 function slugify(input) {
   const normalized = input.toLowerCase().trim().replace(/[^a-z0-9]+/g, "_");
@@ -269,6 +288,9 @@ function App() {
   const updateField = (id, key, value) => {
     setFields((prev) => prev.map((field) => (field.id === id ? { ...field, [key]: value } : field)));
   };
+
+  // Return a field-specific suggestion to show as grey helper text.
+  const getFieldSuggestion = (fieldKey) => FIELD_SUGGESTIONS[fieldKey] || "Type value used in final letter";
 
   // Keep token keys safe and unique so collisions don't break replacements.
   const updateFieldKey = (id, rawKey) => {
@@ -580,7 +602,7 @@ function App() {
                   value={field.value}
                   onChange={(event) => updateField(field.id, "value", event.target.value)}
                   disabled={!isReady}
-                  placeholder="Value used in final letter"
+                  placeholder={getFieldSuggestion(field.key)}
                 />
                 <button type="button" className="text-button" onClick={() => deleteField(field.id)} disabled={!isReady}>
                   Remove
