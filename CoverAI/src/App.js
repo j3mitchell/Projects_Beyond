@@ -340,6 +340,16 @@ function extractGenericJobTitleFromTitleTag(content) {
     .trim();
 }
 
+// LinkedIn titles sometimes append extra details after a slash.
+// Keep only the title portion before the first slash.
+function truncateLinkedInJobTitle(rawTitle) {
+  const title = normalizeTitleCandidate(rawTitle);
+  if (!title) return "";
+  const slashIndex = title.search(/\s*\/\s*/);
+  if (slashIndex < 0) return title;
+  return title.slice(0, slashIndex).trim();
+}
+
 function extractCompanyFromTitleTag(content, rawUrl) {
   const titleTag = extractTitleTag(content);
   if (!titleTag) return "";
@@ -1296,9 +1306,12 @@ function App() {
       setJobLookupProgress(88);
       setJobLookupStage("Applying results...");
       const refFirstSegment = (refTitle || "").split("|")[0]?.trim() || "";
-      const resolvedPositionTitle = [title, refFirstSegment, instantTitle].find(
+      const baseResolvedPositionTitle = [title, refFirstSegment, instantTitle].find(
         (candidate) => candidate && !isNumericOnlyTitle(candidate)
       );
+      const resolvedPositionTitle = /linkedin\.com/i.test(url)
+        ? truncateLinkedInJobTitle(baseResolvedPositionTitle)
+        : baseResolvedPositionTitle;
       const fallbackSkills = inferSkillsFromTitle(title);
       const mergedSkills = [...skills, ...fallbackSkills]
         .map((s) => (s || "").trim())
