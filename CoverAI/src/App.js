@@ -307,7 +307,10 @@ function normalizeTitleCandidate(rawTitle) {
 function extractTitleTag(content) {
   if (!content) return "";
   const match = content.match(/<title>\s*([^<]+)\s*<\/title>/i);
-  return normalizeTitleCandidate(match?.[1] || "");
+  if (match?.[1]) return normalizeTitleCandidate(match[1]);
+  // r.jina.ai mirror pages often expose the title as plain text: "Title: ...".
+  const textTitle = content.match(/^Title:\s*(.+)$/im)?.[1];
+  return normalizeTitleCandidate(textTitle || "");
 }
 
 // Simple title parser for URL commit:
@@ -786,8 +789,10 @@ async function fetchJobInsightsFromUrl(rawUrl) {
     }),
   ]);
 
+  const fallbackTitle = titleFromUrlPath(rawUrl);
+  const fallbackSafeTitle = isNumericOnlyTitle(fallbackTitle) ? "" : fallbackTitle;
   const title =
-    titleCompanyResult.status === "fulfilled" ? titleCompanyResult.value.title || titleFromUrlPath(rawUrl) : titleFromUrlPath(rawUrl);
+    titleCompanyResult.status === "fulfilled" ? titleCompanyResult.value.title || fallbackSafeTitle : fallbackSafeTitle;
   let company = titleCompanyResult.status === "fulfilled" ? titleCompanyResult.value.company || "" : "";
   let skills = [];
 
@@ -1168,9 +1173,12 @@ function App() {
         .filter((skill, index, arr) => arr.findIndex((x) => x.toLowerCase() === skill.toLowerCase()) === index)
         .slice(0, 3);
 
-      setFieldLabelAndValueByKey("job_listing_ref_title", title);
-      setFieldLabelAndValueByKey("position_title", title);
-      if (company) setFieldLabelAndValueByKey("company_name", company);
+      if (title && !isNumericOnlyTitle(title)) {
+        setFieldLabelAndValueByKey("job_listing_ref_title", title);
+        setFieldLabelAndValueByKey("position_title", title);
+      }
+      // Always update the company field so stale values do not stick.
+      setFieldLabelAndValueByKey("company_name", company || "");
       if (washedSkills[0]) setFieldLabelAndValueByKey("pos_skill_1", washedSkills[0]);
       if (washedSkills[1]) setFieldLabelAndValueByKey("pos_skill_2", washedSkills[1]);
       if (washedSkills[2]) setFieldLabelAndValueByKey("pos_skill_3", washedSkills[2]);
