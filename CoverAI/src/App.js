@@ -354,11 +354,23 @@ function companyFromUrl(rawUrl) {
 }
 
 function cleanCompanyName(raw) {
-  return (raw || "")
+  const cleaned = (raw || "")
     .replace(/<[^>]+>/g, " ")
     .replace(/&amp;/g, "&")
+    .replace(/&quot;/g, "\"")
+    .replace(/&#39;/g, "'")
     .replace(/\s+/g, " ")
     .trim();
+
+  // Remove common legal/business suffixes at the end only.
+  const suffixPattern =
+    /\s*,?\s*(incorporated|inc|corporation|corp|company|co|llc|l\.l\.c|ltd|limited|plc|gmbh|s\.a\.|s\.a|ag)\.?$/i;
+  let normalized = cleaned;
+  while (suffixPattern.test(normalized)) {
+    normalized = normalized.replace(suffixPattern, "").trim();
+  }
+
+  return normalized;
 }
 
 function extractCompanyFromContent(content, rawUrl, titleHint = "") {
