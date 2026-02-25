@@ -375,7 +375,10 @@ function App() {
 
   // Memoized map keeps token lookups fast while typing.
   const valueByKey = useMemo(() => {
-    const base = Object.fromEntries(fields.map((field) => [field.key.toLowerCase(), field.value.trim()]));
+    // In simple mode (advanced hidden), field label can act as value fallback.
+    const base = Object.fromEntries(
+      fields.map((field) => [field.key.toLowerCase(), field.value.trim() || field.label.trim()])
+    );
     const rawJobUrl = base.job_url;
     const refTitle = base.job_listing_ref_title;
     const refUrl = base.job_listing_ref_url;
@@ -859,6 +862,20 @@ function App() {
                     className="field-input field-label-input"
                     value={field.label}
                     onChange={(event) => updateField(field.id, "label", event.target.value)}
+                    onPaste={(event) => {
+                      if (field.key !== "job_url") return;
+                      const pasted = event.clipboardData.getData("text/plain") || "";
+                      if (!isHttpUrl(pasted)) return;
+                      event.preventDefault();
+                      updateField(field.id, "label", pasted.trim());
+                      resolveJobReferenceFromUrl(pasted);
+                    }}
+                    onBlur={(event) => {
+                      if (field.key !== "job_url") return;
+                      const entered = event.target.value.trim();
+                      if (!isHttpUrl(entered)) return;
+                      resolveJobReferenceFromUrl(entered);
+                    }}
                     onFocus={(event) => event.target.select()}
                     disabled={!isReady}
                     placeholder={getFieldLabelSuggestion(field.key)}
