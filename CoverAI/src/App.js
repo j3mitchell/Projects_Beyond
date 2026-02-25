@@ -318,12 +318,12 @@ function extractTitleTag(content) {
 // 2) after first "|" and before second "|" => company
 function extractTitleAndCompanyFromTitleTag(content) {
   const titleTag = extractTitleTag(content);
-  if (!titleTag) return { title: "", company: "" };
+  if (!titleTag) return { title: "", company: "", refTitle: "" };
 
   const parts = titleTag.split("|").map((part) => normalizeTitleCandidate(part));
   const title = parts[0] || "";
   const company = parts[1] || "";
-  return { title, company };
+  return { title, company, refTitle: titleTag };
 }
 
 function extractCompanyFromTitleTag(content, rawUrl) {
@@ -793,6 +793,8 @@ async function fetchJobInsightsFromUrl(rawUrl) {
   const fallbackSafeTitle = isNumericOnlyTitle(fallbackTitle) ? "" : fallbackTitle;
   const title =
     titleCompanyResult.status === "fulfilled" ? titleCompanyResult.value.title || fallbackSafeTitle : fallbackSafeTitle;
+  const refTitle =
+    titleCompanyResult.status === "fulfilled" ? titleCompanyResult.value.refTitle || title : title;
   let company = titleCompanyResult.status === "fulfilled" ? titleCompanyResult.value.company || "" : "";
   let skills = [];
 
@@ -811,7 +813,7 @@ async function fetchJobInsightsFromUrl(rawUrl) {
     company = companyFromUrl(rawUrl);
   }
 
-  return { title, company, skills };
+  return { title, refTitle, company, skills };
 }
 
 function inferSkillsFromTitle(title) {
@@ -1246,7 +1248,7 @@ function App() {
 
     try {
       setJobLookupStage("Fetching title, company, and skills...");
-      const { title, company, skills } = await fetchJobInsightsFromUrl(url);
+      const { title, refTitle, company, skills } = await fetchJobInsightsFromUrl(url);
       if (jobUrlLookupRef.current !== requestId) return;
       setJobLookupProgress(88);
       setJobLookupStage("Applying results...");
@@ -1263,9 +1265,9 @@ function App() {
         .slice(0, 3);
 
       if (title && !isNumericOnlyTitle(title)) {
-        setFieldLabelAndValueByKey("job_listing_ref_title", title);
         setFieldLabelAndValueByKey("position_title", title);
       }
+      if (refTitle) setFieldLabelAndValueByKey("job_listing_ref_title", refTitle);
       // Always update the company field so stale values do not stick.
       setFieldLabelAndValueByKey("company_name", company || "");
       if (washedSkills[0]) setFieldLabelAndValueByKey("pos_skill_1", washedSkills[0]);
