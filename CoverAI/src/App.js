@@ -249,6 +249,7 @@ function App() {
   const [fields, setFields] = useState(DEFAULT_FIELDS);
   const [newFieldLabel, setNewFieldLabel] = useState("");
   const [activeTab, setActiveTab] = useState("editor");
+  const [showAdvancedFields, setShowAdvancedFields] = useState(false);
   const [isLoadingFile, setIsLoadingFile] = useState(false);
   const [notice, setNotice] = useState("");
   const [error, setError] = useState("");
@@ -688,6 +689,14 @@ function App() {
           <div className="side-top">
             <h2>Fields</h2>
             <p>Click or drag a token into the template.</p>
+            <button
+              type="button"
+              className="text-button"
+              onClick={() => setShowAdvancedFields((prev) => !prev)}
+              disabled={!isReady}
+            >
+              {showAdvancedFields ? "Hide advanced fields" : "Show advanced fields"}
+            </button>
           </div>
 
           <div className="token-grid">
@@ -718,20 +727,24 @@ function App() {
                   disabled={!isReady}
                   placeholder={getFieldLabelSuggestion(field.key)}
                 />
-                <input
-                  className="field-input mono"
-                  value={field.key}
-                  onChange={(event) => updateFieldKey(field.id, event.target.value)}
-                  disabled={!isReady}
-                  placeholder="token_key"
-                />
-                <textarea
-                  className="field-textarea"
-                  value={field.value}
-                  onChange={(event) => updateField(field.id, "value", event.target.value)}
-                  disabled={!isReady}
-                  placeholder={getFieldSuggestion(field.key)}
-                />
+                {showAdvancedFields && (
+                  <>
+                    <input
+                      className="field-input mono"
+                      value={field.key}
+                      onChange={(event) => updateFieldKey(field.id, event.target.value)}
+                      disabled={!isReady}
+                      placeholder="token_key"
+                    />
+                    <textarea
+                      className="field-textarea"
+                      value={field.value}
+                      onChange={(event) => updateField(field.id, "value", event.target.value)}
+                      disabled={!isReady}
+                      placeholder={getFieldSuggestion(field.key)}
+                    />
+                  </>
+                )}
                 <button type="button" className="text-button" onClick={() => deleteField(field.id)} disabled={!isReady}>
                   Remove
                 </button>
