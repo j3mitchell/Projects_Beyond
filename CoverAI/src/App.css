@@ -62,6 +62,33 @@
   max-width: 35rem;
 }
 
+.style-picker {
+  display: grid;
+  gap: 0.3rem;
+  min-width: 220px;
+}
+
+.style-picker label {
+  font: 600 0.74rem/1 "IBM Plex Sans", "Segoe UI", sans-serif;
+  color: #2f4d57;
+}
+
+.style-select,
+.style-code-input {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+  padding: 0.38rem 0.5rem;
+  font: 500 0.8rem/1 "IBM Plex Sans", "Segoe UI", sans-serif;
+}
+
+.style-custom-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.35rem;
+}
+
 .startup-panel {
   margin-bottom: 1rem;
   border: 1px solid rgba(98, 120, 124, 0.32);

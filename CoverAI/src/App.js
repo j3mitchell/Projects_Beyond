@@ -58,6 +58,60 @@ Reference: {{ref}}
 Sincerely,
 {{my_signature}}`;
 
+// Preset style templates loaded by the style selector.
+const STYLE_TEMPLATE_MAP = {
+  eng: `Dear {{hiring_manager}},
+
+I am excited to apply for the {{position_title}} role at {{company_name}}.
+
+My background aligns with your needs in {{pos_skill_1}}, {{pos_skill_2}}, and {{pos_skill_3}}.
+I have applied these strengths in hands-on delivery at {{prev_company}}, with additional impact in {{additional_exp_1}} and {{additional_exp_2}}.
+
+Job posting: {{job_url}}
+Reference: {{ref}}
+
+Sincerely,
+{{my_signature}}`,
+  cus: `Dear {{hiring_manager}},
+
+I am applying for the {{position_title}} opportunity with {{company_name}}.
+
+My customer-facing experience includes {{pos_skill_1}}, {{pos_skill_2}}, and {{pos_skill_3}}.
+At {{prev_company}}, I focused on service quality and communication outcomes, including {{additional_exp_1}} and {{additional_exp_2}}.
+
+Job posting: {{job_url}}
+Reference: {{ref}}
+
+Sincerely,
+{{my_signature}}`,
+  fin: `Dear {{hiring_manager}},
+
+Please accept my application for the {{position_title}} position at {{company_name}}.
+
+My qualifications include {{pos_skill_1}}, {{pos_skill_2}}, and {{pos_skill_3}} with practical results at {{prev_company}}.
+I also bring experience in {{additional_exp_1}} and {{additional_exp_2}}.
+
+Job posting: {{job_url}}
+Reference: {{ref}}
+
+Sincerely,
+{{my_signature}}`,
+  mgr: `Dear {{hiring_manager}},
+
+I am writing to express interest in the {{position_title}} role at {{company_name}}.
+
+My management background includes {{pos_skill_1}}, {{pos_skill_2}}, and {{pos_skill_3}}.
+I have led outcomes at {{prev_company}}, including {{additional_exp_1}} and {{additional_exp_2}}.
+
+Job posting: {{job_url}}
+Reference: {{ref}}
+
+Sincerely,
+{{my_signature}}`,
+  custom_1: DEFAULT_TEMPLATE,
+  custom_2: DEFAULT_TEMPLATE,
+};
+
 const FIELD_SUGGESTIONS = {
   hiring_manager: "e.g., Jordan Lee",
   company_name: "e.g., OpenAI",
@@ -954,6 +1008,37 @@ async function saveJsonWithDialog(text, suggestedName) {
   return true;
 }
 
+function formatDateYYMMDD(dateObj = new Date()) {
+  const yy = String(dateObj.getFullYear()).slice(-2);
+  const mm = String(dateObj.getMonth() + 1).padStart(2, "0");
+  const dd = String(dateObj.getDate()).padStart(2, "0");
+  return `${yy}${mm}${dd}`;
+}
+
+function sanitizeStyleCode(rawCode, fallback = "gen") {
+  const normalized = (rawCode || "")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "");
+  return normalized || fallback;
+}
+
+function getTemplateSequenceStorageKey(datePart, styleCode) {
+  return `coverai.templateSeq.${datePart}.${styleCode}`;
+}
+
+function peekNextTemplateSequence(datePart, styleCode) {
+  const key = getTemplateSequenceStorageKey(datePart, styleCode);
+  const raw = Number.parseInt(localStorage.getItem(key) || "0", 10);
+  const last = Number.isNaN(raw) ? 0 : raw;
+  return last + 1;
+}
+
+function commitTemplateSequence(datePart, styleCode, seq) {
+  const key = getTemplateSequenceStorageKey(datePart, styleCode);
+  localStorage.setItem(key, String(seq));
+}
+
 // Basic word counter used for quick stats in the UI.
 function toWordCount(text) {
   const words = text.trim().split(/\s+/).filter(Boolean);
@@ -1103,11 +1188,14 @@ function App() {
   const lastJobLookupRef = useRef({ url: "", at: 0 });
 
   // Main app state: template text, fields, UI mode, and status messages.
-  const [template, setTemplate] = useState(DEFAULT_TEMPLATE);
+  const [template, setTemplate] = useState(STYLE_TEMPLATE_MAP.eng);
   const [fields, setFields] = useState(DEFAULT_FIELDS);
   const [newFieldLabel, setNewFieldLabel] = useState("");
   const [activeTab, setActiveTab] = useState("editor");
   const [showAdvancedFields, setShowAdvancedFields] = useState(false);
+  const [selectedStyle, setSelectedStyle] = useState("eng");
+  const [customStyle1Code, setCustomStyle1Code] = useState("cus1");
+  const [customStyle2Code, setCustomStyle2Code] = useState("cus2");
   const [isLoadingFile, setIsLoadingFile] = useState(false);
   const [notice, setNotice] = useState("");
   const [error, setError] = useState("");
@@ -1129,6 +1217,9 @@ function App() {
       if (Array.isArray(parsed.fields) && parsed.fields.length > 0) {
         setFields(mergeFieldsWithDefaults(parsed.fields));
       }
+      if (typeof parsed.selectedStyle === "string") setSelectedStyle(parsed.selectedStyle);
+      if (typeof parsed.customStyle1Code === "string") setCustomStyle1Code(parsed.customStyle1Code);
+      if (typeof parsed.customStyle2Code === "string") setCustomStyle2Code(parsed.customStyle2Code);
     } catch {
       setError("Autosave data could not be loaded.");
     }
@@ -1136,9 +1227,9 @@ function App() {
 
   // Any time template or fields change, autosave the project.
   useEffect(() => {
-    const payload = JSON.stringify({ template, fields });
+    const payload = JSON.stringify({ template, fields, selectedStyle, customStyle1Code, customStyle2Code });
     localStorage.setItem(STORAGE_KEY, payload);
-  }, [template, fields]);
+  }, [template, fields, selectedStyle, customStyle1Code, customStyle2Code]);
 
   // Keyboard shortcut: Ctrl/Cmd + S downloads the final rendered letter.
   useEffect(() => {
@@ -1423,9 +1514,40 @@ function App() {
     setFields((prev) => prev.filter((field) => field.id !== id));
   };
 
+  const getSelectedStyleCode = () => {
+    if (selectedStyle === "custom_1") return sanitizeStyleCode(customStyle1Code, "cus1");
+    if (selectedStyle === "custom_2") return sanitizeStyleCode(customStyle2Code, "cus2");
+    return selectedStyle;
+  };
+
+  const getStyleLabelByCode = (code) => {
+    const known = {
+      eng: "Engineering",
+      cus: "Customer Service",
+      fin: "Financial",
+      mgr: "Management",
+    };
+    return known[code] || code.toUpperCase();
+  };
+
+  const applyStyleTemplate = (styleKey) => {
+    const nextTemplate = STYLE_TEMPLATE_MAP[styleKey] || DEFAULT_TEMPLATE;
+    const styleCode =
+      styleKey === "custom_1"
+        ? sanitizeStyleCode(customStyle1Code, "cus1")
+        : styleKey === "custom_2"
+        ? sanitizeStyleCode(customStyle2Code, "cus2")
+        : styleKey;
+    setSelectedStyle(styleKey);
+    setTemplate(nextTemplate);
+    setNotice(`Loaded ${getStyleLabelByCode(styleCode)} template.`);
+    setError("");
+  };
+
   // Restore template + fields to starter defaults.
   const resetAll = () => {
-    setTemplate(DEFAULT_TEMPLATE);
+    setTemplate(STYLE_TEMPLATE_MAP.eng);
+    setSelectedStyle("eng");
     setFields(DEFAULT_FIELDS);
     setNotice("Reset to default template.");
     setError("");
@@ -1461,14 +1583,20 @@ function App() {
         type: "coverai_template",
         version: 1,
         createdAt: new Date().toISOString(),
+        style: getSelectedStyleCode(),
         template,
         fields: templateFields,
       },
       null,
       2
     );
-    const saved = await saveJsonWithDialog(payload, "cover-letter-template.json");
+    const datePart = formatDateYYMMDD();
+    const styleCode = getSelectedStyleCode();
+    const seq = peekNextTemplateSequence(datePart, styleCode);
+    const suggestedName = `cv_${datePart}_${styleCode}_${seq}.json`;
+    const saved = await saveJsonWithDialog(payload, suggestedName);
     if (saved) {
+      commitTemplateSequence(datePart, styleCode, seq);
       setNotice("Template JSON created.");
       setError("");
     } else {
@@ -1489,6 +1617,14 @@ function App() {
       }
       setTemplate(parsed.template);
       setFields(mergeFieldsWithDefaults(parsed.fields));
+      if (typeof parsed.style === "string") {
+        if (["eng", "cus", "fin", "mgr", "custom_1", "custom_2"].includes(parsed.style)) {
+          setSelectedStyle(parsed.style);
+        } else {
+          setSelectedStyle("custom_1");
+          setCustomStyle1Code(parsed.style);
+        }
+      }
       setNotice("Project imported.");
     } catch {
       setError("Invalid project file.");
@@ -1611,6 +1747,39 @@ function App() {
           <p className="subhead">Use smart placeholders, edit once, then export polished versions fast.</p>
         </div>
         <div className="header-actions">
+          <div className="style-picker">
+            <label htmlFor="style-select">Style</label>
+            <select
+              id="style-select"
+              className="style-select"
+              value={selectedStyle}
+              onChange={(event) => applyStyleTemplate(event.target.value)}
+              disabled={!isReady}
+            >
+              <option value="eng">eng - engineering</option>
+              <option value="cus">cus - customer service</option>
+              <option value="fin">fin - financial</option>
+              <option value="mgr">mgr - management</option>
+              <option value="custom_1">{sanitizeStyleCode(customStyle1Code, "cus1")} - custom 1</option>
+              <option value="custom_2">{sanitizeStyleCode(customStyle2Code, "cus2")} - custom 2</option>
+            </select>
+            <div className="style-custom-inputs">
+              <input
+                className="style-code-input"
+                value={customStyle1Code}
+                onChange={(event) => setCustomStyle1Code(event.target.value)}
+                placeholder="custom1 code"
+                disabled={!isReady}
+              />
+              <input
+                className="style-code-input"
+                value={customStyle2Code}
+                onChange={(event) => setCustomStyle2Code(event.target.value)}
+                placeholder="custom2 code"
+                disabled={!isReady}
+              />
+            </div>
+          </div>
           <button type="button" className="button" onClick={startCoverAI} disabled={isRunning}>
             Start CoverAI
           </button>
