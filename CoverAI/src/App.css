@@ -212,6 +212,9 @@
   color: #ffffff;
   height: var(--menu-height);
   padding: 0 0.92rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   font: 560 0.89rem/1 "IBM Plex Sans", "Segoe UI", sans-serif;
   letter-spacing: 0.01em;
   cursor: pointer;
