@@ -310,7 +310,7 @@
 .field-list {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.7rem;
+  gap: 0.5rem;
   max-height: 36vh;
   overflow: auto;
   padding-right: 0.15rem;
@@ -319,14 +319,14 @@
 .field-card {
   border: 1px solid var(--line);
   border-radius: 11px;
-  padding: 0.65rem;
+  padding: 0.45rem 0.5rem;
   background: #fff;
 }
 
 .field-header {
   display: flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.3rem;
 }
 
 .field-input,
@@ -334,8 +334,8 @@
   width: 100%;
   border: 1px solid #c9d5d3;
   border-radius: 8px;
-  padding: 0.48rem 0.58rem;
-  margin-bottom: 0.48rem;
+  padding: 0.36rem 0.5rem;
+  margin-bottom: 0.34rem;
   font: 500 0.88rem/1.3 "IBM Plex Sans", "Segoe UI", sans-serif;
 }
 
