@@ -761,11 +761,18 @@ function extractTopSkillsFromText(rawText) {
 }
 
 async function fetchJobInsightsFromUrl(rawUrl) {
+  // Use one shared mirror fetch so we do not double-hit the same endpoint.
+  const mirrorTextPromise = withTimeout(12000, async () => {
+    const mirror = await fetch(`https://r.jina.ai/${rawUrl}`);
+    if (!mirror.ok) throw new Error("mirror not ok");
+    return mirror.text();
+  });
+
   // Run title/company lookup and mirror lookup at the same time.
   // allSettled keeps every rejection consumed so there are no uncaught promises.
   const [titleCompanyResult, mirrorResult] = await Promise.allSettled([
     Promise.any([
-      withTimeout(5000, async () => {
+      withTimeout(12000, async () => {
         const direct = await fetch(rawUrl, { mode: "cors" });
         if (!direct.ok) throw new Error("direct not ok");
         const html = await direct.text();
@@ -773,20 +780,13 @@ async function fetchJobInsightsFromUrl(rawUrl) {
         if (!parsed.title && !parsed.company) throw new Error("no title tag values");
         return parsed;
       }),
-      withTimeout(5000, async () => {
-        const mirror = await fetch(`https://r.jina.ai/${rawUrl}`);
-        if (!mirror.ok) throw new Error("mirror not ok");
-        const content = await mirror.text();
+      mirrorTextPromise.then((content) => {
         const parsed = extractTitleAndCompanyFromTitleTag(content);
         if (!parsed.title && !parsed.company) throw new Error("no title tag values");
         return parsed;
       }),
     ]),
-    withTimeout(5000, async () => {
-      const mirror = await fetch(`https://r.jina.ai/${rawUrl}`);
-      if (!mirror.ok) throw new Error("mirror not ok");
-      return mirror.text();
-    }),
+    mirrorTextPromise,
   ]);
 
   const fallbackTitle = titleFromUrlPath(rawUrl);
