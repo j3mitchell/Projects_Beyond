@@ -442,6 +442,22 @@
   font: 500 0.9rem/1.2 "IBM Plex Sans", "Segoe UI", sans-serif;
 }
 
+.job-lookup-progress {
+  width: min(100%, 420px);
+  border: 1px solid rgba(98, 120, 124, 0.32);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.88);
+  padding: 0.45rem 0.55rem 0.5rem;
+}
+
+.job-lookup-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.38rem;
+  font: 560 0.82rem/1 "IBM Plex Sans", "Segoe UI", sans-serif;
+}
+
 .status-row .ok {
   color: #1f6943;
 }

@@ -918,6 +918,7 @@ function App() {
   const editorRef = useRef(null);
   const importProjectRef = useRef(null);
   const startupTimerRef = useRef(null);
+  const jobLookupTimerRef = useRef(null);
   const isSyncingEditorRef = useRef(false);
   const jobUrlLookupRef = useRef(0);
 
@@ -931,6 +932,9 @@ function App() {
   const [notice, setNotice] = useState("");
   const [error, setError] = useState("");
   const [isResolvingJobTitle, setIsResolvingJobTitle] = useState(false);
+  // Tracks visible progress for the Job URL commit workflow.
+  const [jobLookupStage, setJobLookupStage] = useState("");
+  const [jobLookupProgress, setJobLookupProgress] = useState(0);
   // Demo startup state for the Start/Stop controls.
   const [startupPhase, setStartupPhase] = useState("idle");
   const [startupProgress, setStartupProgress] = useState(0);
@@ -1129,6 +1133,7 @@ function App() {
     const requestId = Date.now();
     jobUrlLookupRef.current = requestId;
     setIsResolvingJobTitle(true);
+    startJobLookupProgress();
     setFieldLabelAndValueByKey("job_url", url);
     // Instant prefill from URL slug so the UI updates immediately.
     const instantTitleCandidate = titleFromUrlPath(url);
@@ -1146,8 +1151,11 @@ function App() {
     setError("");
 
     try {
+      setJobLookupStage("Fetching title, company, and skills...");
       const { title, company, skills } = await fetchJobInsightsFromUrl(url);
       if (jobUrlLookupRef.current !== requestId) return;
+      setJobLookupProgress(88);
+      setJobLookupStage("Applying results...");
       const fallbackSkills = inferSkillsFromTitle(title);
       const mergedSkills = [...skills, ...fallbackSkills]
         .map((s) => (s || "").trim())
@@ -1168,9 +1176,11 @@ function App() {
       if (washedSkills[2]) setFieldLabelAndValueByKey("pos_skill_3", washedSkills[2]);
       setNotice("Job details populated from URL.");
       setError("");
+      completeJobLookupProgress("URL complete.");
     } catch {
       if (jobUrlLookupRef.current !== requestId) return;
       setError("Could not fetch job title from URL.");
+      completeJobLookupProgress("URL failed.");
     } finally {
       if (jobUrlLookupRef.current === requestId) {
         setIsResolvingJobTitle(false);
@@ -1269,6 +1279,40 @@ function App() {
     }
   };
 
+  // Stop URL lookup timer so only one progress animation runs at a time.
+  const clearJobLookupTimer = () => {
+    if (jobLookupTimerRef.current) {
+      clearInterval(jobLookupTimerRef.current);
+      jobLookupTimerRef.current = null;
+    }
+  };
+
+  // Begin URL lookup progress animation.
+  const startJobLookupProgress = () => {
+    clearJobLookupTimer();
+    setJobLookupProgress(8);
+    setJobLookupStage("Reading page title...");
+    jobLookupTimerRef.current = setInterval(() => {
+      setJobLookupProgress((prev) => {
+        if (prev >= 92) return prev;
+        if (prev < 50) return prev + 9;
+        if (prev < 75) return prev + 4;
+        return prev + 2;
+      });
+    }, 180);
+  };
+
+  // Finish URL lookup progress animation and clear it shortly after.
+  const completeJobLookupProgress = (stageText) => {
+    clearJobLookupTimer();
+    setJobLookupProgress(100);
+    setJobLookupStage(stageText);
+    setTimeout(() => {
+      setJobLookupProgress(0);
+      setJobLookupStage("");
+    }, 900);
+  };
+
   // Demo "start script": shows staged progress until app is ready.
   const startCoverAI = () => {
     clearStartupTimer();
@@ -1299,8 +1343,14 @@ function App() {
     setError("");
   };
 
-  // Cleanup timer if user leaves page/component.
-  useEffect(() => () => clearStartupTimer(), []);
+  // Cleanup timers if user leaves page/component.
+  useEffect(
+    () => () => {
+      clearStartupTimer();
+      clearJobLookupTimer();
+    },
+    []
+  );
 
   const isRunning = startupPhase === "running";
   const isReady = startupPhase === "ready";
@@ -1599,10 +1649,21 @@ function App() {
       </main>
 
       {/* Small status area for success/error/loading feedback. */}
-      {(notice || error || isLoadingFile || isResolvingJobTitle) && (
+      {(notice || error || isLoadingFile || isResolvingJobTitle || jobLookupProgress > 0) && (
         <div className="status-row" role="status" aria-live="polite">
           {isLoadingFile && <span>Loading file...</span>}
-          {isResolvingJobTitle && <span>Resolving job title...</span>}
+          {isResolvingJobTitle && <span>Resolving job details...</span>}
+          {jobLookupProgress > 0 && (
+            <div className="job-lookup-progress" aria-label="Job URL process status">
+              <div className="job-lookup-row">
+                <strong>{jobLookupStage || "Processing URL..."}</strong>
+                <span>{jobLookupProgress}%</span>
+              </div>
+              <div className="progress-track">
+                <div className="progress-fill" style={{ width: `${jobLookupProgress}%` }} />
+              </div>
+            </div>
+          )}
           {notice && <span className="ok">{notice}</span>}
           {error && <span className="err">{error}</span>}
         </div>
