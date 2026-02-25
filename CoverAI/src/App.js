@@ -310,6 +310,38 @@ function extractTitleTag(content) {
   return normalizeTitleCandidate(match?.[1] || "");
 }
 
+function extractCompanyFromTitleTag(content, rawUrl) {
+  const titleTag = extractTitleTag(content);
+  if (!titleTag) return "";
+
+  // Job boards commonly format <title> as:
+  // "Job Title | Company Name | Board Name"
+  // So we first try the exact segment right after the first pipe.
+  const rawParts = titleTag
+    .split("|")
+    .map((part) => normalizeTitleCandidate(part))
+    .filter(Boolean);
+  if (rawParts.length < 2) return "";
+  const parts = rawParts.map((p) => cleanCompanyName(p)).filter(Boolean);
+
+  const siteModel = getJobSiteModel(rawUrl);
+  const siteName = siteModel?.name?.toLowerCase() || "";
+
+  const candidate = parts[1] || "";
+  if (candidate && !candidate.toLowerCase().includes(siteName) && isValidCompanyCandidate(candidate)) {
+    return candidate;
+  }
+
+  // Fallback: pick first valid segment that is not the board name.
+  for (const part of parts) {
+    if (!part) continue;
+    if (siteName && part.toLowerCase().includes(siteName)) continue;
+    if (isValidCompanyCandidate(part)) return part;
+  }
+
+  return "";
+}
+
 function isLikelyJobTitle(value) {
   const text = normalizeTitleCandidate(value);
   if (!text) return false;
@@ -510,10 +542,38 @@ function cleanCompanyName(raw) {
     .replace(/\s+/g, " ")
     .trim();
 
+  // Some scraped pages space letters like "T r i n i t y".
+  // Merge consecutive single-letter tokens into normal words.
+  const collapseSingleLetterRuns = (value) => {
+    const tokens = value.split(/\s+/).filter(Boolean);
+    const output = [];
+    let run = [];
+
+    const flushRun = () => {
+      if (run.length === 0) return;
+      output.push(run.join(""));
+      run = [];
+    };
+
+    for (const token of tokens) {
+      if (token.length === 1 && /[a-z]/i.test(token)) {
+        run.push(token);
+        continue;
+      }
+      flushRun();
+      output.push(token);
+    }
+    flushRun();
+
+    return output.join(" ").trim();
+  };
+
+  const deSpaced = collapseSingleLetterRuns(cleaned);
+
   // Remove common legal/business suffixes at the end only.
   const suffixPattern =
     /\s*,?\s*(incorporated|inc|corporation|corp|company|co|llc|l\.l\.c|ltd|limited|plc|gmbh|s\.a\.|s\.a|ag)\.?$/i;
-  let normalized = cleaned;
+  let normalized = deSpaced;
   while (suffixPattern.test(normalized)) {
     normalized = normalized.replace(suffixPattern, "").trim();
   }
@@ -584,6 +644,8 @@ function bestCompanyCandidate(candidates) {
 function extractCompanyFromContent(content, rawUrl, titleHint = "") {
   if (!content) return "";
   const siteModel = getJobSiteModel(rawUrl);
+  const titleTagCompany = extractCompanyFromTitleTag(content, rawUrl);
+  if (titleTagCompany) return titleTagCompany;
 
   // LinkedIn-specific first pass.
   if (siteModel?.name === "LinkedIn") {
