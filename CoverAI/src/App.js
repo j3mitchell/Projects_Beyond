@@ -923,6 +923,18 @@ function App() {
     jobUrlLookupRef.current = requestId;
     setIsResolvingJobTitle(true);
     setFieldLabelAndValueByKey("job_url", url);
+    // Instant prefill from URL slug so the UI updates immediately.
+    const instantTitle = washJobTitle(titleFromUrlPath(url)) || titleFromUrlPath(url);
+    const instantSkills = inferSkillsFromTitle(instantTitle).slice(0, 3);
+    if (instantTitle) {
+      setFieldLabelAndValueByKey("job_listing_ref_title", instantTitle);
+      setFieldLabelAndValueByKey("position_title", instantTitle);
+    }
+    if (instantSkills[0]) setFieldLabelAndValueByKey("pos_skill_1", instantSkills[0]);
+    if (instantSkills[1]) setFieldLabelAndValueByKey("pos_skill_2", instantSkills[1]);
+    if (instantSkills[2]) setFieldLabelAndValueByKey("pos_skill_3", instantSkills[2]);
+    setNotice("Job URL committed. Refining details...");
+    setError("");
 
     try {
       const { title, company, skills } = await fetchJobInsightsFromUrl(url);
