@@ -24,22 +24,22 @@ async function getPdfJs() {
 
 // Starter placeholders shown on first load and after reset.
 const DEFAULT_FIELDS = [
-  { id: "f1", key: "hiring_manager", label: "Hiring Manager", value: "" },
-  { id: "f2", key: "company_name", label: "Company Name", value: "" },
-  { id: "f3", key: "position_title", label: "Position Title", value: "" },
-  { id: "f4", key: "pos_skill_1", label: "Pos Skill 1", value: "" },
-  { id: "f5", key: "pos_skill_2", label: "Pos Skill 2", value: "" },
-  { id: "f6", key: "pos_skill_3", label: "Pos Skill 3", value: "" },
-  { id: "f7", key: "job_url", label: "Job URL", value: "" },
-  { id: "f8", key: "job_listing_ref_title", label: "Ref Title", value: "" },
-  { id: "f9", key: "job_listing_ref_url", label: "Ref URL", value: "" },
-  { id: "f10", key: "prev_company", label: "Prev Company", value: "" },
-  { id: "f11", key: "my_skill_1", label: "My Skill 1", value: "" },
-  { id: "f12", key: "my_skill_2", label: "My Skill 2", value: "" },
-  { id: "f13", key: "my_skill_3", label: "My Skill 3", value: "" },
-  { id: "f14", key: "additional_exp_1", label: "Additional Exp 1", value: "" },
-  { id: "f15", key: "additional_exp_2", label: "Additional Exp 2", value: "" },
-  { id: "f16", key: "my_signature", label: "My Signature", value: "" },
+  { id: "f1", key: "hiring_manager", label: "", value: "" },
+  { id: "f2", key: "company_name", label: "", value: "" },
+  { id: "f3", key: "position_title", label: "", value: "" },
+  { id: "f4", key: "pos_skill_1", label: "", value: "" },
+  { id: "f5", key: "pos_skill_2", label: "", value: "" },
+  { id: "f6", key: "pos_skill_3", label: "", value: "" },
+  { id: "f7", key: "job_url", label: "", value: "" },
+  { id: "f8", key: "job_listing_ref_title", label: "", value: "" },
+  { id: "f9", key: "job_listing_ref_url", label: "", value: "" },
+  { id: "f10", key: "prev_company", label: "", value: "" },
+  { id: "f11", key: "my_skill_1", label: "", value: "" },
+  { id: "f12", key: "my_skill_2", label: "", value: "" },
+  { id: "f13", key: "my_skill_3", label: "", value: "" },
+  { id: "f14", key: "additional_exp_1", label: "", value: "" },
+  { id: "f15", key: "additional_exp_2", label: "", value: "" },
+  { id: "f16", key: "my_signature", label: "", value: "" },
 ];
 
 // Starter letter template that includes tokens wrapped in {{ }}.
@@ -74,6 +74,25 @@ const FIELD_SUGGESTIONS = {
   additional_exp_1: "e.g., Led onboarding redesign across 4 teams",
   additional_exp_2: "e.g., Built KPI dashboard used by executives",
   my_signature: "e.g., Jane Doe | jane@email.com",
+};
+
+const FIELD_LABEL_SUGGESTIONS = {
+  hiring_manager: "Hiring Manager",
+  company_name: "Company Name",
+  position_title: "Position Title",
+  pos_skill_1: "Pos Skill 1",
+  pos_skill_2: "Pos Skill 2",
+  pos_skill_3: "Pos Skill 3",
+  job_url: "Job URL",
+  job_listing_ref_title: "Ref Title",
+  job_listing_ref_url: "Ref URL",
+  prev_company: "Prev Company",
+  my_skill_1: "My Skill 1",
+  my_skill_2: "My Skill 2",
+  my_skill_3: "My Skill 3",
+  additional_exp_1: "Additional Exp 1",
+  additional_exp_2: "Additional Exp 2",
+  my_signature: "My Signature",
 };
 
 // Turn human text into a safe token key (ex: "Top Skill" -> "top_skill").
@@ -291,6 +310,7 @@ function App() {
 
   // Return a field-specific suggestion to show as grey helper text.
   const getFieldSuggestion = (fieldKey) => FIELD_SUGGESTIONS[fieldKey] || "Type value used in final letter";
+  const getFieldLabelSuggestion = (fieldKey) => FIELD_LABEL_SUGGESTIONS[fieldKey] || "Field Label";
 
   // Keep token keys safe and unique so collisions don't break replacements.
   const updateFieldKey = (id, rawKey) => {
@@ -575,7 +595,7 @@ function App() {
                 title={`Insert token {{${field.key}}}`}
                 disabled={!isReady}
               >
-                {field.label || field.key}
+                {field.label || getFieldLabelSuggestion(field.key)}
               </button>
             ))}
           </div>
@@ -589,7 +609,7 @@ function App() {
                   onChange={(event) => updateField(field.id, "label", event.target.value)}
                   onFocus={(event) => event.target.select()}
                   disabled={!isReady}
-                  placeholder="Label"
+                  placeholder={getFieldLabelSuggestion(field.key)}
                 />
                 <input
                   className="field-input mono"
