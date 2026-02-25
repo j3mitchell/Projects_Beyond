@@ -310,6 +310,19 @@ function extractTitleTag(content) {
   return normalizeTitleCandidate(match?.[1] || "");
 }
 
+// Simple title parser for URL commit:
+// 1) before first "|" => job title
+// 2) after first "|" and before second "|" => company
+function extractTitleAndCompanyFromTitleTag(content) {
+  const titleTag = extractTitleTag(content);
+  if (!titleTag) return { title: "", company: "" };
+
+  const parts = titleTag.split("|").map((part) => normalizeTitleCandidate(part));
+  const title = parts[0] || "";
+  const company = parts[1] || "";
+  return { title, company };
+}
+
 function extractCompanyFromTitleTag(content, rawUrl) {
   const titleTag = extractTitleTag(content);
   if (!titleTag) return "";
@@ -340,45 +353,6 @@ function extractCompanyFromTitleTag(content, rawUrl) {
   }
 
   return "";
-}
-
-function isLikelyJobTitle(value) {
-  const text = normalizeTitleCandidate(value);
-  if (!text) return false;
-  if (text.length < 4 || text.length > 120) return false;
-  if (/https?:\/\//i.test(text)) return false;
-  if (/\b(reposted|clicked apply|responses managed|on-site|full-time|part-time)\b/i.test(text)) return false;
-  if (/\b[A-Za-z ]+,\s*[A-Z]{2}\b/.test(text)) return false; // likely location like "Silver Spring, MD"
-  return true;
-}
-
-function titleCandidateScore(rawValue) {
-  const text = normalizeTitleCandidate(rawValue);
-  if (!isLikelyJobTitle(text)) return -1000;
-  const nouns =
-    /\b(engineer|developer|administrator|manager|analyst|specialist|officer|nurse|planner|technician|representative|consultant|architect)\b/i;
-  const words = text.split(/\s+/).filter(Boolean);
-  let score = 0;
-  score += Math.min(words.length, 8);
-  if (nouns.test(text)) score += 20;
-  if (/-/.test(text)) score += 2;
-  if (/\bii|iii|iv|jr|sr|lead|senior|principal\b/i.test(text)) score += 4;
-  return score;
-}
-
-function bestTitleCandidate(candidates) {
-  const unique = [];
-  const seen = new Set();
-  for (const raw of candidates) {
-    const normalized = normalizeTitleCandidate(raw || "");
-    const key = normalized.toLowerCase();
-    if (!normalized || seen.has(key)) continue;
-    seen.add(key);
-    unique.push(normalized);
-  }
-  if (unique.length === 0) return "";
-  unique.sort((a, b) => titleCandidateScore(b) - titleCandidateScore(a));
-  return unique[0];
 }
 
 function safeJsonParse(raw) {
@@ -441,76 +415,6 @@ function extractLinkedInJsonData(content) {
   const bestCompany = bestCompanyCandidate(companyCandidates.map(cleanCompanyName).filter(Boolean));
 
   return { title: bestTitle, company: bestCompany };
-}
-
-function extractTitleWithModel(content, siteModel) {
-  if (!content) return "";
-  const tagTitle = extractTitleTag(content);
-  if (isLikelyJobTitle(tagTitle)) return tagTitle;
-
-  if (siteModel?.name === "LinkedIn") {
-    // Fast path first: common LinkedIn title containers.
-    const linkedInCandidates = [
-      content.match(/<h1[^>]*>\s*([^<]+)\s*<\/h1>/i)?.[1],
-      content.match(/href="https:\/\/www\.linkedin\.com\/jobs\/view\/[^"]+"[^>]*>([^<]+)</i)?.[1],
-      content.match(/class="[^"]*job-details-jobs-unified-top-card__job-title[^"]*"[\s\S]*?<h1[^>]*>\s*([^<]+)\s*<\/h1>/i)?.[1],
-      content.match(/^Title:\s*(.+)$/im)?.[1],
-    ].filter(Boolean);
-    const topLinkedInTitle = bestTitleCandidate(linkedInCandidates);
-    if (topLinkedInTitle) return topLinkedInTitle;
-
-    // JSON-LD fallback only if fast HTML patterns missed.
-    const linkedInJson = extractLinkedInJsonData(content);
-    if (linkedInJson.title) return linkedInJson.title;
-  }
-  if (!siteModel) {
-    const generic = content.match(/^Title:\s*(.+)$/im);
-    return bestTitleCandidate([generic?.[1] || ""]);
-  }
-
-  const collected = [];
-  for (const pattern of siteModel.titlePatterns) {
-    const match = content.match(pattern);
-    const candidate = normalizeTitleCandidate(match?.[1] || "");
-    if (candidate) collected.push(candidate);
-  }
-  return bestTitleCandidate(collected);
-}
-
-async function fetchJobTitleFromUrl(rawUrl) {
-  const siteModel = getJobSiteModel(rawUrl);
-
-  const fromDirect = async () =>
-    withTimeout(5000, async () => {
-      const direct = await fetch(rawUrl, { mode: "cors" });
-      if (!direct.ok) throw new Error("direct not ok");
-      const html = await direct.text();
-      const modelTitle = extractTitleWithModel(html, siteModel);
-      if (modelTitle) return modelTitle;
-      const doc = new DOMParser().parseFromString(html, "text/html");
-      const title = doc.querySelector("meta[property='og:title']")?.getAttribute("content") || doc.title;
-      if (!title?.trim()) throw new Error("no direct title");
-      return title.trim();
-    });
-
-  const fromMirror = async () =>
-    withTimeout(7000, async () => {
-      const mirror = await fetch(`https://r.jina.ai/${rawUrl}`);
-      if (!mirror.ok) throw new Error("mirror not ok");
-      const content = await mirror.text();
-      const siteSpecificTitle = extractTitleWithModel(content, siteModel);
-      if (!siteSpecificTitle) throw new Error("no mirror title");
-      return siteSpecificTitle;
-    });
-
-  try {
-    // Run both sources in parallel and take whichever resolves first.
-    return await Promise.any([fromDirect(), fromMirror()]);
-  } catch {
-    // Ignore and use URL-derived fallback.
-  }
-
-  return titleFromUrlPath(rawUrl);
 }
 
 function companyFromUrl(rawUrl) {
@@ -789,113 +693,6 @@ function washSkillToShortPhrase(rawSkill) {
   return toTitleCasePhrase(kept.join(" "));
 }
 
-function cleanJobTitleText(rawTitle) {
-  return (rawTitle || "")
-    .replace(/\s+/g, " ")
-    .replace(/[|].*$/, "")
-    .replace(/[-–]\s*(careers?|jobs?)$/i, "")
-    .trim();
-}
-
-function washJobTitle(rawTitle) {
-  const title = cleanJobTitleText(rawTitle);
-  if (!title) return "";
-
-  const nounSet = new Set([
-    "engineer",
-    "assistant",
-    "officer",
-    "administrator",
-    "developer",
-    "representative",
-    "manager",
-    "accountant",
-    "planner",
-    "analyst",
-    "specialist",
-    "coordinator",
-    "architect",
-    "technician",
-    "consultant",
-    "director",
-    "lead",
-  ]);
-
-  const adjectiveSet = new Set([
-    "database",
-    "software",
-    "web",
-    "mechanical",
-    "civil",
-    "administrative",
-    "executive",
-    "peoplesoft",
-    "oracle",
-    "full-stack",
-    "office",
-    "county",
-    "lead",
-    "jr",
-    "senior",
-    "sr",
-    "field",
-    "systems",
-    "system",
-    "information",
-    "security",
-    "clinical",
-  ]);
-  const levelPrefixSet = new Set(["jr", "sr", "senior", "lead", "principal", "staff"]);
-  const levelSuffixSet = new Set(["i", "ii", "iii", "iv", "v", "1", "2", "3", "4", "5"]);
-
-  const normalized = title
-    .replace(/[()]/g, " ")
-    .replace(/[^\w\s/-]/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-  const words = normalized.split(" ").filter(Boolean);
-  if (words.length === 2) return toTitleCasePhrase(words.join(" "));
-  if (words.length <= 3) return toTitleCasePhrase(words.join(" "));
-
-  // Find first noun anchor and collect compact adjective + noun (+ optional level).
-  let nounIndex = words.findIndex((word) => nounSet.has(word.toLowerCase()));
-  if (nounIndex < 0) nounIndex = words.length - 1;
-
-  const picked = [];
-  const before = words.slice(0, nounIndex);
-
-  // Prefer one level prefix (Lead/Jr/Sr/etc.) when present.
-  const levelPrefix = before.find((w) => levelPrefixSet.has(w.toLowerCase()));
-  if (levelPrefix) picked.push(levelPrefix);
-
-  // Prefer one strong adjective closest to noun.
-  let adjectiveCandidate = "";
-  for (let i = before.length - 1; i >= 0; i -= 1) {
-    const w = before[i].toLowerCase();
-    if (adjectiveSet.has(w) || w.length > 3) {
-      adjectiveCandidate = before[i];
-      break;
-    }
-  }
-  if (adjectiveCandidate && !picked.some((w) => w.toLowerCase() === adjectiveCandidate.toLowerCase())) {
-    picked.push(adjectiveCandidate);
-  }
-
-  // Core noun (Engineer, Developer, Nurse, etc.).
-  picked.push(words[nounIndex]);
-
-  // Optional level suffix right after noun: II/III/2/etc.
-  const nextWord = words[nounIndex + 1];
-  if (nextWord && levelSuffixSet.has(nextWord.toLowerCase())) {
-    picked.push(nextWord.toUpperCase());
-  }
-
-  // Final title: keep concise output at 3 words max.
-  const compact = picked.filter(Boolean);
-  const maxWords = 3;
-  return toTitleCasePhrase(compact.slice(0, maxWords).join(" "));
-}
-
 function extractTopSkillsFromText(rawText) {
   if (!rawText) return [];
   const lines = rawText
@@ -961,10 +758,27 @@ function extractTopSkillsFromText(rawText) {
 }
 
 async function fetchJobInsightsFromUrl(rawUrl) {
-  // Run title lookup and mirror lookup at the same time so we do not stack delays.
-  // Use allSettled so any rejection is consumed and never bubbles as an uncaught promise.
-  const [titleResult, mirrorResult] = await Promise.allSettled([
-    fetchJobTitleFromUrl(rawUrl),
+  // Run title/company lookup and mirror lookup at the same time.
+  // allSettled keeps every rejection consumed so there are no uncaught promises.
+  const [titleCompanyResult, mirrorResult] = await Promise.allSettled([
+    Promise.any([
+      withTimeout(5000, async () => {
+        const direct = await fetch(rawUrl, { mode: "cors" });
+        if (!direct.ok) throw new Error("direct not ok");
+        const html = await direct.text();
+        const parsed = extractTitleAndCompanyFromTitleTag(html);
+        if (!parsed.title && !parsed.company) throw new Error("no title tag values");
+        return parsed;
+      }),
+      withTimeout(5000, async () => {
+        const mirror = await fetch(`https://r.jina.ai/${rawUrl}`);
+        if (!mirror.ok) throw new Error("mirror not ok");
+        const content = await mirror.text();
+        const parsed = extractTitleAndCompanyFromTitleTag(content);
+        if (!parsed.title && !parsed.company) throw new Error("no title tag values");
+        return parsed;
+      }),
+    ]),
     withTimeout(5000, async () => {
       const mirror = await fetch(`https://r.jina.ai/${rawUrl}`);
       if (!mirror.ok) throw new Error("mirror not ok");
@@ -972,15 +786,18 @@ async function fetchJobInsightsFromUrl(rawUrl) {
     }),
   ]);
 
-  const title = titleResult.status === "fulfilled" ? titleResult.value : titleFromUrlPath(rawUrl);
-  let company = "";
+  const title =
+    titleCompanyResult.status === "fulfilled" ? titleCompanyResult.value.title || titleFromUrlPath(rawUrl) : titleFromUrlPath(rawUrl);
+  let company = titleCompanyResult.status === "fulfilled" ? titleCompanyResult.value.company || "" : "";
   let skills = [];
 
   try {
     if (mirrorResult.status !== "fulfilled") throw new Error("mirror unavailable");
     const content = mirrorResult.value;
     skills = extractTopSkillsFromText(content);
-    company = extractCompanyFromContent(content, rawUrl, title);
+    if (!company) {
+      company = extractCompanyFromContent(content, rawUrl, title);
+    }
   } catch {
     // Mirror can be slow or blocked; keep best-effort behavior.
   }
@@ -1316,7 +1133,7 @@ function App() {
     // Instant prefill from URL slug so the UI updates immediately.
     const instantTitleCandidate = titleFromUrlPath(url);
     const canUseInstantTitle = instantTitleCandidate && !isNumericOnlyTitle(instantTitleCandidate);
-    const instantTitle = canUseInstantTitle ? (washJobTitle(instantTitleCandidate) || instantTitleCandidate) : "";
+    const instantTitle = canUseInstantTitle ? instantTitleCandidate : "";
     const instantSkills = canUseInstantTitle ? inferSkillsFromTitle(instantTitle).slice(0, 3) : [];
     if (canUseInstantTitle && instantTitle) {
       setFieldLabelAndValueByKey("job_listing_ref_title", instantTitle);
@@ -1331,8 +1148,6 @@ function App() {
     try {
       const { title, company, skills } = await fetchJobInsightsFromUrl(url);
       if (jobUrlLookupRef.current !== requestId) return;
-      const rawResolvedTitle = cleanJobTitleText(title) || title;
-      const washedTitle = washJobTitle(rawResolvedTitle) || rawResolvedTitle;
       const fallbackSkills = inferSkillsFromTitle(title);
       const mergedSkills = [...skills, ...fallbackSkills]
         .map((s) => (s || "").trim())
@@ -1345,16 +1160,8 @@ function App() {
         .filter((skill, index, arr) => arr.findIndex((x) => x.toLowerCase() === skill.toLowerCase()) === index)
         .slice(0, 3);
 
-      // Apply raw title first, then wash as a quick second pass.
-      setFieldLabelAndValueByKey("job_listing_ref_title", rawResolvedTitle);
-      setFieldLabelAndValueByKey("position_title", rawResolvedTitle);
-      if (washedTitle && washedTitle !== rawResolvedTitle) {
-        setTimeout(() => {
-          if (jobUrlLookupRef.current !== requestId) return;
-          setFieldLabelAndValueByKey("job_listing_ref_title", washedTitle);
-          setFieldLabelAndValueByKey("position_title", washedTitle);
-        }, 120);
-      }
+      setFieldLabelAndValueByKey("job_listing_ref_title", title);
+      setFieldLabelAndValueByKey("position_title", title);
       if (company) setFieldLabelAndValueByKey("company_name", company);
       if (washedSkills[0]) setFieldLabelAndValueByKey("pos_skill_1", washedSkills[0]);
       if (washedSkills[1]) setFieldLabelAndValueByKey("pos_skill_2", washedSkills[1]);
