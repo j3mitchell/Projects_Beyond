@@ -1814,12 +1814,12 @@ function App() {
             aria-label="Template style"
             title="Template style"
           >
-            <option value="eng">eng - engineering</option>
-            <option value="cus">cus - customer service</option>
-            <option value="fin">fin - financial</option>
-            <option value="mgr">mgr - management</option>
-            <option value="custom_1">{sanitizeStyleCode(customStyle1Code, "cus1")} - custom 1</option>
-            <option value="custom_2">{sanitizeStyleCode(customStyle2Code, "cus2")} - custom 2</option>
+            <option value="eng">Eng</option>
+            <option value="cus">Cus</option>
+            <option value="fin">Fin</option>
+            <option value="mgr">Mgr</option>
+            <option value="custom_1">{sanitizeStyleCode(customStyle1Code, "cus1")}</option>
+            <option value="custom_2">{sanitizeStyleCode(customStyle2Code, "cus2")}</option>
           </select>
         </div>
       </header>
