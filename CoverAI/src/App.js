@@ -1265,6 +1265,10 @@ function App() {
       if (jobUrlLookupRef.current !== requestId) return;
       setJobLookupProgress(88);
       setJobLookupStage("Applying results...");
+      const refFirstSegment = (refTitle || "").split("|")[0]?.trim() || "";
+      const resolvedPositionTitle = [title, refFirstSegment, instantTitle].find(
+        (candidate) => candidate && !isNumericOnlyTitle(candidate)
+      );
       const fallbackSkills = inferSkillsFromTitle(title);
       const mergedSkills = [...skills, ...fallbackSkills]
         .map((s) => (s || "").trim())
@@ -1277,9 +1281,7 @@ function App() {
         .filter((skill, index, arr) => arr.findIndex((x) => x.toLowerCase() === skill.toLowerCase()) === index)
         .slice(0, 3);
 
-      if (title && !isNumericOnlyTitle(title)) {
-        setFieldLabelAndValueByKey("position_title", title);
-      }
+      if (resolvedPositionTitle) setFieldLabelAndValueByKey("position_title", resolvedPositionTitle);
       const resolvedRefTitle = refTitle || title || instantTitle;
       if (resolvedRefTitle) setFieldLabelAndValueByKey("job_listing_ref_title", resolvedRefTitle);
       // Always update the company field so stale values do not stick.
