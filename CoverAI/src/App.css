@@ -211,7 +211,27 @@
 }
 
 .editor {
-  resize: vertical;
+  overflow: auto;
+  white-space: pre-wrap;
+  outline: none;
+}
+
+.editor[data-placeholder]:empty::before {
+  content: attr(data-placeholder);
+  color: #7d8a8f;
+}
+
+.editor-chip {
+  display: inline-block;
+  margin: 0 0.15rem;
+  padding: 0.08rem 0.45rem;
+  border-radius: 999px;
+  border: 1px solid #58968e;
+  background: #eff9f7;
+  color: #125b52;
+  font: 600 0.83rem/1.35 "IBM Plex Sans", "Segoe UI", sans-serif;
+  vertical-align: baseline;
+  user-select: none;
 }
 
 .preview {

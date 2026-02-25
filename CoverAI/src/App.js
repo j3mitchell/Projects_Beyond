@@ -95,6 +95,79 @@ const FIELD_LABEL_SUGGESTIONS = {
   my_signature: "My Signature",
 };
 
+function buildChipElement(fieldKey, labelByKey) {
+  const chip = document.createElement("span");
+  chip.className = "editor-chip";
+  chip.setAttribute("contenteditable", "false");
+  chip.dataset.tokenKey = fieldKey;
+  chip.textContent = labelByKey[fieldKey] || fieldKey;
+  return chip;
+}
+
+function normalizeEditorTemplate(rootNode) {
+  const chunks = [];
+
+  const walk = (node) => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      chunks.push(node.textContent || "");
+      return;
+    }
+
+    if (node.nodeType !== Node.ELEMENT_NODE) return;
+    const element = node;
+
+    if (element.classList?.contains("editor-chip") && element.dataset.tokenKey) {
+      chunks.push(`{{${element.dataset.tokenKey}}}`);
+      return;
+    }
+
+    if (element.tagName === "BR") {
+      chunks.push("\n");
+      return;
+    }
+
+    Array.from(element.childNodes).forEach(walk);
+
+    if (element.tagName === "DIV" || element.tagName === "P") {
+      chunks.push("\n");
+    }
+  };
+
+  Array.from(rootNode.childNodes).forEach(walk);
+  return chunks.join("").replace(/\n{3,}/g, "\n\n");
+}
+
+function renderEditorNodes(templateText, labelByKey) {
+  const fragment = document.createDocumentFragment();
+  let cursor = 0;
+  let match = TOKEN_REGEX.exec(templateText);
+
+  while (match) {
+    const tokenStart = match.index;
+    const tokenEnd = match.index + match[0].length;
+    const tokenKey = match[1].toLowerCase();
+
+    if (tokenStart > cursor) {
+      fragment.appendChild(document.createTextNode(templateText.slice(cursor, tokenStart)));
+    }
+    fragment.appendChild(buildChipElement(tokenKey, labelByKey));
+    cursor = tokenEnd;
+    match = TOKEN_REGEX.exec(templateText);
+  }
+  TOKEN_REGEX.lastIndex = 0;
+
+  if (cursor < templateText.length) {
+    fragment.appendChild(document.createTextNode(templateText.slice(cursor)));
+  }
+
+  return fragment;
+}
+
+function extractTokenKey(rawToken) {
+  const match = rawToken?.match(/{{\s*([a-z0-9_]+)\s*}}/i);
+  return match ? match[1].toLowerCase() : "";
+}
+
 // Turn human text into a safe token key (ex: "Top Skill" -> "top_skill").
 function slugify(input) {
   const normalized = input.toLowerCase().trim().replace(/[^a-z0-9]+/g, "_");
@@ -169,6 +242,7 @@ function App() {
   const editorRef = useRef(null);
   const importProjectRef = useRef(null);
   const startupTimerRef = useRef(null);
+  const isSyncingEditorRef = useRef(false);
 
   // Main app state: template text, fields, UI mode, and status messages.
   const [template, setTemplate] = useState(DEFAULT_TEMPLATE);
@@ -231,6 +305,13 @@ function App() {
   // Recompute preview text and missing tokens whenever inputs change.
   const { rendered, unresolved } = useMemo(() => renderTemplate(template, valueByKey), [template, valueByKey]);
   const tokensInTemplate = useMemo(() => extractTokens(template), [template]);
+  const labelByKey = useMemo(
+    () =>
+      Object.fromEntries(
+        fields.map((field) => [field.key.toLowerCase(), field.label || FIELD_LABEL_SUGGESTIONS[field.key] || field.key])
+      ),
+    [fields]
+  );
 
   // Small dashboard stats shown below the editor.
   const stats = useMemo(
@@ -243,35 +324,59 @@ function App() {
     [rendered, template, unresolved.length]
   );
 
-  // Insert a token at the current cursor position in the textarea.
-  const insertTokenAtCursor = (token) => {
+  // Insert a token chip at the current cursor position in the editor.
+  const insertTokenAtCursor = (fieldKey) => {
     const editor = editorRef.current;
     if (!editor) return;
     editor.focus();
-    const start = editor.selectionStart ?? template.length;
-    const end = editor.selectionEnd ?? template.length;
-    const updated = `${template.slice(0, start)}${token}${template.slice(end)}`;
-    setTemplate(updated);
-    const nextPosition = start + token.length;
-    requestAnimationFrame(() => {
-      editor.selectionStart = nextPosition;
-      editor.selectionEnd = nextPosition;
-    });
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) return;
+
+    const range = selection.getRangeAt(0);
+    const chip = buildChipElement(fieldKey, labelByKey);
+    range.deleteContents();
+    range.insertNode(chip);
+    range.collapse(false);
+    selection.removeAllRanges();
+    selection.addRange(range);
+    setTemplate(normalizeEditorTemplate(editor));
   };
 
-  // Start drag operation by placing token text into drag payload.
+  useEffect(() => {
+    const editor = editorRef.current;
+    if (!editor || activeTab !== "editor") return;
+
+    if (isSyncingEditorRef.current) {
+      isSyncingEditorRef.current = false;
+      return;
+    }
+
+    editor.textContent = "";
+    editor.appendChild(renderEditorNodes(template, labelByKey));
+  }, [activeTab, labelByKey, template]);
+
+  const handleEditorInput = () => {
+    const editor = editorRef.current;
+    if (!editor) return;
+    isSyncingEditorRef.current = true;
+    setTemplate(normalizeEditorTemplate(editor));
+  };
+
+  // Start drag operation by placing field key into drag payload.
   const handleTokenDragStart = (event, fieldKey) => {
-    const token = `{{${fieldKey}}}`;
-    event.dataTransfer.setData("text/plain", token);
+    event.dataTransfer.setData("application/x-coverai-token-key", fieldKey);
+    event.dataTransfer.setData("text/plain", `{{${fieldKey}}}`);
     event.dataTransfer.effectAllowed = "copy";
   };
 
   // On drop inside editor, pull token text and insert it at cursor.
   const handleEditorDrop = (event) => {
     event.preventDefault();
-    const token = event.dataTransfer.getData("text/plain");
-    if (!token) return;
-    insertTokenAtCursor(token);
+    const droppedKey =
+      event.dataTransfer.getData("application/x-coverai-token-key") ||
+      extractTokenKey(event.dataTransfer.getData("text/plain"));
+    if (!droppedKey) return;
+    insertTokenAtCursor(droppedKey);
   };
 
   // Upload template from .txt or .pdf file.
@@ -551,15 +656,17 @@ function App() {
           </div>
 
           {activeTab === "editor" ? (
-            <textarea
+            <div
               ref={editorRef}
               className="editor"
-              value={template}
-              onChange={(event) => setTemplate(event.target.value)}
+              contentEditable={isReady}
+              suppressContentEditableWarning
+              onInput={handleEditorInput}
               onDrop={handleEditorDrop}
               onDragOver={(event) => event.preventDefault()}
-              disabled={!isReady}
-              placeholder="Write your cover letter template here..."
+              role="textbox"
+              aria-label="Template editor"
+              data-placeholder="Write your cover letter template here..."
             />
           ) : (
             <pre className="preview">{rendered}</pre>
@@ -591,7 +698,7 @@ function App() {
                 className="token"
                 draggable
                 onDragStart={(event) => handleTokenDragStart(event, field.key)}
-                onClick={() => insertTokenAtCursor(`{{${field.key}}}`)}
+                onClick={() => insertTokenAtCursor(field.key)}
                 title={`Insert token {{${field.key}}}`}
                 disabled={!isReady}
               >
