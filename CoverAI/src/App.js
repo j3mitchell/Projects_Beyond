@@ -353,6 +353,50 @@ function companyFromUrl(rawUrl) {
   }
 }
 
+function cleanCompanyName(raw) {
+  return (raw || "")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function extractCompanyFromContent(content, rawUrl, titleHint = "") {
+  if (!content) return "";
+  const siteModel = getJobSiteModel(rawUrl);
+
+  // LinkedIn-specific first pass.
+  if (siteModel?.name === "LinkedIn") {
+    const linkedInMatches = [
+      content.match(/Company,\s*([^.<\n]+)\./i)?.[1],
+      content.match(/company-name[^>]*>\s*<a[^>]*>\s*([^<]+)\s*</i)?.[1],
+      content.match(/\bat\s+([A-Z][A-Za-z0-9&.\- ]{2,60})\b/)?.[1],
+    ]
+      .map((value) => cleanCompanyName(value || ""))
+      .filter(Boolean);
+    if (linkedInMatches.length > 0) return linkedInMatches[0];
+  }
+
+  // Generic JSON-LD/metadata style matches.
+  const genericMatches = [
+    content.match(/"hiringOrganization"\s*:\s*\{[^}]*"name"\s*:\s*"([^"]+)"/i)?.[1],
+    content.match(/"name"\s*:\s*"([^"]+)"\s*,\s*"@type"\s*:\s*"Organization"/i)?.[1],
+    content.match(/Company[^:\n]*:\s*([^\n<|]+)/i)?.[1],
+  ]
+    .map((value) => cleanCompanyName(value || ""))
+    .filter(Boolean);
+  if (genericMatches.length > 0) return genericMatches[0];
+
+  // Pull from title patterns like "... at Company" as last content-based step.
+  const titleSource = titleHint || content.match(/^Title:\s*(.+)$/im)?.[1] || "";
+  const atMatch = titleSource.match(/\bat\s+([A-Z][A-Za-z0-9&.\- ]{2,60})$/i)?.[1];
+  const byMatch = titleSource.match(/\b-\s*([A-Z][A-Za-z0-9&.\- ]{2,60})\s*$/i)?.[1];
+  const titleDerived = cleanCompanyName(atMatch || byMatch || "");
+  if (titleDerived) return titleDerived;
+
+  return "";
+}
+
 function cleanSkillLine(line) {
   return line
     .replace(/^[-*•\d.)\s]+/, "")
@@ -609,7 +653,7 @@ function extractTopSkillsFromText(rawText) {
 
 async function fetchJobInsightsFromUrl(rawUrl) {
   const title = await fetchJobTitleFromUrl(rawUrl);
-  const company = companyFromUrl(rawUrl);
+  let company = "";
   let skills = [];
 
   try {
@@ -617,9 +661,14 @@ async function fetchJobInsightsFromUrl(rawUrl) {
     if (mirror.ok) {
       const content = await mirror.text();
       skills = extractTopSkillsFromText(content);
+      company = extractCompanyFromContent(content, rawUrl, title);
     }
   } catch {
     // Keep best-effort behavior; title fallback already exists.
+  }
+
+  if (!company) {
+    company = companyFromUrl(rawUrl);
   }
 
   return { title, company, skills };
