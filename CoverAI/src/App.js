@@ -26,24 +26,36 @@ async function getPdfJs() {
 const DEFAULT_FIELDS = [
   { id: "f1", key: "hiring_manager", label: "Hiring Manager", value: "" },
   { id: "f2", key: "company_name", label: "Company Name", value: "" },
-  { id: "f3", key: "job_title", label: "Job Title", value: "" },
-  { id: "f4", key: "city", label: "City", value: "" },
-  { id: "f5", key: "top_skill", label: "Top Skill", value: "" },
-  { id: "f6", key: "impact_metric", label: "Impact Metric", value: "" },
-  { id: "f7", key: "portfolio_link", label: "Portfolio Link", value: "" },
+  { id: "f3", key: "position_title", label: "Position Title", value: "" },
+  { id: "f4", key: "pos_skill_1", label: "Pos Skill 1", value: "" },
+  { id: "f5", key: "pos_skill_2", label: "Pos Skill 2", value: "" },
+  { id: "f6", key: "pos_skill_3", label: "Pos Skill 3", value: "" },
+  { id: "f7", key: "job_url", label: "Job URL", value: "" },
+  { id: "f8", key: "job_listing_ref_title", label: "Ref Title", value: "" },
+  { id: "f9", key: "job_listing_ref_url", label: "Ref URL", value: "" },
+  { id: "f10", key: "prev_company", label: "Prev Company", value: "" },
+  { id: "f11", key: "my_skill_1", label: "My Skill 1", value: "" },
+  { id: "f12", key: "my_skill_2", label: "My Skill 2", value: "" },
+  { id: "f13", key: "my_skill_3", label: "My Skill 3", value: "" },
+  { id: "f14", key: "additional_exp_1", label: "Additional Exp 1", value: "" },
+  { id: "f15", key: "additional_exp_2", label: "Additional Exp 2", value: "" },
+  { id: "f16", key: "my_signature", label: "My Signature", value: "" },
 ];
 
 // Starter letter template that includes tokens wrapped in {{ }}.
 const DEFAULT_TEMPLATE = `Dear {{hiring_manager}},
 
-I am excited to apply for the {{job_title}} role at {{company_name}} in {{city}}.
+I am excited to apply for the {{position_title}} role at {{company_name}}.
 
-I bring strong experience in {{top_skill}}, and recently delivered {{impact_metric}}.
+I reviewed the role requirements, including {{pos_skill_1}}, {{pos_skill_2}}, and {{pos_skill_3}}.
+Relevant examples from my background include work at {{prev_company}}, plus strengths in {{my_skill_1}}, {{my_skill_2}}, and {{my_skill_3}}.
+Additional experience: {{additional_exp_1}} and {{additional_exp_2}}.
 
-I would welcome the opportunity to discuss how I can contribute to your team.
+Job posting: {{job_url}}
+Reference: {{ref}}
 
 Sincerely,
-[Your Name]`;
+{{my_signature}}`;
 
 // Turn human text into a safe token key (ex: "Top Skill" -> "top_skill").
 function slugify(input) {
@@ -169,10 +181,14 @@ function App() {
   }, [fields, template]);
 
   // Memoized map keeps token lookups fast while typing.
-  const valueByKey = useMemo(
-    () => Object.fromEntries(fields.map((field) => [field.key.toLowerCase(), field.value.trim()])),
-    [fields]
-  );
+  const valueByKey = useMemo(() => {
+    const base = Object.fromEntries(fields.map((field) => [field.key.toLowerCase(), field.value.trim()]));
+    const refTitle = base.job_listing_ref_title;
+    const refUrl = base.job_listing_ref_url;
+    // Convenience token: {{ref}} becomes "[Title](URL)" when both fields are present.
+    if (refTitle && refUrl) base.ref = `[${refTitle}](${refUrl})`;
+    return base;
+  }, [fields]);
 
   // Recompute preview text and missing tokens whenever inputs change.
   const { rendered, unresolved } = useMemo(() => renderTemplate(template, valueByKey), [template, valueByKey]);
