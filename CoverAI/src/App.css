@@ -71,6 +71,12 @@
   max-width: 35rem;
 }
 
+/* Keep menu buttons uniform width; style picker remains excluded. */
+.header-actions > .button,
+.header-actions > label.button {
+  width: 132px;
+}
+
 .style-inline {
   display: inline-flex;
   align-items: center;
