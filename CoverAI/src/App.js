@@ -1768,6 +1768,9 @@ function App() {
           <button type="button" className="button" onClick={startCoverAI} disabled={isRunning}>
             Start CoverAI
           </button>
+          <button type="button" className="button secondary" onClick={createTemplateFile} disabled={!isReady}>
+            Create Template
+          </button>
           <button
             type="button"
             className="button secondary"
@@ -1782,9 +1785,6 @@ function App() {
           </label>
           <button type="button" className="button secondary" onClick={exportProject} disabled={!isReady}>
             Export Project
-          </button>
-          <button type="button" className="button secondary" onClick={createTemplateFile} disabled={!isReady}>
-            Create Template
           </button>
           <button
             type="button"

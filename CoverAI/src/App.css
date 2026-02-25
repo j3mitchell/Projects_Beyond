@@ -93,21 +93,20 @@
   min-width: 0;
   width: auto;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(31, 59, 109, 0.12);
-  transition: transform 140ms ease, box-shadow 140ms ease, border-color 140ms ease;
+  box-shadow: none;
+  transition: border-color 140ms ease, background 140ms ease;
 }
 
 .style-select-button:hover {
-  transform: translateY(-1px);
   border-color: #c3c8cf;
   background: var(--menu-fill-hover);
-  box-shadow: 0 4px 12px rgba(31, 59, 109, 0.16);
+  box-shadow: none;
 }
 
 .style-select-button:focus-visible {
   outline: none;
   border-color: #bcc2ca;
-  box-shadow: 0 0 0 2px rgba(45, 89, 153, 0.2), 0 4px 12px rgba(31, 59, 109, 0.16);
+  box-shadow: 0 0 0 1px rgba(45, 89, 153, 0.2);
 }
 
 .style-select-button:disabled {
@@ -230,8 +229,8 @@
   font: 560 0.89rem/1 "IBM Plex Sans", "Segoe UI", sans-serif;
   letter-spacing: 0.01em;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(31, 59, 109, 0.12);
-  transition: transform 140ms ease, box-shadow 140ms ease, border-color 140ms ease;
+  box-shadow: none;
+  transition: border-color 140ms ease, background 140ms ease, color 140ms ease;
 }
 
 .button.secondary {
@@ -239,21 +238,30 @@
 }
 
 .button.danger {
-  border-color: #1f3b6d;
+  border-color: #4a4f56;
   background: var(--menu-fill);
+  color: #b9462e;
+  font-weight: 700;
 }
 
 .button:hover {
-  transform: translateY(-1px);
   border-color: #274a86;
   background: var(--menu-fill-hover);
-  box-shadow: 0 4px 12px rgba(31, 59, 109, 0.16);
+  box-shadow: none;
 }
 
 .button:focus-visible {
   outline: none;
   border-color: #2c568f;
-  box-shadow: 0 0 0 2px rgba(45, 89, 153, 0.2), 0 4px 12px rgba(31, 59, 109, 0.16);
+  box-shadow: 0 0 0 1px rgba(45, 89, 153, 0.2);
+}
+
+.button.danger,
+.button.danger:hover,
+.button.danger:focus-visible {
+  background: transparent;
+  border-color: #4a4f56;
+  color: #b9462e;
 }
 
 .button:disabled,
