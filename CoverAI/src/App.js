@@ -192,6 +192,25 @@ function titleFromUrlPath(rawUrl) {
   }
 }
 
+function withTimeout(ms, task) {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error("timeout")), ms);
+    task()
+      .then((result) => {
+        clearTimeout(timer);
+        resolve(result);
+      })
+      .catch((error) => {
+        clearTimeout(timer);
+        reject(error);
+      });
+  });
+}
+
+function isNumericOnlyTitle(value) {
+  return /^\d+$/.test((value || "").replace(/\s+/g, ""));
+}
+
 // Job-board models in priority order requested by user.
 const JOB_SITE_MODELS = [
   {
@@ -289,29 +308,32 @@ function extractTitleWithModel(content, siteModel) {
 async function fetchJobTitleFromUrl(rawUrl) {
   const siteModel = getJobSiteModel(rawUrl);
 
-  try {
-    // Try normal fetch first for sites that allow CORS.
-    const direct = await fetch(rawUrl, { mode: "cors" });
-    if (direct.ok) {
+  const fromDirect = async () =>
+    withTimeout(5000, async () => {
+      const direct = await fetch(rawUrl, { mode: "cors" });
+      if (!direct.ok) throw new Error("direct not ok");
       const html = await direct.text();
       const modelTitle = extractTitleWithModel(html, siteModel);
       if (modelTitle) return modelTitle;
       const doc = new DOMParser().parseFromString(html, "text/html");
       const title = doc.querySelector("meta[property='og:title']")?.getAttribute("content") || doc.title;
-      if (title?.trim()) return title.trim();
-    }
-  } catch {
-    // Ignore and try fallback mirror below.
-  }
+      if (!title?.trim()) throw new Error("no direct title");
+      return title.trim();
+    });
 
-  try {
-    // Fallback: text mirror often exposes "Title: ..." in plain text response.
-    const mirror = await fetch(`https://r.jina.ai/${rawUrl}`);
-    if (mirror.ok) {
+  const fromMirror = async () =>
+    withTimeout(7000, async () => {
+      const mirror = await fetch(`https://r.jina.ai/${rawUrl}`);
+      if (!mirror.ok) throw new Error("mirror not ok");
       const content = await mirror.text();
       const siteSpecificTitle = extractTitleWithModel(content, siteModel);
-      if (siteSpecificTitle) return siteSpecificTitle;
-    }
+      if (!siteSpecificTitle) throw new Error("no mirror title");
+      return siteSpecificTitle;
+    });
+
+  try {
+    // Run both sources in parallel and take whichever resolves first.
+    return await Promise.any([fromDirect(), fromMirror()]);
   } catch {
     // Ignore and use URL-derived fallback.
   }
@@ -924,9 +946,11 @@ function App() {
     setIsResolvingJobTitle(true);
     setFieldLabelAndValueByKey("job_url", url);
     // Instant prefill from URL slug so the UI updates immediately.
-    const instantTitle = washJobTitle(titleFromUrlPath(url)) || titleFromUrlPath(url);
-    const instantSkills = inferSkillsFromTitle(instantTitle).slice(0, 3);
-    if (instantTitle) {
+    const instantTitleCandidate = titleFromUrlPath(url);
+    const canUseInstantTitle = instantTitleCandidate && !isNumericOnlyTitle(instantTitleCandidate);
+    const instantTitle = canUseInstantTitle ? (washJobTitle(instantTitleCandidate) || instantTitleCandidate) : "";
+    const instantSkills = canUseInstantTitle ? inferSkillsFromTitle(instantTitle).slice(0, 3) : [];
+    if (canUseInstantTitle && instantTitle) {
       setFieldLabelAndValueByKey("job_listing_ref_title", instantTitle);
       setFieldLabelAndValueByKey("position_title", instantTitle);
     }
@@ -939,7 +963,8 @@ function App() {
     try {
       const { title, company, skills } = await fetchJobInsightsFromUrl(url);
       if (jobUrlLookupRef.current !== requestId) return;
-      const washedTitle = washJobTitle(title) || title;
+      const rawResolvedTitle = cleanJobTitleText(title) || title;
+      const washedTitle = washJobTitle(rawResolvedTitle) || rawResolvedTitle;
       const fallbackSkills = inferSkillsFromTitle(title);
       const mergedSkills = [...skills, ...fallbackSkills]
         .map((s) => (s || "").trim())
@@ -952,8 +977,16 @@ function App() {
         .filter((skill, index, arr) => arr.findIndex((x) => x.toLowerCase() === skill.toLowerCase()) === index)
         .slice(0, 3);
 
-      setFieldLabelAndValueByKey("job_listing_ref_title", washedTitle);
-      setFieldLabelAndValueByKey("position_title", washedTitle);
+      // Apply raw title first, then wash as a quick second pass.
+      setFieldLabelAndValueByKey("job_listing_ref_title", rawResolvedTitle);
+      setFieldLabelAndValueByKey("position_title", rawResolvedTitle);
+      if (washedTitle && washedTitle !== rawResolvedTitle) {
+        setTimeout(() => {
+          if (jobUrlLookupRef.current !== requestId) return;
+          setFieldLabelAndValueByKey("job_listing_ref_title", washedTitle);
+          setFieldLabelAndValueByKey("position_title", washedTitle);
+        }, 120);
+      }
       if (company) setFieldLabelAndValueByKey("company_name", company);
       if (washedSkills[0]) setFieldLabelAndValueByKey("pos_skill_1", washedSkills[0]);
       if (washedSkills[1]) setFieldLabelAndValueByKey("pos_skill_2", washedSkills[1]);
