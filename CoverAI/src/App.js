@@ -1082,7 +1082,9 @@ function App() {
     const refUrl = base.job_listing_ref_url && isHttpUrl(base.job_listing_ref_url) ? base.job_listing_ref_url : rawJobUrl;
     const fallbackTitle = rawJobUrl && isHttpUrl(rawJobUrl) ? titleFromUrlPath(rawJobUrl) : "";
     const refLabel = refTitle || fallbackTitle;
-    if (refLabel && refUrl && isHttpUrl(refUrl)) base.ref = `[${refLabel}](${refUrl})`;
+    const shortRefLabel = refUrl && isHttpUrl(refUrl) ? toLinkLabel(refUrl) : "";
+    if (shortRefLabel && refUrl && isHttpUrl(refUrl)) base.ref = `[${shortRefLabel}](${refUrl})`;
+    else if (refLabel && refUrl && isHttpUrl(refUrl)) base.ref = `[${refLabel}](${refUrl})`;
     else if (refLabel) base.ref = refLabel;
     else if (refUrl && isHttpUrl(refUrl)) base.ref = refUrl;
     return base;
