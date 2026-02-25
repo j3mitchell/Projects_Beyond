@@ -359,6 +359,12 @@ function cleanCompanyName(raw) {
     .replace(/&amp;/g, "&")
     .replace(/&quot;/g, "\"")
     .replace(/&#39;/g, "'")
+    // Convert markdown links: [Name](https://...) -> Name
+    .replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/gi, "$1")
+    // Remove raw URLs and broken markdown tails.
+    .replace(/https?:\/\/\S+/gi, " ")
+    .replace(/\]\([^)]+/g, " ")
+    .replace(/[[\]()]*/g, " ")
     .replace(/\s+/g, " ")
     .trim();
 
@@ -375,6 +381,15 @@ function cleanCompanyName(raw) {
   return words.slice(0, 3).join(" ");
 }
 
+function isValidCompanyCandidate(value) {
+  const candidate = cleanCompanyName(value);
+  if (!candidate) return false;
+  if (/https?:\/\//i.test(candidate)) return false;
+  if (/\]\(|\[|\]/.test(candidate)) return false;
+  if (candidate.length < 2) return false;
+  return true;
+}
+
 function extractCompanyFromContent(content, rawUrl, titleHint = "") {
   if (!content) return "";
   const siteModel = getJobSiteModel(rawUrl);
@@ -389,7 +404,7 @@ function extractCompanyFromContent(content, rawUrl, titleHint = "") {
       content.match(/\bat\s+([A-Z][A-Za-z0-9&.\- ]{2,60})\b/)?.[1],
     ]
       .map((value) => cleanCompanyName(value || ""))
-      .filter(Boolean);
+      .filter((value) => isValidCompanyCandidate(value));
     if (linkedInMatches.length > 0) return linkedInMatches[0];
   }
 
@@ -400,7 +415,7 @@ function extractCompanyFromContent(content, rawUrl, titleHint = "") {
     content.match(/Company[^:\n]*:\s*([^\n<|]+)/i)?.[1],
   ]
     .map((value) => cleanCompanyName(value || ""))
-    .filter(Boolean);
+    .filter((value) => isValidCompanyCandidate(value));
   if (genericMatches.length > 0) return genericMatches[0];
 
   // Pull from title patterns like "... at Company" as last content-based step.
