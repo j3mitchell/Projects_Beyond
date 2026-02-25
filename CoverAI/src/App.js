@@ -304,6 +304,12 @@ function normalizeTitleCandidate(rawTitle) {
   return text;
 }
 
+function extractTitleTag(content) {
+  if (!content) return "";
+  const match = content.match(/<title>\s*([^<]+)\s*<\/title>/i);
+  return normalizeTitleCandidate(match?.[1] || "");
+}
+
 function isLikelyJobTitle(value) {
   const text = normalizeTitleCandidate(value);
   if (!text) return false;
@@ -407,6 +413,9 @@ function extractLinkedInJsonData(content) {
 
 function extractTitleWithModel(content, siteModel) {
   if (!content) return "";
+  const tagTitle = extractTitleTag(content);
+  if (isLikelyJobTitle(tagTitle)) return tagTitle;
+
   if (siteModel?.name === "LinkedIn") {
     // Fast path first: common LinkedIn title containers.
     const linkedInCandidates = [
