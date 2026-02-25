@@ -328,6 +328,18 @@ function extractTitleAndCompanyFromTitleTag(content) {
   return { title, company, refTitle: titleTag };
 }
 
+// For unknown job sites, take the first segment from <title> as the job title.
+// This keeps title extraction simple and predictable when we do not have a site profile.
+function extractGenericJobTitleFromTitleTag(content) {
+  const rawTitle = extractTitleTag(content);
+  if (!rawTitle) return "";
+  return rawTitle
+    .split("|")[0]
+    .split(" - ")[0]
+    .split(" – ")[0]
+    .trim();
+}
+
 function extractCompanyFromTitleTag(content, rawUrl) {
   const titleTag = extractTitleTag(content);
   if (!titleTag) return "";
@@ -763,6 +775,7 @@ function extractTopSkillsFromText(rawText) {
 }
 
 async function fetchJobInsightsFromUrl(rawUrl) {
+  const siteModel = getJobSiteModel(rawUrl);
   // Use one shared mirror fetch so we do not double-hit the same endpoint.
   const mirrorTextPromise = withTimeout(12000, async () => {
     const mirror = await fetch(`https://r.jina.ai/${rawUrl}`);
@@ -793,7 +806,7 @@ async function fetchJobInsightsFromUrl(rawUrl) {
 
   const fallbackTitle = titleFromUrlPath(rawUrl);
   const fallbackSafeTitle = isNumericOnlyTitle(fallbackTitle) ? "" : fallbackTitle;
-  const title =
+  let title =
     titleCompanyResult.status === "fulfilled" ? titleCompanyResult.value.title || fallbackSafeTitle : fallbackSafeTitle;
   let refTitle =
     titleCompanyResult.status === "fulfilled" ? titleCompanyResult.value.refTitle || title : title;
@@ -803,6 +816,16 @@ async function fetchJobInsightsFromUrl(rawUrl) {
   try {
     if (mirrorResult.status !== "fulfilled") throw new Error("mirror unavailable");
     const content = mirrorResult.value;
+    // Rule requested: on non-profiled, non-LinkedIn sites, prioritize <title> first for job title.
+    if (!siteModel || siteModel.name !== "LinkedIn") {
+      const genericTitle = extractGenericJobTitleFromTitleTag(content);
+      if (genericTitle && !isNumericOnlyTitle(genericTitle)) {
+        refTitle = refTitle || extractTitleTag(content);
+        if (!title || isNumericOnlyTitle(title)) {
+          title = genericTitle;
+        }
+      }
+    }
     if (!refTitle) {
       refTitle = extractTitleTag(content);
     }
