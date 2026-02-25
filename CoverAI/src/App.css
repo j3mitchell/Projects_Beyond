@@ -78,31 +78,38 @@
 }
 
 .style-inline {
-  display: inline-flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.2rem;
+  display: inline-grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: stretch;
+  gap: 0;
   width: 132px;
   margin-left: 0;
+  height: var(--menu-height);
 }
 
 .style-inline label {
-  color: #5f666f;
-  font: 560 0.83rem/1 "IBM Plex Sans", "Segoe UI", sans-serif;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #3f4349;
+  border-right: 0;
+  background: transparent;
+  color: #1f3b6d;
+  font: 700 0.83rem/1 "IBM Plex Sans", "Segoe UI", sans-serif;
 }
 
 .style-select-button {
-  border: 1px solid #d0d4da;
+  border: 1px solid #1f3b6d;
   border-radius: 0;
   background: var(--menu-fill);
   color: #ffffff;
-  height: var(--menu-height);
-  padding: 0 0.92rem;
+  height: 100%;
+  padding: 0 0.5rem;
   font: 560 0.89rem/1 "IBM Plex Sans", "Segoe UI", sans-serif;
   letter-spacing: 0.01em;
   min-width: 0;
-  width: 78px;
-  margin-left: -10px;
+  width: 100%;
+  margin-left: 0;
   cursor: pointer;
   box-shadow: none;
   transition: border-color 140ms ease, background 140ms ease;
