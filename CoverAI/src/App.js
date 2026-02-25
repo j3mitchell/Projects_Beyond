@@ -515,10 +515,9 @@ function washJobTitle(rawTitle) {
     picked.push(nextWord.toUpperCase());
   }
 
-  // Final title: prefer 2-3 words. Allow 4 only when level suffix is present and role needs it.
+  // Final title: keep concise output at 3 words max.
   const compact = picked.filter(Boolean);
-  const hasSuffix = compact.length > 0 && levelSuffixSet.has(compact[compact.length - 1].toLowerCase());
-  const maxWords = hasSuffix ? 4 : 3;
+  const maxWords = 3;
   return toTitleCasePhrase(compact.slice(0, maxWords).join(" "));
 }
 
