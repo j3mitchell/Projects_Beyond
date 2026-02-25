@@ -240,99 +240,6 @@ function cleanSkillLine(line) {
     .trim();
 }
 
-function toSkillTitleCase(input) {
-  const keepUpper = new Set(["OOP", "SQL", "JELC", "IT", "AI"]);
-  return input
-    .split(" ")
-    .filter(Boolean)
-    .map((word) => {
-      const upper = word.toUpperCase();
-      if (keepUpper.has(upper)) return upper;
-      return word[0].toUpperCase() + word.slice(1).toLowerCase();
-    })
-    .join(" ");
-}
-
-function condenseSkillText(rawLine) {
-  const cleaned = cleanSkillLine(rawLine);
-  if (!cleaned) return [];
-
-  const mapped = [
-    { regex: /\bobject[- ]oriented programming\b/i, label: "OOP" },
-    { regex: /\bdata structures?\b/i, label: "Data Structures" },
-    { regex: /\balgorithms?\b/i, label: "Algorithms" },
-    { regex: /\bproject management\b/i, label: "Project Management" },
-    { regex: /\bprogram management\b/i, label: "Program Management" },
-    { regex: /\boperations planning\b/i, label: "Operations Planning" },
-    { regex: /\bexercise planning\b/i, label: "Exercise Planning" },
-    { regex: /\bjelc\b|\bjoint exercise life cycle\b/i, label: "JELC" },
-    { regex: /\bcommunication\b/i, label: "Communication" },
-    { regex: /\bcoordination\b/i, label: "Coordination" },
-    { regex: /\banalysis\b/i, label: "Analysis" },
-    { regex: /\bleadership\b/i, label: "Leadership" },
-  ];
-
-  const fromMappings = [];
-  for (const entry of mapped) {
-    if (entry.regex.test(cleaned)) fromMappings.push(entry.label);
-  }
-
-  const listMatch = cleaned.match(/including\s+(.+)$/i) || cleaned.match(/:\s*(.+)$/);
-  const fromList = [];
-  if (listMatch?.[1]) {
-    const parts = listMatch[1].split(/,| and /i);
-    for (const partRaw of parts) {
-      const part = cleanSkillLine(partRaw)
-        .replace(/[.;:]$/g, "")
-        .replace(/\b(fundamentals?|experience|knowledge|understanding|ability)\b/gi, "")
-        .replace(/\s+/g, " ")
-        .trim();
-      if (!part) continue;
-      const words = part.split(" ").filter(Boolean);
-      if (words.length <= 4) fromList.push(toSkillTitleCase(part));
-    }
-  }
-
-  const merged = [...fromMappings, ...fromList];
-  const seen = new Set();
-  const unique = [];
-  for (const item of merged) {
-    const key = item.toLowerCase();
-    if (seen.has(key)) continue;
-    seen.add(key);
-    unique.push(item);
-  }
-  return unique;
-}
-
-function normalizeTopSkills(skills, limit = 3) {
-  const picked = [];
-  const seen = new Set();
-
-  for (const raw of skills) {
-    const compact = condenseSkillText(raw);
-    for (const skill of compact) {
-      const key = skill.toLowerCase();
-      if (seen.has(key)) continue;
-      seen.add(key);
-      picked.push(skill);
-      if (picked.length >= limit) return picked;
-    }
-  }
-
-  // Fallback: if no condensed skills found, keep original extracted lines.
-  if (picked.length === 0) {
-    for (const raw of skills) {
-      const fallback = cleanSkillLine(raw);
-      if (!fallback) continue;
-      picked.push(fallback);
-      if (picked.length >= limit) break;
-    }
-  }
-
-  return picked;
-}
-
 function extractTopSkillsFromText(rawText) {
   if (!rawText) return [];
   const lines = rawText
@@ -696,13 +603,12 @@ function App() {
     try {
       const { title, company, skills } = await fetchJobInsightsFromUrl(url);
       if (jobUrlLookupRef.current !== requestId) return;
-      const normalizedSkills = normalizeTopSkills(skills, 3);
       setFieldLabelAndValueByKey("job_listing_ref_title", title);
       setFieldLabelAndValueByKey("position_title", title);
       if (company) setFieldLabelAndValueByKey("company_name", company);
-      if (normalizedSkills[0]) setFieldLabelAndValueByKey("pos_skill_1", normalizedSkills[0]);
-      if (normalizedSkills[1]) setFieldLabelAndValueByKey("pos_skill_2", normalizedSkills[1]);
-      if (normalizedSkills[2]) setFieldLabelAndValueByKey("pos_skill_3", normalizedSkills[2]);
+      if (skills[0]) setFieldLabelAndValueByKey("pos_skill_1", skills[0]);
+      if (skills[1]) setFieldLabelAndValueByKey("pos_skill_2", skills[1]);
+      if (skills[2]) setFieldLabelAndValueByKey("pos_skill_3", skills[2]);
       setNotice("Job details populated from URL.");
       setError("");
     } catch {
