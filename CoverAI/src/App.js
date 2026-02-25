@@ -100,7 +100,9 @@ function buildChipElement(fieldKey, labelByKey) {
   chip.className = "editor-chip";
   chip.setAttribute("contenteditable", "false");
   chip.dataset.tokenKey = fieldKey;
-  chip.textContent = labelByKey[fieldKey] || fieldKey;
+  // Keep template display friendly for the job URL token.
+  const chipLabel = fieldKey === "job_url" ? "Job posting" : labelByKey[fieldKey] || fieldKey;
+  chip.textContent = chipLabel;
   return chip;
 }
 
@@ -1079,10 +1081,6 @@ function App() {
     const refTitle = base.job_listing_ref_title;
     const refUrl = base.job_listing_ref_url && isHttpUrl(base.job_listing_ref_url) ? base.job_listing_ref_url : rawJobUrl;
     const fallbackTitle = rawJobUrl && isHttpUrl(rawJobUrl) ? titleFromUrlPath(rawJobUrl) : "";
-    if (rawJobUrl && isHttpUrl(rawJobUrl)) {
-      // Show template-friendly text while keeping the destination URL.
-      base.job_url = `[Job posting](${rawJobUrl})`;
-    }
     const refLabel = refTitle || fallbackTitle;
     if (refLabel && refUrl && isHttpUrl(refUrl)) base.ref = `[${refLabel}](${refUrl})`;
     else if (refLabel) base.ref = refLabel;
