@@ -100,9 +100,7 @@ function buildChipElement(fieldKey, labelByKey) {
   chip.className = "editor-chip";
   chip.setAttribute("contenteditable", "false");
   chip.dataset.tokenKey = fieldKey;
-  // Keep template display friendly for the job URL token.
-  const chipLabel = fieldKey === "job_url" ? "Job posting" : labelByKey[fieldKey] || fieldKey;
-  chip.textContent = chipLabel;
+  chip.textContent = labelByKey[fieldKey] || fieldKey;
   return chip;
 }
 
