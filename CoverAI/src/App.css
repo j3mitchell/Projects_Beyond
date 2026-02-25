@@ -312,6 +312,12 @@
   font: 500 0.88rem/1.3 "IBM Plex Sans", "Segoe UI", sans-serif;
 }
 
+/* Hide helper placeholder text as soon as the user clicks into a field. */
+.field-input:focus::placeholder,
+.field-textarea:focus::placeholder {
+  color: transparent;
+}
+
 .field-textarea {
   resize: vertical;
   min-height: 3.2rem;
