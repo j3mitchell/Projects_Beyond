@@ -462,7 +462,21 @@ function isValidCompanyCandidate(value) {
   if (/https?:\/\//i.test(candidate)) return false;
   if (/\]\(|\[|\]/.test(candidate)) return false;
   if (candidate.length < 2) return false;
+  const words = candidate.split(/\s+/).filter(Boolean);
+  const singleLetterWords = words.filter((w) => w.length === 1).length;
+  if (singleLetterWords >= 3) return false;
   return true;
+}
+
+function companyFromLinkedInSlug(rawUrl) {
+  const match = (rawUrl || "").match(/linkedin\.com\/company\/([^/?#]+)/i);
+  if (!match?.[1]) return "";
+  const slug = decodeURIComponent(match[1]);
+  const withSpaces = slug
+    .replace(/[-_]+/g, " ")
+    .replace(/([a-z])([A-Z])/g, "$1 $2")
+    .trim();
+  return cleanCompanyName(withSpaces);
 }
 
 function companyCandidateScore(rawValue) {
@@ -509,6 +523,12 @@ function extractCompanyFromContent(content, rawUrl, titleHint = "") {
     const linkedInJson = extractLinkedInJsonData(content);
     if (linkedInJson.company) return linkedInJson.company;
 
+    const slugCandidates = Array.from(
+      content.matchAll(/href="https:\/\/www\.linkedin\.com\/company\/([^"?#/]+)[^"]*"/gi)
+    )
+      .map((m) => companyFromLinkedInSlug(`https://www.linkedin.com/company/${m[1]}/`))
+      .filter((value) => isValidCompanyCandidate(value));
+
     const linkedInMatches = [
       content.match(/Company,\s*([^.<\n]+)\./i)?.[1],
       content.match(/href="https:\/\/www\.linkedin\.com\/company\/[^"]+"[^>]*>\s*([^<]+)\s*<\/a>/i)?.[1],
@@ -518,7 +538,7 @@ function extractCompanyFromContent(content, rawUrl, titleHint = "") {
     ]
       .map((value) => cleanCompanyName(value || ""))
       .filter((value) => isValidCompanyCandidate(value));
-    const topLinkedIn = bestCompanyCandidate(linkedInMatches);
+    const topLinkedIn = bestCompanyCandidate([...slugCandidates, ...linkedInMatches]);
     if (topLinkedIn) return topLinkedIn;
   }
 
