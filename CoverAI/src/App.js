@@ -1305,7 +1305,12 @@ function App() {
       if (jobUrlLookupRef.current !== requestId) return;
       setJobLookupProgress(88);
       setJobLookupStage("Applying results...");
-      const refFirstSegment = (refTitle || "").split("|")[0]?.trim() || "";
+      const titleParts = (refTitle || "")
+        .split("|")
+        .map((part) => part.trim())
+        .filter(Boolean);
+      const refFirstSegment = titleParts[0] || "";
+      const refSecondSegment = titleParts[1] || "";
       const baseResolvedPositionTitle = [title, refFirstSegment, instantTitle].find(
         (candidate) => candidate && !isNumericOnlyTitle(candidate)
       );
@@ -1328,7 +1333,7 @@ function App() {
       const resolvedRefTitle = refTitle || title || instantTitle;
       if (resolvedRefTitle) setFieldLabelAndValueByKey("job_listing_ref_title", resolvedRefTitle);
       // Always update the company field so stale values do not stick.
-      setFieldLabelAndValueByKey("company_name", company || "");
+      setFieldLabelAndValueByKey("company_name", refSecondSegment || company || "");
       if (washedSkills[0]) setFieldLabelAndValueByKey("pos_skill_1", washedSkills[0]);
       if (washedSkills[1]) setFieldLabelAndValueByKey("pos_skill_2", washedSkills[1]);
       if (washedSkills[2]) setFieldLabelAndValueByKey("pos_skill_3", washedSkills[2]);
