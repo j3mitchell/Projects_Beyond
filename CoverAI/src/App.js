@@ -1805,22 +1805,25 @@ function App() {
           <button type="button" className="button danger" onClick={resetAll} disabled={!isReady}>
             Reset
           </button>
-          <select
-            id="style-select"
-            className="style-select-button"
-            value={selectedStyle}
-            onChange={(event) => handleStyleSelectionChange(event.target.value)}
-            disabled={!isReady}
-            aria-label="Template style"
-            title="Template style"
-          >
-            <option value="eng">Eng</option>
-            <option value="cus">Cus</option>
-            <option value="fin">Fin</option>
-            <option value="mgr">Mgr</option>
-            <option value="custom_1">{sanitizeStyleCode(customStyle1Code, "cus1")}</option>
-            <option value="custom_2">{sanitizeStyleCode(customStyle2Code, "cus2")}</option>
-          </select>
+          <div className="style-inline">
+            <label htmlFor="style-select">Style</label>
+            <select
+              id="style-select"
+              className="style-select-button"
+              value={selectedStyle}
+              onChange={(event) => handleStyleSelectionChange(event.target.value)}
+              disabled={!isReady}
+              aria-label="Template style"
+              title="Template style"
+            >
+              <option value="eng">Eng</option>
+              <option value="cus">Cus</option>
+              <option value="fin">Fin</option>
+              <option value="mgr">Mgr</option>
+              <option value="custom_1">{sanitizeStyleCode(customStyle1Code, "cus1")}</option>
+              <option value="custom_2">{sanitizeStyleCode(customStyle2Code, "cus2")}</option>
+            </select>
+          </div>
         </div>
       </header>
 

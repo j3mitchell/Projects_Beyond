@@ -70,9 +70,20 @@
   max-width: 35rem;
 }
 
+.style-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.38rem;
+}
+
+.style-inline label {
+  color: #5f666f;
+  font: 560 0.83rem/1 "IBM Plex Sans", "Segoe UI", sans-serif;
+}
+
 .style-select-button {
-  border: 1px solid #1f3b6d;
-  border-radius: 6px;
+  border: 1px solid #d0d4da;
+  border-radius: 0;
   background: var(--menu-fill);
   color: #ffffff;
   height: var(--menu-height);
@@ -88,14 +99,14 @@
 
 .style-select-button:hover {
   transform: translateY(-1px);
-  border-color: #274a86;
+  border-color: #c3c8cf;
   background: var(--menu-fill-hover);
   box-shadow: 0 4px 12px rgba(31, 59, 109, 0.16);
 }
 
 .style-select-button:focus-visible {
   outline: none;
-  border-color: #2c568f;
+  border-color: #bcc2ca;
   box-shadow: 0 0 0 2px rgba(45, 89, 153, 0.2), 0 4px 12px rgba(31, 59, 109, 0.16);
 }
 
