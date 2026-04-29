@@ -1,0 +1,122 @@
+{
+  "type": "coverai_template",
+  "version": 1,
+  "createdAt": "2026-02-26T02:31:14.976Z",
+  "templateDefinition": "session_with_placeholders_no_field_data",
+  "styleSlots": {
+    "total": 5,
+    "lockedPresets": [
+      "eng",
+      "cus",
+      "fin",
+      "mgr"
+    ],
+    "editableSlot": "custom_1"
+  },
+  "style": "eng",
+  "template": "To {{hiring_manager}},\nI am excited to apply for the Software Engineer (Entry) position at Parsons. With a B.S. degree in Web Technology, a passion for creating dynamic, user-friendly web applications, and a strong background in front-end and back-end development, I am eager to contribute my skills to your projects.{{hiring_manager}}\n\nIn my previous role at J. Consulting Group, I developed and optimized responsive websites that enhanced user engagement. My proficiency in C+{{prev_company}}+, Java, Python, and frameworks like React and Node.js have enabled me to build scalable and efficient web applications. Additionally, I have {{prev_company}}extensive database experience with SQL Server, Oracle, MySQL, and MongoDB, ensuring seamless data integration.\n\nI thrive in collaborative environments; I am a people perso{{pos_skill_3}}n, enjoy problem-solving, and accept no excuses. I take pride in innovation and wr{{my_skill_1}}iting clean, maintainable code. To further my growth, I am pursuing certification as a Full-Stack Developer with IBM.\n\nI look forward to partnering with Parsons and discussing how my skills align with your team's goals.\n\nJohn Mitchell\nj3mitchell@gmail.com\n\n",
+  "fields": [
+    {
+      "id": "f1",
+      "key": "hiring_manager",
+      "label": "Hiring Manager",
+      "value": ""
+    },
+    {
+      "id": "f2",
+      "key": "company_name",
+      "label": "Company Name",
+      "value": ""
+    },
+    {
+      "id": "f3",
+      "key": "position_title",
+      "label": "Position Title",
+      "value": ""
+    },
+    {
+      "id": "f4",
+      "key": "pos_skill_1",
+      "label": "Pos Skill 1",
+      "value": ""
+    },
+    {
+      "id": "f5",
+      "key": "pos_skill_2",
+      "label": "Pos Skill 2",
+      "value": ""
+    },
+    {
+      "id": "f6",
+      "key": "pos_skill_3",
+      "label": "Pos Skill 3",
+      "value": ""
+    },
+    {
+      "id": "f7",
+      "key": "job_url",
+      "label": "Job URL",
+      "value": ""
+    },
+    {
+      "id": "f8",
+      "key": "job_listing_ref_title",
+      "label": "Ref Title",
+      "value": ""
+    },
+    {
+      "id": "f9",
+      "key": "job_listing_ref_url",
+      "label": "Ref URL",
+      "value": ""
+    },
+    {
+      "id": "f10",
+      "key": "prev_company",
+      "label": "Prev Company",
+      "value": ""
+    },
+    {
+      "id": "f11",
+      "key": "my_skill_1",
+      "label": "My Skill 1",
+      "value": ""
+    },
+    {
+      "id": "f12",
+      "key": "my_skill_2",
+      "label": "My Skill 2",
+      "value": ""
+    },
+    {
+      "id": "f13",
+      "key": "my_skill_3",
+      "label": "My Skill 3",
+      "value": ""
+    },
+    {
+      "id": "f14",
+      "key": "additional_exp_1",
+      "label": "Additional Exp 1",
+      "value": ""
+    },
+    {
+      "id": "f15",
+      "key": "additional_exp_2",
+      "label": "Additional Exp 2",
+      "value": ""
+    },
+    {
+      "id": "f16",
+      "key": "my_signature",
+      "label": "My Signature",
+      "value": ""
+    },
+    {
+      "id": "f17",
+      "key": "ref",
+      "label": "Referred By",
+      "value": ""
+    }
+  ]
+}

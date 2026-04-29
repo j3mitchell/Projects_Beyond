@@ -1,10 +1,121 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import "./App.css";
+import {
+  fieldArrayToValueMap,
+  normalizeAiFieldSuggestions,
+  requestAiDraftLetter,
+  requestAiExtractJob,
+  requestControlRestart,
+  requestControlStatus,
+  requestControlStop,
+} from "./ai";
 
 // This key is the "name tag" used when saving data in the browser.
 const STORAGE_KEY = "coverLetterStudio.v1";
+// Separate storage for the "File > Recent" list.
+const RECENT_SESSIONS_KEY = "coverLetterStudio.recent.v1";
+const RECENT_SESSIONS_LIMIT = 5;
+// Stores user company frequency counts for the Company Name dropdown.
+const COMPANY_USAGE_KEY = "coverLetterStudio.companyUsage.v1";
+const COMPANY_DROPDOWN_LIMIT = 25;
+// Shared picker id so browser reuses one "CoverAI home" folder across open/save/import/export.
+const COVERAI_PICKER_ID = "coverai-home";
+// Saved style library (4 locked presets + 1 editable user slot).
+const STYLE_LIBRARY_KEY = "coverLetterStudio.styleLibrary.v1";
+const BROWSER_SESSION_PREF_KEY = "coverLetterStudio.useCurrentBrowserSession.v1";
 // This pattern finds tokens like {{company_name}} inside the template text.
 const TOKEN_REGEX = /{{\s*([a-z0-9_]+)\s*}}/gi;
+
+// User-provided starter company list. We seed suggestions from this on first use.
+const DEFAULT_COMPANY_SEED = [
+  "SAIC",
+  "Northrop Grumman",
+  "Oracle",
+  "Tesla",
+  "General Dynamics",
+  "Robert Half",
+  "IBM",
+  "Booz Allen",
+  "Deloitte & Touche",
+  "US Government",
+  "Amazon",
+  "Google",
+  "Walmart",
+  "Accenture",
+  "Allied Universal",
+  "FedEx",
+  "United Parcel Service",
+  "Home Depot",
+  "Starbucks",
+  "United Health",
+  "Kroger Co",
+  "Marriott Interntional",
+  "Berkshire Hathaway",
+  "CostCo",
+  "JPMorgan Chase",
+  "CVS Health",
+  "Apple",
+  "Microsoft",
+  "Keller Williams",
+];
+
+// Starter position-title list for the Position Title dropdown.
+const DEFAULT_POSITION_SEED = [
+  "Software Engineer",
+  "Web Developer",
+  "Database Administrator",
+  "Administrative Asst.",
+  "Customer Service",
+  "Consultant",
+  "Accountant",
+  "Graphic Designer",
+  "Analyst",
+  "Maintenance",
+  "Manager",
+  "Sales Rep.",
+  "Marketing",
+  "CEO",
+  "Financial Officer",
+  "Military",
+  "Secretary",
+  "Care Giver",
+  "Writer",
+  "Musician",
+  "Clergy",
+  "Banker",
+  "Police",
+  "Fire Fighter",
+  "Nurse",
+  "Doctor",
+  "Lawyer",
+  "Cook",
+  "Driver",
+  "Entrepreneur",
+  "Self Employed",
+];
+
+// Starter skill list used by Pos Skill 1-3 dropdowns.
+const DEFAULT_POSITION_SKILL_SEED = [
+  "Database",
+  "Programming",
+  "JavaScript",
+  "Python",
+  "React",
+  "C++",
+  "Oracle",
+  "MS SQL Server",
+  "Accounting",
+  "Management",
+  "Marketing",
+  "Customer Service",
+  "Sales",
+  "Educator",
+  "Trainer",
+  "Fitness",
+  "Electrical Engineer",
+  "Mechanical Engineer",
+  "Medical",
+];
 
 // We keep a single shared promise so PDF.js is loaded only once.
 let pdfJsPromise;
@@ -42,6 +153,7 @@ const DEFAULT_FIELDS = [
   { id: "f16", key: "my_signature", label: "", value: "" },
   { id: "f17", key: "ref", label: "", value: "" },
 ];
+const DEFAULT_FIELD_KEY_SET = new Set(DEFAULT_FIELDS.map((field) => field.key));
 
 // Starter letter template that includes tokens wrapped in {{ }}.
 const DEFAULT_TEMPLATE = `Dear {{hiring_manager}},
@@ -53,7 +165,7 @@ Relevant examples from my background include work at {{prev_company}}, plus stre
 Additional experience: {{additional_exp_1}} and {{additional_exp_2}}.
 
 Job posting: {{job_url}}
-Reference: {{ref}}
+Referred By: {{ref}}
 
 Sincerely,
 {{my_signature}}`;
@@ -68,7 +180,7 @@ My background aligns with your needs in {{pos_skill_1}}, {{pos_skill_2}}, and {{
 I have applied these strengths in hands-on delivery at {{prev_company}}, with additional impact in {{additional_exp_1}} and {{additional_exp_2}}.
 
 Job posting: {{job_url}}
-Reference: {{ref}}
+Referred By: {{ref}}
 
 Sincerely,
 {{my_signature}}`,
@@ -80,7 +192,7 @@ My customer-facing experience includes {{pos_skill_1}}, {{pos_skill_2}}, and {{p
 At {{prev_company}}, I focused on service quality and communication outcomes, including {{additional_exp_1}} and {{additional_exp_2}}.
 
 Job posting: {{job_url}}
-Reference: {{ref}}
+Referred By: {{ref}}
 
 Sincerely,
 {{my_signature}}`,
@@ -92,7 +204,7 @@ My qualifications include {{pos_skill_1}}, {{pos_skill_2}}, and {{pos_skill_3}} 
 I also bring experience in {{additional_exp_1}} and {{additional_exp_2}}.
 
 Job posting: {{job_url}}
-Reference: {{ref}}
+Referred By: {{ref}}
 
 Sincerely,
 {{my_signature}}`,
@@ -104,12 +216,20 @@ My management background includes {{pos_skill_1}}, {{pos_skill_2}}, and {{pos_sk
 I have led outcomes at {{prev_company}}, including {{additional_exp_1}} and {{additional_exp_2}}.
 
 Job posting: {{job_url}}
-Reference: {{ref}}
+Referred By: {{ref}}
 
 Sincerely,
 {{my_signature}}`,
   custom_1: DEFAULT_TEMPLATE,
   custom_2: DEFAULT_TEMPLATE,
+};
+
+const STYLE_SLOT_META = {
+  eng: { label: "Engineer", locked: true },
+  cus: { label: "Service", locked: true },
+  fin: { label: "Financial", locked: true },
+  mgr: { label: "Management", locked: true },
+  custom_1: { label: "User Defined", locked: false },
 };
 
 const FIELD_SUGGESTIONS = {
@@ -142,7 +262,7 @@ const FIELD_LABEL_SUGGESTIONS = {
   job_url: "Job URL",
   job_listing_ref_title: "Ref Title",
   job_listing_ref_url: "Ref URL",
-  ref: "Ref",
+  ref: "Referred By",
   prev_company: "Prev Company",
   my_skill_1: "My Skill 1",
   my_skill_2: "My Skill 2",
@@ -152,6 +272,23 @@ const FIELD_LABEL_SUGGESTIONS = {
   my_signature: "My Signature",
 };
 
+const AI_REVIEW_FIELD_ORDER = [
+  "company_name",
+  "position_title",
+  "job_listing_ref_title",
+  "job_url",
+  "job_listing_ref_url",
+  "pos_skill_1",
+  "pos_skill_2",
+  "pos_skill_3",
+  "my_skill_1",
+  "my_skill_2",
+  "my_skill_3",
+  "additional_exp_1",
+  "additional_exp_2",
+];
+const HISTORY_LIMIT = 80;
+
 function buildChipElement(fieldKey, labelByKey) {
   const chip = document.createElement("span");
   chip.className = "editor-chip";
@@ -159,7 +296,8 @@ function buildChipElement(fieldKey, labelByKey) {
   chip.dataset.tokenKey = fieldKey;
   const rawLabel = labelByKey[fieldKey] || fieldKey;
   // Show compact URL label in the template chip, while field data keeps full URL.
-  chip.textContent = fieldKey === "job_url" && isHttpUrl(rawLabel) ? toLinkLabel(rawLabel) : rawLabel;
+  chip.textContent =
+    ["job_url", "job_listing_ref_url"].includes(fieldKey) && isHttpUrl(rawLabel) ? toLinkLabel(rawLabel) : rawLabel;
   return chip;
 }
 
@@ -422,6 +560,87 @@ function truncateLinkedInJobTitle(rawTitle) {
   return title.slice(0, slashIndex).trim();
 }
 
+function cleanPositionTitle(rawTitle, companyHint = "") {
+  const title = normalizeTitleCandidate(rawTitle)
+    .replace(/\s+/g, " ")
+    .trim();
+  if (!title) return "";
+
+  let cleaned = title;
+  const company = normalizeTitleCandidate(companyHint).trim();
+  const escapedCompany = company.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+  cleaned = cleaned
+    .replace(/\([^)]*\)/g, " ")
+    .replace(/\s+[|/-]\s+(linkedin|indeed|glassdoor|ziprecruiter|monster|dice|wellfound|angelist|usajobs|flexjobs|simplyhired).*$/i, "")
+    .replace(/\s+\bat\s+[^|/-]+$/i, "")
+    .replace(/\s+\bwith\s+[^|/-]+$/i, "")
+    .replace(/\s+\bfor\s+[^|/-]+$/i, "");
+
+  if (escapedCompany) {
+    cleaned = cleaned
+      .replace(new RegExp(`\\s+[|/-]\\s+${escapedCompany}\\b.*$`, "i"), "")
+      .replace(new RegExp(`\\s+at\\s+${escapedCompany}\\b.*$`, "i"), "")
+      .replace(new RegExp(`\\s+for\\s+${escapedCompany}\\b.*$`, "i"), "");
+  }
+
+  const roleKeywordPattern =
+    /\b(administrator|engineer|developer|manager|analyst|architect|specialist|consultant|director|designer|coordinator|technician|officer|writer|editor|trainer|planner|lead|dba)\b/i;
+  const companyLikePattern =
+    /\b(llc|inc|corp|corporation|technologies|technology|systems|industries|industry|group|services|service|company|solutions|holdings|partners|international)\b/i;
+  const dashParts = cleaned.split(/\s[-–]\s/).map((part) => part.trim()).filter(Boolean);
+  if (dashParts.length >= 2) {
+    const first = dashParts[0];
+    const rest = dashParts.slice(1).join(" - ");
+    if ((companyLikePattern.test(first) || /^[A-Z][A-Za-z0-9&.\- ]+$/.test(first)) && roleKeywordPattern.test(rest)) {
+      cleaned = rest;
+    }
+  }
+
+  cleaned = cleaned
+    .split("|")[0]
+    .trim()
+    .replace(/\s+/g, " ");
+
+  if (!roleKeywordPattern.test(cleaned)) {
+    cleaned = cleaned
+      .split(" - ")
+      .slice(-1)[0]
+      .split(" – ")
+      .slice(-1)[0]
+      .trim()
+      .replace(/\s+/g, " ");
+  } else {
+    cleaned = cleaned
+      .split(" - ")[0]
+      .split(" – ")[0]
+      .trim()
+      .replace(/\s+/g, " ");
+  }
+
+  cleaned = cleaned
+    .trim()
+    .replace(/\s+/g, " ");
+
+  cleaned = cleaned
+    .replace(/^(principal|senior|sr|lead|staff|junior|jr|associate|mid-level|mid level|expert)\s+/i, "")
+    .replace(/\b(contract|temporary|temp|remote|hybrid|onsite|on-site)\b/gi, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  const roleMappings = [
+    { regex: /\b(dba|database administrator)\b/i, value: "Database Administrator" },
+    { regex: /\bsoftware engineer\b/i, value: "Software Engineer" },
+    { regex: /\bweb developer\b/i, value: "Web Developer" },
+    { regex: /\bproject manager\b/i, value: "Project Manager" },
+  ];
+  for (const entry of roleMappings) {
+    if (entry.regex.test(cleaned)) return entry.value;
+  }
+
+  return cleaned;
+}
+
 function extractCompanyFromTitleTag(content, rawUrl) {
   const titleTag = extractTitleTag(content);
   if (!titleTag) return "";
@@ -531,6 +750,8 @@ function companyFromUrl(rawUrl) {
 }
 
 function cleanCompanyName(raw) {
+  const fluffTailPattern =
+    /\s*,?\s*(incorporated|inc|corporation|corp|company|co|llc|l\.l\.c|ltd|limited|plc|gmbh|s\.a\.|s\.a|ag|technologies|technology|systems|industries|industry|group|services|service|solutions|holdings|partners|international)\.?$/i;
   const cleaned = (raw || "")
     .replace(/<[^>]+>/g, " ")
     .replace(/&amp;/g, "&")
@@ -577,16 +798,30 @@ function cleanCompanyName(raw) {
   const deSpacedWithWordBoundaries = deSpaced.replace(/([a-z])([A-Z])/g, "$1 $2");
 
   // Remove common legal/business suffixes at the end only.
-  const suffixPattern =
-    /\s*,?\s*(incorporated|inc|corporation|corp|company|co|llc|l\.l\.c|ltd|limited|plc|gmbh|s\.a\.|s\.a|ag)\.?$/i;
   let normalized = deSpacedWithWordBoundaries;
-  while (suffixPattern.test(normalized)) {
-    normalized = normalized.replace(suffixPattern, "").trim();
+  while (fluffTailPattern.test(normalized)) {
+    normalized = normalized.replace(fluffTailPattern, "").trim();
   }
 
-  const words = normalized.split(/\s+/).filter(Boolean);
-  if (words.length <= 3) return normalized;
-  return words.slice(0, 3).join(" ");
+  const words = normalized
+    .split(/\s+/)
+    .filter(Boolean)
+    .filter((word, index, source) => {
+      if (source.length <= 1) return true;
+      const lowered = word.toLowerCase();
+      return !["corp", "llc", "inc", "technologies", "technology", "systems", "industries", "industry", "group", "services", "service", "company", "solutions", "holdings", "partners", "international"].includes(lowered);
+    });
+
+  const capped = words.slice(0, Math.min(words.length, 2));
+  return toTitleCasePhrase(capped.join(" "));
+}
+
+function getFieldButtonLabel(field) {
+  const rawLabel = field.label || FIELD_LABEL_SUGGESTIONS[field.key] || field.key;
+  if (["job_url", "job_listing_ref_url"].includes(field.key) && isHttpUrl(rawLabel)) {
+    return toLinkLabel(rawLabel);
+  }
+  return rawLabel;
 }
 
 function isValidCompanyCandidate(value) {
@@ -978,12 +1213,18 @@ function downloadTextFile(text, name) {
 }
 
 // Save JSON with a real file dialog when available.
-// Falls back to a simple file-name prompt + browser download.
-async function saveJsonWithDialog(text, suggestedName) {
+// We use one picker id so browser can remember a single CoverAI folder location.
+// Caller should pass a base name without extension; this helper enforces .json.
+async function saveJsonWithDialog(text, suggestedBaseName) {
+  const suggestedJsonName = suggestedBaseName.toLowerCase().endsWith(".json")
+    ? suggestedBaseName
+    : `${suggestedBaseName}.json`;
   try {
     if (window.showSaveFilePicker) {
       const handle = await window.showSaveFilePicker({
-        suggestedName,
+        id: COVERAI_PICKER_ID,
+        startIn: "documents",
+        suggestedName: suggestedJsonName,
         types: [
           {
             description: "JSON Files",
@@ -994,18 +1235,33 @@ async function saveJsonWithDialog(text, suggestedName) {
       const writable = await handle.createWritable();
       await writable.write(text);
       await writable.close();
-      return true;
+      const savedName = handle.name || suggestedJsonName;
+      return savedName.toLowerCase().endsWith(".json") ? savedName : `${savedName}.json`;
     }
   } catch (error) {
-    if (error?.name === "AbortError") return false;
+    if (error?.name === "AbortError") return "";
   }
 
-  const response = window.prompt("Template file name:", suggestedName);
-  if (response === null) return false;
+  const response = window.prompt("File name (no extension needed):", suggestedBaseName);
+  if (response === null) return "";
   const trimmed = response.trim();
-  const fileName = trimmed ? (trimmed.toLowerCase().endsWith(".json") ? trimmed : `${trimmed}.json`) : suggestedName;
+  const fileName = trimmed ? (trimmed.toLowerCase().endsWith(".json") ? trimmed : `${trimmed}.json`) : `${suggestedBaseName}.json`;
   downloadTextFile(text, fileName);
-  return true;
+  return fileName;
+}
+
+// Template = current token layout with empty data values.
+function toTemplateFields(fields) {
+  return fields.map((field) => {
+    const isDefaultField = DEFAULT_FIELD_KEY_SET.has(field.key);
+    return {
+      ...field,
+      // Template contains placeholders only, so values are cleared.
+      value: "",
+      // Default fields reset to canonical names; custom fields keep their token names.
+      label: isDefaultField ? FIELD_LABEL_SUGGESTIONS[field.key] || field.label : field.label,
+    };
+  });
 }
 
 function formatDateYYMMDD(dateObj = new Date()) {
@@ -1039,22 +1295,110 @@ function commitTemplateSequence(datePart, styleCode, seq) {
   localStorage.setItem(key, String(seq));
 }
 
+// Keep a safe snapshot shape so recent sessions can be loaded reliably.
+function normalizeSessionSnapshot(rawSnapshot) {
+  if (!rawSnapshot || typeof rawSnapshot !== "object") return null;
+  if (typeof rawSnapshot.template !== "string" || !Array.isArray(rawSnapshot.fields)) return null;
+  return {
+    template: rawSnapshot.template,
+    fields: mergeFieldsWithDefaults(rawSnapshot.fields),
+    selectedStyle:
+      typeof rawSnapshot.selectedStyle === "string"
+        ? rawSnapshot.selectedStyle
+        : typeof rawSnapshot.style === "string"
+        ? rawSnapshot.style
+        : "eng",
+    customStyle1Code: typeof rawSnapshot.customStyle1Code === "string" ? rawSnapshot.customStyle1Code : "cus1",
+    customStyle2Code: typeof rawSnapshot.customStyle2Code === "string" ? rawSnapshot.customStyle2Code : "cus2",
+  };
+}
+
+function buildDefaultStyleSnapshot(styleKey) {
+  return normalizeSessionSnapshot({
+    template: STYLE_TEMPLATE_MAP[styleKey] || DEFAULT_TEMPLATE,
+    fields: toTemplateFields(DEFAULT_FIELDS),
+    selectedStyle: styleKey,
+    customStyle1Code: "cus1",
+    customStyle2Code: "cus2",
+  });
+}
+
+function normalizeStyleLibrary(rawLibrary) {
+  const normalized = {};
+  const keys = Object.keys(STYLE_SLOT_META);
+  for (const styleKey of keys) {
+    const meta = STYLE_SLOT_META[styleKey];
+    const rawEntry = rawLibrary?.[styleKey];
+    const rawSnapshot = rawEntry?.snapshot || rawEntry;
+    const snapshot = normalizeSessionSnapshot(rawSnapshot);
+    if (snapshot) {
+      normalized[styleKey] = {
+        ...meta,
+        name: typeof rawEntry?.name === "string" && rawEntry.name.trim() ? rawEntry.name.trim() : meta.label,
+        updatedAt:
+          typeof rawEntry?.updatedAt === "string" && !Number.isNaN(Date.parse(rawEntry.updatedAt))
+            ? rawEntry.updatedAt
+            : new Date().toISOString(),
+        snapshot,
+      };
+      continue;
+    }
+    // Locked presets always exist; user-defined style starts empty.
+    if (meta.locked) {
+      normalized[styleKey] = {
+        ...meta,
+        name: meta.label,
+        updatedAt: new Date().toISOString(),
+        snapshot: buildDefaultStyleSnapshot(styleKey),
+      };
+    } else {
+      normalized[styleKey] = { ...meta, name: meta.label, updatedAt: "", snapshot: null };
+    }
+  }
+  return normalized;
+}
+
+function normalizeRecentSessions(rawList) {
+  if (!Array.isArray(rawList)) return [];
+  return rawList
+    .map((entry) => {
+      if (!entry || typeof entry !== "object") return null;
+      const snapshot = normalizeSessionSnapshot(entry.snapshot);
+      if (!snapshot) return null;
+      return {
+        id: typeof entry.id === "string" ? entry.id : `recent_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+        name: typeof entry.name === "string" && entry.name.trim() ? entry.name.trim() : "Session",
+        savedAt:
+          typeof entry.savedAt === "string" && !Number.isNaN(Date.parse(entry.savedAt))
+            ? entry.savedAt
+            : new Date().toISOString(),
+        snapshot,
+      };
+    })
+    .filter(Boolean)
+    .slice(0, RECENT_SESSIONS_LIMIT);
+}
+
+function normalizeCompanyName(raw) {
+  return (raw || "").replace(/\s+/g, " ").trim();
+}
+
+function normalizeCompanyUsage(rawUsage) {
+  if (!rawUsage || typeof rawUsage !== "object") return {};
+  const normalized = {};
+  for (const [rawName, rawCount] of Object.entries(rawUsage)) {
+    const name = normalizeCompanyName(rawName);
+    const count = Number(rawCount);
+    if (!name || !Number.isFinite(count) || count <= 0) continue;
+    normalized[name] = Math.floor(count);
+  }
+  return normalized;
+}
+
 // Basic word counter used for quick stats in the UI.
 function toWordCount(text) {
   const words = text.trim().split(/\s+/).filter(Boolean);
   return words.length;
-}
-
-// Read all unique token keys used in the template.
-function extractTokens(template) {
-  const keys = new Set();
-  let match = TOKEN_REGEX.exec(template);
-  while (match) {
-    keys.add(match[1].toLowerCase());
-    match = TOKEN_REGEX.exec(template);
-  }
-  TOKEN_REGEX.lastIndex = 0;
-  return [...keys];
 }
 
 // Replace each token in the template with the matching field value.
@@ -1176,9 +1520,114 @@ async function readPdfAsText(file) {
   return pageTexts.join("\n\n");
 }
 
+function getFieldTextByKey(fields, fieldKey) {
+  const field = (fields || []).find((entry) => entry.key === fieldKey);
+  if (!field) return "";
+  return (field.value || field.label || "").trim();
+}
+
+function mergeSuggestionEntries(fieldSuggestions, fieldOrder = AI_REVIEW_FIELD_ORDER) {
+  const normalized = normalizeAiFieldSuggestions(fieldSuggestions);
+  const orderedKeys = [
+    ...fieldOrder.filter((key) => normalized[key]),
+    ...Object.keys(normalized).filter((key) => !fieldOrder.includes(key)),
+  ];
+  return orderedKeys.map((key) => ({
+    key,
+    label: FIELD_LABEL_SUGGESTIONS[key] || key,
+    value: normalized[key],
+  }));
+}
+
+function normalizeManagedFieldValues(fields) {
+  const list = Array.isArray(fields) ? fields : [];
+  const company = cleanCompanyName(getFieldTextByKey(list, "company_name"));
+  const currentTitle = getFieldTextByKey(list, "position_title");
+  const referenceTitle = getFieldTextByKey(list, "job_listing_ref_title");
+
+  const currentLooksWrong =
+    !currentTitle ||
+    currentTitle.toLowerCase() === company.toLowerCase() ||
+    /\b(llc|inc|corp|corporation|technologies|systems|industries|group|services|company|solutions|holdings|partners)\b/i.test(
+      currentTitle
+    );
+
+  const normalizedTitle =
+    (currentLooksWrong ? cleanPositionTitle(referenceTitle, company) : "") || cleanPositionTitle(currentTitle, company);
+
+  let changed = false;
+  const next = list.map((field) => {
+    if (field.key === "company_name") {
+      const nextValue = company;
+      if ((field.label || "") === nextValue && (field.value || "") === nextValue) return field;
+      changed = true;
+      return { ...field, label: nextValue, value: nextValue };
+    }
+    if (field.key === "position_title") {
+      const nextValue = normalizedTitle;
+      if (!nextValue) return field;
+      if ((field.label || "") === nextValue && (field.value || "") === nextValue) return field;
+      changed = true;
+      return { ...field, label: nextValue, value: nextValue };
+    }
+    return field;
+  });
+
+  return changed ? next : list;
+}
+
+function buildWashedJobPayload(input) {
+  const source = input && typeof input === "object" ? input : {};
+  const rawCompany = source.company_name || "";
+  const rawRefTitle = source.job_listing_ref_title || "";
+  const rawPositionTitle = source.position_title || rawRefTitle || "";
+  const rawSkills = Array.isArray(source.skills) ? source.skills : [];
+
+  const company = cleanCompanyName(rawCompany);
+  const jobListingRefTitle = normalizeFieldValue(rawRefTitle);
+  const positionTitle = cleanPositionTitle(rawPositionTitle, company);
+  const skills = rawSkills
+    .map((skill) => washSkillToShortPhrase(skill))
+    .filter(Boolean)
+    .filter((skill, index, arr) => arr.findIndex((item) => item.toLowerCase() === skill.toLowerCase()) === index)
+    .slice(0, 3);
+
+  const fieldSuggestions = {
+    ...(source.fieldSuggestions && typeof source.fieldSuggestions === "object" ? source.fieldSuggestions : {}),
+    ...(company ? { company_name: company } : {}),
+    ...(positionTitle ? { position_title: positionTitle } : {}),
+    ...(jobListingRefTitle ? { job_listing_ref_title: jobListingRefTitle } : {}),
+    ...(source.job_url ? { job_url: source.job_url } : {}),
+    ...(source.job_listing_ref_url ? { job_listing_ref_url: source.job_listing_ref_url } : {}),
+    ...(skills[0] ? { pos_skill_1: skills[0] } : {}),
+    ...(skills[1] ? { pos_skill_2: skills[1] } : {}),
+    ...(skills[2] ? { pos_skill_3: skills[2] } : {}),
+  };
+
+  return {
+    ...source,
+    company_name: company,
+    position_title: positionTitle,
+    job_listing_ref_title: jobListingRefTitle,
+    skills,
+    fieldSuggestions,
+  };
+}
+
+function buildEditorSnapshot({ template, fields, selectedStyle, customStyle1Code, customStyle2Code }) {
+  return {
+    template,
+    fields,
+    selectedStyle,
+    customStyle1Code,
+    customStyle2Code,
+  };
+}
+
 function App() {
   // Refs let us access real DOM nodes (editor and hidden file input).
   const editorRef = useRef(null);
+  const importTextRef = useRef(null);
   const importProjectRef = useRef(null);
   const startupTimerRef = useRef(null);
   const jobLookupTimerRef = useRef(null);
@@ -1186,6 +1635,13 @@ function App() {
   const jobUrlLookupRef = useRef(0);
   const activeJobLookupUrlRef = useRef("");
   const lastJobLookupRef = useRef({ url: "", at: 0 });
+  const historyRef = useRef({
+    undo: [],
+    redo: [],
+    lastSnapshot: null,
+    lastSerialized: "",
+    isRestoring: false,
+  });
 
   // Main app state: template text, fields, UI mode, and status messages.
   const [template, setTemplate] = useState(STYLE_TEMPLATE_MAP.eng);
@@ -1206,6 +1662,46 @@ function App() {
   // Demo startup state for the Start/Stop controls.
   const [startupPhase, setStartupPhase] = useState("idle");
   const [startupProgress, setStartupProgress] = useState(0);
+  // Keeps the last 5 exported/imported sessions for quick loading.
+  const [recentSessions, setRecentSessions] = useState([]);
+  // Tracks how often each company is used so dropdown can prioritize common choices.
+  const [companyUsage, setCompanyUsage] = useState({});
+  const [isCompanyMenuOpen, setIsCompanyMenuOpen] = useState(false);
+  const [companyMenuFilter, setCompanyMenuFilter] = useState("");
+  const [isPositionMenuOpen, setIsPositionMenuOpen] = useState(false);
+  const [positionMenuFilter, setPositionMenuFilter] = useState("");
+  const [activeSkillMenuKey, setActiveSkillMenuKey] = useState("");
+  const [skillMenuFilter, setSkillMenuFilter] = useState("");
+  const [styleLibrary, setStyleLibrary] = useState(() => normalizeStyleLibrary(null));
+  const [resumeText, setResumeText] = useState("");
+  const [aiJobText, setAiJobText] = useState("");
+  const [useCurrentBrowserSession, setUseCurrentBrowserSession] = useState(false);
+  const [isAiExtracting, setIsAiExtracting] = useState(false);
+  const [isAiDrafting, setIsAiDrafting] = useState(false);
+  const [aiFieldSuggestions, setAiFieldSuggestions] = useState([]);
+  const [aiExtractMeta, setAiExtractMeta] = useState(null);
+  const [aiDraftResult, setAiDraftResult] = useState(null);
+  const [jsonPre, setJsonPre] = useState(null);
+  const [, setJsonPost] = useState(null);
+  const [aiScreenshotPreviews, setAiScreenshotPreviews] = useState([]);
+  const [isHistoryReady, setIsHistoryReady] = useState(false);
+  const [undoCount, setUndoCount] = useState(0);
+  const [redoCount, setRedoCount] = useState(0);
+
+  const syncControlStatus = useCallback(async () => {
+    try {
+      const response = await requestControlStatus();
+      const appRunning = Boolean(response?.status?.app?.running);
+      setStartupPhase(appRunning ? "ready" : "stopped");
+      setStartupProgress(appRunning ? 100 : 0);
+      if (appRunning) {
+        setError("");
+      }
+    } catch {
+      setStartupPhase("stopped");
+      setStartupProgress(0);
+    }
+  }, []);
 
   // On first render, restore autosaved data from localStorage.
   useEffect(() => {
@@ -1225,26 +1721,128 @@ function App() {
     }
   }, []);
 
+  useEffect(() => {
+    syncControlStatus();
+  }, [syncControlStatus]);
+
+  // On first render, restore the recent session list shown under File > Recent.
+  useEffect(() => {
+    try {
+      const rawRecent = localStorage.getItem(RECENT_SESSIONS_KEY);
+      if (!rawRecent) return;
+      const parsedRecent = JSON.parse(rawRecent);
+      setRecentSessions(normalizeRecentSessions(parsedRecent));
+    } catch {
+      setError("Recent sessions could not be loaded.");
+    }
+  }, []);
+
+  // On first render, restore company frequency history.
+  useEffect(() => {
+    try {
+      const rawCompanyUsage = localStorage.getItem(COMPANY_USAGE_KEY);
+      if (!rawCompanyUsage) return;
+      const parsedCompanyUsage = JSON.parse(rawCompanyUsage);
+      setCompanyUsage(normalizeCompanyUsage(parsedCompanyUsage));
+    } catch {
+      setError("Company suggestion history could not be loaded.");
+    }
+  }, []);
+
+  // On first render, restore style library slots.
+  useEffect(() => {
+    try {
+      const rawStyles = localStorage.getItem(STYLE_LIBRARY_KEY);
+      if (!rawStyles) return;
+      setStyleLibrary(normalizeStyleLibrary(JSON.parse(rawStyles)));
+    } catch {
+      setError("Style library could not be loaded.");
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      const rawPref = localStorage.getItem(BROWSER_SESSION_PREF_KEY);
+      setUseCurrentBrowserSession(rawPref === "1");
+    } catch {
+      setUseCurrentBrowserSession(false);
+    }
+  }, []);
+
+  // Turn history tracking on only after the initial restore effects have had a chance to run.
+  useEffect(() => {
+    setIsHistoryReady(true);
+  }, []);
+
   // Any time template or fields change, autosave the project.
   useEffect(() => {
     const payload = JSON.stringify({ template, fields, selectedStyle, customStyle1Code, customStyle2Code });
     localStorage.setItem(STORAGE_KEY, payload);
   }, [template, fields, selectedStyle, customStyle1Code, customStyle2Code]);
 
-  // Keyboard shortcut: Ctrl/Cmd + S downloads the final rendered letter.
+  // Keep recent sessions synced to browser storage.
   useEffect(() => {
-    const onKeyDown = (event) => {
-      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "s") {
-        event.preventDefault();
-        // Build a quick key->value map from current fields.
-        const { rendered } = renderTemplate(template, Object.fromEntries(fields.map((f) => [f.key, f.value.trim()])));
-        downloadTextFile(rendered, "cover-letter-final.txt");
-        setNotice("Final letter downloaded.");
-      }
-    };
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [fields, template]);
+    localStorage.setItem(RECENT_SESSIONS_KEY, JSON.stringify(recentSessions));
+  }, [recentSessions]);
+
+  // Persist company usage so suggestions stay available after refresh/restart.
+  useEffect(() => {
+    localStorage.setItem(COMPANY_USAGE_KEY, JSON.stringify(companyUsage));
+  }, [companyUsage]);
+
+  useEffect(() => {
+    localStorage.setItem(STYLE_LIBRARY_KEY, JSON.stringify(styleLibrary));
+  }, [styleLibrary]);
+
+  useEffect(() => {
+    localStorage.setItem(BROWSER_SESSION_PREF_KEY, useCurrentBrowserSession ? "1" : "0");
+  }, [useCurrentBrowserSession]);
+
+  useEffect(() => {
+    const normalizedFields = normalizeManagedFieldValues(fields);
+    if (normalizedFields === fields) return;
+    setFields(normalizedFields);
+  }, [fields]);
+
+  useEffect(() => {
+    if (!isHistoryReady) return;
+
+    const snapshot = buildEditorSnapshot({
+      template,
+      fields,
+      selectedStyle,
+      customStyle1Code,
+      customStyle2Code,
+    });
+    const serialized = JSON.stringify(snapshot);
+    const history = historyRef.current;
+
+    if (!history.lastSnapshot) {
+      history.lastSnapshot = snapshot;
+      history.lastSerialized = serialized;
+      setUndoCount(history.undo.length);
+      setRedoCount(history.redo.length);
+      return;
+    }
+
+    if (serialized === history.lastSerialized) return;
+
+    if (history.isRestoring) {
+      history.lastSnapshot = snapshot;
+      history.lastSerialized = serialized;
+      history.isRestoring = false;
+      setUndoCount(history.undo.length);
+      setRedoCount(history.redo.length);
+      return;
+    }
+
+    history.undo = [...history.undo, history.lastSnapshot].slice(-HISTORY_LIMIT);
+    history.redo = [];
+    history.lastSnapshot = snapshot;
+    history.lastSerialized = serialized;
+    setUndoCount(history.undo.length);
+    setRedoCount(history.redo.length);
+  }, [customStyle1Code, customStyle2Code, fields, isHistoryReady, selectedStyle, template]);
 
   // Memoized map keeps token lookups fast while typing.
   const valueByKey = useMemo(() => {
@@ -1258,7 +1856,6 @@ function App() {
   // Recompute preview text and missing tokens whenever inputs change.
   const { rendered, unresolved } = useMemo(() => renderTemplate(template, valueByKey), [template, valueByKey]);
   const previewHtml = useMemo(() => toPreviewHtml(rendered), [rendered]);
-  const tokensInTemplate = useMemo(() => extractTokens(template), [template]);
   const labelByKey = useMemo(
     () => {
       const labels = Object.fromEntries(
@@ -1279,6 +1876,72 @@ function App() {
     }),
     [rendered, template, unresolved.length]
   );
+  const currentFieldValueMap = useMemo(() => fieldArrayToValueMap(fields), [fields]);
+  const aiDraftSuggestions = useMemo(
+    () => mergeSuggestionEntries(aiDraftResult?.fieldSuggestions || {}),
+    [aiDraftResult]
+  );
+  const jsonPreText = useMemo(() => (jsonPre ? JSON.stringify(jsonPre, null, 2) : ""), [jsonPre]);
+
+  // Build dropdown options: top-used first, then default seed list, capped to 25.
+  const companyDropdownOptions = useMemo(() => {
+    const used = Object.entries(companyUsage)
+      .map(([name, count]) => ({ name, count: Number(count) || 0 }))
+      .filter((entry) => entry.name && entry.count > 0)
+      .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name))
+      .map((entry) => entry.name);
+
+    const defaultsSorted = [...new Set(DEFAULT_COMPANY_SEED.map(normalizeCompanyName))]
+      .filter(Boolean)
+      .sort((a, b) => a.localeCompare(b));
+
+    const merged = [];
+    const seen = new Set();
+    for (const name of [...used, ...defaultsSorted]) {
+      const key = name.toLowerCase();
+      if (seen.has(key)) continue;
+      seen.add(key);
+      merged.push(name);
+      if (merged.length >= COMPANY_DROPDOWN_LIMIT) break;
+    }
+    return merged;
+  }, [companyUsage]);
+
+  const companyMenuOptions = useMemo(() => {
+    const query = companyMenuFilter.trim().toLowerCase();
+    if (!query) return companyDropdownOptions;
+    return companyDropdownOptions.filter((name) => name.toLowerCase().includes(query));
+  }, [companyDropdownOptions, companyMenuFilter]);
+
+  const positionDropdownOptions = useMemo(
+    () =>
+      [...new Set(DEFAULT_POSITION_SEED.map(normalizeCompanyName))]
+        .filter(Boolean)
+        .sort((a, b) => a.localeCompare(b)),
+    []
+  );
+
+  const positionMenuOptions = useMemo(() => {
+    const query = positionMenuFilter.trim().toLowerCase();
+    if (!query) return positionDropdownOptions;
+    return positionDropdownOptions.filter((name) => name.toLowerCase().includes(query));
+  }, [positionDropdownOptions, positionMenuFilter]);
+
+  const positionSkillDropdownOptions = useMemo(
+    () =>
+      [...new Set(DEFAULT_POSITION_SKILL_SEED.map(normalizeCompanyName))]
+        .filter(Boolean)
+        .sort((a, b) => a.localeCompare(b)),
+    []
+  );
+
+  const positionSkillMenuOptions = useMemo(() => {
+    const query = skillMenuFilter.trim().toLowerCase();
+    if (!query) return positionSkillDropdownOptions;
+    return positionSkillDropdownOptions.filter((name) => name.toLowerCase().includes(query));
+  }, [positionSkillDropdownOptions, skillMenuFilter]);
+
+  const isPositionSkillKey = (fieldKey) => ["pos_skill_1", "pos_skill_2", "pos_skill_3"].includes(fieldKey);
 
   // Insert a token chip at the current cursor position in the editor.
   const insertTokenAtCursor = (fieldKey, explicitRange = null) => {
@@ -1347,22 +2010,40 @@ function App() {
   };
 
   // Upload template from .txt or .pdf file.
-  const handleFileUpload = async (event) => {
-    const file = event.target.files?.[0];
+  const importTextFromFile = async (file) => {
     if (!file) return;
     setError("");
     setNotice("");
     setIsLoadingFile(true);
     try {
+      // JSON file: import a saved session/style file.
+      if (file.name.toLowerCase().endsWith(".json")) {
+        await importProjectFromFile(file);
+        return;
+      }
       // Plain text file: read directly.
       if (file.type === "text/plain" || file.name.toLowerCase().endsWith(".txt")) {
         const text = await file.text();
         setTemplate(text);
+        saveRecentSession(file.name, {
+          template: text,
+          fields,
+          selectedStyle,
+          customStyle1Code,
+          customStyle2Code,
+        });
         setNotice(`Loaded ${file.name}.`);
       // PDF file: extract text page-by-page.
       } else if (file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf")) {
         const text = await readPdfAsText(file);
         setTemplate(text);
+        saveRecentSession(file.name, {
+          template: text,
+          fields,
+          selectedStyle,
+          customStyle1Code,
+          customStyle2Code,
+        });
         setNotice(`Extracted template from ${file.name}.`);
       } else {
         setError("Supported file types are .txt and .pdf.");
@@ -1371,8 +2052,17 @@ function App() {
       setError("Could not read this file.");
     } finally {
       setIsLoadingFile(false);
-      event.target.value = "";
     }
+  };
+
+  const handleFileUpload = async (event) => {
+    const file = event.target.files?.[0];
+    await importTextFromFile(file);
+    event.target.value = "";
+  };
+
+  const handleOpenText = () => {
+    importTextRef.current?.click();
   };
 
   // Update one property on one field card.
@@ -1380,22 +2070,253 @@ function App() {
     setFields((prev) => prev.map((field) => (field.id === id ? { ...field, [key]: value } : field)));
   };
 
-  const setFieldLabelByKey = (fieldKey, label) => {
-    setFields((prev) =>
-      prev.map((field) => (field.key === fieldKey ? { ...field, label } : field))
-    );
+  // Increase usage count for a company so frequent choices rise in the dropdown.
+  const recordCompanyUsage = (rawCompany) => {
+    const company = normalizeCompanyName(rawCompany);
+    if (!company) return;
+    setCompanyUsage((prev) => ({
+      ...prev,
+      [company]: (Number(prev[company]) || 0) + 1,
+    }));
+  };
+
+  const selectCompanyName = (rawCompany) => {
+    const company = normalizeCompanyName(rawCompany);
+    if (!company) return;
+    setFieldLabelAndValueByKey("company_name", company);
+    setCompanyMenuFilter(company);
+    setIsCompanyMenuOpen(false);
+  };
+
+  const selectPositionTitle = (rawTitle) => {
+    const title = normalizeCompanyName(rawTitle);
+    if (!title) return;
+    setFieldLabelAndValueByKey("position_title", title);
+    setPositionMenuFilter(title);
+    setIsPositionMenuOpen(false);
+  };
+
+  const selectPositionSkill = (fieldKey, rawSkill) => {
+    const skill = normalizeCompanyName(rawSkill);
+    if (!skill) return;
+    setFieldLabelAndValueByKey(fieldKey, skill);
+    setSkillMenuFilter(skill);
+    setActiveSkillMenuKey("");
   };
 
   const setFieldLabelAndValueByKey = (fieldKey, nextValue) => {
-    const normalized = normalizeFieldValue(nextValue);
+    let normalized = normalizeFieldValue(nextValue);
+    if (fieldKey === "company_name") {
+      normalized = cleanCompanyName(normalized);
+    }
+    if (fieldKey === "position_title") {
+      normalized = cleanPositionTitle(normalized, getFieldTextByKey(fields, "company_name"));
+    }
     setFields((prev) =>
       prev.map((field) =>
         field.key === fieldKey ? { ...field, label: normalized, value: normalized } : field
       )
     );
+    if (fieldKey === "company_name") recordCompanyUsage(normalized);
   };
 
-  const resolveJobReferenceFromUrl = async (rawUrl) => {
+  const applyFieldSuggestions = (suggestionEntries) => {
+    const suggestions = Array.isArray(suggestionEntries) ? suggestionEntries : [];
+    const suggestionMap = Object.fromEntries(
+      suggestions.filter((entry) => entry?.key && entry?.value).map((entry) => [entry.key, entry.value])
+    );
+    setFields((prev) =>
+      prev.map((field) => {
+        if (!suggestionMap[field.key]) return field;
+        let normalized = normalizeFieldValue(suggestionMap[field.key]);
+        if (field.key === "company_name") {
+          normalized = cleanCompanyName(normalized);
+        }
+        if (field.key === "position_title") {
+          normalized = cleanPositionTitle(normalized, cleanCompanyName(suggestionMap.company_name || getFieldTextByKey(prev, "company_name")));
+        }
+        return { ...field, label: normalized, value: normalized };
+      })
+    );
+    if (suggestionMap.company_name) recordCompanyUsage(suggestionMap.company_name);
+  };
+
+  const applySingleAiSuggestion = (entry) => {
+    if (!entry?.key || !entry?.value) return;
+    applyFieldSuggestions([entry]);
+    setNotice(`Applied ${entry.label}.`);
+    setError("");
+  };
+
+  const applyAllAiSuggestions = (suggestionEntries, contextLabel) => {
+    if (!suggestionEntries?.length) return;
+    applyFieldSuggestions(suggestionEntries);
+    setNotice(`${contextLabel} suggestions applied.`);
+    setError("");
+  };
+
+  const buildCurrentStyleSnapshot = (templateOverride = template) => ({
+    template: templateOverride,
+    fields: toTemplateFields(fields),
+    selectedStyle,
+    customStyle1Code,
+    customStyle2Code,
+  });
+
+  const saveAiDraftToUserStyle = () => {
+    if (!aiDraftResult?.draft) return;
+    const styleName = `AI Draft ${new Date().toLocaleString()}`;
+    const snapshot = normalizeSessionSnapshot({
+      ...buildCurrentStyleSnapshot(aiDraftResult.draft),
+      selectedStyle: "custom_1",
+    });
+    setStyleLibrary((prev) => ({
+      ...prev,
+      custom_1: {
+        ...STYLE_SLOT_META.custom_1,
+        name: styleName,
+        updatedAt: new Date().toISOString(),
+        snapshot,
+      },
+    }));
+    setNotice("AI draft saved to User Defined style.");
+    setError("");
+  };
+
+  const replaceEditorDraftWithAi = () => {
+    if (!aiDraftResult?.draft) return;
+    setTemplate(aiDraftResult.draft);
+    setNotice("AI draft loaded into the template editor.");
+    setError("");
+  };
+
+  const buildAiExtractMeta = (response) => ({
+    confidence: response.confidence || "medium",
+    notes: response.notes || "",
+    sourceSummary: response.sourceSummary || "",
+    skills: Array.isArray(response.answers?.top_skills)
+      ? response.answers.top_skills
+      : Array.isArray(response.skills)
+        ? response.skills
+        : [],
+  });
+
+  const buildAiScreenshotPreviews = (response) =>
+    (Array.isArray(response?.screenshots) ? response.screenshots : [])
+      .filter((item) => item?.imageDataUrl)
+      .map((item, index) => ({
+        id: `${item.label || "shot"}_${index}`,
+        label: item.label || `Preview ${index + 1}`,
+        excerpt: item.excerpt || "",
+        src: item.imageDataUrl,
+      }));
+
+  const runAiExtractJob = async () => {
+    const jobUrl = getFieldTextByKey(fields, "job_url");
+    const pastedJobText = aiJobText.trim();
+    if (!jobUrl && !pastedJobText) {
+      setError("Add a Job URL or paste job text before running AI Extract Job.");
+      return;
+    }
+
+    setIsAiExtracting(true);
+    setError("");
+    setNotice("CoverAI AI is extracting job details...");
+    try {
+      const response = await requestAiExtractJob({
+        jobUrl,
+        jobText: pastedJobText,
+        fields,
+        useCurrentBrowserSession,
+      });
+      const nextJsonPre = response;
+      const suggestionEntries = mergeSuggestionEntries(response.fieldSuggestions || {});
+      setAiFieldSuggestions(suggestionEntries);
+      setAiExtractMeta(buildAiExtractMeta(response));
+      setAiScreenshotPreviews(buildAiScreenshotPreviews(response));
+      setJsonPre(nextJsonPre);
+      setJsonPost(null);
+      if (response?.errorCode === "ai_not_configured") {
+        setNotice("Screenshots captured, but AI extraction did not run because OPENAI_API_KEY is not configured.");
+      } else {
+        setNotice("AI extraction complete. Review the raw jsonPre findings.");
+      }
+      setError("");
+    } catch (error) {
+      setAiFieldSuggestions([]);
+      setAiExtractMeta(null);
+      setAiScreenshotPreviews([]);
+      setJsonPre(null);
+      setJsonPost(null);
+      if (jobUrl) {
+        setNotice("AI extraction failed. Falling back to the existing URL parser...");
+        await resolveJobReferenceFromUrl(jobUrl, { preferAi: false });
+      } else {
+        setError(error.message || "AI extraction failed.");
+      }
+    } finally {
+      setIsAiExtracting(false);
+    }
+  };
+
+  const extractJobViaAi = async ({ jobUrl = "", jobText = "", autoApply = false } = {}) => {
+    const response = await requestAiExtractJob({
+      jobUrl,
+      jobText,
+      fields,
+      useCurrentBrowserSession,
+    });
+    const nextJsonPre = response;
+    const suggestionEntries = mergeSuggestionEntries(response.fieldSuggestions || {});
+    setAiFieldSuggestions(suggestionEntries);
+    setAiExtractMeta(buildAiExtractMeta(response));
+    setAiScreenshotPreviews(buildAiScreenshotPreviews(response));
+    setJsonPre(nextJsonPre);
+    setJsonPost(null);
+    if (autoApply && suggestionEntries.length > 0) {
+      applyFieldSuggestions(suggestionEntries);
+    }
+    return { response, suggestionEntries, jsonPre: nextJsonPre, jsonPost: null };
+  };
+
+  const runAiDraftLetter = async () => {
+    const extractedJob =
+      aiExtractMeta || aiJobText.trim()
+        ? {
+            ...(aiExtractMeta || {}),
+            fieldSuggestions: Object.fromEntries(aiFieldSuggestions.map((entry) => [entry.key, entry.value])),
+            pastedJobText: aiJobText.trim(),
+          }
+        : null;
+
+    setIsAiDrafting(true);
+    setError("");
+    setNotice("CoverAI AI is drafting a tailored letter...");
+    try {
+      const response = await requestAiDraftLetter({
+        template,
+        fields,
+        selectedStyle: getSelectedStyleCode(),
+        resumeText,
+        extractedJob,
+      });
+      setAiDraftResult({
+        draft: response.draft || "",
+        fieldSuggestions: response.fieldSuggestions || {},
+        notes: response.notes || "",
+        warnings: Array.isArray(response.warnings) ? response.warnings : [],
+      });
+      setNotice("AI draft ready. Review it before applying.");
+      setError("");
+    } catch (error) {
+      setError(error.message || "AI draft generation failed.");
+    } finally {
+      setIsAiDrafting(false);
+    }
+  };
+
+  const resolveJobReferenceFromUrl = async (rawUrl, options = {}) => {
+    const { preferAi = true } = options;
     const url = rawUrl.trim();
     if (!isHttpUrl(url)) return;
     const now = Date.now();
@@ -1425,6 +2346,24 @@ function App() {
     setNotice("Job URL committed. Refining details...");
     setError("");
 
+    if (preferAi) {
+      try {
+        setJobLookupStage("LLM extracting job details...");
+        await extractJobViaAi({
+          jobUrl: url,
+          autoApply: false,
+        });
+        if (jobUrlLookupRef.current !== requestId) return;
+        completeJobLookupProgress("AI extraction complete.");
+        setNotice("Raw AI job findings saved to jsonPre.");
+        setError("");
+        return;
+      } catch {
+        if (jobUrlLookupRef.current !== requestId) return;
+        setNotice("AI extraction unavailable. Falling back to heuristic URL parsing...");
+      }
+    }
+
     try {
       setJobLookupStage("Fetching title, company, and skills...");
       const { title, refTitle, company, skills } = await fetchJobInsightsFromUrl(url);
@@ -1437,12 +2376,14 @@ function App() {
         .filter(Boolean);
       const refFirstSegment = titleParts[0] || "";
       const refSecondSegment = titleParts[1] || "";
+      const resolvedCompany = cleanCompanyName(refSecondSegment || company || "");
       const baseResolvedPositionTitle = [title, refFirstSegment, instantTitle].find(
         (candidate) => candidate && !isNumericOnlyTitle(candidate)
       );
-      const resolvedPositionTitle = /linkedin\.com/i.test(url)
+      const linkedInAdjustedTitle = /linkedin\.com/i.test(url)
         ? truncateLinkedInJobTitle(baseResolvedPositionTitle)
         : baseResolvedPositionTitle;
+      const resolvedPositionTitle = cleanPositionTitle(linkedInAdjustedTitle, resolvedCompany);
       const fallbackSkills = inferSkillsFromTitle(title);
       const mergedSkills = [...skills, ...fallbackSkills]
         .map((s) => (s || "").trim())
@@ -1454,15 +2395,29 @@ function App() {
         .filter(Boolean)
         .filter((skill, index, arr) => arr.findIndex((x) => x.toLowerCase() === skill.toLowerCase()) === index)
         .slice(0, 3);
+      const resolvedRefTitle = refTitle || title || instantTitle;
+      const nextJsonPre = {
+        source: "heuristic_url_lookup",
+        job_url: url,
+        company_name: refSecondSegment || company || "",
+        position_title: linkedInAdjustedTitle || "",
+        job_listing_ref_title: resolvedRefTitle,
+        skills: mergedSkills,
+      };
+      const nextJsonPost = buildWashedJobPayload({
+        ...nextJsonPre,
+        job_listing_ref_url: url,
+      });
 
       if (resolvedPositionTitle) setFieldLabelAndValueByKey("position_title", resolvedPositionTitle);
-      const resolvedRefTitle = refTitle || title || instantTitle;
       if (resolvedRefTitle) setFieldLabelAndValueByKey("job_listing_ref_title", resolvedRefTitle);
       // Always update the company field so stale values do not stick.
-      setFieldLabelAndValueByKey("company_name", refSecondSegment || company || "");
+      setFieldLabelAndValueByKey("company_name", resolvedCompany);
       if (washedSkills[0]) setFieldLabelAndValueByKey("pos_skill_1", washedSkills[0]);
       if (washedSkills[1]) setFieldLabelAndValueByKey("pos_skill_2", washedSkills[1]);
       if (washedSkills[2]) setFieldLabelAndValueByKey("pos_skill_3", washedSkills[2]);
+      setJsonPre(nextJsonPre);
+      setJsonPost(nextJsonPost);
       setNotice("Job details populated from URL.");
       setError("");
       completeJobLookupProgress("URL complete.");
@@ -1526,72 +2481,171 @@ function App() {
       cus: "Customer Service",
       fin: "Financial",
       mgr: "Management",
+      custom_1: "User Defined",
     };
     return known[code] || code.toUpperCase();
   };
 
-  const applyStyleTemplate = (styleKey, customCodeOverride = "") => {
-    const nextTemplate = STYLE_TEMPLATE_MAP[styleKey] || DEFAULT_TEMPLATE;
-    const styleCode =
-      styleKey === "custom_1"
-        ? sanitizeStyleCode(customCodeOverride || customStyle1Code, "cus1")
-        : styleKey === "custom_2"
-        ? sanitizeStyleCode(customCodeOverride || customStyle2Code, "cus2")
-        : styleKey;
-    setSelectedStyle(styleKey);
-    setTemplate(nextTemplate);
-    setNotice(`Loaded ${getStyleLabelByCode(styleCode)} template.`);
-    setError("");
+  // Apply a saved snapshot into the current working session.
+  const applySessionSnapshot = (snapshot, nextStyleKey = selectedStyle) => {
+    const normalized = normalizeSessionSnapshot(snapshot);
+    if (!normalized) {
+      setError("Saved style data is invalid.");
+      return false;
+    }
+    setTemplate(normalized.template);
+    setFields(normalized.fields);
+    setSelectedStyle(nextStyleKey);
+    setCustomStyle1Code(normalized.customStyle1Code);
+    setCustomStyle2Code(normalized.customStyle2Code);
+    return true;
   };
 
-  const handleStyleSelectionChange = (styleKey) => {
-    if (styleKey === "custom_1") {
-      const response = window.prompt("Enter custom style code for slot 1:", customStyle1Code);
-      if (response !== null) setCustomStyle1Code(response);
-      const styleCode = sanitizeStyleCode(response ?? customStyle1Code, "cus1");
-      applyStyleTemplate(styleKey, styleCode);
+  // Load a style directly from local style slots (no file browse on each click).
+  const loadStyleFromSlot = (styleKey) => {
+    const styleName = STYLE_SLOT_META[styleKey]?.label || getStyleLabelByCode(styleKey);
+    const overwrite = window.confirm(`Load ${styleName}? This will overwrite your current active session.`);
+    if (!overwrite) return;
+    const slot = styleLibrary[styleKey];
+    if (!slot?.snapshot) {
+      setError(`No saved ${styleName} style yet.`);
       return;
     }
-    applyStyleTemplate(styleKey);
+    const applied = applySessionSnapshot(slot.snapshot, styleKey);
+    if (!applied) return;
+    setNotice(`Loaded ${slot.name || styleName}.`);
+    setError("");
   };
 
-  const openRecentSessions = () => {
-    setNotice("Recent sessions (5) is coming soon.");
+  // Save current session to the only editable style slot and export a matching style file.
+  const saveStyleToSlot = async (mode) => {
+    const editableKey = "custom_1";
+    const currentSlot = styleLibrary[editableKey];
+    if (mode === "new" && currentSlot?.snapshot) {
+      setError("User Defined style already exists. Use Replace Existing.");
+      return;
+    }
+
+    const styleNamePrompt = window.prompt("Style name:", currentSlot?.name || "User Defined");
+    if (styleNamePrompt === null) return;
+    const styleName = styleNamePrompt.trim() || "User Defined";
+    const snapshot = {
+      template,
+      fields: toTemplateFields(fields),
+      selectedStyle: editableKey,
+      customStyle1Code,
+      customStyle2Code,
+    };
+
+    setStyleLibrary((prev) => ({
+      ...prev,
+      [editableKey]: {
+        ...STYLE_SLOT_META[editableKey],
+        name: styleName,
+        updatedAt: new Date().toISOString(),
+        snapshot: normalizeSessionSnapshot(snapshot),
+      },
+    }));
+    setSelectedStyle(editableKey);
+
+    const styleCode = sanitizeStyleCode(customStyle1Code, "usr");
+    const suggestedName = `style_${formatDateYYMMDD()}_${styleCode}`;
+    const payload = JSON.stringify(
+      {
+        type: "coverai_style",
+        version: 1,
+        styleKey: editableKey,
+        styleName,
+        locked: false,
+        createdAt: new Date().toISOString(),
+        snapshot,
+      },
+      null,
+      2
+    );
+    const savedFileName = await saveJsonWithDialog(payload, suggestedName);
+    if (savedFileName) {
+      saveRecentSession(savedFileName, snapshot);
+    }
+    setNotice(mode === "new" ? `Saved new style: ${styleName}.` : `Replaced style: ${styleName}.`);
     setError("");
+  };
+
+  // Save one snapshot into the "recent sessions" list.
+  const saveRecentSession = (name, snapshot) => {
+    const normalized = normalizeSessionSnapshot(snapshot);
+    if (!normalized) return;
+    const cleanName = (name || "Session").trim();
+    setRecentSessions((prev) => {
+      const filtered = prev.filter((entry) => entry.name !== cleanName);
+      const next = [
+        {
+          id: `recent_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+          name: cleanName,
+          savedAt: new Date().toISOString(),
+          snapshot: normalized,
+        },
+        ...filtered,
+      ];
+      return next.slice(0, RECENT_SESSIONS_LIMIT);
+    });
+  };
+
+  // Load a saved recent session back into editor + fields.
+  const loadRecentSession = (entry) => {
+    const normalized = normalizeSessionSnapshot(entry?.snapshot);
+    if (!normalized) {
+      setError("This recent session entry is invalid.");
+      return;
+    }
+    setTemplate(normalized.template);
+    setFields(normalized.fields);
+    setSelectedStyle(normalized.selectedStyle);
+    setCustomStyle1Code(normalized.customStyle1Code);
+    setCustomStyle2Code(normalized.customStyle2Code);
+    setNotice(`Loaded recent session: ${entry.name}`);
+    setError("");
+  };
+
+  const formatRecentSavedAt = (isoString) => {
+    const parsed = Date.parse(isoString);
+    if (Number.isNaN(parsed)) return "";
+    const stamp = new Date(parsed);
+    return stamp.toLocaleString([], { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
   };
 
   // Restore template + fields to starter defaults.
   const resetAll = () => {
-    setTemplate(STYLE_TEMPLATE_MAP.eng);
-    setSelectedStyle("eng");
-    setFields(DEFAULT_FIELDS);
+    const baseline = styleLibrary.eng?.snapshot || buildDefaultStyleSnapshot("eng");
+    applySessionSnapshot(baseline, "eng");
+    setResumeText("");
+    setAiJobText("");
+    setAiFieldSuggestions([]);
+    setAiExtractMeta(null);
+    setAiDraftResult(null);
+    setAiScreenshotPreviews([]);
+    setJsonPre(null);
+    setJsonPost(null);
     setNotice("Reset to default template.");
     setError("");
   };
 
   // Create a reusable template file for future jobs.
-  // It keeps the current wording/tokens, but clears fields users usually change each application.
+  // A template keeps token layout and wording, but no field data.
   const createTemplateFile = async () => {
-    const fieldsToClear = new Set([
-      "hiring_manager",
-      "company_name",
-      "position_title",
-      "job_url",
-      "job_listing_ref_title",
-      "job_listing_ref_url",
-      "ref",
-    ]);
-
-    const templateFields = fields.map((field) => {
-      if (!fieldsToClear.has(field.key)) return field;
-      return { ...field, label: "", value: "" };
-    });
+    const templateFields = toTemplateFields(fields);
 
     const payload = JSON.stringify(
       {
         type: "coverai_template",
         version: 1,
         createdAt: new Date().toISOString(),
+        templateDefinition: "session_with_placeholders_no_field_data",
+        styleSlots: {
+          total: 5,
+          lockedPresets: ["eng", "cus", "fin", "mgr"],
+          editableSlot: "custom_1",
+        },
         style: getSelectedStyleCode(),
         template,
         fields: templateFields,
@@ -1602,10 +2656,17 @@ function App() {
     const datePart = formatDateYYMMDD();
     const styleCode = getSelectedStyleCode();
     const seq = peekNextTemplateSequence(datePart, styleCode);
-    const suggestedName = `cv_${datePart}_${styleCode}_${seq}.json`;
-    const saved = await saveJsonWithDialog(payload, suggestedName);
-    if (saved) {
+    const suggestedName = `cv_${datePart}_${styleCode}_${seq}`;
+    const savedFileName = await saveJsonWithDialog(payload, suggestedName);
+    if (savedFileName) {
       commitTemplateSequence(datePart, styleCode, seq);
+      saveRecentSession(savedFileName, {
+        template,
+        fields: templateFields,
+        selectedStyle,
+        customStyle1Code,
+        customStyle2Code,
+      });
       setNotice("Template JSON created.");
       setError("");
     } else {
@@ -1613,14 +2674,34 @@ function App() {
     }
   };
 
-  // Load a previously exported JSON project file.
-  const importProject = async (event) => {
-    const file = event.target.files?.[0];
+  // Load a previously exported JSON project/template file.
+  const importProjectFromFile = async (file) => {
     if (!file) return;
     setError("");
     try {
       const text = await file.text();
       const parsed = JSON.parse(text);
+      // Style file: save into editable style slot and apply immediately.
+      if (parsed?.type === "coverai_style" && parsed?.snapshot) {
+        const snapshot = normalizeSessionSnapshot(parsed.snapshot);
+        if (!snapshot) throw new Error("Invalid style snapshot");
+        const styleName = typeof parsed.styleName === "string" && parsed.styleName.trim() ? parsed.styleName.trim() : "User Defined";
+        setStyleLibrary((prev) => ({
+          ...prev,
+          custom_1: {
+            ...STYLE_SLOT_META.custom_1,
+            name: styleName,
+            updatedAt: new Date().toISOString(),
+            snapshot,
+          },
+        }));
+        applySessionSnapshot(snapshot, "custom_1");
+        saveRecentSession(file.name, snapshot);
+        setNotice(`Style imported: ${styleName}.`);
+        setError("");
+        return;
+      }
+
       if (!parsed || typeof parsed.template !== "string" || !Array.isArray(parsed.fields)) {
         throw new Error("Invalid project");
       }
@@ -1634,12 +2715,30 @@ function App() {
           setCustomStyle1Code(parsed.style);
         }
       }
+      saveRecentSession(file.name, {
+        template: parsed.template,
+        fields: parsed.fields,
+        selectedStyle:
+          typeof parsed.style === "string" && ["eng", "cus", "fin", "mgr", "custom_1", "custom_2"].includes(parsed.style)
+            ? parsed.style
+            : "custom_1",
+        customStyle1Code: typeof parsed.style === "string" ? parsed.style : customStyle1Code,
+        customStyle2Code,
+      });
       setNotice("Project imported.");
     } catch {
       setError("Invalid project file.");
-    } finally {
-      event.target.value = "";
     }
+  };
+
+  const importProject = async (event) => {
+    const file = event.target.files?.[0];
+    await importProjectFromFile(file);
+    event.target.value = "";
+  };
+
+  const handleImportSession = async () => {
+    importProjectRef.current?.click();
   };
 
   // Copy final rendered letter to clipboard.
@@ -1652,6 +2751,75 @@ function App() {
       setError("Clipboard copy failed.");
     }
   };
+
+  const restoreEditorSnapshot = (snapshot) => {
+    if (!snapshot) return false;
+    historyRef.current.isRestoring = true;
+    setTemplate(snapshot.template);
+    setFields(mergeFieldsWithDefaults(snapshot.fields));
+    setSelectedStyle(snapshot.selectedStyle);
+    setCustomStyle1Code(snapshot.customStyle1Code);
+    setCustomStyle2Code(snapshot.customStyle2Code);
+    return true;
+  };
+
+  const handleUndo = useCallback(() => {
+    const history = historyRef.current;
+    const previous = history.undo[history.undo.length - 1];
+    if (!previous || !history.lastSnapshot) return;
+
+    history.undo = history.undo.slice(0, -1);
+    history.redo = [history.lastSnapshot, ...history.redo].slice(0, HISTORY_LIMIT);
+    setUndoCount(history.undo.length);
+    setRedoCount(history.redo.length);
+    restoreEditorSnapshot(previous);
+    setNotice("Undo applied.");
+    setError("");
+  }, []);
+
+  const handleRedo = useCallback(() => {
+    const history = historyRef.current;
+    const next = history.redo[0];
+    if (!next || !history.lastSnapshot) return;
+
+    history.redo = history.redo.slice(1);
+    history.undo = [...history.undo, history.lastSnapshot].slice(-HISTORY_LIMIT);
+    setUndoCount(history.undo.length);
+    setRedoCount(history.redo.length);
+    restoreEditorSnapshot(next);
+    setNotice("Redo applied.");
+    setError("");
+  }, []);
+
+  useEffect(() => {
+    const onKeyDown = (event) => {
+      const isModifier = event.metaKey || event.ctrlKey;
+      if (!isModifier) return;
+
+      const key = event.key.toLowerCase();
+      if (key === "s") {
+        event.preventDefault();
+        downloadTextFile(rendered, "cover-letter-final.txt");
+        setNotice("Final letter downloaded.");
+        setError("");
+        return;
+      }
+
+      if (key === "z" && !event.shiftKey) {
+        event.preventDefault();
+        handleUndo();
+        return;
+      }
+
+      if ((key === "z" && event.shiftKey) || key === "y") {
+        event.preventDefault();
+        handleRedo();
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [handleRedo, handleUndo, rendered]);
 
   // Stop any running startup timer to avoid multiple timers at once.
   const clearStartupTimer = () => {
@@ -1696,33 +2864,56 @@ function App() {
   };
 
   // Demo "start script": shows staged progress until app is ready.
-  const startCoverAI = () => {
+  const startCoverAI = async () => {
     clearStartupTimer();
     setStartupPhase("running");
-    setStartupProgress(0);
+    setStartupProgress(12);
     setError("");
-    setNotice("Starting CoverAI services...");
+    setNotice("Restarting CoverAI services...");
 
     startupTimerRef.current = setInterval(() => {
-      setStartupProgress((prev) => {
-        const next = Math.min(prev + Math.floor(Math.random() * 12) + 8, 100);
-        if (next >= 100) {
-          clearStartupTimer();
-          setStartupPhase("ready");
-          setNotice("CoverAI is fully started.");
-        }
-        return next;
-      });
-    }, 280);
+      setStartupProgress((prev) => Math.min(prev + 7, 88));
+    }, 220);
+
+    try {
+      const response = await requestControlRestart();
+      setNotice(response?.message || "Starting CoverAI services...");
+      window.setTimeout(() => {
+        window.location.reload();
+      }, 3200);
+    } catch (requestError) {
+      clearStartupTimer();
+      setStartupPhase("ready");
+      setStartupProgress(100);
+      setError(requestError.message || "Could not restart CoverAI.");
+    }
   };
 
   // Demo "stop script": halts startup/readiness and resets progress.
-  const stopCoverAI = () => {
+  const stopCoverAI = async () => {
     clearStartupTimer();
-    setStartupPhase("stopped");
-    setStartupProgress(0);
-    setNotice("CoverAI stopped.");
+    setStartupPhase("running");
+    setStartupProgress(12);
+    setNotice("Stopping CoverAI services...");
     setError("");
+    try {
+      await requestControlStop();
+      window.setTimeout(() => {
+        setStartupPhase("stopped");
+        setStartupProgress(0);
+        setAiFieldSuggestions([]);
+        setAiExtractMeta(null);
+        setAiDraftResult(null);
+        setAiScreenshotPreviews([]);
+        setJsonPre(null);
+        setJsonPost(null);
+        setNotice("CoverAI stopped.");
+      }, 1500);
+    } catch (requestError) {
+      setStartupPhase("ready");
+      setStartupProgress(100);
+      setError(requestError.message || "Could not stop CoverAI.");
+    }
   };
 
   // Cleanup timers if user leaves page/component.
@@ -1740,10 +2931,12 @@ function App() {
     startupPhase === "ready"
       ? "Ready"
       : startupPhase === "running"
-      ? "Starting..."
+      ? "Working..."
       : startupPhase === "stopped"
       ? "Stopped"
       : "Idle";
+  // Show the currently selected style directly under the Style header.
+  const selectedStyleMenuLabel = styleLibrary[selectedStyle]?.name || STYLE_SLOT_META[selectedStyle]?.label || "Style";
 
   // UI layout: header controls, editor/preview area, and field sidebar.
   return (
@@ -1756,71 +2949,181 @@ function App() {
           <p className="subhead">Use smart placeholders, edit once, then export polished versions fast.</p>
         </div>
         <div className="header-actions">
-          <div className="menu-group">
-            <p className="menu-heading">CoverAI</p>
-            <div className="menu-row">
-              <button type="button" className="button" onClick={startCoverAI} disabled={isRunning}>
+          <details className="menu-dropdown">
+            <summary>CoverAI</summary>
+            <div className="menu-list">
+              <button type="button" className="menu-item" onClick={startCoverAI} disabled={isRunning}>
                 Start CoverAI
               </button>
               <button
                 type="button"
-                className="button secondary"
+                className="menu-item"
                 onClick={stopCoverAI}
                 disabled={startupPhase === "idle" || startupPhase === "stopped"}
               >
                 Stop CoverAI
               </button>
             </div>
-          </div>
+          </details>
 
-          <div className="menu-group">
-            <p className="menu-heading">File</p>
-            <div className="menu-row">
-              <label className="button secondary">
+          <details className="menu-dropdown">
+            <summary>File</summary>
+            <div className="menu-list">
+              <button type="button" className="menu-item" onClick={handleOpenText} disabled={!isReady}>
                 Open
-                <input type="file" accept=".txt,.pdf" onChange={handleFileUpload} hidden disabled={!isReady} />
-              </label>
-              <button type="button" className="button secondary" onClick={openRecentSessions} disabled={!isReady}>
-                Recent (5)
               </button>
+              <div className="menu-submenu">
+                <button type="button" className="menu-item submenu-trigger" disabled={!isReady}>
+                  Recent (5)
+                </button>
+                <div className="submenu-list">
+                  {recentSessions.length === 0 ? (
+                    <div className="submenu-empty">No recent sessions</div>
+                  ) : (
+                    recentSessions.map((entry) => (
+                      <button
+                        key={entry.id}
+                        type="button"
+                        className="submenu-item"
+                        onClick={() => loadRecentSession(entry)}
+                        disabled={!isReady}
+                        title={entry.name}
+                      >
+                        <span className="submenu-item-name">{entry.name}</span>
+                        <span className="submenu-item-meta">{formatRecentSavedAt(entry.savedAt)}</span>
+                      </button>
+                    ))
+                  )}
+                </div>
+              </div>
               <button
                 type="button"
-                className="button secondary"
-                onClick={() => importProjectRef.current?.click()}
+                className="menu-item"
+                onClick={handleImportSession}
                 disabled={!isReady}
               >
                 Import Session
               </button>
-              <button type="button" className="button secondary" onClick={createTemplateFile} disabled={!isReady}>
+              <button type="button" className="menu-item" onClick={createTemplateFile} disabled={!isReady}>
                 Export Session
               </button>
+              <div className="menu-submenu">
+                <button type="button" className="menu-item submenu-trigger" disabled={!isReady}>
+                  Save Style
+                </button>
+                <div className="submenu-list">
+                  <button
+                    type="button"
+                    className="submenu-item"
+                    onClick={() => saveStyleToSlot("new")}
+                    disabled={!isReady || Boolean(styleLibrary.custom_1?.snapshot)}
+                  >
+                    <span className="submenu-item-name">Save New</span>
+                  </button>
+                  <button
+                    type="button"
+                    className="submenu-item"
+                    onClick={() => saveStyleToSlot("replace")}
+                    disabled={!isReady}
+                  >
+                    <span className="submenu-item-name">Replace Existing</span>
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
+          </details>
 
-          <div className="menu-group">
-            <p className="menu-heading">Style</p>
-            <div className="menu-row">
-              <div className="style-inline">
-            <label htmlFor="style-select">Style</label>
-            <select
-              id="style-select"
-              className="style-select-button"
-              value={selectedStyle}
-              onChange={(event) => handleStyleSelectionChange(event.target.value)}
-              disabled={!isReady}
-              aria-label="Template style"
-              title="Template style"
-            >
-              <option value="eng">Engineer</option>
-              <option value="cus">Service</option>
-              <option value="fin">Financial</option>
-              <option value="mgr">Management</option>
-              <option value="custom_1">User Defined</option>
-            </select>
-          </div>
+          <details className="menu-dropdown style-menu">
+            <summary>Style</summary>
+            <div className="menu-current-style">{selectedStyleMenuLabel}</div>
+            <div className="menu-list">
+              <button
+                type="button"
+                className={`menu-item ${selectedStyle === "eng" ? "active" : ""}`}
+                onClick={() => loadStyleFromSlot("eng")}
+                disabled={!isReady}
+              >
+                Engineer
+              </button>
+              <button
+                type="button"
+                className={`menu-item ${selectedStyle === "cus" ? "active" : ""}`}
+                onClick={() => loadStyleFromSlot("cus")}
+                disabled={!isReady}
+              >
+                Service
+              </button>
+              <button
+                type="button"
+                className={`menu-item ${selectedStyle === "fin" ? "active" : ""}`}
+                onClick={() => loadStyleFromSlot("fin")}
+                disabled={!isReady}
+              >
+                Financial
+              </button>
+              <button
+                type="button"
+                className={`menu-item ${selectedStyle === "mgr" ? "active" : ""}`}
+                onClick={() => loadStyleFromSlot("mgr")}
+                disabled={!isReady}
+              >
+                Management
+              </button>
+              <button
+                type="button"
+                className={`menu-item ${selectedStyle === "custom_1" ? "active" : ""}`}
+                onClick={() => loadStyleFromSlot("custom_1")}
+                disabled={!isReady}
+              >
+                User Defined
+              </button>
             </div>
-          </div>
+          </details>
 
+          <details className="menu-dropdown">
+            <summary>AI</summary>
+            <div className="menu-list">
+              <button type="button" className="menu-item" onClick={runAiExtractJob} disabled={!isReady || isAiExtracting}>
+                {isAiExtracting ? "Extracting..." : "AI Extract Job"}
+              </button>
+              <button type="button" className="menu-item" onClick={runAiDraftLetter} disabled={!isReady || isAiDrafting}>
+                {isAiDrafting ? "Drafting..." : "AI Draft Letter"}
+              </button>
+              <button
+                type="button"
+                className="menu-item"
+                onClick={() => applyAllAiSuggestions(aiFieldSuggestions, "Extracted")}
+                disabled={!isReady || aiFieldSuggestions.length === 0}
+              >
+                Apply Suggested Fields
+              </button>
+              <button
+                type="button"
+                className="menu-item"
+                onClick={replaceEditorDraftWithAi}
+                disabled={!isReady || !aiDraftResult?.draft}
+              >
+                Replace Editor Draft
+              </button>
+              <button
+                type="button"
+                className="menu-item"
+                onClick={saveAiDraftToUserStyle}
+                disabled={!isReady || !aiDraftResult?.draft}
+              >
+                Save Draft to User Style
+              </button>
+            </div>
+          </details>
+
+          <input
+            ref={importTextRef}
+            type="file"
+            accept=".txt,.pdf,.json"
+            onChange={handleFileUpload}
+            disabled={!isReady}
+            hidden
+          />
           <input
             ref={importProjectRef}
             type="file"
@@ -1843,7 +3146,7 @@ function App() {
         <div className="progress-track" aria-label="CoverAI startup progress">
           <div className="progress-fill" style={{ width: `${startupProgress}%` }} />
         </div>
-        {!isReady && <p>Press Start CoverAI to initialize the demo workflow.</p>}
+        {!isReady && <p>Use Start CoverAI to restart services or Stop CoverAI to shut them down.</p>}
       </div>
 
       <main className={isReady ? "layout" : "layout locked"}>
@@ -1869,6 +3172,12 @@ function App() {
               </button>
             </div>
             <div className="quick-actions">
+              <button type="button" className="button" onClick={handleUndo} disabled={!isReady || undoCount === 0}>
+                Undo
+              </button>
+              <button type="button" className="button" onClick={handleRedo} disabled={!isReady || redoCount === 0}>
+                Redo
+              </button>
               <button
                 type="button"
                 className="button"
@@ -1906,8 +3215,132 @@ function App() {
               <span>{stats.finalWords} final words</span>
               <span>{stats.characters} characters</span>
               <span>{stats.unresolved} unresolved tokens</span>
+              <span>{undoCount} undo steps</span>
             </div>
-            <span className="shortcut">Shortcut: Ctrl/Cmd + S downloads final text</span>
+            <span className="shortcut">Shortcuts: Cmd/Ctrl + Z undo, Shift + Cmd/Ctrl + Z redo, Cmd/Ctrl + S download</span>
+          </div>
+
+          <div className="ai-review-grid">
+            <section className="ai-review-card">
+              <div className="ai-review-head">
+                <div>
+                  <h3>AI Job Review</h3>
+                  <p>Review extracted field suggestions before they touch your working session.</p>
+                </div>
+                <button
+                  type="button"
+                  className="button"
+                  onClick={() => applyAllAiSuggestions(aiFieldSuggestions, "Extracted")}
+                  disabled={!isReady || aiFieldSuggestions.length === 0}
+                >
+                  Apply Suggested Fields
+                </button>
+              </div>
+              {aiExtractMeta ? (
+                <div className="ai-meta">
+                  <span>Confidence: {aiExtractMeta.confidence}</span>
+                  {aiExtractMeta.skills?.length > 0 && <span>Skills: {aiExtractMeta.skills.join(", ")}</span>}
+                  {aiExtractMeta.sourceSummary && <span>{aiExtractMeta.sourceSummary}</span>}
+                  {aiExtractMeta.notes && <span>{aiExtractMeta.notes}</span>}
+                </div>
+              ) : (
+                <p className="ai-empty">Run AI Extract Job after adding a Job URL or pasted listing text.</p>
+              )}
+              {aiFieldSuggestions.length > 0 && (
+                <div className="ai-suggestion-list">
+                  {aiFieldSuggestions.map((entry) => (
+                    <div className="ai-suggestion-card" key={`extract_${entry.key}`}>
+                      <div>
+                        <strong>{entry.label}</strong>
+                        <p>Current: {currentFieldValueMap[entry.key] || "Empty"}</p>
+                        <p>Suggested: {entry.value}</p>
+                      </div>
+                      <button
+                        type="button"
+                        className="button"
+                        onClick={() => applySingleAiSuggestion(entry)}
+                        disabled={!isReady}
+                      >
+                        Apply
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </section>
+
+            <section className="ai-review-card">
+              <div className="ai-review-head">
+                <div>
+                  <h3>AI Draft Review</h3>
+                  <p>Generate a tailored draft, then replace the editor or save it into your user style slot.</p>
+                </div>
+                <div className="ai-inline-actions">
+                  <button
+                    type="button"
+                    className="button"
+                    onClick={replaceEditorDraftWithAi}
+                    disabled={!isReady || !aiDraftResult?.draft}
+                  >
+                    Replace Editor Draft
+                  </button>
+                  <button
+                    type="button"
+                    className="button"
+                    onClick={saveAiDraftToUserStyle}
+                    disabled={!isReady || !aiDraftResult?.draft}
+                  >
+                    Save Draft to User Style
+                  </button>
+                </div>
+              </div>
+              {!aiDraftResult?.draft ? (
+                <p className="ai-empty">Run AI Draft Letter after you add your fields and optional resume context.</p>
+              ) : (
+                <>
+                  <div className="ai-meta">
+                    {aiDraftResult.notes && <span>{aiDraftResult.notes}</span>}
+                    {aiDraftResult.warnings?.map((warning) => (
+                      <span key={warning}>Warning: {warning}</span>
+                    ))}
+                  </div>
+                  <textarea className="ai-draft-preview" value={aiDraftResult.draft} readOnly />
+                  {aiDraftSuggestions.length > 0 && (
+                    <>
+                      <div className="ai-inline-actions">
+                        <button
+                          type="button"
+                          className="button"
+                          onClick={() => applyAllAiSuggestions(aiDraftSuggestions, "Draft")}
+                          disabled={!isReady}
+                        >
+                          Apply Draft Field Suggestions
+                        </button>
+                      </div>
+                      <div className="ai-suggestion-list compact">
+                        {aiDraftSuggestions.map((entry) => (
+                          <div className="ai-suggestion-card" key={`draft_${entry.key}`}>
+                            <div>
+                              <strong>{entry.label}</strong>
+                              <p>Current: {currentFieldValueMap[entry.key] || "Empty"}</p>
+                              <p>Suggested: {entry.value}</p>
+                            </div>
+                            <button
+                              type="button"
+                              className="button"
+                              onClick={() => applySingleAiSuggestion(entry)}
+                              disabled={!isReady}
+                            >
+                              Apply
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </>
+              )}
+            </section>
           </div>
         </section>
 
@@ -1939,20 +3372,87 @@ function App() {
             </button>
           </div>
 
+          <section className="ai-workbench">
+            <div className="ai-workbench-header">
+              <h3>AI Workbench</h3>
+              <p>Use the Job URL field or paste raw job text here. Resume text helps the draft stay grounded.</p>
+            </div>
+            <textarea
+              className="field-textarea ai-textarea"
+              value={aiJobText}
+              onChange={(event) => setAiJobText(event.target.value)}
+              disabled={!isReady}
+              placeholder="Paste job description text here for AI extraction or drafting."
+            />
+            <textarea
+              className="field-textarea ai-textarea"
+              value={resumeText}
+              onChange={(event) => setResumeText(event.target.value)}
+              disabled={!isReady}
+              placeholder="Paste resume or profile text here to ground AI drafts."
+            />
+            <label className="ai-session-toggle">
+              <input
+                type="checkbox"
+                checked={useCurrentBrowserSession}
+                onChange={(event) => setUseCurrentBrowserSession(event.target.checked)}
+                disabled={!isReady}
+              />
+              <span>Use current Chrome session for site access</span>
+            </label>
+            <div className="ai-inline-actions">
+              <button type="button" className="button" onClick={runAiExtractJob} disabled={!isReady || isAiExtracting}>
+                {isAiExtracting ? "Extracting..." : "AI Extract Job"}
+              </button>
+              <button type="button" className="button" onClick={runAiDraftLetter} disabled={!isReady || isAiDrafting}>
+                {isAiDrafting ? "Drafting..." : "AI Draft Letter"}
+              </button>
+            </div>
+            {aiScreenshotPreviews.length > 0 && (
+              <div className="ai-screenshot-grid" aria-label="AI screenshot previews">
+                {aiScreenshotPreviews.map((preview) => (
+                  <figure className="ai-screenshot-card" key={preview.id}>
+                    <img className="ai-screenshot-image" src={preview.src} alt={preview.label} />
+                    <figcaption>
+                      <strong>{preview.label}</strong>
+                      {preview.excerpt && <span>{preview.excerpt}</span>}
+                    </figcaption>
+                  </figure>
+                ))}
+              </div>
+            )}
+            <div className="ai-json-preview" aria-label="AI extracted job JSON">
+              {jsonPreText || "Job-related JSON from AI extraction will appear here."}
+            </div>
+          </section>
+
           <div className="token-grid">
             {fields.map((field) => (
-              <button
-                type="button"
-                key={`token_${field.id}`}
-                className="token"
-                draggable
-                onDragStart={(event) => handleTokenDragStart(event, field.key)}
-                onClick={() => insertTokenAtCursor(field.key)}
-                title={`Insert token {{${field.key}}}`}
-                disabled={!isReady}
-              >
-                {field.label || getFieldLabelSuggestion(field.key)}
-              </button>
+              <div key={`token_${field.id}`} className="token-wrap">
+                <button
+                  type="button"
+                  className="token"
+                  draggable
+                  onDragStart={(event) => handleTokenDragStart(event, field.key)}
+                  onClick={() => insertTokenAtCursor(field.key)}
+                  title={`Insert token {{${field.key}}}`}
+                  disabled={!isReady}
+                >
+                  {getFieldButtonLabel(field)}
+                </button>
+                {!DEFAULT_FIELD_KEY_SET.has(field.key) && (
+                  <button
+                    type="button"
+                    className="token-remove"
+                    onClick={() => deleteField(field.id)}
+                    title="Delete custom token"
+                    aria-label="Delete custom token"
+                    disabled={!isReady}
+                  >
+                    x
+                  </button>
+                )}
+              </div>
             ))}
           </div>
 
@@ -1960,48 +3460,195 @@ function App() {
             {fields.map((field) => (
               <div className="field-card" key={field.id}>
                 <div className="field-header">
-                  <input
-                    className="field-input field-label-input"
-                    value={field.label}
-                    onChange={(event) => updateField(field.id, "label", event.target.value)}
-                    onPaste={(event) => {
-                      if (field.key !== "job_url") return;
-                      const pasted = event.clipboardData.getData("text/plain") || "";
-                      if (!isHttpUrl(pasted)) return;
-                      event.preventDefault();
-                      const pastedUrl = pasted.trim();
-                      setFieldLabelByKey("job_url", pastedUrl);
-                      resolveJobReferenceFromUrl(pasted);
-                    }}
-                    onBlur={(event) => {
-                      if (field.key !== "job_url") return;
-                      const entered = event.target.value.trim();
-                      if (!isHttpUrl(entered)) return;
-                      resolveJobReferenceFromUrl(entered);
-                    }}
-                    onKeyDown={(event) => {
-                      if (field.key !== "job_url") return;
-                      if (event.key !== "Enter") return;
-                      const entered = event.currentTarget.value.trim();
-                      if (!isHttpUrl(entered)) return;
-                      event.preventDefault();
-                      resolveJobReferenceFromUrl(entered);
-                    }}
-                    onFocus={(event) => event.target.select()}
-                    disabled={!isReady}
-                    placeholder={getFieldLabelSuggestion(field.key)}
-                  />
-                  <button
-                    type="button"
-                    className="icon-button"
-                    aria-label="Delete field"
-                    title="Delete field"
-                    onClick={() => deleteField(field.id)}
-                    disabled={!isReady}
-                  >
-                    x
-                  </button>
+                  {field.key === "my_signature" ? (
+                    <textarea
+                      className="field-textarea field-label-input field-label-signature"
+                      value={field.label}
+                      onChange={(event) => {
+                        updateField(field.id, "label", event.target.value);
+                        updateField(field.id, "value", event.target.value);
+                      }}
+                      disabled={!isReady}
+                      placeholder={getFieldLabelSuggestion(field.key)}
+                    />
+                  ) : (
+                    <input
+                      className={`field-input field-label-input ${
+                        field.key === "company_name" ||
+                        field.key === "position_title" ||
+                        ["pos_skill_1", "pos_skill_2", "pos_skill_3"].includes(field.key)
+                          ? "company-picker-input"
+                          : ""
+                      }`}
+                      value={field.label}
+                      onChange={(event) => {
+                        if (field.key === "job_url" || field.key === "job_listing_ref_url") {
+                          const next = event.target.value;
+                          updateField(field.id, "label", next);
+                          updateField(field.id, "value", next);
+                          return;
+                        }
+                        if (field.key === "company_name") {
+                          const next = event.target.value;
+                          updateField(field.id, "label", next);
+                          updateField(field.id, "value", next);
+                          setCompanyMenuFilter(next);
+                          setIsCompanyMenuOpen(true);
+                          return;
+                        }
+                        if (field.key === "position_title") {
+                          const next = event.target.value;
+                          updateField(field.id, "label", next);
+                          updateField(field.id, "value", next);
+                          setPositionMenuFilter(next);
+                          setIsPositionMenuOpen(true);
+                          return;
+                        }
+                        if (isPositionSkillKey(field.key)) {
+                          const next = event.target.value;
+                          updateField(field.id, "label", next);
+                          updateField(field.id, "value", next);
+                          setSkillMenuFilter(next);
+                          setActiveSkillMenuKey(field.key);
+                          return;
+                        }
+                        updateField(field.id, "label", event.target.value);
+                      }}
+                      onPaste={(event) => {
+                        if (field.key !== "job_url") return;
+                        const pasted = event.clipboardData.getData("text/plain") || "";
+                        if (!isHttpUrl(pasted)) return;
+                        event.preventDefault();
+                        const pastedUrl = pasted.trim();
+                        setFieldLabelAndValueByKey("job_url", pastedUrl);
+                        resolveJobReferenceFromUrl(pasted);
+                      }}
+                      onBlur={(event) => {
+                        if (field.key === "job_url") {
+                          const entered = event.target.value.trim();
+                          if (!isHttpUrl(entered)) return;
+                          resolveJobReferenceFromUrl(entered);
+                          return;
+                        }
+                        if (field.key === "company_name") {
+                          recordCompanyUsage(event.target.value);
+                          window.setTimeout(() => setIsCompanyMenuOpen(false), 120);
+                          return;
+                        }
+                        if (field.key === "position_title") {
+                          window.setTimeout(() => setIsPositionMenuOpen(false), 120);
+                          return;
+                        }
+                        if (isPositionSkillKey(field.key)) {
+                          window.setTimeout(() => setActiveSkillMenuKey(""), 120);
+                        }
+                      }}
+                      onKeyDown={(event) => {
+                        if (field.key !== "job_url") return;
+                        if (event.key !== "Enter") return;
+                        const entered = event.currentTarget.value.trim();
+                        if (!isHttpUrl(entered)) return;
+                        event.preventDefault();
+                        resolveJobReferenceFromUrl(entered);
+                      }}
+                      onFocus={(event) => {
+                        if (field.key === "company_name") {
+                          setCompanyMenuFilter(event.target.value || "");
+                          setIsCompanyMenuOpen(true);
+                          return;
+                        }
+                        if (field.key === "position_title") {
+                          setPositionMenuFilter(event.target.value || "");
+                          setIsPositionMenuOpen(true);
+                          return;
+                        }
+                        if (isPositionSkillKey(field.key)) {
+                          setSkillMenuFilter(event.target.value || "");
+                          setActiveSkillMenuKey(field.key);
+                          return;
+                        }
+                        event.target.select();
+                      }}
+                      disabled={!isReady}
+                      placeholder={getFieldLabelSuggestion(field.key)}
+                    />
+                  )}
+                  {!DEFAULT_FIELD_KEY_SET.has(field.key) && (
+                    <button
+                      type="button"
+                      className="icon-button"
+                      aria-label="Delete custom field"
+                      title="Delete custom field"
+                      onClick={() => deleteField(field.id)}
+                      disabled={!isReady}
+                    >
+                      x
+                    </button>
+                  )}
                 </div>
+                {field.key === "company_name" && isCompanyMenuOpen && isReady && (
+                  <div className="company-suggestions" role="listbox" aria-label="Company suggestions">
+                    {companyMenuOptions.length === 0 ? (
+                      <div className="company-option-empty">No matches</div>
+                    ) : (
+                      companyMenuOptions.map((company) => (
+                        <button
+                          key={company}
+                          type="button"
+                          className="company-option"
+                          onMouseDown={(event) => {
+                            event.preventDefault();
+                            selectCompanyName(company);
+                          }}
+                        >
+                          {company}
+                        </button>
+                      ))
+                    )}
+                  </div>
+                )}
+                {field.key === "position_title" && isPositionMenuOpen && isReady && (
+                  <div className="company-suggestions" role="listbox" aria-label="Position title suggestions">
+                    {positionMenuOptions.length === 0 ? (
+                      <div className="company-option-empty">No matches</div>
+                    ) : (
+                      positionMenuOptions.map((title) => (
+                        <button
+                          key={title}
+                          type="button"
+                          className="company-option"
+                          onMouseDown={(event) => {
+                            event.preventDefault();
+                            selectPositionTitle(title);
+                          }}
+                        >
+                          {title}
+                        </button>
+                      ))
+                    )}
+                  </div>
+                )}
+                {isPositionSkillKey(field.key) && activeSkillMenuKey === field.key && isReady && (
+                  <div className="company-suggestions" role="listbox" aria-label="Position skill suggestions">
+                    {positionSkillMenuOptions.length === 0 ? (
+                      <div className="company-option-empty">No matches</div>
+                    ) : (
+                      positionSkillMenuOptions.map((skill) => (
+                        <button
+                          key={skill}
+                          type="button"
+                          className="company-option"
+                          onMouseDown={(event) => {
+                            event.preventDefault();
+                            selectPositionSkill(field.key, skill);
+                          }}
+                        >
+                          {skill}
+                        </button>
+                      ))
+                    )}
+                  </div>
+                )}
                 {showAdvancedFields && (
                   <>
                     <input
@@ -2043,7 +3690,6 @@ function App() {
               </div>
             ))}
           </div>
-
           <div className="add-field">
             <input
               className="field-input"
@@ -2057,20 +3703,7 @@ function App() {
             </button>
           </div>
 
-          <div className="insights">
-            <h3>Token insights</h3>
-            {tokensInTemplate.length === 0 ? (
-              <p>No tokens in template yet.</p>
-            ) : (
-              <ul>
-                {tokensInTemplate.map((token) => (
-                  <li key={token} className={valueByKey[token] ? "filled" : "missing"}>
-                    {token}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
+          
         </aside>
       </main>
 
@@ -2079,6 +3712,8 @@ function App() {
         <div className="status-row" role="status" aria-live="polite">
           {isLoadingFile && <span>Loading file...</span>}
           {isResolvingJobTitle && <span>Resolving job details...</span>}
+          {isAiExtracting && <span>AI extracting job details...</span>}
+          {isAiDrafting && <span>AI drafting letter...</span>}
           {notice && <span className="ok">{notice}</span>}
           {error && <span className="err">{error}</span>}
         </div>

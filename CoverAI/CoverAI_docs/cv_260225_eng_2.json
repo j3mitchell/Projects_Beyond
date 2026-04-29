@@ -1,0 +1,111 @@
+{
+  "type": "coverai_template",
+  "version": 1,
+  "createdAt": "2026-02-25T14:02:03.345Z",
+  "style": "eng",
+  "template": "Reference: Kelli Quinn (Smyrna, GA) (LinkedIn)\n\nTo {{hiring_manager}},\nI am excited to apply for the {{position_title}} position at {{company_name}}. With a B.S. degree in Web Technology, a passion for creating dynamic, user-friendly web applications, and a background in full-stack development. I am eager to contribute my skills to your projects.\n\nPreviously at {{prev_company}}, I developed websites optimized for user engagement. My proficiency in {{my_skill_1}}, {{my_skill_2}}, and frameworks like React and Node.js, enable me to build scalable, efficient applications. You’ll find extensive {{my_skill_3}} experience with {{additional_exp_1}} and {{additional_exp_2}}. However, I’m transitioning to primary Dev-Engineering roles.\n\nI thrive in collaborative environments; am a people person, enjoy problem-solving, pristine work, and accept no excuses. To further technical growth, I'm pursuing certification as a Full-Stack Developer with IBM.\n\nI look forward to partnering with Home Depot and discussing how my skills align with your team's goals. \n\nJohn Mitchell\nj3mitchell@gmail.com\n{{my_signature}}\n",
+  "fields": [
+    {
+      "id": "f1",
+      "key": "hiring_manager",
+      "label": "",
+      "value": ""
+    },
+    {
+      "id": "f2",
+      "key": "company_name",
+      "label": "",
+      "value": ""
+    },
+    {
+      "id": "f3",
+      "key": "position_title",
+      "label": "",
+      "value": ""
+    },
+    {
+      "id": "f4",
+      "key": "pos_skill_1",
+      "label": "",
+      "value": ""
+    },
+    {
+      "id": "f5",
+      "key": "pos_skill_2",
+      "label": "",
+      "value": ""
+    },
+    {
+      "id": "f6",
+      "key": "pos_skill_3",
+      "label": "",
+      "value": ""
+    },
+    {
+      "id": "f7",
+      "key": "job_url",
+      "label": "",
+      "value": ""
+    },
+    {
+      "id": "f8",
+      "key": "job_listing_ref_title",
+      "label": "",
+      "value": ""
+    },
+    {
+      "id": "f9",
+      "key": "job_listing_ref_url",
+      "label": "",
+      "value": ""
+    },
+    {
+      "id": "f10",
+      "key": "prev_company",
+      "label": "",
+      "value": ""
+    },
+    {
+      "id": "f11",
+      "key": "my_skill_1",
+      "label": "",
+      "value": ""
+    },
+    {
+      "id": "f12",
+      "key": "my_skill_2",
+      "label": "",
+      "value": ""
+    },
+    {
+      "id": "f13",
+      "key": "my_skill_3",
+      "label": "",
+      "value": ""
+    },
+    {
+      "id": "f14",
+      "key": "additional_exp_1",
+      "label": "",
+      "value": ""
+    },
+    {
+      "id": "f15",
+      "key": "additional_exp_2",
+      "label": "",
+      "value": ""
+    },
+    {
+      "id": "f16",
+      "key": "my_signature",
+      "label": "",
+      "value": ""
+    },
+    {
+      "id": "f17",
+      "key": "ref",
+      "label": "",
+      "value": ""
+    }
+  ]
+}

@@ -1,0 +1,122 @@
+{
+  "type": "coverai_template",
+  "version": 1,
+  "createdAt": "2026-02-25T20:21:13.293Z",
+  "templateDefinition": "session_with_placeholders_no_field_data",
+  "styleSlots": {
+    "total": 5,
+    "lockedPresets": [
+      "eng",
+      "cus",
+      "fin",
+      "mgr"
+    ],
+    "editableSlot": "custom_1"
+  },
+  "style": "eng",
+  "template": "Dear {{hiring_manager}},\n\nI am excited to apply for the {{position_title}} role at {{company_name}}.\n\nMy background aligns with your needs in {{pos_skill_1}}, {{pos_skill_2}}, and {{pos_skill_3}}.\nI have applied these strengths in hands-on delivery at {{prev_company}}, with additional impact in {{additional_exp_1}} and {{additional_exp_2}}.\n\nJob posting: {{job_url}}\nReferred By: {{ref}}\n\nSincerely,\n{{my_signature}}",
+  "fields": [
+    {
+      "id": "f1",
+      "key": "hiring_manager",
+      "label": "Hiring Manager",
+      "value": ""
+    },
+    {
+      "id": "f2",
+      "key": "company_name",
+      "label": "Company Name",
+      "value": ""
+    },
+    {
+      "id": "f3",
+      "key": "position_title",
+      "label": "Position Title",
+      "value": ""
+    },
+    {
+      "id": "f4",
+      "key": "pos_skill_1",
+      "label": "Pos Skill 1",
+      "value": ""
+    },
+    {
+      "id": "f5",
+      "key": "pos_skill_2",
+      "label": "Pos Skill 2",
+      "value": ""
+    },
+    {
+      "id": "f6",
+      "key": "pos_skill_3",
+      "label": "Pos Skill 3",
+      "value": ""
+    },
+    {
+      "id": "f7",
+      "key": "job_url",
+      "label": "Job URL",
+      "value": ""
+    },
+    {
+      "id": "f8",
+      "key": "job_listing_ref_title",
+      "label": "Ref Title",
+      "value": ""
+    },
+    {
+      "id": "f9",
+      "key": "job_listing_ref_url",
+      "label": "Ref URL",
+      "value": ""
+    },
+    {
+      "id": "f10",
+      "key": "prev_company",
+      "label": "Prev Company",
+      "value": ""
+    },
+    {
+      "id": "f11",
+      "key": "my_skill_1",
+      "label": "My Skill 1",
+      "value": ""
+    },
+    {
+      "id": "f12",
+      "key": "my_skill_2",
+      "label": "My Skill 2",
+      "value": ""
+    },
+    {
+      "id": "f13",
+      "key": "my_skill_3",
+      "label": "My Skill 3",
+      "value": ""
+    },
+    {
+      "id": "f14",
+      "key": "additional_exp_1",
+      "label": "Additional Exp 1",
+      "value": ""
+    },
+    {
+      "id": "f15",
+      "key": "additional_exp_2",
+      "label": "Additional Exp 2",
+      "value": ""
+    },
+    {
+      "id": "f16",
+      "key": "my_signature",
+      "label": "My Signature",
+      "value": ""
+    },
+    {
+      "id": "f17",
+      "key": "ref",
+      "label": "Referred By",
+      "value": ""
+    }
+  ]
+}
