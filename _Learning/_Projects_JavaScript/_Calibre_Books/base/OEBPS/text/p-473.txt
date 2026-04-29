@@ -1,0 +1,41 @@
+           454                     Algorithms: A Top-Down Approach
+            Figure 14.7  The MatchingGraph for the bipartite graph shown in Figure 14.5
+            with matching {{0,5},{3,7}}
+                                                                4
+                                  0
+                                                                5
+                                  1
+                                                 96
+                                  2
+                                                                7
+                                  3
+                                                                8
+               As a result, we only need to do a single search from each vertex in V1.
+           The following theorem summarizes this property.
+           Theorem 14.6. Let G be a bipartite graph, and let S be the set of vertices
+           in some matching on G. Suppose some maximum-sized matching includes
+           all of the vertices in S.Leti be some vertex not in S. Then there is a
+           maximum-sized matching including S ∪{i} if there is a matching including
+           S∪{i}.
+               In order to implement the above optimizations, it is helpful to deﬁne
+           a data structure called MatchingGraph, which implements the Graph
+                                                                        
+           ADT.Its purposeis to represent a particular directed graph G derived from
+           a given bipartite graph G andamatchingonG. Suppose G has vertices
+                           
+           0,1,...,n−1. G then contains the vertices 0,1,...,n.If{i,j} is an edge in
+                                        
+           Gandj is unmatched, then G will contain the edge (i,n). Every other edge
+               
+           in G will represent two edges in G — an edge not in the matching followed
+           by an edge in the matching. Thus, for 0 ≤ i<n,0≤ j<n,andi = j,
+             
+           G contains the edge (i,j)iﬀthereisavertexk in G such that {k,j} is in
+           the matching and {i,k} is an edge in G. For example, Figure 14.7 shows
+           the MatchingGraph for the bipartite graph of Figure 14.5 with matching
+           {{0,5},{3,7}}.
+               Suppose the two partitions of G are V and V . Then augmenting paths
+                                                    1      2
+           in the ﬂow network constructed by the reduction correspond to paths from
+                                             
+           unmatched vertices in V1 to n in G . In order to ﬁnd an augmenting path in

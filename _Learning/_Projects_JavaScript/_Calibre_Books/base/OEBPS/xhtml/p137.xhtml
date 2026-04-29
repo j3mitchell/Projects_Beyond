@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 137</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-137.jpg" alt="Page 137" width="1282" height="1882"/>
+      <div class="ocr">      118          Algorithms: A Top-Down Approach
+      parameter list, as in the two-argument constructor in Figure 4.10 (page 129).
+      Atypedeclaration applies to a single parameter only, so that in this example,
+      Lis of type ConsList, but a is untyped. We interpret a type declaration as
+      generating an error if the value passed to that parameter is not nil and does
+      not refer to an instance of the declared type.
+        As we have already suggested, the elements of a particular data type
+      mayhaveoperationsassociated with them. Thus, each instance of the Stack
+      type has a Push operation and a Pop operation. For the sake of consistency,
+      we will consider that when a constructor is invoked, it belongs to the data
+      item that it is constructing. In addition, the elements of a data type may
+      have internal functions associated with them. Internal functions are just like
+      operations, but with restricted access, as described below.
+        In order to control the way in which a data structure can be changed, we
+      place the following restrictions on how representation variables and internal
+      functions can be accessed:
+      • Write access to a representation variable of an instance of data type A is
+        given only to the operations, constructors, and internal functions of that
+        instance.
+      • Read access to a representation variable of an instance of data type A is
+        given only to operations, constructors, and internal functions of instances
+        of type A.
+      • Access to an internal function of an instance of a data type A is given
+        only to operations, constructors, and internal functions of that instance.
+        These restrictions are severe enough that we will often need to relax
+      them. In order to relax either of the ﬁrst two restrictions, we can provide
+      accessor operations. Because we frequently need to do this, we will adopt
+      someconventions that allow us to avoid cluttering our algorithms with trivial
+      code.
+      • If we want to provide read access to a variable var in the representation of
+        type A,wedeﬁnetheoperationA.Var(), which simply returns var.Using
+        this convention, we could have omitted operation SimpleStack.Size()
+        from Figure 4.4.
+      • If we want to provide write access to var,wedeﬁnetheoperation
+        A.SetVar(x), which assigns the value of x to var.
+        Explicitly allowing write access does not technically violate security,
+      because any changes are made by invoking operations of the data structure.
+      What can be problematic is allowing read access. For example, suppose we
+</div>
+    </div>
+  </body>
+</html>

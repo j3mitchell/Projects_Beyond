@@ -1,0 +1,33 @@
+           76                       Algorithms: A Top-Down Approach
+             Figure 3.2  Whenapplyingdivide-and-conquer, the maximum subsequence sum may
+             not lie entirely in either half
+                            0                                       n−1
+           that begins in the ﬁrst half and ends in the second half, then the maximum
+           of these three values is the overall maximum subsequence sum.
+               For example, consider again the array A[0..5] = −1,3,−2,7,−9,7 from
+           Example 1.1 (page 14). The maximum subsequence sum of the ﬁrst half,
+           namely, of A[0..2] = −1,3,−2, has a value of 3. Likewise, the maximum
+           subsequence sum of the second half, 7,−9,7, is 7. In examining the two
+           halves, we have missed the actual maximum, A[1..3] = 3,−2,7,which
+           resides in neither half. However, notice that such a sequence that resides in
+           neither half can be expressed as a suﬃx of the ﬁrst half followed by a preﬁx
+           of the last half; e.g., 3,−2,7 can be expressed as 3,−2 followed by 7.
+               Let us deﬁne the maximum preﬁx sum analogously to the maximum
+           suﬃx sum as follows:
+                                        	i−1                  
+
+                                   max A[k]|0≤i≤n .
+                                          k=0
+           It is not hard to see that the maximum sum of any sequence crossing
+           the boundary is simply the maximum suﬃx sum of the ﬁrst half plus
+           the maximum preﬁx sum of the second half. For example, returning to
+           Example 1.1, the maximum suﬃx sum of the ﬁrst half is 1, obtained from
+           the suﬃx 3,−2. Likewise, the maximum preﬁx sum of the second half is 7,
+           obtained from the preﬁx 7. The sum of these two values gives us 8, the
+           maximum subsequence sum.
+               Note that when we create smaller instances by splitting the array in half,
+           one of the two smaller instances — the upper half — does not begin with
+           index 0. For this reason, let us describe the input array more generally, as
+           A[lo..hi]. We can then modify the deﬁnitions of maximum subsequence sum,
+           maximum suﬃx sum, and maximum preﬁx sum by replacing 0 with lo and
+           n−1withhi. We will discuss the ranges of lo and hi shortly.

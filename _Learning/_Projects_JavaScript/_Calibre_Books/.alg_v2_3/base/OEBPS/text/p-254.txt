@@ -1,0 +1,42 @@
+                                      Storage/Retrieval I: Ordered Keys                          235
+                 By Theorem 5.5,
+                                                      ∞
+                                                     
+                                         E[taili]=       P(taili ≥ j).
+                                                     j=1
+             Suppose that there are at least j components with length at least i.In
+             order for taili ≥ j,theith coin ﬂip in each of the last j of these components
+                                                                                                 −j
+             must be tails. The probability that j independent coin ﬂips are all tails is 2         .
+             However, this is not the probability that taili ≥ j, but rather the conditional
+             probability given that there are at least j components with length at least i.
+             Let numi denote the number of components whose length is at least i.We
+             then have
+                                                                       −j
+                                       P(taili ≥ j | numi ≥ j)=2 .
+                 Fortunately, this conditional probability is closely related to P(taili ≥ j).
+             Speciﬁcally, in order for taili ≥ j, it must be the case that numi ≥ j.Thus,
+             the event taili ≥ j is a subset of the event numi ≥ j. Therefore, from (5.2)
+             we have
+                           P(taili ≥ j)=P((taili ≥ j)∩(numi ≥ j))
+                                          =P(numi ≥j)P(taili ≥ j | numi ≥ j)
+                                                             −j
+                                          =P(numi ≥j)2 .
+                 Unfortunately, computing the exact value of P(numi ≥ j)israther
+             diﬃcult. We will therefore content ourselves with observing that because
+             it is a probability, it can be no more than 1. We therefore have,
+                                                    ∞
+                                       E[taili]=P(taili ≥ j)
+                                                   j=1
+                                                    ∞
+                                                                      −j
+                                                =      P(numi ≥ j)2
+                                                   j=1
+                                                    ∞
+                                                   −j
+                                                ≤      2
+                                                   j=1
+                                                =1
+             from Theorem 6.7.
+                 This bound seems quite good, perhaps even surprisingly so. It tells us
+             that on any iteration of the for loop, we can expect the while loop to iterate

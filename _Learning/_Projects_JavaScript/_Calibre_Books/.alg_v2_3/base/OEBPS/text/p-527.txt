@@ -1,0 +1,35 @@
+          508                 Algorithms: A Top-Down Approach
+          deciding X.ItisthissetP that we will consider to be the set of eﬃciently
+          solvable decision problems.
+             The decision to deﬁne P using only deterministic algorithms is rather
+          arbitrary. Indeed, there is a branch of computational complexity theory
+          that focuses on eﬃcient randomized algorithms. However, the study of
+          deterministic algorithms is more fundamental, and therefore is a more
+          reasonable starting point for us.
+             Asoneﬁnalnote on the set P, we should emphasize that we are focusing
+          on worst-case running time. This focus sometimes is too pessimistic in
+          practice. For example, we have already seen from Theorem 7.1 that in the
+          worst case, a hash table provides lookups in Θ(n) time, but that in practice
+          the lookups tend to run in Θ(1) time. Likewise, there are problems for which
+          no known algorithm runs in polynomial time in the worst case, but because
+          the worst case occurs so rarely, practical algorithms exist. We discuss this
+          issue further in Section 16.11.
+          16.3  The Set NP
+          Sat is clearly a decision problem, but as we have suggested, it is currently
+          not known whether or not it belongs to P. In this section, we will deﬁne a
+          related set called NP that includes all of P, but also includes Sat,aswell
+          as many other problems not known to be in P.Furthermore,NP will have
+          the property that if Sat is, in fact, in P,thenP = NP.
+             In order to extend the deﬁnition of P to include problems like Sat,we
+          need to formalize the idea that each element of a decision problem X has
+          a short proof which can be eﬃciently checked. For the sake of concreteness,
+          let us assume that all proofs will be encoded as bit strings. We then denote
+          the set of all bit strings by B.
+             We now deﬁne NP to be the set of all decision problems X for which
+          there exist:
+          • a polynomial p(n); and
+          • a decision problem Y ⊆ I ×B,whereI is the set of instances for X;
+          such that
+          • Y ∈P;
+          • for each x ∈ I, x ∈ X iﬀ there is a proof φ ∈Bsuch that (x,φ) ∈ Y;and
+          • for each x ∈ X, there is a proof φ ∈Bsuch that (x,φ) ∈ Y and |φ|≤p(|x|).

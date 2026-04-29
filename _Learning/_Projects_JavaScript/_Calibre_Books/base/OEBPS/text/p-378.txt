@@ -1,0 +1,40 @@
+                                       Divide and Conquer                           359
+           thesamesizeasy. However, note that successive iterations give successively
+           better approximations. For the earlier approximations, which will probably
+           not be very accurate anyway, we need not use all of the bits of y in the
+           computation.
+               Thissuggeststhefollowing approach. Supposewe needan approximation
+                                                                   −k
+           that diﬀers from the actual reciprocal by no more than 2   . We will use k as
+           the size of this problem instance. If k is not too small, we ﬁrst solve a smaller
+           instance in order to obtain a less-accurate approximation. The accuracy that
+           we require of this approximation needs to be such that a single application
+           of the Newtonian iteration will yield an accuracy of within 2−k. In applying
+           this iteration, we only use as many bits of y as we need in order to ensure
+           the required accuracy. Finally, in order to keep the number of bits in the
+           approximation from growing too rapidly, we return only as many bits as we
+           need to ensure the required accuracy.
+               Let α ∈ R denote the absolute error of some estimate; i.e., our estimate is
+           1/y +α.Letβ ∈R≥0 denote the absolute error introduced by truncating y,
+           so that the value we use for y in the iteration is y − β. Finally, let γ ∈ R≥0
+           denote the absolute error introduced by truncating the result. The value
+           computed by the iteration is therefore
+               1                 1     2        1    β    2αβ      2       2
+             2   y +α −(y−β) y +α             −γ=y+y2+ y +α β−yα −γ.
+           Weneed for this value to diﬀer from 1/y by at most 2−k; i.e., we need
+                                                          
+                                β   2αβ      2       2        −k
+                                  +      +α β−yα −γ≤2 .                        (10.2)
+                               y2     y                   
+               Note that because y>0, β ≥ 0, and γ ≥ 0, all terms except the second
+           are always non-negative. In order to ensure that the inequality holds when
+           the value inside the absolute value bars is non-negative, we can therefore
+           ignore the last two terms. We therefore need
+                                      β    2αβ     2      −k
+                                     y2 + y +α β ≤2 .
+           If we replace α by |α| in the above inequality, the left-hand side does not
+           decrease. For ﬁxed α and β, the resulting left-hand side is maximized when
+           y is minimized. Setting y to its minimum possible value of 1/2, it therefore
+           suﬃces to ensure that
+                                                    2     −k
+                                     4β +4|α|β +α β ≤ 2      .

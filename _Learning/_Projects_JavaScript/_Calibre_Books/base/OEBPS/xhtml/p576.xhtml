@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 576</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-576.jpg" alt="Page 576" width="1282" height="1882"/>
+      <div class="ocr">                               Approximation Algorithms                 557
+          17.2  Knapsack
+          The ﬁrst problem we will examine is the 0-1 knapsack problem, as deﬁned
+          in Section 12.4. As is suggested by Exercise 16.18, the associated decision
+          problem is NP-complete; hence, the optimization problem is NP-hard.
+             Consider the following greedy strategy for ﬁlling the knapsack. Suppose
+          wetakeanitemwhoseratioofvaluetoweightismaximum.Ifthisitemwon’t
+          ﬁt, we discard it and solve the remaining problem. Otherwise, we include it in
+          the knapsack and solve the problem that results from removing this item and
+          decreasing the capacity by its weight. We have thus reduced the problem to a
+          smaller instance of itself. Clearly, this strategy results in a set of items whose
+          total weight does not exceed the weight bound. Furthermore, it is not hard
+          to implement this strategy in O(nlgn) time, where n is the number of items.
+             Because the problem is NP-hard, we would not expect this greedy
+          strategy to yield an optimal solution in all cases. What we need is a way
+          to measure how good an approximation to an optimal solution it provides.
+          In order to motivate an analysis, let us consider a simple example. Consider
+          the following instance consisting of two items:
+          • The ﬁrst item has weight 1 and value 2.
+          • The second item has weight 10 and value 10.
+          • The weight bound is 10.
+             Thevalue-to-weight ratios of the two items are 2 and 1, respectively. The
+          greedy algorithm therefore takes the ﬁrst item ﬁrst. Because the second item
+          will no longer ﬁt, the solution provided by the greedy algorithm consists of
+          the ﬁrst item by itself. The value of this solution is 2. However, it is easily
+          seen that the optimal solution is the second item by itself. This solution has
+          a value of 10.
+             Acommonwayofmeasuring the quality of an approximation is to form
+          a ratio with the actual value. Speciﬁcally, for a maximization problem, we
+          deﬁne the approximation ratio of a given approximation to be the ratio of
+          the optimal value to the approximation. Thus, the approximation ratio for
+          the above example is 5. For a minimization problem, we use the reciprocal
+          of this ratio, so that the approximation ratio is always at least 1. As
+          the approximation ratio approaches 1, the approximation approaches the
+          optimal value.
+             Note that for a minimization problem, the approximation ratio cannot
+          take a ﬁnite value if the optimal value is 0. For this reason, we will restrict
+          our attention to optimization problems whose optimal solutions always make
+</div>
+    </div>
+  </body>
+</html>

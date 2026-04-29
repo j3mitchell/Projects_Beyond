@@ -1,0 +1,44 @@
+                              Divide and Conquer                 341
+            We therefore have
+                                    n   n
+                                   
+                          E[comp]=         P(c )
+                                             ij
+                                    i=1 j=i+1
+                                    n   n
+                                  ≤ 2
+                                    i=1 j=i+1 j − i +1
+                                     n n−i+1
+                                     1
+                                  =2        j.                 (10.3)
+                                     i=1 j=2
+         The inner sum above is closely related to the harmonic series:
+                                       n
+                                 Hn=1.
+                                      i=1 i
+         Tight bounds for Hn are given by the following theorem, whose proof is left
+         as an exercise.
+         Theorem 10.1. For all n ≥ 1:
+                            ln(n+1)≤Hn≤1+lnn.
+            Applying Theorem 10.1 to inequality (10.3), we have
+                                      n n−i+1
+                           E[comp] ≤ 2  1
+                                     i=1 j=2 j
+                                      n
+                                     
+                                  =2 (Hn−i+1−1)
+                                     i=1
+                                      n
+                                  ≤2ln(n−i+1)
+                                     i=1
+                                      n
+                                     
+                                  =2 lni
+                                     i=1
+                                  ∈O(nlgn),
+         fromTheorem3.31.Foranarrayofdistinctelements,asimilaranalysisshows
+         that E[comp] ∈ Ω(nlgn); hence, the expected running time of QuickSort
+         on any array of n elements is in Θ(nlgn).
+            The expected-case analysis of QuickSort suggests that it would work
+         well in practice, and indeed, there are versions that outperform both heap
+         sort and merge sort. The most widely-used versions, however, are not

@@ -1,0 +1,35 @@
+                                     Optimization I: Greedy Algorithms                         385
+             • Generalize the problem so that a partial solution is given as input.
+             • Decide upon a selection criterion for incrementally extending partial
+               solutions.
+             • Prove that if a given partial solution can be extended to an optimal
+               solution, then after extending this partial solution using the chosen
+               selection criterion, the resulting partial solution can also be extended to
+               an optimal solution.
+             • Implement the transformation suggested by the incremental extension
+               using a loop.
+                 Priority queues are often useful in facilitating quick access to the best
+             extension, as determined by the selection criterion. In many cases, the
+             extension involves joining pieces of a partial solution in a way that can be
+             modeled eﬀectively using a DisjointSets structure.
+                 Proving that the incremental extension can be extended to an optimal
+             solution is essential, because it is not true for all selection criteria. In fact,
+             there are optimization problems for which there is no greedy solution. In
+             the next chapter, we will examine a more general, though typically more
+             expensive, technique for solving optimization problems.
+             11.6    Exercises
+             Exercise 11.1. Prove that Kruskal, shown in Figure 11.1, meets its
+             speciﬁcation.
+             Exercise 11.2. Prove that Prim, shown in Figure 11.2, meets its
+             speciﬁcation.
+             Exercise 11.3. Instead of using the arrays best and bestCost,Prim’s
+             algorithm could use a priority queue to store all of the edges from vertices in
+             the spanning tree. As vertices are added to the spanning tree, all edges from
+             these vertices would be added to the priority queue. As edges are removed
+             from the priority queue, they would need to be checked to see if they connect
+             a vertex in the spanning tree with one that is not in the spanning tree.
+             Implement this algorithm and analyze its running time assuming the graph
+             is implemented as a ListGraph.
+             Exercise 11.4. Implement the single-source shortest path algorithm as
+             outlined in Section 11.3. Your algorithm should take a Graph G and a
+             natural number u<G.Size()andreturnanarraypred[0..G.Size()−1] such

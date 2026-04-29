@@ -1,0 +1,40 @@
+      206          Algorithms: A Top-Down Approach
+        In order to help us to understand better the performance of a binary
+      search tree, let us analyze the worst-case runningtime of Find inasomewhat
+      diﬀerent way. Instead of analyzing the running time in terms of the number
+      of data items, let us instead analyze it in terms of the height of the tree.
+      The analysis is similar, because again in the worst case the child selected in
+      the loop has height one less than the entire subtree. Thus, the worst-case
+      running time of Find is in Θ(h), where h is the height of the tree.
+        What this analysis tells us is that in order to achieve good performance
+      from a binary search tree, we need a tree whose height is not too large.
+      In practice, provided the pattern of insertions and deletions is somewhat
+      random, the height of a binary search tree tends to be in Θ(lgn). It is not
+      hard to see that the worst-case running time of Get, Put,andRemove
+      are all in Θ(h). Thus, if the height of the tree is logarithmic, we can achieve
+      good performance. In the next section, we will show how we can modify
+      our implementation to guarantee logarithmic height in the worst case, and
+      thereby achieve logarithmic performance from these three operations.
+        Before we leave ordinary binary search trees, however, let us analyze
+      the worst-case running time of TraverseInOrder, which does not use the
+      Find function. We cannot analyze this operation completely because we
+      cannot analyze v.Visit without knowing how it is implemented. Assuming
+      the correctness of TraverseInOrder(whoseproofweleave asanexercise),
+      wecannevertheless conclude that v.Visit is called exactly once for each data
+      item, and so must take at least Ω(n) time. What we would like to analyze is
+      thetimerequiredforeverythingelse.Thisamountstoanalyzingtheoverhead
+      involved in applying v.Visit to every data item.
+        Ignoring the call to v.Visit and the recursive calls, it is easily seen that
+      the remaining code runs in Θ(1) time. However, setting up a recurrence
+      describing the worst-case runningtime, including the recursion but excluding
+      calls to v.Visit, is not easy. We must make two recursive calls, but all we
+      know about the sizes of the trees in these calls is that their sum is one less
+      than the size of the entire tree.
+        Let us therefore take a diﬀerent approach to the analysis. As we
+      have already argued, v.Visit is called exactly once for each data item.
+      Furthermore, it is easily seen that, excluding the calls made on empty trees,
+      v.Visit is called exactly once in each call to TraverseInOrder. A total
+      of exactly n calls are therefore made on nonempty trees. The calls made
+      on empty trees make no further recursive calls. We can therefore obtain
+      the total number of recursive calls (excluding the initial call made from
+      VisitInOrder) by counting the recursive calls made by each of the calls on

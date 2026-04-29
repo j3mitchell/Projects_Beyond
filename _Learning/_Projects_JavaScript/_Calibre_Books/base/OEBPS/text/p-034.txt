@@ -1,0 +1,34 @@
+                                              Introduction                                15
+             Figure 1.10   Asimplealgorithmimplementingthespeciﬁcation givenin Figure 1.9
+                                                        10
+            various values of k. On a data set of size 2   =1024, MaxSumIterrequired
+            about 0.038 seconds, which seems reasonably fast. However, as the size of
+            the array increased, the running time degraded quickly:
+                11
+            • 2   =2048 elements: 0.36 seconds,
+                12
+            • 2   =4096 elements: 3.0 seconds,
+                13
+            • 2   =8192 elements: 24 seconds.
+                Note that as the size of the array doubles, the running time increases by
+            roughly a factor of 8. This is not surprising if we realize that the running time
+                         3                       3       3
+            should be cn for some c,andc(2n) =8cn . We can therefore estimate that
+                                   18                                            5
+            for a data set of size 2  =262,144, the running time should be 8 =32,768
+                                   13
+            timesaslongasfor2 . This running time is over a week!
+                If we want to solve this problem on large data sets, we clearly would like
+            to improve the running time. A careful examination of Figure 1.10 reveals
+            some redundant computation. Speciﬁcally, the inner loop computes sums of
+            successively longer subsequences. Much work can be saved if we compute
+            sums of successive sequences by simply adding the next element to the
+            preceding sum. Furthermore, a small optimization can be made by running
+            the outer loop to n−1, as the inner loop would not execute on this iteration.
+            The result of this optimization is shown in Figure 1.11.
+                It turns out that this algorithm has a running time proportional to n2,
+            whichisanimprovementovern3. To show how signiﬁcant this improvement
+            is, we again coded this algorithm and timed it for arrays of various sizes.
+                                                                    18
+            The diﬀerence was dramatic — for an input of size 2 , which we estimated
+            would require over a week for MaxSumIter to process, the running time

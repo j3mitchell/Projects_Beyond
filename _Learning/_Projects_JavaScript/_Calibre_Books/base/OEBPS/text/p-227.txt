@@ -1,0 +1,26 @@
+           208                     Algorithms: A Top-Down Approach
+            Figure 6.10   AnAVLtree
+               The balance criterion that we choose is that in any subtree, the heights
+           of the two children diﬀer by at most 1. For the purpose of this deﬁnition, we
+           consider an empty tree to have height −1, or one less than the height of a tree
+           containing a single node. A binary search tree obeying this balance criterion
+           is known as an AVL tree; “AVL” stands for the names of its inventors,
+           Adel’son-Vel’ski˘ı and Landis.
+               Figure 6.10 shows an AVL tree of height 4 containing integer keys. Note
+           that its balance is not perfect – it is not hard to construct a binary tree of
+           height 3 with even more nodes. Nevertheless, the children of each nonempty
+           subtree have heights diﬀering by at most 1, so it is an AVL tree.
+               Before we begin designing an AVL tree implementation of Ordered-
+           Dictionary, let us ﬁrst derive an upper bound on the height of an AVL
+           tree with n nodes. We will not derive this bound directly. Instead, we will
+           ﬁrst derive a lower bound on the number of nodes in an AVL tree of height
+           h. We will then transform this lower bound into our desired upper bound.
+               Consider an AVL tree with height h having a minimum number of
+           nodes. By deﬁnition, both children of a nonempty AVL tree must also be
+           AVLtrees. By deﬁnition of the height of a tree, at least one child must have
+           height h−1. By deﬁnition of an AVL tree, the other child must have height
+           at least h − 2. In order to minimize the number of nodes in this child, its
+           height must be exactly h−2, provided h ≥ 1. Thus, the two children are AVL
+           trees of heights h − 1andh−2, each having a minimum number of nodes.
+               Theabove discussion suggests a recurrence giving the minimum number
+           of nodes in an AVL tree of height h.Letg(h) give this number. Then for

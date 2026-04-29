@@ -1,0 +1,36 @@
+                               Contents                    xiii
+            5.5 RandomizedHeaps ......................169
+            5.6 SortingandBinaryHeaps...................179
+            5.7 Summary............................187
+            5.8 Exercises............................190
+            5.9 Notes..............................195
+        6. Storage/Retrieval I: Ordered Keys              197
+            6.1 BinarySearchTrees......................200
+            6.2 AVLTrees...........................207
+            6.3 SplayTrees...........................216
+            6.4 SkipLists............................226
+            6.5 Summary............................239
+            6.6 Exercises............................240
+            6.7 Notes..............................244
+        7. Storage/Retrieval II: Unordered Keys           245
+            7.1 ArrayswithVirtualInitialization ..............245
+            7.2 Hashing.............................248
+            7.3 DeterministicHashFunctions ................255
+            7.4 UniversalHashing.......................261
+            7.5 Number Theoretic Universal Hash Families . . . . . ....265
+            7.6 PerfectHashing ........................275
+            7.7 Summary............................283
+            7.8 Exercises............................285
+            7.9 Notes..............................288
+        8. Disjoint Sets                                  289
+            8.1 Using DisjointSets inScheduling .............291
+            8.2 ATree-BasedImplementation ................291
+            8.3 AShortTreeImplementation.................294
+            8.4 *PathCompression......................295
+            8.5 Summary............................304
+            8.6 Exercises............................305
+            8.7 Notes..............................307
+        9. Graphs                                         309
+            9.1 UniversalSinkDetection ...................312
+            9.2 TopologicalSort........................313
+            9.3 AdjacencyMatrixImplementation..............315

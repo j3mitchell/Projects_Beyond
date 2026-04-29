@@ -1,0 +1,41 @@
+       556           Algorithms: A Top-Down Approach
+       many-one reduction. We will therefore deﬁne a new kind of reducibility that
+       will include this kind of reduction.
+         Suppose we can reduce a problem X to another problem Y in such a
+       way that for some polynomial p(n) and any instance x of X:
+       • thetimerequiredtoobtainasolutionforx, excluding any time needed to
+        solve instances of Y , is bounded above by p(|x|); and
+       • the values of all variables are bounded above by p(|x|).
+       We then say that X is polynomially Turing reducible to Y,orX ≤p Y.Note
+              p            p                  T
+       that if X ≤m Y, then clearly X ≤T Y.
+         It is easily seen that VC ≤p VCOpt. More generally, consider any
+                           T
+       minimization problem Y with objective function f. We can construct a
+       decision problem X fromY byaddinganadditionalnaturalnumberinput, k.
+       X is simply the set of all pairs (y,k) such that y is an instance of Y with a
+       candidate solution s for which f(s) ≤ k. It is easily seen that X ≤p Y,for
+                                               T
+       if we can ﬁnd the minimum value of f for a given instance y,thenwecan
+       quickly decide whether there is a candidate solution s for which f(s) ≤ k.
+         Wecannowextend the notion of NP-hardness by saying that Y is NP-
+       hard with respect to Turing reducibility if for every X ∈NP, X ≤p Y.
+                                                 T
+       Note that we have not modiﬁed the deﬁnition of NP —itcontainsonly
+       decision problems. As a result, it makes no sense to extend the deﬁnition
+       of NP-completeness beyond decision problems. Because NP-hardness with
+       respect to Turing reducibility is the natural version of NP-hardness to use
+       when discussing optimization problems, we will simply refer to this version
+       as “NP-hardness” in this chapter. The following theorem can now be shown
+       in a manner similar to the proof of Theorem 16.2.
+       Theorem 17.1. If X ≤p Y and there is a deterministic polynomial-
+                       T
+       time algorithm for solving Y, then there is a deterministic polynomial-time
+       algorithm for solving X.
+         Theabovetheoremshowsthatifthereisadeterministicpolynomial-time
+       algorithm for solving an NP-hard problem Y, then there is a deterministic
+       polynomial-time algorithm for deciding every problem in NP. We therefore
+       have the following corollary, which highlights the importance of the notion
+       of NPhardness with respect to Turing reducibility.
+       Corollary 17.2. If Y is NP-hard and there is a deterministic polynomial-
+       time algorithm for solving Y,thenP = NP.

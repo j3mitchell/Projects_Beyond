@@ -1,0 +1,18 @@
+                                            Introduction                               11
+             Figure 1.5  Translation of a typical tail recursive algorithm to an iterative algorithm
+             Figure 1.6  Iterative algorithm implementing the speciﬁcation of Insert, given in
+             Figure 1.3
+           variable x). Once the condition indicating the base case is true, the loop
+           terminates, the base case is executed, and the algorithm terminates.
+               Figure 1.6 shows the result of eliminating the tail recursion from
+           RecursiveInsert. Because RecursiveInsert is structured in a slightly
+           diﬀerent way from what is shown in Figure 1.5, we could not apply this
+           translation verbatim. The tail recursion occurs, not in the else part, but
+           in the if part, of the if statement in RecursiveInsert. For this reason,
+           we did not negate the condition when forming the while loop. The base
+           case is then the empty else part of the if statement. Because there is no
+           code in the base case, there is nothing to place after the loop. In order to
+           avoid changing the value of n, we have copied its value to j, and used j in
+           place of n throughout the algorithm. Furthermore, because the meaning of
+           the statement “A[1..j] ← A[1..j −1]” is not clear, we instead simulated the
+           recursion by the statement “j ← j −1”.

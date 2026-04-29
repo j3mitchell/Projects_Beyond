@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 052</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-052.jpg" alt="Page 052" width="1282" height="1882"/>
+      <div class="ocr">                                       Proving Algorithm Correctness                           33
+            loop just terminates that much sooner.) We can therefore prove the following
+            theorem.
+            Theorem 2.6. The while loop in IterativeInsert always terminates.
+            Proof.     We ﬁrst observe that each iteration of the while loop decreases j
+            by 1. Thus, if the loop continues to iterate, eventually j ≤ 1, and the loop
+            then terminates.                                                                    
+                 Proving termination of a while loop can be much more diﬃcult than
+            the proof of the above theorem. For example, consider the while loop shown
+            in Figure 2.1. The mod operation, when applied to positive integers, gives
+            the remainder obtained when an integer division is performed; thus, the if
+            statement tests whether n is even. Though many people have studied this
+            computation over a numberof years, as of this writing, it is unknown whether
+            this loop terminates for all initial integer values of n. This question is known
+            as the Collatz problem.
+                 On the other hand, when algorithms are designed using the top-down
+            approach, proving termination of any resulting while loops becomes much
+            easier. Even if an examination of the while loop condition does not help
+            us to ﬁnd a proof, we should be able to derive a proof from the reduction
+            we used to solve the problem. Speciﬁcally, a loop results from the reduction
+            of larger instances of a problem to smaller instances of the same problem,
+            where the size of the instance is a natural number. We should therefore be
+            able to prove that the expression denoting the size of the instance is a natural
+            number that is decreased by every iteration. Termination will then follow.
+                 For example, consider again the algorithm IterativeInsert.Inthe
+            design of this algorithm (see Section 1.4), we reduced larger instances to
+            smaller instances, where the size of an instance was n, the number of array
+            elements. In removing the tail recursion from the algorithm, we replaced n
+            by j. j should therefore decrease as the size decreases. We therefore base our
+            correctness proof on this fact.
+              Figure 2.1    Aloop whose termination for all n is unknown
+</div>
+    </div>
+  </body>
+</html>

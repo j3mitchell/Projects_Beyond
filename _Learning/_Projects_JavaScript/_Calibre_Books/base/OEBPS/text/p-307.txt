@@ -1,0 +1,16 @@
+           288                     Algorithms: A Top-Down Approach
+           7.9   Notes
+           Virtual initialization was suggested by Aho et al. [2, Exercise 2.12].
+               The ﬁrst description of hashing in the literature was by Dumey [33],
+           who also introduced the division method. However, the concept appears
+           to have been discovered a few years earlier at IBM by H. P. Luhn and
+           independently by Gene M. Amdahl, Elaine M. Boehme, N. Rochester, and
+           Arthur L. Samuel. Knuth [84] gives a detailed treatment of deterministic
+           hashing.
+               Universal hashing was introduced by Carter and Wegman [19]. They
+           presented the universal families H1   and H2 . The notion of a c-universal
+                                             l,m       p,m
+           family is closely related to the notion of an -universal family deﬁned by
+           Cormen et al. [25].
+               The perfect hashing strategy given in Section 7.6 is due to Fredman
+           et al. [45].

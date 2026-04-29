@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 295</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-295.jpg" alt="Page 295" width="1282" height="1882"/>
+      <div class="ocr">          276                   Algorithms: A Top-Down Approach
+          can then guarantee that accesses will be fast. To achieve this goal, we use a
+          technique called perfect hashing.
+             One of the drawbacks to hashing is that we can’t guarantee that there
+          will be no collisions. In fact, we can’t even guarantee that all of keys don’t
+          hashtothesamelocation. Universal hashinggives usan expectation that the
+          resulting hash table will not have too many collisions. Thus, even though we
+          might be unlucky and choose a hash function that yields poor performance
+          on our data set, if we randomly select several diﬀerent hash functions, we
+          can expect to ﬁnd one that yields a small number of collisions.
+             With perfect hashing, our goal is to produce a hash table with no
+          collisions. Unfortunately, as we saw in Section 7.2, unless the size of the
+          hash table is much larger than the number of keys, we can expect to have
+          at least one collision. With a reasonable table size, we would probably need
+          to try many diﬀerent hash functions before we found one that yielded no
+          collisions.
+             Wecanavoid this diﬃculty, however, by employing a two-level approach
+          (see Figure 7.11). Instead of using a ConsList to store all of the elements
+          that hash to a certain location, we use a secondary hash table with its own
+          hash function. The secondary hash tables that store more than one element
+          are much larger than the number of elements they store. As a result, we
+          will be able to ﬁnd a hash function for each secondary hash table such that
+          no collisions occur. Furthermore, we will see that the sizes of the secondary
+          hash tables can be chosen so that the total number of locations in all of the
+          hash tables combined is linear in the number of elements stored.
+             Let us ﬁrst determine an appropriate size m for a secondary hash table
+          in which we need to store n distinct keys. We saw in Section 7.2 that in order
+          for the expected number of collisions to be less than 1, if the probability that
+          two keys collide is 1/m,thenm must be nearly n2. We will therefore assume
+          that m ≥ n2.
+             Let Hm be a c-universal family of hash functions. We wish to determine
+          an upper bound on the number of hash functions we would need to select
+          from Hm before we can expect to ﬁnd one that produces no collisions among
+          the given keys. Let coll be the discrete random variable giving the total
+          number of collisions, as deﬁned in Section 7.2, produced by a hash function
+          h∈H ondistinct keys k ,...,k . As we showed in Section 7.2,
+                m                 1     n
+                                    n−1   n
+                            E[coll]=  P(h(k)=h(k )).
+                                                  i      j
+                                     i=1 j=i+1
+</div>
+    </div>
+  </body>
+</html>

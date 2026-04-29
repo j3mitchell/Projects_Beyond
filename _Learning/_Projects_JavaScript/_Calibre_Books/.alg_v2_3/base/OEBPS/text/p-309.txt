@@ -1,0 +1,25 @@
+           290                      Algorithms: A Top-Down Approach
+           When we then schedule the job at time slot 6, the set {6,7,8} no longer
+           contains an available time slot. We therefore need to merge the set {6,7,8}
+           with the set containing 5, namely, {4,5}.
+               Theoperations of ﬁnding the set containing a given element and merging
+           two sets are typical of many algorithms that manipulate disjoint sets. The
+           operation of ﬁnding the smallest element of a given set is not as commonly
+           needed, so we will ignore this operation for now; however, as we will see
+           shortly, it is not hard to use an array to keep track of this information.
+           Furthermore, we often need to manipulate objects other than Nats; however,
+           we can always store these objects in an array and use their indices as the
+           elements of the disjoint sets. For this reason, we will simplify matters by
+           assuming that the elements of the disjoint sets are the Nats0..n−1. In gen-
+           eral, the individual sets will be allowed to contain non-consecutive integers.
+               The DisjointSets ADT, shown in Figure 8.1, speciﬁes the data
+           structure we need. Each of the sets contains an element that is distinguished
+           as its representative.TheFind operation simply returns that representative.
+           Thus,if two calls to Find return the same result, we know that both elements
+           belong to the same set. The Merge operation takes two representatives,
+           combines the sets identiﬁed by these elements, and returns the resulting
+           set’s representative. In this chapter, we will consider how the DisjointSets
+           ADTcanbeimplemented eﬃciently. Before we do this, however, let us take
+           acloserlookathowtheDisjointSets ADT can be used to implement the
+           scheduling algorithm outlined above.
+             Figure 8.1  The DisjointSets ADT

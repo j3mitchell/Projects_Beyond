@@ -1,0 +1,37 @@
+           86                    Algorithms: A Top-Down Approach
+           1.O(f(m,n)) is the set of all functions g : N × N → R≥0 such that there
+             exist c ∈ R>0 and n0 ∈ N such that
+                                                  
+                                       g(m,n) ≤ cf(m,n),
+             whenever m ≥ n0 and n ≥ n0.                         ≥0
+           2. Ω(f(m,n)) is the set of all functions g : N × N → R   such that there
+             exist c ∈ R>0 and n0 ∈ N such that
+                                       g(m,n) ≥ cf(m,n),
+             whenever m ≥ n0 and n ≥ n0.
+           Proof.   From the deﬁnitions, for any function g(m,n)inO(f(m,n)) or
+           in Ω(f(m,n)), respectively, there are a c ∈ R>0 and an n0 ∈ N such that
+           wheneverm≥n0andn≥n0,thecorrespondinginequalityaboveissatisﬁed.
+           We therefore only need to show that if there are c ∈ R>0 and n0 ∈ N such
+           that whenever m ≥ n0 and n ≥ n0, the given inequality is satisﬁed, then
+           g(m,n) belongs to O(f(m,n)) or Ω(f(m,n), respectively.
+              Weﬁrst observe that if f is strictly non-decreasing, then
+                                      
+                                      f(m,n)=f(m,n),
+           for all natural numbers m and n. Furthermore, for any function g : N×N →
+           R≥0,
+                                  >0 g(m,n) ≥ g(m,n).
+              Now suppose c ∈ R      and n0 ∈ N such that whenever m ≥ n0 and
+                              
+           n≥n0, g(m,n) ≤ cf(m,n). Then for m ≥ n0 and n ≥ n0,
+                                     g(m,n) ≤ g(m,n)
+                                                
+                                             ≤cf(m,n)
+                                             =cf(m,n).
+           Hence, g(m,n) ∈ O(f(m,n)).           >0
+              Likewise, suppose now that c ∈ R     and n0 ∈ N such that whenever
+           m≥n0andn≥n0,g(m,n)≥cf(m,n). Then for m≥n0 and n≥n0,
+                                     g(m,n) ≥ g(m,n)
+                                             ≥cf(m,n)
+                                                
+                                             =cf(m,n).
+           Therefore, g(m,n) ∈ Ω(f(m,n)).                                        

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 464</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-464.jpg" alt="Page 464" width="1282" height="1882"/>
+      <div class="ocr">                              Network Flow and Matching                445
+             We now need to prove the correctness of this reduction. We begin by
+          showing the following lemma.
+          Lemma 14.1. Let (G,u,v,C) be a ﬂow network, and let P be the set of
+          edges on some augmenting path. Let F be the ﬂow obtained by adding a
+                                           1
+          ﬂow of m to each edge in P,wherem is the minimum capacity of any edge
+          in P.LetF be a maximum ﬂow on the residual graph of (G,u,v,C) with
+                    2
+          respect to P, and suppose F has value k. Then the combination of F and
+                                 2                                   1
+          F is a ﬂow with value k +m on (G,u,v,C).
+           2
+          Proof.  Wemustﬁrstshowthatthecombination of the two ﬂows does not
+          give a ﬂow where there is no edge in G. This can only happen if there is a
+          ﬂow in F on an edge (x,y)thatisnotinG.Then(y,x)mustbeanedge
+                 2
+          in P. The capacity of (x,y) in the residual graph is therefore m. Because
+          the ﬂow on (y,x)inF is m, the combination of F and F cannot give a
+                             1                        1     2
+          positive ﬂow on (x,y).
+             We will now show that in the combination of F with F , the ﬂow on
+                                                      1       2
+          each edge (x,y)isnomorethanC((x,y)). The only way this can happen is
+          if there is positive ﬂow on (x,y)inF . We consider three cases.
+                                         2
+          Case 1: (x,y) ∈ P.ThenC((x,y)) = C((x,y)) − m. The sum of the two
+          ﬂows on (x,y) is therefore at most C((x,y)).
+          Case 2: (y,x) ∈ P.ThenC((x,y)) = C((x,y))+m. In the combination of
+          F with F , the ﬂow on (x,y)isitsﬂowinF ,minusm. This total ﬂow can
+           1      2                            2
+          be no more than C((x,y)).
+          Case 3: (x,y) ∈ P and (y,x) ∈ P.ThenC((x,y)) = C((x,y)). In the
+          combination of F with F , the ﬂow on (x,y) is simply its ﬂow in F ,which
+                        1      2                                   2
+          can be no more than C((x,y)).
+             Finally, it is clear that for each vertex w in G other than u and v,the
+          total ﬂow into w must equal the total ﬂow out of w, and that the total ﬂow
+          out of u is k + m.                                            
+             Using the above Lemma, we can prove the theorem below. Combined
+          with Lemma14.1, this theorem ensures that the reduction yields a maximum
+          ﬂow for the given network.
+          Theorem 14.2. Let (G,u,v,C) be a ﬂow network with maximum ﬂow k,
+          and let P be the set of edges in some augmenting path. Let m be the minimum
+</div>
+    </div>
+  </body>
+</html>

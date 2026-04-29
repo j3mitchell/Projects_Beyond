@@ -1,0 +1,24 @@
+                                         Priority Queues                            183
+           new leaf and shifting elements downward one level until we reach a location
+           where the new element will ﬁt. This is where having a sentinel element is
+           convenient — we know we will eventually ﬁnd some element whose key is at
+           least as large as that of x. The resulting algorithm is shown in Figure 5.16.
+           We assume that Expand(A) returns an array of twice the size of A,with
+           the elements of A copied to the ﬁrst half of the returned array.
+               The RemoveMax operation is a bit more diﬃcult. We need to remove
+           the root because it contains the element with maximum priority, but in order
+           to preserve the proper shape of the heap, we need to remove a speciﬁc leaf.
+           Wetherefore ﬁrst save the value of the root, then remove the proper leaf. We
+           need to form a new heap by replacing the root with the removed leaf. In order
+           to accomplish this, we use the MakeHeap algorithm shown in Figure 5.17.
+           For ease of presentation, we assume t is formed with BinaryTreeNodes,
+           rather than with an array. If the key of x is at least as large as the keys of
+           the roots of all children of t, we can simply replace the root of t with x,and
+           we are ﬁnished. Otherwise, we need to move the root of the child with larger
+           key to the root of t and make a heap from this child and x. This is just a
+           smaller instance of the original problem.
+               We can simplify MakeHeap somewhat when we use it with a binary
+           heap. First, we observe that once we have determined that at least one child
+           is nonempty, we can conclude that the left child must be nonempty. We also
+           observe that the reduction is a transformation to a smaller instance; i.e.,
+            Figure 5.16   The BinaryHeap.Put operation

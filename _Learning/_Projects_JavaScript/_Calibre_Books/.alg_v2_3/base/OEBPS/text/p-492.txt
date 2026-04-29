@@ -1,0 +1,37 @@
+                                * The Fast Fourier Transform                  473
+          Wenowconsider three cases.
+          Case 1: i = j.Then
+                                             n−1
+                                     Cij = 1 ωk(i−j)
+                                           n k=0
+                                             n−1
+                                        = 1 ω0
+                                           n k=0
+                                        =1.
+          Case 2: i>j.Then1≤ i−j<n. Because ω is a principal nth root of
+          unity, we have
+                                             n−1
+                                     Cij = 1 ωk(i−j)
+                                           n k=0
+                                        =0.
+          Case 3: i<j.Then1≤i−j+n<n.Becauseωn =1,ωk(i−j) =ωk(i−j+n).
+          Hence, as in Case 2, Cij =0.
+                                                   −1
+              Weconclude that C = I,sothatB = A .                              
+                                    −1                                 −ij
+              Note that the matrix A   can be written A /n,whereA = ω       .The
+                                                                   ij
+          following theorem shows that ω−1 is also a principal nth root of unity, so
+                                  
+          that multiplication by A is also a DFT. As a result, we can use Fft to
+          compute the inverse transform.
+          Theorem 15.4. Let ω be a principal nth root of unity, where n ≥ 2 is a
+          power of 2.Thenω−1 is a principal nth root of unity.
+          Proof.   From Theorem 15.2, we need only to show that ω−n/2 = −1.
+          Because ωn =1,wehave
+                                      ω−n/2 = ωn−n/2
+                                            =ωn/2
+                                            =−1
+          from Theorem 15.2. ω−1 is therefore a principal nth root of unity.   
+              In order to complete the convolution algorithm, we need a principal nth
+          root of unity for each n that is a power of 2. The following theorem provides

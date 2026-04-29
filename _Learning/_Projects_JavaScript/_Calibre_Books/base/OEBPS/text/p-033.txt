@@ -1,0 +1,24 @@
+           14                      Algorithms: A Top-Down Approach
+            Figure 1.8   The subsequence with maximum sum may begin and end anywhere in
+            the array, but must be contiguous
+            Figure 1.9   Speciﬁcation for the maximum subsequence sum problem
+           its sum is 0. The speciﬁcation for this problem is given in Figure 1.9. Note
+           that according to this speciﬁcation, the values in A[0..n − 1] may not be
+           modiﬁed.
+           Example 1.1. Suppose A[0..5] = −1,3,−2,7,−9,7. Then the subse-
+           quence A[1..3] = 3,−2,7 has a sum of 8. By exhaustively checking all other
+           contiguous subsequences, we can verify that this is, in fact, the maximum.
+           For example, the subsequence A[1..5]hasasumof6.
+           Example 1.2. Suppose A[0..3] = −3,−4,−1,−5. Then all nonempty
+           subsequences have negative sums. However, any empty subsequence (e.g.,
+           A[0..−1]) by deﬁnition has a sum of 0. The maximum subsequence sum of
+           this array is therefore 0.
+               We can easily obtain an algorithm for this problem by translating the
+           deﬁnition of a maximum subsequence sum directly into an iterative solution.
+           The result is shown in Figure 1.10. By applying the analysis techniques
+           of Chapter 3, it can be shown that the running time of this algorithm is
+           proportional to n3,wheren is the size of the array.
+               In order to illustrate the practical ramiﬁcations of this analysis, we
+           implemented this algorithm in the JavaTM programming language and ran
+                                                                                  k
+           it on a personal computer using randomly generated data sets of size 2 for

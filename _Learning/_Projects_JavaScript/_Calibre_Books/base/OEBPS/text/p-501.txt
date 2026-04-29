@@ -1,0 +1,44 @@
+           482                     Algorithms: A Top-Down Approach
+            Figure 15.3   Implementation of Multiply (speciﬁed in Figure 10.6, p. 349) using
+            modular multiplication
+             MultFft(u,v)
+                n←Max(1,u.NumBits()+v.NumBits()); k ←2 lgn
+                return ModMult(u,v,k)
+             Precondition: u and v are BigNums each having at most k bits, and k is
+             a Nat containing a power of 2.
+             Postcondition: Returns a BigNum representing
+                                                  k
+                                         uv mod (2 +1).
+             ModMult(u,v,k)
+           multiplying a BigNum by a power of 2 can be done very eﬃciently via the
+           Shift operation.
+               In order to complete the reduction of arbitrary-precision multiplication
+           to multiplication in a ring Zm,+,·, we must select a speciﬁc m. Suppose
+           the natural numbers u and v together have a total of n bits. Then uv will
+           have at most n bits. We can therefore set k to the smallest power of 2 no
+                                           k
+           smaller than n,andletm =2 + 1. The resulting algorithm is shown in
+           Figure 15.3 (see Figure 10.6 on page 349 for its speciﬁcation).
+                                                                                 k
+               Let us consider how to multiply two k-bit numbers, u and v,mod2 +1,
+           where k is a power of 2. Suppose we break u and v into b blocks of l bits
+           each. Let these blocks be u ,...,u    and v ,...,v    ,sothat
+                                      0      b−1       0      b−1
+                                               b−1
+                                                il
+                                          u=      u 2
+                                                    i
+                                               i=0
+           and
+                                               b−1
+                                               il
+                                          v =     v 2 .
+                                                   i
+                                               i=0
+                                  k
+           The product uv mod (2 +1)isthengivenby
+                                    ⎛       min(j,b−1)          ⎞
+                                      2b−1
+                           k        ⎝                        jl⎠        k
+                 uv mod(2 +1)=                          uivj−i2    mod(2 +1).
+                                      j=0 i=max(0,j−b+1)

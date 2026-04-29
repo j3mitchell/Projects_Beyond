@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 581</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-581.jpg" alt="Page 581" width="1282" height="1882"/>
+      <div class="ocr">                  562                                     Algorithms: A Top-Down Approach
+                  With the modiﬁed values, this packing has a value of
+                                                            v v −d
+                                                                       i   ≥            i
+                                                            i∈S      d          i∈S       d
+                                                                               v 
+                                                                           =            i −         1
+                                                                                i∈S d         i∈S
+                                                                           ≥ V∗ −n.
+                                                                                 d
+                        If we remove from S theitemswhosenewvaluesare0,weobtain
+                  a packing for the revised instance with same value as above. Because
+                  the dynamic programming algorithm selects an optimal packing for the
+                  revised instance, it will yield a packing with a value at least this large. If
+                  we substitute the original values into the packing chosen by the dynamic
+                  programming algorithm, we obtain a value of at least V∗ − nd.The
+                  approximation ratio is therefore at most
+                                                                              V∗        .
+                                                                          V∗−nd
+                        Weneedtoensurethattheapproximation ratio is at most 1+1 for some
+                                                                                                                               k
+                  positive integer k. We therefore need
+                                                            V∗        ≤1+1
+                                                       V∗−nd                     k
+                                                                 V∗ ≤V∗−nd+V∗−nd
+                                                                                                   k
+                                                                   0 ≤ V∗−(k+1)nd
+                                                                                      k
+                                                                   0 ≤ V∗ −(k +1)nd
+                                                                   d ≤         V∗        .
+                                                                           (k +1)n
+                        Let v be the largest value of any item in the original instance. Assuming
+                  that no item’s weight exceeds the weight bound, we can conclude that
+                  V∗ ≥v.Thus,ifv ≥ (k+1)n, we can satisfy the above inequality by setting
+                  d to v/((k +1)n)	. However, if v&lt;(k +1)n, this value becomes 0. In this
+                  case, we can certainly set d to 1, as the dynamic programming algorithm
+                  would then give the optimal solution. We therefore set
+                                                                                   v       	 
+
+                                                           d =max (k+1)n ,1 .
+</div>
+    </div>
+  </body>
+</html>

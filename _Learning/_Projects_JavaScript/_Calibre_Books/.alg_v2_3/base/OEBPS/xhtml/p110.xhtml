@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 110</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-110.jpg" alt="Page 110" width="1282" height="1882"/>
+      <div class="ocr">                                         Analyzing Algorithms                            91
+                It may seem at this point that the above theorem could be strengthened
+            to say that o(f(n)) = O(f(n))\Θ(f(n)) and ω(f(n)) = Ω(f(n))\Θ(f(n)).
+            Indeed, for functions f and g that we typically encounter in the analysis
+            of algorithms, it will be the case that if g(n) ∈ O(f(n))\Θ(f(n)) then
+            g(n) ∈ o(f(n)). However, there are exceptions. For example, let f(n)=n,
+                               lglgn
+                              2
+            and let g(n)=2          .Theng(n) ∈ O(f(n)) because g(n) ≤ f(n) for all
+                                                k                           k−1    √
+                                               2                           2
+            n ∈ N. Furthermore, when n =2 −1fork&gt;0, g(n)=2                      = n+1;
+                                                          k
+                                                         2
+            hence, g(n) ∈ Θ(f(n)). Finally, when n =2 , g(n)=n,sog(n) ∈ o(f(n)).
+                Note that we have the same duality between o and ω as between O and
+            Ω. We therefore have the following theorem.
+            Theorem 3.55. Let f : N → R≥0 and g : N → R≥0.Theng(n) ∈ o(f(n))
+            iﬀ f(n) ∈ ω(g(n)).
+                Given the above results, we might expect o and ω to have some properties
+            similar to those of other forms of asymptotic notation. One example of such
+            a property is expressed in the following theorem, which is analogous to
+            Theorems 3.8 and 3.15. Its proof is left as an exercise.
+            Theorem 3.56. Suppose f (n) ∈ o(g (n)), f (n) ∈ o(g (n)), f (n) ∈
+                                          1           1        2           2        3
+            ω(g (n)),andf (n) ∈ ω(g (n)).Then
+               3            4          4
+            1.f(n)f (n) ∈ o(g (n)g (n)).
+                1     2         1     2
+            2.f(n)+f (n)∈o(max(g (n),g(n))).
+                1        2               1     2
+            3.f(n)f (n) ∈ ω(g (n)g (n)).
+                3     4          3    4
+            4.f(n)+f (n)∈ω(max(g (n),g(n))).
+                3        4               3      4
+                Thefollowing theorems express relationships between common functions
+            using o-notation.
+            Theorem 3.57. Let p,q ∈ R≥0 such that p&lt;q,and suppose f(n) ∈ O(np)
+            and g(n) ∈ Ω(nq).Thenf(n) ∈ o(g(n)).
+            Proof.    Because f(n) ∈ O(np), there exist a positive real number c and a
+                                                                                    1
+            natural number n1 such that
+                                             f(n) ≤ c np                             (3.11)
+                                                      1
+            whenever n ≥ n1. Because g(n) ∈ Ω(nq), there exist a positive real number
+            c and a natural number n such that
+             2                          2
+                                             g(n) ≥ c nq                             (3.12)
+                                                      2
+</div>
+    </div>
+  </body>
+</html>

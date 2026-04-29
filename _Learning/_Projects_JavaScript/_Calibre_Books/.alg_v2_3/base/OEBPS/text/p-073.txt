@@ -1,0 +1,7 @@
+      54           Algorithms: A Top-Down Approach
+      programcorrectness can befound in Apt and Olderog [6] or Francez [44]. Our
+      presentation of proofs using invariants is patterned after Cormen, et al. [25].
+        Adiscussion of the Dutch national ﬂag problem and the iterative solution
+      used in SelectByMedian are given by Dijkstra [29]. The Collatz problem
+      was ﬁrst posted by Lothar Collatz in 1937. An up-to-date summary of its
+      history is maintained by Eric Weisstein [119].

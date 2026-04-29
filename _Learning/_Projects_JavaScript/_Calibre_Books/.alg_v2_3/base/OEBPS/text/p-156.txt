@@ -1,0 +1,16 @@
+                                    Basic Techniques for Data Structures                        137
+              Figure 4.14     IterBinCounter implementation of BinaryCounter,speciﬁedin
+              Figure 4.13
+             Using the above criteria, we can divide operations into four categories:
+             1. Operations that cost little and improve future performance. IterBin-
+                Counter contains no such operation; however, we needn’t be too
+                concerned with operations of this type because they cause no problems
+                for our analysis.
+             2. Operations that cost little but degrade future performance. The Incre-
+                ment operation when the head of value is 0 is an example of this type.
+                It performs no loop iterations, but causes value to have at least one
+                leading 1, so that the next Increment will perform at least one iteration.
+             3. Operations that cost much but improve future performance. The Incre-
+                ment operation when value has many leading 1s is an example of this
+                type. It performs a loop iteration for each leading 1, but replaces these
+                leading 1s with 0s. Thus, the next Increment will not perform any

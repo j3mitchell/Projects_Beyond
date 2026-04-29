@@ -1,0 +1,20 @@
+           38                      Algorithms: A Top-Down Approach
+             Figure 2.2  Speciﬁcation of the median problem
+             Figure 2.3  Speciﬁcation of DutchFlag
+           and that a number is red if it is strictly less than some given value p, white
+           if it is equal to p,orblue if it is strictly greater than p.
+               Theformal speciﬁcation of this problem is given in Figure 2.3. Note that
+           we use the type Int to represent an integer. Notice also that because it may
+           be important to know the number of items of each color, these values are
+           returned in a 3-element array.
+               Wecanthenﬁndthekthsmallestelementinanonemptyarrayasfollows:
+           1. Let p be the median element of the array.
+           2. Solve the resulting Dutch national ﬂag problem.
+           3. If there are at least k red elements, return the kth smallest red element.
+           4. Otherwise, if there are at least k red and white elements combined,
+              return p.
+           5. Otherwise, return the (k − j)th smallest blue element, where j is the
+              number of red and white elements combined.
+               Note that after we have solved the Dutch national ﬂag problem, all
+           elements less than p appear ﬁrst in the array, followed by all elements equal
+           to p, followed by all elements greater than p. Furthermore, because steps 3

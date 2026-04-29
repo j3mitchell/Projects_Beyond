@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 273</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-273.jpg" alt="Page 273" width="1282" height="1882"/>
+      <div class="ocr">         254                Algorithms: A Top-Down Approach
+                                    n
+                                  =P(i =i ).
+                                         j   n
+                                    j=1
+         Now using the fact that P(i = i ) ≤  when j = n,wehave
+                               j   n
+                                    n
+                                   
+                            E[len]=   P(i =i )
+                                         j  n
+                                   j=1
+                                              n−1
+                                 ≤P(i =i )+
+                                      n   n
+                                              j=1
+                                 =1+(n−1).
+            The above value is the expected length of the ConsList searched when
+         the key is found in a table containing n keys. If the key is not in the table,
+         n−1gives the number of keys in the table, and E[len] is one greater than
+         the expected length of the ConsList. Thus, if we let n denote the number of
+         keys in the table, the length of the ConsList searched is expected to be n.
+            In either case, the length of the ConsList is linear in n if  is a ﬁxed
+         constant. However,  may depend upon m.Thus,if ≤ c/m for some positive
+         constant c and we use an expandable array for the table, we can keep the
+         expected length bounded by a constant. Let λ = n/m be known as the load
+         factor of the hash table. Using the expandable array design pattern, we can
+         ensure that λ ≤ d,whered is a ﬁxed positive real number of our choosing.
+         Thus, the expected list length is bounded by
+                               1+n≤1+cn/m
+                                     =1+cλ
+                                     ≤1+cd
+                                     ∈O(1).
+            In order to implement the expandable array pattern for a hash table, we
+         will need to change the hash function to take advantage of the larger range of
+         indices. In copying elements to the new table, we therefore need to apply the
+         new hash function to each element in order to ﬁnd its proper location. This
+         technique is called rehashing. We leave it as an exercise to show that as long
+         as the size of the table increases by at least a factor of 2 and at most a factor
+         of 6, the amortized cost of rehashing is proportional to the cost of hashing
+         asinglekey.TheHashTable.Put operation, which employs rehashing, is
+         showninFigure7.6.
+</div>
+    </div>
+  </body>
+</html>

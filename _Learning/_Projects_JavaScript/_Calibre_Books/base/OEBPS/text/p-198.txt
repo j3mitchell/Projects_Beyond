@@ -1,0 +1,21 @@
+                                         Priority Queues                            179
+           way as we suggested for SkewHeap.Merge. Doing so would reduce the
+           total space usage to Θ(1).
+           5.6   Sorting and Binary Heaps
+           In Section 3.6, we saw how to sort an array in Θ(n2) time. A priority queue
+           can be used to improve this performance. Using either a LeftistHeap or a
+           SkewHeap,wecaninsertn elements in Θ(nlgn) time, by Theorem 3.31.
+           WecanthensorttheitemsintheheapbyremovingthemaximuminΘ(lgn)
+           time and sorting the remainder. It is easily seen that this entire algorithm
+           runs in Θ(nlgn)time.
+               In order to improve further the performance of sorting, we would like
+           to avoid the need to use an auxiliary data structure. Speciﬁcally, we would
+           like to keep the data items in a single array, which is partitioned into an
+           unsorted part followed by a sorted part, as illustrated in Figure 5.13(a). The
+           unsorted part will, in essence, be a representation of a priority queue — we
+           will explain the details of this representation in what follows. This priority
+           queue will contain keys that are no larger than any of the keys in the sorted
+           part. When we remove the maximum element from the priority queue, this
+           frees up an array location, as shown in Figure 5.13(b). We can put the
+           element that we removed from the priority queue into this location. Because
+            Figure 5.13   Illustration of sorting using a priority queue represented in an array

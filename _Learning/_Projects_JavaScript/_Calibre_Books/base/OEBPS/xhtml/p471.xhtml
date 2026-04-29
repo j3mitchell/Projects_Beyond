@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 471</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-471.jpg" alt="Page 471" width="1282" height="1882"/>
+      <div class="ocr">           452                    Algorithms: A Top-Down Approach
+            Figure 14.6  The ﬂow network constructed from the bipartite graph shown in
+            Figure 14.5
+                                   sink      10
+                          45678
+                               0123
+                                 source       9
+                                   All edge capacities are 1.
+              Consider any matching in the given bipartite graph. We can construct
+           a ﬂow in the constructed network by adding a ﬂow of 1 to each edge in the
+           matching, as well as to each edge leading to a matched vertex in V1 and
+           to each edge leading from a matched vertex in V2. Clearly, any unmatched
+           vertex from the bipartite graph will have a ﬂow of 0 on all of its incoming
+           and outgoing edges. Furthermore, each matched vertex in V1 will have a ﬂow
+           of 1 on its incoming edge and a ﬂow of 1 on the single outgoing edge in the
+           matching. Likewise, each matched vertex in V willhaveaﬂowof1onthe
+                                                       2
+           single incoming edge in the matching and a ﬂow of 1 on its outgoing edge.
+           Thus, we have constructed a ﬂow whose value is the number of edges in the
+           matching.
+              Conversely, consider any ﬂow on the constructed network. Because any
+           vertex in V can have an incoming ﬂow of at most 1, at most one of its
+                      1
+           outgoing edges will contain a positive ﬂow. Likewise, because any vertex in
+           V can have an outgoing ﬂow of at most 1, at most one of its incoming edges
+            2
+           will contain a positive ﬂow. The edges from V to V containing positive ﬂow
+                                                     1     2
+           therefore correspond to a matching in the bipartite graph. Furthermore, the
+           value of the ﬂow is the number of edges in the matching.
+              We conclude that the edges from V to V in a maximum ﬂow for the
+                                                 1    2
+           constructed network are the edges in a maximum-sized matching for the
+           given bipartite graph. The resulting ﬂow network has n+2 vertices and n+a
+</div>
+    </div>
+  </body>
+</html>

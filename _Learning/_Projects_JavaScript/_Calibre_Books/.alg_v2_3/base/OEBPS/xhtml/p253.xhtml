@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 253</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-253.jpg" alt="Page 253" width="1282" height="1882"/>
+      <div class="ocr">           234                      Algorithms: A Top-Down Approach
+           • tail2(e) = 2 because there are 2 level-2 nodes following the last node with
+              level greater than 2; and
+           • tail3(e) = 1 because there is 1 level-3 node, and there are no nodes with
+              level greater than 3.
+               Suppose e describes some skip list with n elements, and suppose this
+           skip list’s Find function is called with a key larger than any in the list. The
+           running time of Find is then proportional to the number of times the while
+           loop condition is tested. On iteration i of the for loop, the while loop will
+           iterate exactly taili(e) times, but will be tested taili(e) + 1 times, including
+           the test that causes the loop to terminate. The expected running time of
+           Find on a worst-case input is therefore proportional to:
+                    ⎡                        ⎤
+                      max(maxLevel,l)
+                    ⎣                       ⎦
+                  E                (taili +1)
+                           i=1
+                                ⎡⎛max(maxLevel,l)    ⎞                      ⎤
+                                ⎣⎝                  ⎠                      ⎦
+                           =E                    taili  +max(maxLevel,l)
+                                        i=1
+                                ⎡                  ⎤
+                                 max(maxLevel,l)
+                           =E⎣         taili⎦+E[max(maxLevel,l)].                  (6.9)
+                                      i=1
+               Let us ﬁrst consider the ﬁrst term in (6.9). It is tempting to apply
+           linearity of expectation to this term; however, note that maxLevel is a
+           random variable, as its value depends on the levels of the nodes in the skip
+           list. Theorem 5.9 therefore does not apply to this term. In particular, note
+           that for any positive n and i, there is a non-zero probability that there is at
+           least one node at level i; hence, there is a non-zero probability that taili is
+           positive.
+               The proper way to handle this kind of a summation, therefore, is to
+           convert it to an inﬁnite sum. The term inside the summation should be
+           equal to taili when i ≤ max(maxLevel,l), but should be 0 for all larger i.In
+           this case, it is easy to derive such a term, as taili =0wheni&gt;maxLevel.
+           We therefore have: ⎡                     ⎤
+                                  max(maxLevel,l)           ∞      
+                              E⎣        taili⎦=E taili
+                                       i=1                   i=1
+                                                          ∞
+                                                      =E[taili].                  (6.10)
+                                                         i=1
+</div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 422</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-422.jpg" alt="Page 422" width="1282" height="1882"/>
+      <div class="ocr">                                Optimization II: Dynamic Programming                     403
+            * Exercise 12.12. Suppose we have two k-dimensional boxes A and B
+            whose k dimensions are a ,...,a and b ,...,b , respectively. We say that
+                                       1       k       1       k
+            A ﬁts inside of B if there is a permutation a ,...,a         of the dimensions
+                                                              i1      ik
+            of A such that a     &lt;bfor 1 ≤ j ≤ k. Design a dynamic programming
+                              ij     j
+            algorithm that takes as input a positive integer k and the dimensions of nk-
+            dimensional boxes, and returns the maximum size of any subset of the boxes
+            that can be ordered such that each box (except the last) in the ordering ﬁts
+            inside of the next. Your algorithm should run in O(max(n2k,nklgk)) time
+            in the worst case. Note that your algorithm doesn’t need to return a subset
+            or an ordering — only the size of the subset.
+            Exercise 12.13. Let G =(V,E) be a directed graph. The transitive closure
+                                                                                        2
+            of G is a directed graph G =(V,E ), where E is the set of all (u,v) ∈ V
+            such that u = v andthereisapathfromu to v in G.GiveanO(n3)dynamic
+            programming algorithm to produce a MatrixGraph that is the transitive
+            closure of a given MatrixGraph.
+            Exercise 12.14. A convex polygon is a polygon whose interior angles are
+            all less than 180 degrees. For example, in Figure 12.4, polygon a is convex,
+            but polygon b is not. A triangulation of a convex polygon is a set of non-
+            intersecting diagonals that partition the polygon into triangles, as shown in
+            Figure 12.4 (c). Give a dynamic programming algorithm that takes as input
+            a convex polygon and produces a triangulation that minimizes the sum of
+            the lengths of the diagonals, where the length of an edge (x ,y ),(x ,y )is
+                                                                            1  1    2   2
+            given by
+                                      	            2            2
+                                         (x1 −x2) +(y1 −y2) .
+            You may assume that the polygon is represented as a sequence of points in
+            the Cartesian plane 
+p ,p ,...,p  such that the edges of the polygon are
+                                    1  2       n
+            (p ,p ),(p ,p ),...,(p     ,p ), and (p ,p ). You may further assume that
+              1  2     2  3         n−1   n          n  1
+            n≥3. Your algorithm should run in O(n3)time.
+             Figure 12.4   Polygons illustrating Exercise 12.14
+                          (a)                  (b)               (c)
+</div>
+    </div>
+  </body>
+</html>

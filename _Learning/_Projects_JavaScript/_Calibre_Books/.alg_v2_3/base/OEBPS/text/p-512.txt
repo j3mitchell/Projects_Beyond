@@ -1,0 +1,60 @@
+                                     * The Fast Fourier Transform                       493
+                K
+            O(2 KlgK),andtherunningtimeoftheresultingmultiplication algorithm
+            would be in O(nlgnlglgn). Thus, in order to improve the running time of
+                                                                                   4l
+            ModMult, it suﬃces to reduce the size of the ring we use from 2 +1=
+              2
+             2 l         2l
+            2   +1to2 +1.
+                Thediﬃculty with such an approach is that we have already shown that
+                  2l+1
+            lg(b2    −1)bitsarerequiredsothattheelements of thenegative wrapped
+            convolution over the given ring uniquely determine the negative wrapped
+            convolution over the integers. We need an additional result result that will
+            allow us to extract the elements of the negative wrapped convolution over
+            the integers from their values over a modular ring. This result is the Chinese
+            Remainder Theorem.
+            Theorem 15.9 (Chinese Remainder Theorem). Let a ,a,m, and
+                                                                            1   2    1
+            m be natural numbers such that a <m,a <m, where m and m are
+              2                                  1     1   2      2          1        2
+            relatively prime. Then there is a unique natural number i<mm such that
+                                                                             1  2
+            i mod m =a and imodm =a .
+                     1    1               2    2
+                Before we prove this theorem, let’s see why it might useful. We need to
+            compute the negative wrapped convolution of two vectors u and v,eachof
+                                                                  l
+            size b and consisting of natural numbers less than 2 .Letwj denote the jth
+            component of the negative wrapped convolution. As we have already shown,
+                2l             2l
+            −b2    <w<b2 . Suppose we were to compute the negative wrapped
+                        j
+                                                                                2l
+            convolution over two separate rings Zm ,+,·,wherem1 =2 +1and
+                                                        i
+            m2 =2b, as shown in Figure 15.10. (As we will see, it is possible to compute
+            the second convolution with relatively little overhead.) Then the results of
+            these convolutions give us
+                                                           2l
+                                     conv[j]=wj mod (2 +1),                          (15.2)
+            and
+                                       conv[j]=w mod(2b),                           (15.3)
+                                                    j
+            for 0 ≤ j<b.                          2l
+                Because 2b isapowerof2and2 +1 is odd, they are relatively prime.
+            Theorem 15.9 therefore guarantees that if wj ≥ 0, then it is the only natural
+                                   2l
+            number less than 2b(2 +1) that satisﬁes (15.2) and (15.3). Furthermore, it
+                                              2l
+            is not hard to see that wj +2b(2 +1) also satisﬁes these constraints. Thus,
+                                                                        2l
+            Theorem 15.9 guarantees that if w < 0, then w +2b(2 +1)istheonly
+                                                 j              j
+                                          2l
+            natural numberless than2b(2 +1)thatsatisﬁestheseconstraints. Theproof
+            of Theorem 15.9 will be constructive, so that we will be able to compute the
+                                                                 2l                 2l
+            value that it guarantees. Finally, because w <b(2 +1)<w +2b(2 +1),
+                                                         j                  j

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 255</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-255.jpg" alt="Page 255" width="1282" height="1882"/>
+      <div class="ocr">          236                 Algorithms: A Top-Down Approach
+          no more than once, on average. Still, this bound does not give a ﬁnite bound
+          for (6.10). However, we have already observed that for any e ∈ Seqn, tail (e)
+                                                                       i
+          will be 0 for all but ﬁnitely many i. This follows because there are only
+          ﬁnitely many nonempty levels. Consequently, we might want to use the fact
+          that taili(e) ≤ numi(e); hence, E[taili] ≤ E[numi].
+             While this bound would yield a ﬁnite bound for (6.10), it unfortunately
+          is still too loose, as num (e)=n for every e ∈ Seqn. We would like to derive
+                              1
+          a logarithmic upper bound, if possible. However, we can use a combination of
+          thetwobounds.Inparticular,theboundof1seemstobeagoodupperbound
+          as long as it is less than E[numi]. Once i is large enough that E[numi] ≤ 1,
+          E[numi] would be a better bound. If we can determine the smallest value of
+          i such that E[numi] ≤ 1, we should be able to break the inﬁnite sum into
+          two sums and derive tight bounds for each of them.
+             In order to analyze E[num ], we observe that for e ∈ Seqn, num (e)isa
+                                    i                               i
+          count of the numberof components whoselengths areat least i.Furthermore,
+          wecanexpressthefactthatacomponenthasalengthofatleastiasanevent
+          in Seq. The standard technique for counting events is to use an indicator
+          random variable. Speciﬁcally, consider the event in Seq that len ≥ i; i.e.,
+          this event is the set of sequences of coin ﬂips consisting of at least i − 1
+          heads, followed by exactly one tails.Theindicator for this event is then
+          deﬁned to be
+                                         
+                                           1iflen(e ) ≥ i
+                           I(len ≥ i)(e )=          j
+                                     j     0otherwise.
+          We can then express numi as follows:
+                                            n
+                                           
+                         num (e ,...,e )=    I(len ≥ i)(e ).
+                             i  1     n                  j
+                                            j=1
+             The utility of indicator random variables is shown by the following
+          theorem, whose proof follows immediately from Theorem 5.5.
+          Theorem 6.9. Let e be any event in a discrete probability space. Then
+          E[I(e)] = P(e).
+             Applying the above theorem, we obtain
+                                         ⎡ n          ⎤
+                                         ⎣           ⎦
+                             E[numi]=E       I(len ≥ i)
+                                          j=1
+                                     =E[nI(len ≥ i)]
+</div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,47 @@
+                                Optimization II: Dynamic Programming                     405
+             • insert a character;
+             • delete a character; or
+             • change a character.
+            **a. Prove that there is an optimal sequence of operations transforming x
+                 to y in which the edits proceed from left to right.
+              b. Using the above result, give a dynamic programming algorithm that
+                 takes as input x and y and returns the edit distance from x to y.Your
+                 algorithm should run in O(mn) time, where m is the length of x and
+                 n is the length of y. Prove that your algorithm is correct.
+            Exercise 12.17. Suppose we wish to store n keys,           The depth of a node in a
+            k <k< ···<k, in a binary search tree (see                  tree is the number of edges
+             1      2             n                                    in the path from the root to
+            Chapter 6). We deﬁne the cost of a look-up of key k        that node.
+                                                                   i
+            as d +1,whered is the depth of k in the tree. Thus,
+                i             i                 i
+            the cost of a look-up is simply the number of nodes
+            examined. Suppose further that we are given, for 1 ≤ i ≤ n, the probability
+            p ∈R>0 that any given look-up is for key k . We assume that
+             i                                             i
+                                                n
+                                               pi=1.
+                                               i=1
+            We say that a binary search tree containing these keys is optimal if the
+            expected cost of a look-up in this tree is minimum over the set of all binary
+            search trees containing these keys.
+              a. Let us extend the deﬁnition of the cost of a look-up to pertain to a
+                 speciﬁc subtree, so that the cost with respect to subtree T is the number
+                 of nodes in T examined during that look-up. For i ≤ j,letSij be the
+                 set of all binary search trees with keys k ,...,k such that there is
+                                                               1      n
+                 a subtree containing exactly the keys k ,...,k .LetC            denote the
+                                                             i       j        ij
+                 minimum over Sij of the expected cost of a look-up with respect to the
+                 subtree containing keys k ,...,k .Provethat
+                                            i       j
+                                   ⎧p                                    if i = j
+                                   ⎪ i
+                                   ⎨                             j
+                             Cij = ⎪ min (Ci,k−1 +Ck+1,j)+pk if i<j
+                                   ⎩i≤k≤j                       k=i
+             *b. Give a dynamic programming algorithm that takes as input p ,...,p
+                                                                                   1       n
+                 and returns the expected cost of a look-up for an optimal binary search
+                 tree whose keys k <k < ···<k have the given probabilities. (Note
+                                    1     2          n

@@ -1,0 +1,37 @@
+      386          Algorithms: A Top-Down Approach
+      that pred[i] gives the parent of i in the shortest paths tree; pred[u] should
+      be −1.
+      Exercise 11.5. Modify your algorithm from Exercise 11.4 to use a priority
+      queue as suggested in Exercise 11.3. Analyze its running time assuming the
+      graph is implemented as a ListGraph.
+      Exercise 11.6. Suppose we wish to solve the single-source shortest path
+      problem for a graph with unweighted edges; i.e., each edge is understood to
+      have a length of 1. Prove that the algorithm for Exercise 11.5 can be modiﬁed
+      by replacing the priority queue with a queue (see Exercise 4.11, page 144) to
+      yield an algorithm for the unweighted single-source shortest path problem.
+      Analyze the running time of the resulting algorithm, assuming the graph
+      is implemented as a ListGraph. (This algorithm is known as breadth-ﬁrst
+      search.)
+      Exercise 11.7. Construct a Huﬀman tree for the string, “banana split”,
+      and give its resulting encoding in binary. Don’t forget the blank character.
+      Exercise 11.8. Prove that HuffmanTree,shown in Figure 11.4, meets its
+      speciﬁcation.
+      Exercise 11.9. Supposewe have a set of jobs, each having a positive integer
+      execution time. We must schedule all of the jobs on a single server so that at
+      most one job occupies the server at any given time and each job occupies the
+      server for a length of time equal to its execution time. Our goal is to minimize
+      the sum of the ﬁnish times of all of the jobs. Design a greedy algorithm to
+      accomplish this and prove that it is optimal. Your algorithm should run in
+      O(nlgn) time, where n is the number of jobs.
+      Exercise 11.10. Extend the above exercise to k servers, so that each job is
+      scheduled on one of the servers.
+      Exercise 11.11. Suppose we are given a set of events, each having a start
+      time and a ﬁnish time. Each event requires a single room. We wish to assign
+      events to rooms using as few rooms as possible so that no two events in the
+      same room overlap (they may, however, be scheduled “back-to-back” with
+      no break in between). Give a greedy algorithm to accomplish this and prove
+      that it is optimal. Your algorithm should run in O(nlgn)time.
+      Exercise 11.12. Repeat the above exercise with the constraint that only
+      one room is available. The goal is to schedule as many events as possible.
+      Exercise 11.13. Wewishtoplanatripacross country in a car that can go d
+      miles on a full tank of gasoline. We have identiﬁed all of the gas stations along

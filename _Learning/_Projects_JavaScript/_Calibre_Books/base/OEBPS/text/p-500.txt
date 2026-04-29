@@ -1,0 +1,43 @@
+                                   * The Fast Fourier Transform                      481
+           apply to an arbitrary ring with unit element, provided n has a multiplicative
+           inverse in that ring. Because the proof of Theorem 15.4 also applies to an
+           arbitrary ring with unit element, Fft canbeusedtocomputeaninverse
+           DFTover R.
+               In order to compute a convolution over R, we need to be able to ﬁnd
+           aprincipalnth root of unity when n is a power of 2. Unfortunately, not
+           every commutative ring with unit element has a principal nth root of
+           unity whenever n is a power of 2. In the next section, we will focus on
+           particular commutative rings and determine when they have principal nth
+           roots of unity. We will then show how to multiply arbitrary-precision natural
+           numbers by using the fast Fourier transform over these rings.
+           15.3    Integer Multiplication
+           Suppose we wish to multiply two BigNums, u and v, as speciﬁed in
+                                                                            n
+           Exercise 4.14 on page 145. If uv contains n bits, and m ≥ 2 , then the
+           product uv in the ring Zm,+,· is the same as the ordinary product
+           over N. We have therefore reduced arbitrary-precision multiplication to
+           multiplication in a ring of the form Zm,+,·. In this section and the next,
+           we show how to use the Fast Fourier Transform to compute a product over
+           such a ring for speciﬁc values of m.
+               We ﬁrst need to choose m in such a way that we can ﬁnd principal nth
+           roots of unity in the ring, when n is a power of 2. Because Theorem 15.2
+           holds for any ring with unit element, we need to ﬁnd m and ω such that
+           ωn/2 mod m = m−1, the inverse of 1 in Zm,+. One way of satisfying this
+                                        k                                        2k/n
+           constraint is to select m =2 +1 for some positive integer k.Then2          is
+           aprincipalnth root of unity, provided 2k is divisible by n. Because n is a
+           power of 2, we should require k tobeapowerof2suchthat2k ≥ n.
+               We also need to be able to ﬁnd the multiplicative inverse of n in this
+                           2k/n                                    2k
+           ring. Because 2      is a principal nth root of unity, 2   = 1 in this ring.
+                        −1    2k
+           Therefore, n    =2 /n. We therefore have the following theorem.
+           Theorem 15.7. Let k and n be powers of 2 such that 1 ≤ n ≤ 2k, and let
+                  k
+           m=2+1.IntheringZm,+,·:
+           a. 22k/n is a principal nth root of unity; and
+                −1    2k
+           b. n    =2 /n.
+               Note that if k and n are both powers of 2 such that 1 ≤ n ≤ 2k,both
+            2k/n       2k
+           2      and 2 /n are also powers of 2. This fact is advantageous because

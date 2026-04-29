@@ -1,0 +1,22 @@
+                                        Priority Queues                            189
+            Figure 5.21   Running times for the PriorityQueue operations for various imple-
+            mentations.
+            Notes:
+            • n is the number of elements in the priority queue.
+            • Unless otherwise noted, all running times are worst-case.
+            • The constructor and the MaxPriority and Size operations all run is
+               Θ(1) worst-case time for all implementations.
+           the two priority queues to be of the same type. For example, if we added
+           a Merge operation to LeftistHeap, we would need to require that the
+           parameter is also a LeftistHeap — Merge(PriorityQueue)wouldbe
+           insuﬃcient. Furthermore, we would need to be concerned with security
+           because the resulting heap would share storage with the original heaps.
+               Using an immutable structure, as we did for LeftistHeap,wouldtake
+           care of the security issue. With such implementations, the Merge operation
+           could be done in Θ(lgn) worst-case time for a LeftistHeap,orinΘ(lgn)
+           expected time for a RandomizedHeap,wherenisthesumofthesizesofthe
+           two priority queues. The amortized time for SkewHeap.Merge, however,
+           is not in O(lgn) unless we restrict the sequences of operations so that after
+           two priority queues are merged, the original priority queues are not used in
+           any subsequent operations; otherwise, we can repeatedly perform the same
+           expensive Merge.

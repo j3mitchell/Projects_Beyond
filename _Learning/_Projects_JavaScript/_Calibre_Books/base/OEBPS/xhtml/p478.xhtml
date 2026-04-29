@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 478</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-478.jpg" alt="Page 478" width="1282" height="1882"/>
+      <div class="ocr">                                   Network Flow and Matching                       459
+            Figure 14.11   An illustration of the lower bound for Matching
+                 8           9             10          11    12     13     14    15
+              01234567
+           We arrange the edges so that when we try to add vertex 2i for 0 ≤ i&lt;k,
+           we ﬁrst encounter the edge {2i,2k + i}. Because 2k + i is not in the
+           matching, it is added. It will then be impossible to add vertex 2i +1,
+           but each node 2k + j,for0≤ j&lt;i, will be reached in the search for
+           an augmenting path. (For example, consider the search when trying to add
+           5 to the matching {{0,8},{2,9},{4,10}} in Figure 14.11.) Constructing this
+           matching therefore uses Ω(k2)time.
+               Wecan now generalize the above construction to arbitrary n by adding
+           or removing a few vertices adjacent to 2k−1. Furthermore, we can add edges
+           {2i,2k + j} for 0 ≤ i&lt;kand 0 ≤ j&lt;i−1 without increasing the size of
+           the maximum-sized matching. However, these additional edges must all be
+           traversed when we try to add vertex 2i+1 to the matching. This construction
+           therefore forces the algorithm to use Ω(na) time. Furthermore, the number
+           of edges added can be as many as
+                                    k−1
+                                    (i−1)= k(k−1) −k
+                                    i=0             2
+                                                 k2 −3k
+                                              =     2
+                                                 n2 −12n
+                                              =     32    .
+           Including the n−1 original edges, the total number of edges a is in the range
+                                     n−1≤a&lt;n(n+20).
+                                                     32
+               The above construction is more general than we really need, but its
+           generality shows that some simple modiﬁcations to the algorithm won’t
+           improve its asymptotic running time. For example, the graph is connected,
+           so processing connected components separately won’t help. Also, the two
+           partitions are the same size, so processing the smaller (or larger) partition
+</div>
+    </div>
+  </body>
+</html>

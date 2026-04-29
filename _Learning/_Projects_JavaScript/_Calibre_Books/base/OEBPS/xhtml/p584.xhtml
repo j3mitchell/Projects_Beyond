@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 584</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-584.jpg" alt="Page 584" width="1282" height="1882"/>
+      <div class="ocr">                               Approximation Algorithms                565
+          NP-hard. Now for a ﬁxed positive real number ,let-ApproxBP be the
+          problem of approximating a solution to a given instance of bin packing with
+          an approximation ratio of no more than 1 + . We will now show that for
+          any &lt;1/2, 2-BP ≤p -ApproxBP,sothat-ApproxBP is NP-hard. As
+                           T
+          a result, there can be no polynomial approximation scheme for bin packing
+          unless P = NP.
+          Theorem 17.5. For 0 &lt;&lt;1/2, -ApproxBP is NP-hard.
+          Proof.  As we noted above, we will show that 2-BP ≤p -ApproxBP.
+                                                           T
+          Given an instance of 2-BP, we ﬁrst ﬁnd an approximate solution with
+          approximation ratio at most 1+. If the approximate solution uses no more
+          than 2 bins, then we can answer “yes”. If the approximate solution uses 3
+          or more bins, then the optimal solution uses at least
+                                      3  &gt; 3
+                                     1+    3/2
+                                         =2
+          bins. We can therefore answer “no”.
+             Ignoring the time needed to compute the approximation, this algorithm
+          runs in Θ(1) time. Therefore, 2-BP ≤p -ApproxBP,and-ApproxBP is
+                                          T
+          NP-hard.                                                      
+             From Theorem 17.5, we can conclude that there is no approximation
+          algorithm for bin packing with approximation ratio less than 3/2 unless
+          P =NP.Asaresult, there can be no polynomial approximation scheme for
+          bin packing unless P = NP.
+             Ontheother hand, there do exist approximation algorithms which yield
+          approximation ratios that come close to the lower bound of 3/2forbin
+          packing. The algorithm we will present here is a simple greedy strategy
+          known as ﬁrst ﬁt. For each item, we try each bin in turn to see if the item
+          will ﬁt. If we ﬁnd a bin in which the item ﬁts, we place it in that bin;
+          otherwise, we place it in a new bin. The algorithm is shown in Figure 17.2.
+          This algorithm is easily seen to run in Θ(n2) time in the worst case. We will
+          now show that it yields an approximation ratio of at most 2.
+          Theorem 17.6. BinPackingFF yields an approximation ratio of no more
+          than 2 on all inputs that satisfy the precondition.
+          Proof.  Wewill ﬁrst show as an invariant of the for loop that at most one
+          bin is no more than half full. This clearly holds initially. Suppose it holds at
+          the beginning of some iteration. If w[i] &gt;W/2, then no matter where w[i]
+</div>
+    </div>
+  </body>
+</html>

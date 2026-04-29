@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 555</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-555.jpg" alt="Page 555" width="1282" height="1882"/>
+      <div class="ocr">                536                                 Algorithms: A Top-Down Approach
+                by the value stored in location l should be used. Thus, for example, if 21 is
+                stored at 0, 2 is stored at 1, and 52 is stored at 2, the instruction
+                                                                Add(0,∗1)
+                will add 21 (stored at 0) to 52 (stored at 2, the value referenced by 1), and
+                store the sum 73 in location 2. Indirection operators cannot be nested.
+                      Eachinstruction that does not explicitly change the program counter will
+                increment it by 1. We will assume that any time an instruction cannot be
+                executed (e.g., because a larger number is subtracted from a smaller number
+                or the program counter would index beyond the program), the program will
+                immediately terminate with output 0.
+                      We will now argue somewhat informally that for any decision problem
+                X, there is a deterministic polynomial-time algorithm deciding X iﬀ there
+                is a polynomial-time RAM deciding X. First, if we have a deterministic
+                polynomial-time algorithm A, we can build a RAM to execute A using
+                standardcompilingtechniques. Somestatements in an algorithm may require
+                much more time when compiled to a RAM. For example, to implement a
+                multiplication, we can use the following top-down formulation:
+                                            ⎧0ifb=0
+                                    ab = ⎨(a+a)b                        if b is positive and even
+                                            ⎩             2
+                                               (a+a)b−1 +a                       if b is odd.
+                                                           2
+                To determine whether b = 0, we can simply check whether b ≤ 0. To
+                determine whether b is even, we can copy b to c,shiftc yielding d = b/2,
+                and subtract d + d from b. If the result is less than or equal to 0, then b is
+                even; otherwise, b is odd. This technique can be implemented with a loop
+                that runs in time linear in the number of bits in b.
+                      In order to implement data structures, we need a memory manager for
+                a RAM. Because we have inﬁnitely many memory locations, only ﬁnitely
+                many of which may be in use at any given time, we can use one memory
+                location l to store a value avail such that for every l ≥ avail, l is unused.
+                              1
+                If we need to allocate n locations, we can copy l to some memory location
+                                                                                       1
+                l   and add n to l . To access the ith of these n locations, we add i to l
+                 2                        1                                                                                   2
+                and use the indirection operator on the result. Thus, it is a straightforward
+                matter to implement the data structures in this text. Speciﬁcally, because
+                we can implement a Stack, we can implement function and operation calls,
+                including recursion.
+                      It is important to realize that even though some operations are less
+                eﬃcient on a RAM, there is some polynomial p(n) that bounds the running
+</div>
+    </div>
+  </body>
+</html>

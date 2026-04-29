@@ -1,0 +1,18 @@
+           xvi                     Algorithms: A Top-Down Approach
+                16.6 Three-DimensionalMatching.................522
+                16.7  Partitioning and Strong NP-Completeness.........526
+                16.8 ProofofCook’sTheorem...................534
+                16.9 Summary............................547
+                16.10Exercises............................548
+                16.11Notes..............................553
+           17. Approximation Algorithms                                           555
+                17.1  Polynomial Turing Reducibility    . ..............555
+                17.2 Knapsack............................557
+                17.3 BinPacking ..........................563
+                17.4 TheTravelingSalespersonProblem .............567
+                17.5 TheMaximumCutandMinimumClusterProblems....572
+                17.6 Summary............................577
+                17.7 Exercises............................578
+                17.8 Notes..............................579
+           Bibliography                                                            581
+           Index                                                                   587

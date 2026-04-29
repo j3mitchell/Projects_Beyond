@@ -1,0 +1,37 @@
+          406                  Algorithms: A Top-Down Approach
+              that we don’t need the values of the keys in order to compute this
+              value.) Your algorithm should run in O(n3)timeandO(n2) space.
+          **c. Suppose rij is the root of an optimal binary search containing the keys
+              k ,...,k ,wherei ≤ j.Provethatr     ≤r ≤r       for 1 ≤ i<j≤
+               i     j                       i,j−1   ij   i+1,j
+              n.
+           *d. Using the above result, improve your algorithm to run in O(n2)time.
+          Exercise 12.18. Give a dynamic programming algorithm that takes as
+          input two natural numbers k ≤ n and returns the probability that ﬂipping a
+          fair coin n times yields at least k heads. Your algorithm should run in O(n)
+          time. Prove that your algorithm is correct.
+          * Exercise 12.19. Give a dynamic programming algorithm that takes as
+          input a natural number n and returns the number of diﬀerent orderings of n
+          elements using < and/or =. For example, for n = 3, there are 13 orderings:
+                       x<y<z x<z<y y<x<z y<z<x
+                       z<x<y z<y<x x=y<z z<x=y
+                       x=z<y y<x=zy=z<x x<y=z
+                      x = y = z.
+          Your algorithm should run in O(n2) time and use O(n) space. Prove that
+          your algorithm is correct.
+          * Exercise 12.20. Suppose we have a mathematical structure containing
+          three elements, a,b,andc, and a multiplication operation given by the
+          following table:
+                                         abc
+                                        a aca
+                                        b cbb
+                                        c acb
+          Note that this multiplication operation is neither commutative nor associa-
+          tive. Give a dynamic programming algorithm that takes as input a string
+          over a,b,andc, and returns a boolean indicating whether it is possible
+          to parenthesize the string so that the result is a.(Forexample,ifwe
+          parenthesize abca as (a(bc))a, we get a result of a.) Your algorithm should
+          run in O(n3) time, where n is the length of the input string. Prove that your
+          algorithm is correct.
+          *Exercise 12.21. SupposewearegivenanarrayL[1..n]of positive integers
+          representing the lengths of successive words in a paragraph. We wish to

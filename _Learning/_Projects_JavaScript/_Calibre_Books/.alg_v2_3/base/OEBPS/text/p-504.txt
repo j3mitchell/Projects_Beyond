@@ -1,0 +1,46 @@
+                                    * The Fast Fourier Transform                       485
+           l = k/b is also a power of 2. Because k must also be a power of 2, we can
+           satisfy this inequality by taking k ≥ 4l,providedlgb +1≤ 2l.
+               In order to make k as small as possible and still at least max(b,4l), we
+           should choose b and 4l to be roughly equal. If k is an even power of 2, we
+                       √               √
+           can set l =   k/2andb=2 k.Inthiscase, both will be powers of 2, and we
+           can set k = b =4l. Otherwise, we can set l = k/2andb = √2k. Again,
+           both are powers of 2, and in this case we can set k =4l.Furthermore,itis
+           easily seen that for these choices, lgb +1≤ 2l whenever k ≥ 16.
+               Finally, the computation of the negative wrappedconvolution will involve
+           arithmetic, including multiplication, over the ring we choose. Thus, this
+           computation will be reduced to modular multiplication. In order to avoid
+           a circular reduction, we must make sure we choose k <k. It is easily seen
+           that when k ≥ 16, this constraint is satisﬁed.
+               The reduction of modular multiplication to a negative wrapped con-
+           volution is shown in Figure 15.4. For the base case, it uses some other
+           multiplication algorithm satisfying the spec given in Figure 10.6. It uses a
+                                                  k
+           function ToRing to apply the mod 2 +1 operation. It also uses a function
+           Eval,whichcoverts thenegative wrappedconvolution into the productmod
+             k
+           2 +1. We will consider the design of these two functions shortly.
+               The NegConv function can now be implemented by directly applying
+           Theorem 15.8. Its implementation is shown in Figure 15.5. In order to
+           multiply a BigNum x by ψj, which is a power of 2, we shift x to the right
+           by jlgψ bits. We use the variable lgPsi to store the value lgψ.
+               NegConvusesthefunction PosConv,whose implementation is shown
+           in Figure 15.6. This algorithm is simply a modiﬁcation of Convolution
+           for the modular ring; however, because the precondition requires that n
+           is a power of 2, we don’t need to copy the elements to arrays of such a
+           size. In order to facilitate multiplication by n−1,weusethevariablelgInv to
+           store lg(n−1). Also, recall that the precondition for ModMult (Figure 15.3)
+           requires that each argument is at most k bits. However, the discrete Fourier
+                                                         k
+           transforms may contains elements equal to 2 , which has k+1 bits. We must
+           therefore handle this case separately.
+                                                                                     2k/n
+               TheprincipalnthrootofunityusedforcomputingtheDFTwillbe2                   .
+           For computing the inverse DFT, we therefore must use the multiplicative
+                        2k/n            2k        k              2k/n −1     2k−2k/n
+           inverse of 2     . Because 2   mod(2 +1)=1,(2             )   =2          .For
+           reasons of eﬃciency and ease of analysis, we use a boolean to indicate which
+           of these roots the function ModFft is to use.
+               The implementation of ModFft is shown in Figure 15.7. It is a fairly
+           straightforward adaptation of Fft (Figure 15.1) to the ring Zm,+,·.We

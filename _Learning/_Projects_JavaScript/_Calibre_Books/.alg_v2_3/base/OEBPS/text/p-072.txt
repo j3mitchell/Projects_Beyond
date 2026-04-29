@@ -1,0 +1,14 @@
+                                       Proving Algorithm Correctness                           53
+              Figure 2.15    Buggy algorithm for Exercise 2.16
+            Exercise 2.16. Figure 2.15 contains an algorithm for reducing the Dutch
+            national ﬂag problem to the problem solved in Figure 2.14. However, the
+            algorithm contains several errors. Work through a proof that this algorithm
+            meets its speciﬁcation (given in Figure 2.3 on page 38), pointing out each
+            place at which the proof fails. At each of these places, suggest a small change
+            that could be made to correct the error. In some cases, the error might be
+            in the invariant, not the algorithm itself.
+            * Exercise 2.17. Reduce the sorting problem to the Dutch national ﬂag
+            problem and one or more smaller instances of itself.
+            2.9    Notes
+            Thetechniquespresentedhereforprovingcorrectness ofalgorithms arebased
+            on Hoare logic [63]. More complete treatments of techniques for proving

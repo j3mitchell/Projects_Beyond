@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 094</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-094.jpg" alt="Page 094" width="1282" height="1882"/>
+      <div class="ocr">                     Analyzing Algorithms     75
+      variety of functions. However, the main restriction on the applicability of
+      this theorem is that f(n)isintermsoff(n−1), so that it applies only to
+      those algorithms whose recursive calls reduce the size of the problem by 1.
+        Let us now see how Theorem 3.34 can be applied to the analysis of
+      MaxSuffixTD. (3.6) ﬁts the form given in Theorem 3.34, where a =1,
+      b =1,g(n) = 1, and X = Θ. Therefore, the second case of Theorem 3.34
+      applies. Substituting the values for X, a,andg(n) in that solution, we obtain
+      f(n) ∈ Θ(n).
+        Knowing that MaxSuffixTD operates in Θ(n) time, we can now
+      analyze MaxSumTD in the same way. In this case, the time required
+      excluding the recursive call is in Θ(n), because a call to MaxSuffixTD
+      is made. Letting f(n) denote the running time for MaxSumTD on an array
+      of size n,weseethat
+                    f(n) ∈ f(n−1)+Θ(n)
+      for n&gt;0. Again, this recurrence ﬁts the form of Theorem 3.34 with a =1,
+      b =1,g(n)=n,andX = Θ. The second case again holds, so that the
+      running time is in Θ(n2).
+        It is no coincidence that both of these analyses ﬁt the second case of
+      Theorem 3.34. Note that unless a and b are both 1, Theorem 3.34 yields an
+      exponential result. Thus, eﬃcient algorithms will always ﬁt the second case
+      if this theorem applies. As a result, we can observe that an algorithm that
+      makesmorethanonerecursivecallofsize n−1willyield an exponential-time
+      algorithm.
+        Wehaveincluded the ﬁrst and third cases in Theorem 3.34 because they
+      are useful in deriving a solution for certain other types of recurrences. To
+      illustrate how these recurrences arise, we consider another solution to the
+      maximum subsequence sum problem (see Section 1.6).
+        The technique we will use is called divide-and-conquer. This technique,
+      which we will examine in detail in Chapter 10, involves reducing the size of
+      recursive calls to a ﬁxed fraction of the size of the original call. For example,
+      we may attempt to make recursive calls on arrays of half the original size.
+        We therefore begin this solution by dividing a large array in half, as
+      nearly as possible. The subsequence giving us the maximum sum can then
+      lie in one of three places: entirely in the ﬁrst half, entirely in the second
+      half, or partially in both halves, as shown in Figure 3.2. We can ﬁnd the
+      maximum subsequence sum of each half by solving the two smaller problem
+      instances recursively. If we can then ﬁnd the maximum sum of any sequence
+</div>
+    </div>
+  </body>
+</html>

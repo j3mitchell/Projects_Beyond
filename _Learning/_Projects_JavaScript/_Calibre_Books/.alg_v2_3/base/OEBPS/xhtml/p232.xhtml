@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 232</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-232.jpg" alt="Page 232" width="1282" height="1882"/>
+      <div class="ocr">                                      Storage/Retrieval I: Ordered Keys                          213
+              Figure 6.12     Adouble rotate right
+             may have heights of either h or h − 1 (though at least one must have
+             height h). It is therefore easily seen that following the rotation, balance
+             is restored.
+                 These two rotations handle the cases in which the left child has height
+             2 greater than the right child. When the right child has height 2 greater
+             than the left child a single rotate left or a double rotate left may be applied.
+             These rotations are simply mirror images of the rotations shown in Figures
+             6.11 and 6.12.
+                 To complete our discussion of the insertion function, we must convince
+             ourselves that if it changes the height of the tree, then it increases it by
+             exactly 1. This is clearly the case if no rotation is done. Let us then consider
+             the rotations shown in Figures 6.11 and 6.12. If either of these rotations
+             is applied, then the data item must have been inserted into the left child,
+             causing its height to increase from h+1toh+2. The overall height of the tree
+             had to have been h+2 prior to the insertion. Following a single rotate right,
+             it is easily seen that the height is either h+2orh+3. Likewise, following a
+             double rotate right, it is easily seen that the height is h+2.Thus,theresult
+             of the insertion is to either leave the height unchanged or increase it by 1.
+                 The insertion algorithm is shown as AVLDictionary.Insert in
+             Figure 6.13. The Balance function can also be used by the deletion algo-
+             rithm. The remainder of the AVLDictionary implementation, including
+             the rotations, is left as an exercise. Note that the rotations must ensure
+             that all height values except that of the root are correct. Speciﬁcally, the
+             heights of node d in Figure 6.11 and nodes b and f in Figure 6.12 must be
+             recomputed.
+</div>
+    </div>
+  </body>
+</html>

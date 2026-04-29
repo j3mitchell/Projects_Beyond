@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 257</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-257.jpg" alt="Page 257" width="1282" height="1882"/>
+      <div class="ocr">         238                Algorithms: A Top-Down Approach
+         of nonempty levels. We can therefore use another indicator random variable
+         to express maxLevel — speciﬁcally,
+                                      ∞
+                           maxLevel = I(numi &gt;0).
+                                      i=1
+            We therefore have
+                                        ∞           
+                        E[maxLevel]=E I(numi &gt;0)
+                                        i=1
+                                      ∞
+                                   =E[I(numi&gt;0)].              (6.13)
+                                     i=1
+            Clearly, I(num &gt; 0)(e) ≤ 1 for all e ∈ Seqn,sothatE[I(num &gt; 0)] ≤ 1.
+                        i                                   i
+         Furthermore,I(numi &gt; 0)(e) ≤ numi(e), so that E[I(numi &gt; 0)] ≤ E[numi].
+         We therefore have E[I(numi &gt; 0)] ≤ min(1,E[numi]), which is the same
+         upper bound we showed for E[taili]. Therefore, following the derivation of
+         (6.11), we have
+                             E[maxLevel] ≤lgn
++2.              (6.14)
+            Now combining (6.9), (6.10), (6.11), (6.12), and (6.14), it follows that
+         the expected number of tests of the while loop condition is no more than
+                            2(lgn
++2)+2∈O(lgn),
+         for a worst-case input when Find is called by Put. The expected running
+         time of Find in this context is therefore in O(lgn).
+            A matching lower bound for the expected running time of Find can
+         also be shown — the details are outlined in Exercise 6.18. We can therefore
+         conclude that the expected running time of Find when called from Put on
+         a worst-case input is in Θ(lgn).
+            We can now complete the analysis of Put. We have shown that the
+         expected running times for both loops and the constructor for SkipList-
+         Nodeareall in Θ(1). The expected running time of Find(k,l)isinΘ(lgn).
+         The remainder of the algorithm clearly runs in Θ(1) time. The total time
+         is therefore expected to be in Θ(lgn) for a worst-case input. We leave as
+         exercises to design Get and Remove to run in Θ(lgn) expected time,
+         as well.
+</div>
+    </div>
+  </body>
+</html>

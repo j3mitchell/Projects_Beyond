@@ -1,0 +1,47 @@
+         498                Algorithms: A Top-Down Approach
+            To analyze ModMultSS, we ﬁrst recall that the running time of
+                           N+K     N
+         NegConv is in O(N2    )+2f(K), where f(K) denotes the worst-
+         case running time of ModMult; here, we will assume that ModMult is
+                                                 K
+         implemented with ModMultSS.Ifwenowlet2 be the value of k in
+                                                                K
+         the call to ModMultSS, then the call to NegConv runs in O(K2 )+
+          K/2                                    K/2lg3
+         2    f(K/2 +1),andNegConvSS runs in O(2        M(K)) time.
+         Hence, even if M(K)isinΘ(K2), the running time for these two calls
+                         K    K/2
+         together is in O(K2 )+2  f(K/2 +1). Because the call to EvalSS
+                  K
+         runs in Θ(2 ) time, the total running time of ModMultSS is easily seen
+         to be given by the recurrence
+                                  K    K/2
+                       f(K)∈O(K2 )+2       f(K/2+1),
+         when K ≥3.
+            The above recurrence ﬁts the form of (15.7) with d = 1; hence, as we
+         showed at the beginning of this section, the running time of the Schon¨ hage–
+         Strassen algorithm is in O(nlgnlglgn), where n is the number of bits in the
+         product.
+         15.5  Summary
+         The Fast Fourier Transform is an eﬃcient algorithm for computing a con-
+         volution, a problem which arises in a variety of applications. For numerical
+         applications, applying the FFT over C,+,· is appropriate; however, for
+         number-theoretic applications like arbitrary-precision integer multiplication,
+         other algebraic structures are more appropriate. The algorithm extends to
+         any commutative ring containing a principal nth root of unity, and over
+         which n has a multiplicative inverse, where n is a power of 2 giving the
+         number of elements in the vectors.
+            Somerings that are particularly useful for number-theoretic applications
+                                                    k
+         are rings of the form Zm,+,·,wherem is of the form 2 +1. The properties
+         of these rings contribute in several ways to the eﬃciency of the Sch¨onhage–
+         Strassen integer multiplication algorithm. First, we can compute n mod
+          k
+         (2 +1) eﬃciently. Second, the principal nth roots of unity in these rings
+         are powers of 2, so that we can use bit shifting to multiply by these roots.
+         Third, when n is a power of 2, it has a multiplicative inverse that is also a
+         power of 2. Fourth, we can compute a product in this ring with a negative
+         wrapped convolution of vectors with half as many elements as would be
+         needed to compute a non-wrapped convolution. Finally, because any power
+                                k
+         of 2 is relatively prime to 2 + 1, we can reduce by half the number of

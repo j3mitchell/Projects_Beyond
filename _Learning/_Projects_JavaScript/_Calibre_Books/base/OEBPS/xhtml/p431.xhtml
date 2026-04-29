@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 431</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-431.jpg" alt="Page 431" width="1282" height="1882"/>
+      <div class="ocr">          412                 Algorithms: A Top-Down Approach
+          13.1  Ancestry in Rooted Trees
+          Suppose we are given two nodes, x and y, in a rooted tree T.Wewishto
+          determine whether x is an ancestor of y. By traversing the subtree rooted
+          at x (see Section 6.1), we can determine whether y is in that subtree. In the
+          worst case, y is not in the subtree, so we have to traverse the entire subtree.
+          If the subtree contains most of the nodes in T, the traversal will take Θ(n)
+          time, where n is the number of nodes in the tree.
+             It seems unlikely that we would be able to solve this problem in o(n)
+          time. However, note that we can traverse the entire tree in Θ(n) time. This
+          fact might help us to solve eﬃciently the problem of determining ancestry
+          for several pairs of nodes. Perhaps we can do a single traversal in Θ(n)time,
+          and save enough information that only constant additional time is needed
+          to decide ancestry for any pair of nodes in the tree.
+             We can get some insight into how to accumulate the necessary infor-
+          mation by reviewing preorder and postorder traversals, as outlined in
+          Section 6.1. A preorder traversal visits a node x before visiting any of its
+          proper descendants, whereas a postorder traversal visits x after visiting all
+          of its proper descendants. Therefore, if x is a proper ancestor of y, a preorder
+          traversal will visit x before visiting y, and a postorder traversal will visit x
+          after visiting y. If we could combine a preorder traversal with a postorder
+          traversal and keep track of the order in which the visits were made, we could
+          theneﬃciently check a necessary condition for x being a proper ancestor of y.
+             We will show that the above condition is also suﬃcient for x being
+          a proper ancestor of y. First, however, let us present an algorithm for
+          calculating this information in order to be able to reason about it more
+          precisely. In order to describe the algorithm, we need a simple data structure
+          called a VisitCounter, whose deﬁnition is shown in Figure 13.1. It has
+          two representation variables, an integer count and an array num[0..n − 1].
+          Its structural invariant is that for 0 ≤ i&lt;n, num[i] is a natural number,
+          and that
+                                 count =maxnum[i].
+                                        0≤i&lt;n
+          Weinterpret the size of the structure to be the size of num, and we interpret
+          the value of num[i] as the value associated with i. Clearly, the constructor
+          runs in Θ(n) time, and the operations all run in Θ(1) time.
+             Thealgorithm showninFigure13.2combinesthepreorderandpostorder
+          traversals of the tree T. We use a (directed) Graph to represent T. pre is
+          a VisitCounter that records the order in which nodes are visited in the
+</div>
+    </div>
+  </body>
+</html>

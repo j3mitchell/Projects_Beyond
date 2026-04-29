@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 076</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-076.jpg" alt="Page 076" width="1282" height="1882"/>
+      <div class="ocr">                                       Analyzing Algorithms                         57
+           of functions to one given function f based on their respective asymptotic
+           growth rates. Typically, f will be fairly simple, e.g., f(n)=n2.Inthis
+           way, we will be able describe the growth rates of complicated — or even
+           unknown — functions using well-understood functions like n2.
+           3.2   Big-O Notation
+           Deﬁnition3.1. Letf : N → R≥0.O(f(n))isdeﬁned             O(f(n)) is pronounced
+           to be the set of all functions g : N → R≥0 such that    “big-Oh of f of n”.
+           for some natural numbern0 andsomestrictlypositive
+           real number c, g(n) ≤ cf(n) whenever n ≥ n0.
+               Theabove deﬁnition formally deﬁnes big-O notation. Let us now dissect
+           this deﬁnition to see what it means. We start with some speciﬁc function f
+           which maps natural numbers to nonnegative real numbers. O(f(n)) is then
+           deﬁned to be a set whose elements are all functions. Each of the functions in
+           O(f(n)) maps natural numbers to nonnegative real numbers. Furthermore,
+           if we consider any function g(n)inO(f(n)), then for every suﬃciently large
+           n (i.e., n ≥ n0), g(n) cannot exceed f(n) by more than some ﬁxed constant
+           factor (i.e., g(n) ≤ cf(n)). Thus, all of the functions in O(f(n)) grow no
+           faster than some constant multiple of f as n becomes suﬃciently large. Note
+           that the constants n0 and c may diﬀer for diﬀerent f and g, but are the same
+           for all n.
+               Note that big-O notation is deﬁned solely in terms of mathematical
+           functions — not in terms of algorithms. Presently, we will show how it can be
+           used to analyze algorithms. First, however, we will give a series of examples
+           illustrating some of its mathematical properties.
+           Example 3.2. Let f(n)=n2,andletg(n)=2n2.Theng(n) ∈ O(f(n))
+           because g(n) ≤ 2f(n) for every n ≥ 0. Here, the constant n0 is 0, and the
+           constant c is 2.
+           Example 3.3. Let f(n)=n2,andletg(n)=3n+10. We wish to show
+           that g(n) ∈ O(f(n)). Hence, we need to ﬁnd a positive real number c and
+           a natural number n0 such that 3n +10≤ cn2 whenever n ≥ n0.Ifn&gt;0,
+           we can divide both sides of this inequality by n, obtaining an equivalent
+           inequality, 3+10/n ≤ cn. The left-hand side of this inequality is maximized
+           when n is minimized. Because we have assumed n&gt;0, 1 is the minimum
+           value of n. Thus, if we can satisfy cn ≥ 13, the original inequality will be
+           satisﬁed. This inequality can be satisﬁed by choosing c =13andn ≥ 1.
+           Therefore, g(n) ∈ O(f(n)).
+</div>
+    </div>
+  </body>
+</html>

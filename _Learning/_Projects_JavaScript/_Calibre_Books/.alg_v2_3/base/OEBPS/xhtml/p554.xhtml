@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 554</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-554.jpg" alt="Page 554" width="1282" height="1882"/>
+      <div class="ocr">                                             NP-Completeness                                  535
+            deﬁning an interpreter for a simple machine language. Such a task is much
+            simpler than deﬁning an interpreter for a high-level language, such as the
+            notation we have been using to present our algorithms.
+                 In order to maintain some consistency between this computational model
+            and the algorithms we have designed, we will assume that a RAM consists
+            of the following:
+            • a ﬁxed program consisting of a sequence of P&gt;0 instructions numbered
+               0 through P −1;
+            • a program counter, which is initially 0 and can store any natural number
+               less than P;
+            • countably inﬁnitely many memory locations, each of which is initially 0
+               and can store any natural number;
+            • two input streams from which values may be read one bit at a time; and
+            • a single output bit, which is produced when the program terminates.
+            Because we will be using this model only for representing an algorithm for
+            deciding whether (x,φ) ∈ Y, we need exactly two input streams, one for x
+            and one for φ. Furthermore, we can represent a “yes” output by setting the
+            output bit to 1.
+                 We will assume that each memory location is addressed by a unique
+            natural number. Each machine will then have the following instruction set:
+            • Input(i,l): Stores the next bit from input stream i,wherei is either 0
+               or 1, in memory location l. If all of the input has already been read, the
+               value 2 is stored.
+            • Load(n,l): Stores the natural number n at memory location l.
+            • Copy(l ,l ): Copies the value stored at location l into location l .
+                        1  2                                           1                 2
+            • Goto(p): Changes the value of the program counter to p.
+            • IfLeq(l ,l ,p): If the value at location l is less than or equal to the value
+                        1  2                                1
+               at location l , changes the value of the program counter to p.
+                             2
+            • Add(l ,l ): Adds the value in location l to the value in location l ,saving
+                      1  2                                 1                            2
+               the result in location l .
+                                        2
+            • Subtract(l ,l ): Subtracts the value in location l from the value in
+                             1  2                                          1
+               location l , saving the result in location l .
+                          2                                  2
+            • Shift(l): Replaces the value n stored in location l with n/2.
+            • Halt(b): Terminates the program with output b, which must be either 0
+               or 1.
+                 In addition, wherever a memory location is used, an indirection operator
+            “∗” maybeadded.Theexpression“∗l”indicates that thelocation referenced
+</div>
+    </div>
+  </body>
+</html>

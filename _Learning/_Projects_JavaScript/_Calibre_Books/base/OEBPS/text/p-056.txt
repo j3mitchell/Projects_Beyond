@@ -1,0 +1,42 @@
+                                    Proving Algorithm Correctness                      37
+           compares with A[j+1]. Thus, when A[j−1] is swapped with A[j], we cannot
+           show that A[j] ≤ A[j +1].
+               We need to express in our invariant that when we choose two indices
+                                                         
+           k<k,wherek =j,wemusthaveA[k]≤A[k].Theinvariant in Figure 1.7
+           states precisely this fact. Arriving at this invariant, however, required some
+           degree of eﬀort.
+               We mentioned in Section 1.4 that starting the for loop with i =1,
+           rather than i = 2, simpliﬁes the correctness proof without aﬀecting the
+           correctness. We can now explain what we meant. Note that if we were to
+           begin the for loop with i = 2, its invariant would no longer be established
+           initially if n = 0. Speciﬁcally, A[1..i − 1] = A[1..1], and if n =0,A[1] is not
+           a valid array location. A more complicated invariant — and consequently
+           a more complicated proof — would therefore be required to handle this
+           special case. By instead beginning the loop at 1, we have sacriﬁced a
+           very small amount of run-time overhead for the purpose of simplifying the
+           invariant.
+           2.4    Combining Recursion and Iteration
+           In this section, we will present an alternative approach to solving the
+           selection problem, speciﬁed in Figure 1.1 on page 5. This approach will
+           ultimately result in a recursive algorithm that also contains a loop. We will
+           then show how to combine the techniques presented in the last two sections
+           in order to prove such an algorithm to be correct.
+               We will reduce the selection problem to the           Figure 2.2 uses the notation
+           following three problems:                                 x, pronounced the ceiling
+                                                                     of x, to denote the small-
+                                                                     est integer no smaller than
+            • the Dutch national ﬂag problem, deﬁned below;          x. Thus, 3/2 =2,and
+                                                                     −3/2 = −1. Likewise,
+            • the problem of ﬁnding the median of a nonempty         x, pronounced the ﬂoor
+                                                                     of x, denotes the largest
+              array of numbers (see Figure 2.2 for a speciﬁcation    integer no larger than x.
+              of this problem); and                                  Thus, 3/2 =1,and
+                                                                     −3/2 = −2.
+            • a smaller instance of the selection problem.
+               Somewhatinformally, the input to the Dutch national ﬂag problem is an
+           array of items, each of which is colored either red, white,orblue. The goal
+           is to arrange the items so that all of the red items precede all of the white
+           items, which in turn precede all of the blue items. This order is the order
+           of the colors appearing on the Dutch national ﬂag, from top to bottom. We
+           will modify the problem slightly by assuming that all items are numbers,

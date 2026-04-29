@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 315</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-315.jpg" alt="Page 315" width="1282" height="1882"/>
+      <div class="ocr">           296                      Algorithms: A Top-Down Approach
+           performs a recursive Compress on k’s parent. If we treat the distance
+           between a node and the root as the size of a call to Find,weseethat
+           such a recursive call is valid. Furthermore, it compresses the path from k’s
+           parent to the root and returns the root. It can therefore complete its task
+           by making k a child of the root and returning the root. The resulting Find
+           algorithm is shown in Figure 8.6.
+               The rest of the implementation is the same as for ShortDisjointSets;
+           however, because path compression can decrease the height of a node i
+           without updating height[i], this value is no longer guaranteed to give the
+           height of node i. For this reason, we will change the name of this array to
+           rank and weaken the structural invariant so that rank[i] is at least the height
+           of i. The precise meaning of rank[i] is now rather elusive, other than the fact
+           that it gives an upper bound on the height of i.
+               Clearly, the running time of CompressedDisjointSets.Find is in
+           O(h), where h is the height of the tree. Furthermore, the height of a
+           tree in this implementation can certainly be no larger than it would
+           have been if no path compression had been done; hence, the upper
+           bound of O(lgn)shownforShortDisjointSets.Find also holds for
+             Figure 8.6  The Find algorithm for the CompressedDisjointSets implementation
+             of DisjointSets
+</div>
+    </div>
+  </body>
+</html>

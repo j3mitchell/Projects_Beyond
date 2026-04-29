@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 372</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-372.jpg" alt="Page 372" width="1282" height="1882"/>
+      <div class="ocr">                                        Divide and Conquer                             353
+           1, so that the right-hand side is strictly less than 3. Because the left-hand
+           side is an integer, its value must therefore be at most 2. It follows from
+           the while loop invariant that the loop terminates when approx = rem/v.
+           Because this loop decrements approx by 1 each iteration, it must iterate at
+           most twice. Its running time is therefore in Θ(n).
+               It is now easily seen that, excluding the recursive call, the running time
+           of the body of the main loop is dominated by the running time of the
+           multiplication. Because the result of the multiplication contains at most
+           3n/2 + 1 signiﬁcant bits, this multiplication can be done in Θ(nlg3)time
+           using the multiplication algorithm suggested at the beginning of this section.
+           If m ≥ n, the number of iterations of the main loop is easily seen to be
+                                   numDig −1=m/digLen−1
+                                                = m −1
+                                                    n/2
+                                                =2m/n−1.
+           Thus, the running time of the main loop, excluding the recursive call, is in
+                                    Θ(nlg3m/n)=Θ(mnlg3−1).
+               Wenowobserve that for even n, there are in the worst case 2m/n−1
+           recursive calls. For odd n, the worst-case number of recursive calls is 2(m+
+           1)/(n +1)−1. The resulting recurrence is therefore quite complicated.
+           However, consider the parameters of the recursive call. We have already
+                                 n/2                   −n/2
+           shownthatrem&lt;v2          ,andvFirst = v2−n/2. This recursive call therefore
+           divides a value strictly less than v by v2     . Thus, in any of these calls,
+                                                                        n
+           the dividend is less than the divisor plus 1, multiplied by 2 ,wheren is the
+           numberofbitsin the divisor. In addition, it is easily seen that the dividend is
+           never less than the divisor. Furthermore, if these relationships initially hold
+           for odd n, they hold for the recursive call in this case as well. We therefore
+           will ﬁrst restrict our attention to this special case.
+               Let n, the number of signiﬁcant bits in v,beeven.If
+                                                          n
+                                         v ≤ u&lt;(v+1)2,
+           then m, the number of signiﬁcant bits in u,isatmost2n.Thenumberof
+           iterations of the outer loop is therefore at most
+                                     2m/n−1≤4n/n−1
+                                                  =3.
+</div>
+    </div>
+  </body>
+</html>

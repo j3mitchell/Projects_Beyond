@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ncx version="2005-1" xml:lang="en" xmlns="http://www.daisy.org/z3986/2005/ncx/">
+<head><meta name="dtb:uid" content="algorithms-howell-full-hybrid-v2_3"/><meta name="dtb:depth" content="2"/><meta name="dtb:totalPageCount" content="0"/><meta name="dtb:maxPageNumber" content="0"/></head>
+<docTitle><text>Algorithms: A Top-Down Approach (TOC v2_3)</text></docTitle>
+<navMap>
+<navPoint id="n1" playOrder="1"><navLabel><text>Cover</text></navLabel><content src="xhtml/p001.xhtml"/></navPoint>
+<navPoint id="n2" playOrder="2"><navLabel><text>Contents</text></navLabel><content src="xhtml/p011.xhtml"/></navPoint>
+<navPoint id="n3" playOrder="3"><navLabel><text>Part I: Fundamentals</text></navLabel><content src="xhtml/p020.xhtml"/></navPoint>
+<navPoint id="n4" playOrder="4"><navLabel><text>1. Introduction</text></navLabel><content src="xhtml/p022.xhtml"/>
+  <navPoint id="n5" playOrder="5"><navLabel><text>1.1 Specifications (p.3)</text></navLabel><content src="xhtml/p022.xhtml"/></navPoint>
+  <navPoint id="n6" playOrder="6"><navLabel><text>1.2 Algorithms (p.6)</text></navLabel><content src="xhtml/p025.xhtml"/></navPoint>
+  <navPoint id="n7" playOrder="7"><navLabel><text>1.3 Proving Algorithm Correctness (p.8)</text></navLabel><content src="xhtml/p027.xhtml"/></navPoint>
+  <navPoint id="n8" playOrder="8"><navLabel><text>1.4 Algorithm Analysis (p.9)</text></navLabel><content src="xhtml/p028.xhtml"/></navPoint>
+  <navPoint id="n9" playOrder="9"><navLabel><text>1.5 Data Structures (p.12)</text></navLabel><content src="xhtml/p031.xhtml"/></navPoint>
+  <navPoint id="n10" playOrder="10"><navLabel><text>1.6 A Case Study: Maximum Subsequence Sum (p.13)</text></navLabel><content src="xhtml/p032.xhtml"/></navPoint>
+  <navPoint id="n11" playOrder="11"><navLabel><text>1.7 Summary (p.19)</text></navLabel><content src="xhtml/p038.xhtml"/></navPoint>
+  <navPoint id="n12" playOrder="12"><navLabel><text>1.8 Exercises (p.20)</text></navLabel><content src="xhtml/p039.xhtml"/></navPoint>
+  <navPoint id="n13" playOrder="13"><navLabel><text>1.9 Notes (p.24)</text></navLabel><content src="xhtml/p043.xhtml"/></navPoint>
+</navPoint>
+<navPoint id="n14" playOrder="14"><navLabel><text>2. Proving Algorithm Correctness</text></navLabel><content src="xhtml/p044.xhtml"/>
+  <navPoint id="n15" playOrder="15"><navLabel><text>2.1 The Basics (p.25)</text></navLabel><content src="xhtml/p044.xhtml"/></navPoint>
+  <navPoint id="n16" playOrder="16"><navLabel><text>2.2 Handling Recursion (p.27)</text></navLabel><content src="xhtml/p046.xhtml"/></navPoint>
+  <navPoint id="n17" playOrder="17"><navLabel><text>2.3 Handling Iteration (p.29)</text></navLabel><content src="xhtml/p048.xhtml"/></navPoint>
+  <navPoint id="n18" playOrder="18"><navLabel><text>2.4 Combining Recursion and Iteration (p.37)</text></navLabel><content src="xhtml/p056.xhtml"/></navPoint>
+  <navPoint id="n19" playOrder="19"><navLabel><text>2.5 Mutual Recursion (p.45)</text></navLabel><content src="xhtml/p064.xhtml"/></navPoint>
+  <navPoint id="n20" playOrder="20"><navLabel><text>2.6 Finding Errors (p.46)</text></navLabel><content src="xhtml/p065.xhtml"/></navPoint>
+  <navPoint id="n21" playOrder="21"><navLabel><text>2.7 Summary (p.47)</text></navLabel><content src="xhtml/p066.xhtml"/></navPoint>
+  <navPoint id="n22" playOrder="22"><navLabel><text>2.8 Exercises (p.48)</text></navLabel><content src="xhtml/p067.xhtml"/></navPoint>
+  <navPoint id="n23" playOrder="23"><navLabel><text>2.9 Notes (p.53)</text></navLabel><content src="xhtml/p072.xhtml"/></navPoint>
+</navPoint>
+<navPoint id="n24" playOrder="24"><navLabel><text>3. Analyzing Algorithms</text></navLabel><content src="xhtml/p074.xhtml"/>
+  <navPoint id="n25" playOrder="25"><navLabel><text>3.1 Motivation (p.55)</text></navLabel><content src="xhtml/p074.xhtml"/></navPoint>
+  <navPoint id="n26" playOrder="26"><navLabel><text>3.2 Big-O Notation (p.57)</text></navLabel><content src="xhtml/p076.xhtml"/></navPoint>
+  <navPoint id="n27" playOrder="27"><navLabel><text>3.3 Big-Ω and Big-Θ (p.61)</text></navLabel><content src="xhtml/p080.xhtml"/></navPoint>
+  <navPoint id="n28" playOrder="28"><navLabel><text>3.4 Operations on Sets (p.66)</text></navLabel><content src="xhtml/p085.xhtml"/></navPoint>
+  <navPoint id="n29" playOrder="29"><navLabel><text>3.5 Smooth Functions and Summations (p.68)</text></navLabel><content src="xhtml/p087.xhtml"/></navPoint>
+  <navPoint id="n30" playOrder="30"><navLabel><text>3.6 Analyzing While Loops (p.72)</text></navLabel><content src="xhtml/p091.xhtml"/></navPoint>
+  <navPoint id="n31" playOrder="31"><navLabel><text>3.7 Analyzing Recursion (p.73)</text></navLabel><content src="xhtml/p092.xhtml"/></navPoint>
+  <navPoint id="n32" playOrder="32"><navLabel><text>3.8 Analyzing Space Usage (p.81)</text></navLabel><content src="xhtml/p100.xhtml"/></navPoint>
+  <navPoint id="n33" playOrder="33"><navLabel><text>3.9 Multiple Variables (p.82)</text></navLabel><content src="xhtml/p101.xhtml"/></navPoint>
+  <navPoint id="n34" playOrder="34"><navLabel><text>3.10 Little-o and Little-ω (p.89)</text></navLabel><content src="xhtml/p108.xhtml"/></navPoint>
+  <navPoint id="n35" playOrder="35"><navLabel><text>3.11 Use of Limits in Asymptotic Analysis (p.92)</text></navLabel><content src="xhtml/p111.xhtml"/></navPoint>
+  <navPoint id="n36" playOrder="36"><navLabel><text>3.12 Summary (p.95)</text></navLabel><content src="xhtml/p114.xhtml"/></navPoint>
+  <navPoint id="n37" playOrder="37"><navLabel><text>3.13 Exercises (p.98)</text></navLabel><content src="xhtml/p117.xhtml"/></navPoint>
+  <navPoint id="n38" playOrder="38"><navLabel><text>3.14 Notes (p.104)</text></navLabel><content src="xhtml/p123.xhtml"/></navPoint>
+</navPoint>
+<navPoint id="n39" playOrder="39"><navLabel><text>Part II: Data Structures</text></navLabel><content src="xhtml/p126.xhtml"/></navPoint>
+<navPoint id="n40" playOrder="40"><navLabel><text>4. Basic Techniques for Data Structures</text></navLabel><content src="xhtml/p128.xhtml"/>
+  <navPoint id="n41" playOrder="41"><navLabel><text>4.1 Stacks (p.109)</text></navLabel><content src="xhtml/p128.xhtml"/></navPoint>
+  <navPoint id="n42" playOrder="42"><navLabel><text>4.2 A Simple Stack Implementation (p.112)</text></navLabel><content src="xhtml/p131.xhtml"/></navPoint>
+  <navPoint id="n43" playOrder="43"><navLabel><text>4.3 Expandable Arrays (p.121)</text></navLabel><content src="xhtml/p140.xhtml"/></navPoint>
+  <navPoint id="n44" playOrder="44"><navLabel><text>4.4 The ConsList ADT (p.125)</text></navLabel><content src="xhtml/p144.xhtml"/></navPoint>
+  <navPoint id="n45" playOrder="45"><navLabel><text>4.5 Amortized Analysis Using Potential Functions (p.131)</text></navLabel><content src="xhtml/p150.xhtml"/></navPoint>
+  <navPoint id="n46" playOrder="46"><navLabel><text>4.6 Summary (p.141)</text></navLabel><content src="xhtml/p160.xhtml"/></navPoint>
+  <navPoint id="n47" playOrder="47"><navLabel><text>4.7 Exercises (p.142)</text></navLabel><content src="xhtml/p161.xhtml"/></navPoint>
+  <navPoint id="n48" playOrder="48"><navLabel><text>4.8 Notes (p.147)</text></navLabel><content src="xhtml/p166.xhtml"/></navPoint>
+</navPoint>
+<navPoint id="n49" playOrder="49"><navLabel><text>5. Priority Queues</text></navLabel><content src="xhtml/p168.xhtml"/>
+  <navPoint id="n50" playOrder="50"><navLabel><text>5.1 Sorted Arrays (p.150)</text></navLabel><content src="xhtml/p169.xhtml"/></navPoint>
+  <navPoint id="n51" playOrder="51"><navLabel><text>5.2 Heaps (p.153)</text></navLabel><content src="xhtml/p172.xhtml"/></navPoint>
+  <navPoint id="n52" playOrder="52"><navLabel><text>5.3 Leftist Heaps (p.159)</text></navLabel><content src="xhtml/p178.xhtml"/></navPoint>
+  <navPoint id="n53" playOrder="53"><navLabel><text>5.4 Skew Heaps (p.165)</text></navLabel><content src="xhtml/p184.xhtml"/></navPoint>
+  <navPoint id="n54" playOrder="54"><navLabel><text>5.5 Randomized Heaps (p.169)</text></navLabel><content src="xhtml/p188.xhtml"/></navPoint>
+  <navPoint id="n55" playOrder="55"><navLabel><text>5.6 Sorting and Binary Heaps (p.179)</text></navLabel><content src="xhtml/p198.xhtml"/></navPoint>
+  <navPoint id="n56" playOrder="56"><navLabel><text>5.7 Summary (p.187)</text></navLabel><content src="xhtml/p206.xhtml"/></navPoint>
+  <navPoint id="n57" playOrder="57"><navLabel><text>5.8 Exercises (p.190)</text></navLabel><content src="xhtml/p209.xhtml"/></navPoint>
+  <navPoint id="n58" playOrder="58"><navLabel><text>5.9 Notes (p.195)</text></navLabel><content src="xhtml/p214.xhtml"/></navPoint>
+</navPoint>
+<navPoint id="n59" playOrder="59"><navLabel><text>6. Storage/Retrieval I: Ordered Keys</text></navLabel><content src="xhtml/p216.xhtml"/>
+  <navPoint id="n60" playOrder="60"><navLabel><text>6.1 Binary Search Trees (p.200)</text></navLabel><content src="xhtml/p219.xhtml"/></navPoint>
+  <navPoint id="n61" playOrder="61"><navLabel><text>6.2 AVL Trees (p.207)</text></navLabel><content src="xhtml/p226.xhtml"/></navPoint>
+  <navPoint id="n62" playOrder="62"><navLabel><text>6.3 Splay Trees (p.216)</text></navLabel><content src="xhtml/p235.xhtml"/></navPoint>
+  <navPoint id="n63" playOrder="63"><navLabel><text>6.4 Skip Lists (p.226)</text></navLabel><content src="xhtml/p245.xhtml"/></navPoint>
+  <navPoint id="n64" playOrder="64"><navLabel><text>6.5 Summary (p.239)</text></navLabel><content src="xhtml/p258.xhtml"/></navPoint>
+  <navPoint id="n65" playOrder="65"><navLabel><text>6.6 Exercises (p.240)</text></navLabel><content src="xhtml/p259.xhtml"/></navPoint>
+  <navPoint id="n66" playOrder="66"><navLabel><text>6.7 Notes (p.244)</text></navLabel><content src="xhtml/p263.xhtml"/></navPoint>
+</navPoint>
+<navPoint id="n67" playOrder="67"><navLabel><text>7. Storage/Retrieval II: Unordered Keys</text></navLabel><content src="xhtml/p264.xhtml"/>
+  <navPoint id="n68" playOrder="68"><navLabel><text>7.1 Arrays with Virtual Initialization (p.245)</text></navLabel><content src="xhtml/p264.xhtml"/></navPoint>
+  <navPoint id="n69" playOrder="69"><navLabel><text>7.2 Hashing (p.248)</text></navLabel><content src="xhtml/p267.xhtml"/></navPoint>
+  <navPoint id="n70" playOrder="70"><navLabel><text>7.3 Deterministic Hash Functions (p.255)</text></navLabel><content src="xhtml/p274.xhtml"/></navPoint>
+  <navPoint id="n71" playOrder="71"><navLabel><text>7.4 Universal Hashing (p.261)</text></navLabel><content src="xhtml/p280.xhtml"/></navPoint>
+  <navPoint id="n72" playOrder="72"><navLabel><text>7.5 Number Theoretic Universal Hash Families (p.265)</text></navLabel><content src="xhtml/p284.xhtml"/></navPoint>
+  <navPoint id="n73" playOrder="73"><navLabel><text>7.6 Perfect Hashing (p.275)</text></navLabel><content src="xhtml/p294.xhtml"/></navPoint>
+  <navPoint id="n74" playOrder="74"><navLabel><text>7.7 Summary (p.283)</text></navLabel><content src="xhtml/p302.xhtml"/></navPoint>
+  <navPoint id="n75" playOrder="75"><navLabel><text>7.8 Exercises (p.285)</text></navLabel><content src="xhtml/p304.xhtml"/></navPoint>
+  <navPoint id="n76" playOrder="76"><navLabel><text>7.9 Notes (p.288)</text></navLabel><content src="xhtml/p307.xhtml"/></navPoint>
+</navPoint>
+<navPoint id="n77" playOrder="77"><navLabel><text>8. Disjoint Sets</text></navLabel><content src="xhtml/p308.xhtml"/>
+  <navPoint id="n78" playOrder="78"><navLabel><text>8.1 Using Disjoint Sets in Scheduling (p.291)</text></navLabel><content src="xhtml/p310.xhtml"/></navPoint>
+  <navPoint id="n79" playOrder="79"><navLabel><text>8.2 A Tree-Based Implementation (p.291)</text></navLabel><content src="xhtml/p310.xhtml"/></navPoint>
+  <navPoint id="n80" playOrder="80"><navLabel><text>8.3 A Short Tree Implementation (p.294)</text></navLabel><content src="xhtml/p313.xhtml"/></navPoint>
+  <navPoint id="n81" playOrder="81"><navLabel><text>8.4 Path Compression (p.295)</text></navLabel><content src="xhtml/p314.xhtml"/></navPoint>
+  <navPoint id="n82" playOrder="82"><navLabel><text>8.5 Summary (p.304)</text></navLabel><content src="xhtml/p323.xhtml"/></navPoint>
+  <navPoint id="n83" playOrder="83"><navLabel><text>8.6 Exercises (p.305)</text></navLabel><content src="xhtml/p324.xhtml"/></navPoint>
+  <navPoint id="n84" playOrder="84"><navLabel><text>8.7 Notes (p.307)</text></navLabel><content src="xhtml/p326.xhtml"/></navPoint>
+</navPoint>
+<navPoint id="n85" playOrder="85"><navLabel><text>9. Graphs</text></navLabel><content src="xhtml/p328.xhtml"/>
+  <navPoint id="n86" playOrder="86"><navLabel><text>9.1 Universal Sink Detection (p.312)</text></navLabel><content src="xhtml/p331.xhtml"/></navPoint>
+  <navPoint id="n87" playOrder="87"><navLabel><text>9.2 Topological Sort (p.313)</text></navLabel><content src="xhtml/p332.xhtml"/></navPoint>
+  <navPoint id="n88" playOrder="88"><navLabel><text>9.3 Adjacency Matrix Implementation (p.315)</text></navLabel><content src="xhtml/p334.xhtml"/></navPoint>
+  <navPoint id="n89" playOrder="89"><navLabel><text>9.4 Adjacency List Implementation (p.318)</text></navLabel><content src="xhtml/p337.xhtml"/></navPoint>
+  <navPoint id="n90" playOrder="90"><navLabel><text>9.5 Multigraphs (p.321)</text></navLabel><content src="xhtml/p340.xhtml"/></navPoint>
+  <navPoint id="n91" playOrder="91"><navLabel><text>9.6 Summary (p.325)</text></navLabel><content src="xhtml/p344.xhtml"/></navPoint>
+  <navPoint id="n92" playOrder="92"><navLabel><text>9.7 Exercises (p.325)</text></navLabel><content src="xhtml/p344.xhtml"/></navPoint>
+  <navPoint id="n93" playOrder="93"><navLabel><text>9.8 Notes (p.327)</text></navLabel><content src="xhtml/p346.xhtml"/></navPoint>
+</navPoint>
+<navPoint id="n94" playOrder="94"><navLabel><text>Part III: Algorithm Design Techniques</text></navLabel><content src="xhtml/p348.xhtml"/></navPoint>
+<navPoint id="n95" playOrder="95"><navLabel><text>10. Divide and Conquer</text></navLabel><content src="xhtml/p350.xhtml"/>
+  <navPoint id="n96" playOrder="96"><navLabel><text>10.1 Polynomial Multiplication (p.332)</text></navLabel><content src="xhtml/p351.xhtml"/></navPoint>
+  <navPoint id="n97" playOrder="97"><navLabel><text>10.2 Merge Sort (p.335)</text></navLabel><content src="xhtml/p354.xhtml"/></navPoint>
+  <navPoint id="n98" playOrder="98"><navLabel><text>10.3 Quick Sort (p.337)</text></navLabel><content src="xhtml/p356.xhtml"/></navPoint>
+  <navPoint id="n99" playOrder="99"><navLabel><text>10.4 Selection (p.342)</text></navLabel><content src="xhtml/p361.xhtml"/></navPoint>
+  <navPoint id="n100" playOrder="100"><navLabel><text>10.5 Integer Division (p.348)</text></navLabel><content src="xhtml/p367.xhtml"/></navPoint>
+  <navPoint id="n101" playOrder="101"><navLabel><text>10.6 Newton&#x27;s Method (p.355)</text></navLabel><content src="xhtml/p374.xhtml"/></navPoint>
+  <navPoint id="n102" playOrder="102"><navLabel><text>10.7 Summary (p.363)</text></navLabel><content src="xhtml/p382.xhtml"/></navPoint>
+  <navPoint id="n103" playOrder="103"><navLabel><text>10.8 Exercises (p.363)</text></navLabel><content src="xhtml/p382.xhtml"/></navPoint>
+  <navPoint id="n104" playOrder="104"><navLabel><text>10.9 Notes (p.370)</text></navLabel><content src="xhtml/p389.xhtml"/></navPoint>
+</navPoint>
+<navPoint id="n105" playOrder="105"><navLabel><text>11. Optimization I: Greedy Algorithms</text></navLabel><content src="xhtml/p390.xhtml"/>
+  <navPoint id="n106" playOrder="106"><navLabel><text>11.1 Job Scheduling (p.372)</text></navLabel><content src="xhtml/p391.xhtml"/></navPoint>
+  <navPoint id="n107" playOrder="107"><navLabel><text>11.2 Minimum-Cost Spanning Trees (p.374)</text></navLabel><content src="xhtml/p393.xhtml"/></navPoint>
+  <navPoint id="n108" playOrder="108"><navLabel><text>11.3 Single-Source Shortest Paths (p.379)</text></navLabel><content src="xhtml/p398.xhtml"/></navPoint>
+  <navPoint id="n109" playOrder="109"><navLabel><text>11.4 Huffman Codes (p.380)</text></navLabel><content src="xhtml/p399.xhtml"/></navPoint>
+  <navPoint id="n110" playOrder="110"><navLabel><text>11.5 Summary (p.384)</text></navLabel><content src="xhtml/p403.xhtml"/></navPoint>
+  <navPoint id="n111" playOrder="111"><navLabel><text>11.6 Exercises (p.385)</text></navLabel><content src="xhtml/p404.xhtml"/></navPoint>
+  <navPoint id="n112" playOrder="112"><navLabel><text>11.7 Notes (p.387)</text></navLabel><content src="xhtml/p406.xhtml"/></navPoint>
+</navPoint>
+<navPoint id="n113" playOrder="113"><navLabel><text>12. Optimization II: Dynamic Programming</text></navLabel><content src="xhtml/p408.xhtml"/>
+  <navPoint id="n114" playOrder="114"><navLabel><text>12.1 Making Change (p.389)</text></navLabel><content src="xhtml/p408.xhtml"/></navPoint>
+  <navPoint id="n115" playOrder="115"><navLabel><text>12.2 Chained Matrix Multiplication (p.393)</text></navLabel><content src="xhtml/p412.xhtml"/></navPoint>
+  <navPoint id="n116" playOrder="116"><navLabel><text>12.3 All-Pairs Shortest Paths (p.395)</text></navLabel><content src="xhtml/p414.xhtml"/></navPoint>
+  <navPoint id="n117" playOrder="117"><navLabel><text>12.4 The Knapsack Problem (p.397)</text></navLabel><content src="xhtml/p416.xhtml"/></navPoint>
+  <navPoint id="n118" playOrder="118"><navLabel><text>12.5 Summary (p.400)</text></navLabel><content src="xhtml/p419.xhtml"/></navPoint>
+  <navPoint id="n119" playOrder="119"><navLabel><text>12.6 Exercises (p.400)</text></navLabel><content src="xhtml/p419.xhtml"/></navPoint>
+  <navPoint id="n120" playOrder="120"><navLabel><text>12.7 Notes (p.408)</text></navLabel><content src="xhtml/p427.xhtml"/></navPoint>
+</navPoint>
+<navPoint id="n121" playOrder="121"><navLabel><text>Part IV: Common Reduction Targets</text></navLabel><content src="xhtml/p428.xhtml"/></navPoint>
+<navPoint id="n122" playOrder="122"><navLabel><text>13. Depth-First Search</text></navLabel><content src="xhtml/p430.xhtml"/>
+  <navPoint id="n123" playOrder="123"><navLabel><text>13.1 Ancestry in Rooted Trees (p.412)</text></navLabel><content src="xhtml/p431.xhtml"/></navPoint>
+  <navPoint id="n124" playOrder="124"><navLabel><text>13.2 Reachability in a Graph (p.417)</text></navLabel><content src="xhtml/p436.xhtml"/></navPoint>
+  <navPoint id="n125" playOrder="125"><navLabel><text>13.3 A Generic Depth-First Search (p.421)</text></navLabel><content src="xhtml/p440.xhtml"/></navPoint>
+  <navPoint id="n126" playOrder="126"><navLabel><text>13.4 Articulation Points (p.425)</text></navLabel><content src="xhtml/p444.xhtml"/></navPoint>
+  <navPoint id="n127" playOrder="127"><navLabel><text>13.5 Topological Sort Revisited (p.430)</text></navLabel><content src="xhtml/p449.xhtml"/></navPoint>
+  <navPoint id="n128" playOrder="128"><navLabel><text>13.6 Strongly Connected Components (p.432)</text></navLabel><content src="xhtml/p451.xhtml"/></navPoint>
+  <navPoint id="n129" playOrder="129"><navLabel><text>13.7 Summary (p.436)</text></navLabel><content src="xhtml/p455.xhtml"/></navPoint>
+  <navPoint id="n130" playOrder="130"><navLabel><text>13.8 Exercises (p.437)</text></navLabel><content src="xhtml/p456.xhtml"/></navPoint>
+  <navPoint id="n131" playOrder="131"><navLabel><text>13.9 Notes (p.439)</text></navLabel><content src="xhtml/p458.xhtml"/></navPoint>
+</navPoint>
+<navPoint id="n132" playOrder="132"><navLabel><text>14. Network Flow and Matching</text></navLabel><content src="xhtml/p460.xhtml"/>
+  <navPoint id="n133" playOrder="133"><navLabel><text>14.1 The Ford-Fulkerson Algorithm (p.443)</text></navLabel><content src="xhtml/p462.xhtml"/></navPoint>
+  <navPoint id="n134" playOrder="134"><navLabel><text>14.2 The Edmonds-Karp Algorithm (p.449)</text></navLabel><content src="xhtml/p468.xhtml"/></navPoint>
+  <navPoint id="n135" playOrder="135"><navLabel><text>14.3 Bipartite Matching (p.451)</text></navLabel><content src="xhtml/p470.xhtml"/></navPoint>
+  <navPoint id="n136" playOrder="136"><navLabel><text>14.4 Summary (p.460)</text></navLabel><content src="xhtml/p479.xhtml"/></navPoint>
+  <navPoint id="n137" playOrder="137"><navLabel><text>14.5 Exercises (p.460)</text></navLabel><content src="xhtml/p479.xhtml"/></navPoint>
+  <navPoint id="n138" playOrder="138"><navLabel><text>14.6 Notes (p.463)</text></navLabel><content src="xhtml/p482.xhtml"/></navPoint>
+</navPoint>
+<navPoint id="n139" playOrder="139"><navLabel><text>15. The Fast Fourier Transform</text></navLabel><content src="xhtml/p484.xhtml"/>
+  <navPoint id="n140" playOrder="140"><navLabel><text>15.1 Convolutions (p.465)</text></navLabel><content src="xhtml/p484.xhtml"/></navPoint>
+  <navPoint id="n141" playOrder="141"><navLabel><text>15.2 Commutative Rings (p.477)</text></navLabel><content src="xhtml/p496.xhtml"/></navPoint>
+  <navPoint id="n142" playOrder="142"><navLabel><text>15.3 Integer Multiplication (p.481)</text></navLabel><content src="xhtml/p500.xhtml"/></navPoint>
+  <navPoint id="n143" playOrder="143"><navLabel><text>15.4 The Schonhage-Strassen Algorithm (p.492)</text></navLabel><content src="xhtml/p511.xhtml"/></navPoint>
+  <navPoint id="n144" playOrder="144"><navLabel><text>15.5 Summary (p.498)</text></navLabel><content src="xhtml/p517.xhtml"/></navPoint>
+  <navPoint id="n145" playOrder="145"><navLabel><text>15.6 Exercises (p.499)</text></navLabel><content src="xhtml/p518.xhtml"/></navPoint>
+  <navPoint id="n146" playOrder="146"><navLabel><text>15.7 Notes (p.500)</text></navLabel><content src="xhtml/p519.xhtml"/></navPoint>
+</navPoint>
+<navPoint id="n147" playOrder="147"><navLabel><text>Part V: Intractable Problems</text></navLabel><content src="xhtml/p520.xhtml"/></navPoint>
+<navPoint id="n148" playOrder="148"><navLabel><text>16. NP-Completeness</text></navLabel><content src="xhtml/p522.xhtml"/>
+  <navPoint id="n149" playOrder="149"><navLabel><text>16.1 Boolean Satisfiability (p.503)</text></navLabel><content src="xhtml/p522.xhtml"/></navPoint>
+  <navPoint id="n150" playOrder="150"><navLabel><text>16.2 The Set P (p.505)</text></navLabel><content src="xhtml/p524.xhtml"/></navPoint>
+  <navPoint id="n151" playOrder="151"><navLabel><text>16.3 The Set NP (p.508)</text></navLabel><content src="xhtml/p527.xhtml"/></navPoint>
+  <navPoint id="n152" playOrder="152"><navLabel><text>16.4 Restricted Satisfiability Problems (p.512)</text></navLabel><content src="xhtml/p531.xhtml"/></navPoint>
+  <navPoint id="n153" playOrder="153"><navLabel><text>16.5 Vertex Cover and Independent Set (p.518)</text></navLabel><content src="xhtml/p537.xhtml"/></navPoint>
+  <navPoint id="n154" playOrder="154"><navLabel><text>16.6 Three-Dimensional Matching (p.522)</text></navLabel><content src="xhtml/p541.xhtml"/></navPoint>
+  <navPoint id="n155" playOrder="155"><navLabel><text>16.7 Partitioning and Strong NP-Completeness (p.526)</text></navLabel><content src="xhtml/p545.xhtml"/></navPoint>
+  <navPoint id="n156" playOrder="156"><navLabel><text>16.8 Proof of Cook&#x27;s Theorem (p.534)</text></navLabel><content src="xhtml/p553.xhtml"/></navPoint>
+  <navPoint id="n157" playOrder="157"><navLabel><text>16.9 Summary (p.547)</text></navLabel><content src="xhtml/p566.xhtml"/></navPoint>
+  <navPoint id="n158" playOrder="158"><navLabel><text>16.10 Exercises (p.548)</text></navLabel><content src="xhtml/p567.xhtml"/></navPoint>
+  <navPoint id="n159" playOrder="159"><navLabel><text>16.11 Notes (p.553)</text></navLabel><content src="xhtml/p572.xhtml"/></navPoint>
+</navPoint>
+<navPoint id="n160" playOrder="160"><navLabel><text>17. Approximation Algorithms</text></navLabel><content src="xhtml/p574.xhtml"/>
+  <navPoint id="n161" playOrder="161"><navLabel><text>17.1 Polynomial Turing Reducibility (p.555)</text></navLabel><content src="xhtml/p574.xhtml"/></navPoint>
+  <navPoint id="n162" playOrder="162"><navLabel><text>17.2 Knapsack (p.557)</text></navLabel><content src="xhtml/p576.xhtml"/></navPoint>
+  <navPoint id="n163" playOrder="163"><navLabel><text>17.3 Bin Packing (p.563)</text></navLabel><content src="xhtml/p582.xhtml"/></navPoint>
+  <navPoint id="n164" playOrder="164"><navLabel><text>17.4 The Traveling Salesperson Problem (p.567)</text></navLabel><content src="xhtml/p586.xhtml"/></navPoint>
+  <navPoint id="n165" playOrder="165"><navLabel><text>17.5 The Maximum Cut and Minimum Cluster Problems (p.572)</text></navLabel><content src="xhtml/p591.xhtml"/></navPoint>
+  <navPoint id="n166" playOrder="166"><navLabel><text>17.6 Summary (p.577)</text></navLabel><content src="xhtml/p596.xhtml"/></navPoint>
+  <navPoint id="n167" playOrder="167"><navLabel><text>17.7 Exercises (p.578)</text></navLabel><content src="xhtml/p597.xhtml"/></navPoint>
+  <navPoint id="n168" playOrder="168"><navLabel><text>17.8 Notes (p.579)</text></navLabel><content src="xhtml/p598.xhtml"/></navPoint>
+</navPoint>
+<navPoint id="n169" playOrder="169"><navLabel><text>Bibliography</text></navLabel><content src="xhtml/p600.xhtml"/></navPoint>
+<navPoint id="n170" playOrder="170"><navLabel><text>Index</text></navLabel><content src="xhtml/p606.xhtml"/></navPoint>
+</navMap>
+</ncx>

@@ -1,0 +1,45 @@
+                                     * The Fast Fourier Transform                       499
+            bits we use in computing the negative wrapped convolution if we instead
+            perform some computation on a few bits of each value and apply the Chinese
+            Remainder Theorem.
+            15.6   Exercises
+            Exercise 15.1. Prove Theorem 15.6. [Hint: Use induction on either m or n.]
+                                                                                     k
+            Exercise 15.2. Suppose that in multiplying two BigNumsmod2 − 1,
+            where k is a power of 2, instead of making b and 4l as nearly equal as
+            possible (as in Section 15.3), we were to make b as small as possible. Analyze
+            the running time of the algorithm that results if we set b to 8 and l to k/8.
+            Exercise 15.3.
+               a. Prove Theorem 15.9 by showing that for any a ∈ Z           and any a ∈
+                                                                    1     m             2
+                                                                           1
+                  Z ,ifi=(m c a +m c a )modm m ,where(m c )modm =1
+                    m            2 2 1      1 1 2         1  2            1 1         2
+                     2
+                  and (m c )modm =1,thenimodm =a and imodm =a .
+                          2 2         1                    1     1              2     2
+             *b.Extendtheaboveideatoprovethefollowing.Letm ,...,m be
+                                                                              1       n
+                  positive integers that are all relatively prime to each other, and let
+                                                       n
+                                                M=mj.
+                                                      j=1
+                  Thenfor natural numbers a ,...,a such that each a <m,thereisa
+                                               1       n                 j      j
+                  uniquenatural number i<Msuchthatfor1 ≤ j ≤ n, i mod mj = aj.
+            Exercise 15.4. Modify PolyMult (Figure 10.1 on page 334) to implement
+            NonWrappedConv, speciﬁed in Figure 15.12. Show that the algorithm
+            runs in O(nlg3M(k)) time, where M(k) is the time required to multiply to
+            k-bit BigNums.
+            * Exercise 15.5. For c ∈ C and p = p ,...,p               ∈Cn,thechirp
+                                                            0    n n−1
+            transform of p with respect to c is the vector q ∈ C such that for 0 ≤ i<n,
+                                                  n−1
+                                                   ij
+                                            qj =     pic .
+                                                  i=0
+            Thus, if c is a principal nth root of unity, then the chirp transform with
+            respect to c is a DFT. Show how to reduce the problem of computing a chirp
+            transform for arbitrary c ∈ C to the problem of computing a convolution.
+            Using this reduction, give an O(nlgn) algorithm for evaluating a chirp
+            transform.

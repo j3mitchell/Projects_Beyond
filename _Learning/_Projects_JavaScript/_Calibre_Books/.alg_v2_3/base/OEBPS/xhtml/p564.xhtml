@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 564</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-564.jpg" alt="Page 564" width="1282" height="1882"/>
+      <div class="ocr">                                                            NP-Completeness                                                    545
+                 be constructed in O(p2(n)) time as well. Clearly, P (i) as deﬁned in (16.4)
+                                                                                               q
+                 can be constructed in O(1) time. Finally, Iq(i) as deﬁned in (16.3) can be
+                 constructed in O(p(n)) time. Thus, ψ (i) can be constructed in O(p2(n))
+                                                                            q
+                 time. The sub-formula F can therefore be constructed in O(p3(n)) time.
+                                                      q
+                      We can handle an instruction Load(n,∗l) in a similar way, but using
+                 the Ind abbreviation. Thus, we deﬁne
+                                                                 4p(n)
+                                                      Eq(i)=  Ind(i−1,j,l),
+                                                                  j=1
+                 and
+                                           4p(n)
+                               U (i)=  If(Ind(i−1,j,l),Eq(v ,n),Eq(v ,v                                          )).
+                                 q                                                   ij               ij   i−1,j
+                                            j=1
+                 In this case, Eq(i)andUq(i) can be constructed in O(p3(n)) time, so that F
+                                                                                                                                  q
+                 can be constructed in O(p4(n)) time.
+                                                                                                
+                      Let us now consider an instruction IfLeq(l ,l ,q). Because the memory
+                                                                                       1   2
+                 locations l and l are referenced, we deﬁne
+                                1          2
+                                                      4p(n)                    4p(n)
+                                              E =  Eq(a ,l)∧  Eq(a ,l).
+                                                q                    j   1                    j   2
+                                                       j=1                      j=1
+                      This statement will cause the program counter to be set to q if the
+                 value stored at l is less than or equal to the value stored at l ;otherwise,
+                                          1                                                                     2
+                 the program counter will be set to q + 1. We ﬁrst observe that for natural
+                 numbers v and v , v ≤ v iﬀ v −v ≥ 0. We can therefore use the variable
+                                1          2    1       2       2      1
+                 d to record |v −v | using the Sum abbreviation as follows:
+                  i                   2       1
+                                           4p(n)
+                                U (i)= Eq(v ,v                       )
+                                  q                       ij    i−1,j
+                                            j=1
+                                               4p(n)4p(n)
+                                            ∧   If(Eq(a ,l)∧Eq(a ,l),
+                                                                         j   1              j    2
+                                                j=1 j=1
+                                                             Sum(v ,d,v )∨Sum(v ,d,v )).
+                                                                       ij    i   ij                 ij    i    ij
+</div>
+    </div>
+  </body>
+</html>

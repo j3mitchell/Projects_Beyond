@@ -1,0 +1,48 @@
+              356                             Algorithms: A Top-Down Approach
+              Thenif vq≤u−v,weknowthattheactualquotient isq+1.Ifvq >u,
+              we know that the quotient is q−1. Otherwise, the quotient is q.
+                   Supposeanerrorofisintroducedinapproximatingthereciprocal.Then
+              we need                                                 
+                                              −n       1              u
+                                                                        
+                                            u2               + −          ≤1
+                                                       −n               
+                                                    v2                v
+                                                    u          −n     u
+                                                    v +u2         −v≤1
+                                                                                n
+                                                                       ||≤2 /u.
+                                                                           m
+              Suppose u consists of m bits, so that u<2 . Then we can ensure that
+              the approximation of u/v diﬀers from the actual value of u/v by no more
+                                                                                −n
+              than 1 if our approximation of the reciprocal of v2                    diﬀers from the actual
+                                             n−m
+              reciprocal by at most 2             .
+                   The resulting algorithm is shown in Figure 10.8. We handle the case
+              in which u<vseparately in order to ensure that the precondition for
+              u.Subtract(v) is met. As in the previous section, we use constants zero and
+              one,whichrefertoBigNum representing 0 and 1, respectively. It is easily
+              seen that the running time is simply the time for Reciprocal plus the time
+              to do the two multiplications. The time to do the ﬁrst multiplication depends
+              onthesizeofthevaluereturnedbyReciprocal. Because the accuracy of
+                                            n−m
+              the approximation is 2             , we would expect the value to be not much more
+              than m−n signiﬁcant bits.
+                   In the remainder of this section, we will consider how to implement the
+              Reciprocal function speciﬁed in Figure 10.8. The technique we apply is
+              Newton’s method for approximating a root of a function. Let I be some
+              interval of the real numbers, and suppose f : I → R has at least one root
+              —avaluex ∈ I such that f(x)=0.Forexample,ify is a ﬁxed positive
+              real number, the function f(x)=1/x − y over R>0 has exactly one root,
+              namely, x =1/y. Newton’s method is an iterative approach to ﬁnding an
+              approximation of a root of f.
+                   Newton’s method begins with an initial estimate x0 of the root. If f(x0)
+              is not suﬃciently close to 0, a better approximation is found using the
+              derivative of f, which we will denote by f. Recall that f(x0)givesthe
+              slope of the line tangent to f at x0 (see Figure 10.9). We can easily ﬁnd
+              the intersection x1 of this line with the x-axis, and for many functions,
+              this intersection will be a better approximation to the root than the initial
+              estimate. We then apply Newton’s method using x1 as the initial estimate.
+              For many functions, this approach is guaranteed to approach a root very
+              quickly. As we will see, the function f(x)=1/x −y is such a function.

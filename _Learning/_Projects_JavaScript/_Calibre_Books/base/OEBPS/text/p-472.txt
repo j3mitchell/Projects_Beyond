@@ -1,0 +1,41 @@
+                            Network Flow and Matching              453
+         edges, where n and a are the number of vertices and edges, respectively, in
+         the bipartite graph. The Edmonds–Karp algorithm will therefore solve the
+         constructed network ﬂow instance in O(M(n + a)) time, where M is the
+         number of edges in the maximum-sized matching. Because M can be no
+         more than n/2, if we assume that each vertex is incident on at least one
+         edge, the running time is in O(na). Furthermore, it is not hard to construct
+         the ﬂow network in O(n + a) time, so the bipartite matching problem can
+         be solved in O(na)time.
+            Rather than presenting the code for the reduction, let us ﬁrst examine
+         the reduction more carefully to see if we can optimize the bipartite matching
+         algorithm. For example, the addition of new vertices and edges is only
+         needed to form a ﬂow network. We could instead adapt one of the network
+         ﬂow algorithms to operate without the source and/or the sink explicitly
+         represented.
+            Wealsonotethatasﬂowisadded,theedgescontainingtheﬂow—which
+         are the edges of a matching — have their direction reversed. Rather than
+         explicitly reversing the direction of the edges, we could keep track of which
+         edges have been included in the matching in some other way. For example,
+         we could use an array matching[0..n − 1] such that matching[i]givesthe
+         vertex to which i is matched, or is −1ifi is unmatched. Because a matching
+         has at most one edge incident on any vertex, this may end up being a more
+         eﬃcient way of keeping track of the vertices adjacent (in the ﬂow network)
+         to vertices in V . The maximum-sized matching could also be returned via
+                     2
+         this array.
+            As we observed at the end of Section 14.1, once ﬂow is added to any
+         edge from the source or to any edge to the sink, that ﬂow is never removed.
+         To put this in terms of the matching algorithm, once a vertex is matched, it
+         remains matched, although the vertex to which it is matched may change.
+         Furthermore, we claim that if we ever attempt to add a vertex w ∈ V1 to the
+         current matching M andareunabletodoso(i.e.,thereisnopathfromw
+         to an unmatched vertex in V ), then we will never be able to add w to the
+                                2
+         matching.
+            To see why this is true, notice that if there were a maximum-sized
+         matching containing all currently matched vertices and w, then there is
+         amatchingM containing no other vertices from V1. If we delete all
+         vertices from V1 that are unmatched in M,thenM is clearly a maximum-
+         sized matching for the resulting graph. The Ford–Fulkerson algorithm must
+         therefore be able to ﬁnd a path that yields M from M.

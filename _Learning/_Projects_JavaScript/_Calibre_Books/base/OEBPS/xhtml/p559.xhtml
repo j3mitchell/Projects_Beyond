@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 559</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-559.jpg" alt="Page 559" width="1282" height="1882"/>
+      <div class="ocr">         540                Algorithms: A Top-Down Approach
+            We will now deﬁne an abbreviation for the speciﬁcation that two
+         variables y and z are equal:
+                            Eq(y,z)=IfElse(y,z,¬z).
+         Again, such an expression can be constructed in O(1) time.
+            We can extend this abbreviation in a couple of ways. First, we can use
+         one of the constants true or false in place of one of the variables. This will
+         be useful, for example, if we want to specify that some variable has the
+         same value as some speciﬁc bit of the input x,sayx[k]. Because x[k]isnota
+         variable in the formula, it cannot appear in the formula; however, when we’re
+         designing the construction, we don’t know this value. It would therefore be
+         convenient to be able to write Eq(y,x[k]), and to let the construction ﬁll in
+         the appropriate value for x[k]. We then deﬁne
+                                 Eq(y,true)=y
+         and
+                                Eq(y,false)=¬y.
+            We can also extend the abbreviation to arrays of variables as follows:
+                                         n
+                       Eq(y[1..n],z[1..n]) =  Eq(y[k],z[k]).
+                                         k=1
+         Such an expression can be constructed in O(n) time. For diﬀerent sizes of
+         arrays, the running time will be proportional to the number of elements. To
+         aid in readability, we will typically drop the range of subscripts when the
+         entire array is used.
+            When we specify the behavior of a program step, we need a way of
+         checking to see if aj records some particular memory location l.Letl[1..p(n)]
+         bethebitscomprisingl.Wecancheckwhetheragivenaj[1..p(n)] = l[1..p(n)]
+         using the Eq abbreviation. However, we may in many cases need to check
+         whether a records the memory location indirectly addressed by l.Forthis
+                 j
+         test, we use the following abbreviation:
+                                4p(n)
+                     Ind(i,j,l)=  (Eq(a ,l)∧ Eq(a ,v )).
+                                        j          j ij
+                                j=1
+         Because aj, a, l,andv  are arrays of p(n) elements, this expression can be
+                    j      ij
+         constructed in O(p2(n)) time.
+</div>
+    </div>
+  </body>
+</html>

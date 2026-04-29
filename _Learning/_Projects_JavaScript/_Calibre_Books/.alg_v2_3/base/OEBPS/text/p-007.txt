@@ -1,0 +1,35 @@
+      vi           Algorithms: A Top-Down Approach
+      of an algorithm is not tied to a particular programming language; hence, we
+      have chosen a computational model and corresponding notation that we feel
+      are appropriate for communicating algorithms to humans.
+        This text contains suﬃcient material for both an advanced undergrad-
+      uate course and an introductory graduate-level course on the design and
+      analysis of algorithms.
+      Prerequisite Material
+      This book is intended to be reasonably self-contained. However, a certain
+      degree of maturity is assumed regarding the audience. Readers are expected
+      to have enough experience in writing programs so as to be able to understand
+      algorithms presented in a pseudo language. Experience with basic data
+      structures, including stacks, queues, lists, and trees, will be helpful, as will
+      experience in manipulating ﬁnite and inﬁnite sums, solving recurrences, and
+      performing combinatorial analyses. Though calculus and number theory are
+      used occasionally, background in these ﬁelds of study is not assumed.
+      Organization
+      The outline of this book is as follows:
+       I. Fundamentals—thefoundationalmaterial uponwhich the remainder
+         of the text is based.
+         1. Introduction — introduction to the ideas of speciﬁcation, correct-
+          ness, and analysis of algorithms, as well as to the top-down approach.
+         2. Proving Algorithm Correctness — introduction to techniques
+          for proving algorithm correctness.
+         3. Analyzing Algorithms—introductiontoasymptotic notation and
+          its use in analyzing worst-case performance of algorithms.
+       II. Data Structures —datastructurescommonlyusedwithalgorithms,
+         including algorithms presented later in this text.
+         4. Basic Techniques for Data Structures — techniques for reason-
+          ing about and analyzing data structures. A more detailed discussion
+          of the computational model and notation is presented. Amortized
+          analysis is introduced.
+         5. Priority Queues — binary heaps, leftist heaps, skew heaps, and
+          randomized heaps. Randomized algorithms and expected-case anal-
+          ysis are introduced.

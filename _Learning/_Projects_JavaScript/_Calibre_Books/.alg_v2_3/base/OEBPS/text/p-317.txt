@@ -1,0 +1,42 @@
+              298                             Algorithms: A Top-Down Approach
+              the potential function to increase by some amount — say α(n), where α is
+              some appropriate function — for at least some of the Merges. The Merge
+              operation only operates on roots, so let us focus our attention there. When
+              a Mergeis performed, the rank of one node — a root — may increase by 1,
+              but otherwise, no ranks increase (see Figure 8.5, and recall that the rank
+              array replaces the height array in this algorithm). Therefore, let us deﬁne
+              φ (i)tobeα(n)rank [i]ifi is a root (i.e., if parent [i]=i).
+                s                         s                                       s
+                   Note that the above deﬁnitions are consistent with each other: if i is both
+              a leaf and a root, its rank is 0, and hence its potential is 0 by either of the
+              above deﬁnitions. Furthermore, if we can ensure that a Merge causes the
+              potential of no node other than the root of the resulting tree to increase, we
+              will have a bound of α(n)+2 on the amortized cost of Merge with respect
+              to Φ. We still need to deﬁne the potentials for nodes that are neither leaves
+              nor roots in such a way that an expensive Find causes Φ to decrease enough
+              to oﬀset much of the actual cost.
+                   Consider the eﬀect of Find(j)onanodei that is neither a leaf nor a
+              root. i’s rank doesn’t change, but its parent may. In particular, it may receive
+              a parent with diﬀerent rank than its original parent. It is not hard to show
+              as a structural invariant that if parent[i] = i,thenrank[parent[i]] > rank[i].
+              Wewouldtherefore like the potential of i to decrease, generally speaking, as
+              rank[parent[i]] increases. Furthermore, in order that its potential does not
+              increase when a Merge changes it from a root to a non-root, we should
+              have φ (i) ≤ α(n)rank [i] for all states s and nodes i.
+                       s                    s
+                   As a ﬁrst approximation to a deﬁnition of φ (i), where i is neither a leaf
+                                                                             s
+              nor a root, suppose we let φ (i)=(α(n) −f(s,i))rank [i], where f is some
+                                                    s                                  s
+              function that depends on the ranks of i and its parent in s and obeys the
+              constraint
+                                                    0 ≤ f(s,i) <α(n).
+              If  f does not decrease when i receives a parent of higher rank, φ
+                                                                                                                s
+              would satisfy the constraints outlined above. However, it would suﬀer the
+              disadvantage that its value is always a multiple of ranks[i]. In order to give
+              us more control over how much the potential function changes, we would like
+              for this function to have a larger range when ranks[i] is ﬁxed, as it is when
+              i is not a root. Therefore, we wish to ﬁnd, for each state s, a function
+                                      φ (i)=(α(n)−f(s,i))rank [i]−g(s,i),
+                                        s                                 s

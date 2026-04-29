@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 079</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-079.jpg" alt="Page 079" width="1282" height="1882"/>
+      <div class="ocr">         60                 Algorithms: A Top-Down Approach
+            If we add inequalities (3.1) and (3.2), we obtain
+                f (n)+f (n) ≤ c g (n)+c g (n)
+                1      2     1 1     2 2
+                           ≤c max(g (n),g (n))+c max(g (n),g (n))
+                             1     1    2      2     1    2
+                           =(c +c )max(g (n),g(n)),
+                              1   2      1    2
+         whenever n ≥ max(n ,n ). Therefore, f (n)+f (n) ∈ O(max(g (n),g (n))).
+                          1 2           1     2            1    2
+                                                                    
+            Let us now apply these two theorems to obtain a simpler analysis of
+         the running time of MaxSumBU. Recall that in our original analysis, we
+         concluded that the running time of a single iteration of the loop is bounded
+         by a ﬁxed constant. We can therefore conclude that the running time of a
+         single iteration is in O(1). Because there are n iterations, the running time
+         for the entire loop is bounded by the product of n and the running time of
+         a single iteration. By Theorem 3.8 part 1, the running time of the loop is in
+         O(n). Clearly, the running times of the code segments before and after the
+         loop are each in O(1). The total running time is then the sum of the running
+         times of these segments and that of the loop. By applying Theorem 3.8 part
+         2 twice, we see that the running time of the algorithm is in O(n) (because
+         max(1,n) ≤ n whenever n ≥ 1).
+            Recall that the actual running time of the program implementing
+         MaxSumOpt (Figure 1.11 on page 16) was much slower than that of
+         MaxSumBU.Letusnowanalyze MaxSumOpttosee whythis is the case.
+            We will begin with the inner loop. It is easily seen that each iteration
+         runs in O(1) time. The number of iterations of this loop varies from 1 to n.
+         Because the number of iterations is in O(n), we can conclude that this loop
+         runs in O(n) time. It is then easily seen that a single iteration of the outer
+         loop runs in O(n) time. Because the outer loop iterates n times, this loop,
+         and hence the entire algorithm, runs in O(n2)time.
+            It is tempting to conclude that this analysis explains the diﬀerence in
+         running times of the implementations of the algorithms; i.e., because n2
+         grows much more rapidly than does n, MaxSumOpt is therefore much
+         slower than MaxSumBU. However, this conclusion is not yet warranted,
+         because we have only shown upper bounds on the running times of the two
+         algorithms. In particular, it is perfectly valid to conclude that the running
+         time of MaxSumBU is in O(n2), because O(n) ⊆ O(n2). Conversely, we
+         have not shown that the running time of MaxSumOpt is not in O(n).
+</div>
+    </div>
+  </body>
+</html>

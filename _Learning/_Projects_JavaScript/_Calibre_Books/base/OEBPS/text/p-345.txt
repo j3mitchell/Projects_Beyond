@@ -1,0 +1,22 @@
+           326                      Algorithms: A Top-Down Approach
+             Figure 9.11  Comparison of running times for two implementations of Graph,along
+             with ListMultigraph
+            Notes
+                  :
+                    
+           Thus, G contains the same edges as does G, except that they are reversed
+                
+           in G . Express the running time of your algorithm as simply as possible using
+           Θ-notation in terms of the number of vertices n and the number of edges a,
+           assuming the graphs are implemented using
+           a. MatrixGraph
+           b. ListGraph
+           c. ListMultigraph.
+           Exercise 9.4. Give an algorithm to compute the number of edges in a given
+           graph.Expresstherunningtimeofyouralgorithmassimplyaspossibleusing
+           Θ-notation in terms of the number of vertices n and the number of edges a,
+           assuming the graph is implemented using
+           a. MatrixGraph
+           b. ListGraph
+           Exercise 9.5. A directed graph is said to be transitively closed if whenever
+           (u,v)and(v,w) are edges, then (u,w)isalsoanedge.GiveanO(n3)

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 450</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-450.jpg" alt="Page 450" width="1282" height="1882"/>
+      <div class="ocr">                                       Depth-First Search                          431
+            Figure 13.11   Algorithm for processing an entire graph with depth-ﬁrst search
+              Precondition: G is a Graph and s is a Searcher with size G.Size().
+              Postcondition: Traverses a depth-ﬁrst spanning forest on G. Each ver-
+              tex j in this forest is processed by calling s.PreProc(j)beforeanyof
+              j’s proper descendants are processed and by calling s.PostProc(j) after
+              all of j’s descendants are processed. Each edge (j,k) in the forest is pro-
+              cessed by calling s.TreePreProc((j,k)) before k is processed and by call-
+              ing s.TreePostProc((j,k)) after k is processed. All other edges e from j
+              toanynodeinG are processed by calling s.OtherEdgeProc(e).
+              DfsAll(G,s)
+                n←G.Size(); sel ← new Selector(n)
+                for i ← 0 to n−1
+                   if sel.IsSelected(i)
+                      Dfs(G,i,sel,s)
+           at a child of the root n. For this reason, we call the collection of trees
+           traversed by DfsAll a depth-ﬁrst spanning forest. In particular, note that
+           either Theorem 13.2 or Theorem 13.3, depending on whether G is undirected
+           or directed, can be extended to apply to this forest.
+                                                                                     
+               Let G be a ListGraph with n vertices and a edges. A graph G
+           constructed by adding a new vertex and n − 1 new edges to G then has
+           n+a−1edges. Therefore, the running time of DfsAll(G,s) is easily seen
+           to be in Θ(n+a), provided each of the vertex and edge processing operations
+           in s runs in Θ(1) time.
+               Nowconsider the depth-ﬁrst spanning forest for a directed acyclic graph.
+           Because there are no cycles, the spanning forest can have no back edges. This
+           leaves only tree edges, forward edges and cross edges. Furthermore, for each
+           of these types of edge (i,j), j is postorder processed before i. This property
+           suggests a straightforward algorithm for topological sort, namely, to order
+           the vertices in the reverse of the order in which they are postorder processed
+           by a depth-ﬁrst search.
+               The Searcher for this algorithm needs as representation variables a
+           readable array order[0..n−1] for storing the listing of vertices in topological
+           order and a natural number loc for storing the location in order of the last
+           vertex to be inserted. Only the constructor and the PostProc operation are
+           nonempty; these are shown in Figure 13.12. The topological sort algorithm is
+           shown in Figure 13.13. If G is implemented as a ListGraph, the algorithm’s
+</div>
+    </div>
+  </body>
+</html>

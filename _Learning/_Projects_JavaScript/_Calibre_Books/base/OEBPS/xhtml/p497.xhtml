@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 497</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-497.jpg" alt="Page 497" width="1282" height="1882"/>
+      <div class="ocr">       478           Algorithms: A Top-Down Approach
+         In view of the above complications, we will take a somewhat diﬀerent
+       approach. In this section, we will show that the results of the previous
+       section can be extended to various other mathematical structures, including
+       some involving only natural numbers. In the next section, we will develop a
+       multiplication algorithm that uses the Fast Fourier Transform over certain
+       of these structures. This algorithm will have a running time in O(nlg2 n). In
+       the following section, we will show how to improve it to achieve a running
+       time in O(nlgnlglgn). This algorithm is asymptotically the fastest known
+       algorithm for arbitrary-precision multiplication.
+         In order to show how the results of the previous section extend to other
+       mathematical structures, we need a few deﬁnitions. Let S be a set, and let
+       +beanybinary operation on S; i.e., for every x,y ∈ S,x+y ∈ S. The pair
+       S,+ is said to be a group if the following properties hold:
+       • Associativity: For every x,y,z ∈ S,(x+y)+z = x+(y +z).
+       • Identity: There is an element 0 ∈ S such that for every x ∈ S,0+x =
+        x+0=x.
+       • Inverse: For every element x ∈ S, there is an element −x ∈ S such that
+        x+(−x)=−x+x=0.
+       If, in addition commutativity holds — for every x,y ∈ S, x + y = y + x —
+       then we say S,+ is an abelian group.
+       Example15.1. Z,+,thesetofintegerswithaddition,isanabeliangroup.
+       Example 15.2. N,+, the set of natural numbers with addition, is not a
+       group because only 0 has an inverse.
+       Example 15.3. For a positive integer m,letZm denote the set of natural
+       numbers strictly less than m, and let + denote addition mod m.Itisnot
+       hard to see that Zm,+ is an abelian group, with 0 being the identity and
+       m−ibeing the inverse of i.
+       Example15.4. LetS3 bethesetofpermutationsofthreedistinctelements,
+       and let ◦ denote composition. We denote a permutation by the result of
+       applying it to 1,2,3; for example, the permutation that swaps the ﬁrst and
+       second elements is denoted by 2,1,3.Then2,1,3◦1,3,2 = 2,3,1, but
+       1,3,2◦2,1,3 = 3,1,2. Hence, S3,◦ is not commutative. However, it
+       is not hard to see that it is a group, with 1,2,3 being the identity element,
+       2,3,1 being the inverse of 3,1,2 and vice versa, and every other element
+       being its own inverse.
+</div>
+    </div>
+  </body>
+</html>

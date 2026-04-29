@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 410</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-410.jpg" alt="Page 410" width="1282" height="1882"/>
+      <div class="ocr">                                Optimization II: Dynamic Programming                     391
+                This recurrence gives us a recursive algorithm for computing C(n,k).
+            However, the direct recursive implementation of this recurrence is ineﬃcient.
+            In order to see this, let us consider the special case in which d = i for 1 ≤
+                                                                               i
+            i ≤ k and n ≥ k2.Thenfork&gt;1, the computation of C(n,k) requires the
+            computation of C(n,k−1) and C(n−k,k). The computation of C(n−k,k)
+            then requires the computation of C(n−k,k−1). Furthermore,
+                                           n−k≥k2−k
+                                                 =k(k−1)
+                                                 ≥(k−1)2,
+            for k ≥ 1. Thus, when n ≥ k2, the computation of C(n,k) requires the
+            computation of two values, C(n1,k−1) and C(n2,k−1), where n1 ≥ (k−1)2
+            and n2 ≥ (k − 1)2. It is then easily shown by induction on k that C(n,k)
+                                            k−1
+            requires the computation of 2       values C(ni,1), where ni ≥ 1for1≤ i ≤
+             k−1
+            2    . In such cases, the running time is exponential in k.
+                A closer look at the above argument reveals that a large amount of
+            redundant computation is taking place. For example, the subproblem C(n−
+            2k +2,k−2) must be computed twice:
+            1. C(n,k) requires the computation of C(n,k−1), which requires C(n−k+
+               1,k−1), which requires C(n−2k+2,k−1), which requires C(n−2k+
+               2,k−2); and
+            2. C(n,k)alsorequiresC(n−k,k), which requires C(n−k,k−1), which
+               requires C(n−k,k−2), which requires C(n−2k +2,k−2).
+            Applying this reasoning again to both computations of C(n−2k+2,k−2),
+            we can see that C(n − 4k +8,k− 4) must be computed four times. More
+                                                   2                               i/2
+            generally, for even i&lt;k, C(n−ik+i /2,k−i) must be computed 2               times
+            for n ≥ k2.
+                In order to avoid the redundant computation that leads to exponential
+            running time, we can compute all values C(i,j)for0≤ i ≤ n,1≤ j ≤ k,
+            saving them in an array. If we compute recurrence (12.1) bottom-up, rather
+            than top-down, we will have all of the values we need in order to compute
+            each C(i,j) in constant time. All (n +1)k of these values can therefore be
+            computed in Θ(nk) time. Once all of these values have been computed, then
+            the optimal collection of coins can be constructed in a greedy fashion, as
+            suggested above. The algorithm is shown in Figure 12.1. This algorithm is
+            easily seen to use Θ(nk) time and space.
+</div>
+    </div>
+  </body>
+</html>

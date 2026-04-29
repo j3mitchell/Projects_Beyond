@@ -1,0 +1,41 @@
+           524                      Algorithms: A Top-Down Approach
+             Figure 16.8  Triples for setting boolean values in the reduction from 3-Sat to 3DM,
+             with n =4
+                                                x
+                                                  1
+                             ¬x                                   ¬x
+                                1        a             b             4
+                                          x1            x1
+                                   b                        a
+                                    x2                        x4
+                          x                                           x
+                            2                                           4
+                                   a                        b
+                                     x2                      x4
+                                         b             a
+                             ¬x           x3            x3        ¬x
+                                2                                    3
+                                                x
+                                                  3
+               Let x ,...,x denote all the copies of the literal x,andlet¬x ,...,¬x
+                     1      n                                                 1        n
+           denote all the copies of the literal ¬x. We then introduce the following triples
+           (see Figure 16.8):
+           •x,a ,b  for 1 ≤ i ≤ n;
+                i  xi  xi
+           •¬x,a ,b          for 1 ≤ i ≤ n −1; and
+                 i  xi  x,i+1
+           •¬x ,a ,b .
+                 n   xn x1
+           It is not too hard to see that in order to match all of the a sandb s, a
+                                                                         xi       xi
+           matching must include either those triples containing the xis or those triples
+           containing the ¬xis.
+               We can now use the construction described earlier for building triples
+           from clauses, except that for clause i, we include the ith copy of each literal
+           in its triple. Thus, in any matching, there must be for each clause at least one
+           triple containing a copy of a literal. However, there still may be unmatched
+           copies of literals. We need to introduce more triples in order to match the
+           remaining copies.
+               Suppose our 3-CNF formula F has n clauses and m variables. Then our
+           construction so far contains:

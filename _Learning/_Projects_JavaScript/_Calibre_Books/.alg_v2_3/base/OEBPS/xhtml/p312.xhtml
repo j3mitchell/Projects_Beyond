@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 312</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-312.jpg" alt="Page 312" width="1282" height="1882"/>
+      <div class="ocr">                                           Disjoint Sets                             293
+             Figure 8.4  TreeDisjointSets implementation of DisjointSets
+               The Merge and Find operations are now straightforward. Merge
+           simply makes one tree a child of the root of the other, and Find follows
+           the parent references until the root is reached. The full implementation is
+           showninFigure8.4.
+               Clearly, the constructor operates in Θ(n)time,andMerge operates in
+           Θ(1) time. The number of iterations of the while loop in Find is the depth
+           of k, which in the worst case is the height of the tree. Clearly, the height is
+           at most n−1. Unfortunately, this height can be achieved by the sequence
+                       Merge(0,1),Merge(1,2),...,Merge(n−2,n−1).
+           Thus, the worst-case running time for Find is in Θ(n).
+               Because the constructor will only be executed once for each structure,
+           Θ(n) is not a bad running time. However, we will probably need to execute
+</div>
+    </div>
+  </body>
+</html>

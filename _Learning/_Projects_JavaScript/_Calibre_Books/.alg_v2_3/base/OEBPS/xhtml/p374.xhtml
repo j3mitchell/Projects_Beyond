@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 374</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-374.jpg" alt="Page 374" width="1282" height="1882"/>
+      <div class="ocr">                                       Divide and Conquer                          355
+           for n&gt;1. Applying Theorem 3.35 to this recurrence yields
+                                     f(n) ∈ O(nlg2nlglgn).
+           The running time of the division algorithm is then in O(N lg2N lglgN),
+           which is slightly worse than the running time of the multiplication algorithm
+           used. In the next section, we will design a division algorithm whose asymp-
+           totic running time matches that of multiplication even for the asymptotically
+           fastest known multiplication algorithm.
+           10.6   * Newton’s Method
+           We can reduce division to multiplication in a straightforward way if we
+           can compute a reciprocal. A reciprocal of an arbitrary positive integer is
+           a fraction that may or may not have a ﬁnite binary representation. We
+           therefore will have to settle for an approximation. In order to simplify the
+           discussion of ﬁxed-point fractions, it helps to scale the value of the divisor
+           v to an appropriate range. Speciﬁcally, suppose v consists of n bits; i.e.,
+            n−1         n
+           2    ≤v&lt;2 .Then                             
+                                    u        −n     1
+                                         = u2         −n    .
+                                      v             v2
+                                  −n
+               Note that 1/2 ≤ v2    &lt;1. Thus, if we can compute a close ﬁxed-point
+           approximation for the reciprocal of a value y such that 1/2 ≤ y&lt;1, we can
+           reduce the integer division problem to the integer multiplication problem.
+           Note that due to the given range of y, the binary encoding of y hasnobitsto
+           the left of the radix point, and the ﬁrst bit to the right is a 1. Furthermore,
+           because 1 &lt; 1/y ≤ 2, we can approximate 1/y with a value z such that
+           1 ≤ z&lt;2; i.e., z has a single 1 bit to the left of the radix point. We can
+           therefore use BigNumstorepresentbothy and 1/y with the interpretation
+           that each contains a radix point at the appropriate position.
+                                                                           −n      −n
+               Because multiplying an approximation of the reciprocal of v2   by u2
+           gives only an approximation of u/v, we may need to correct our result.
+           Suppose we can approximate the reciprocal to enough accuracy that the
+           result of the multiplication is a value q such that
+                                              u
+                                                
+                                           q −    ≤1.
+           Then it is not hard to see that    v
+                                              u
+                                        q−       ≤ 1.
+                                               v 
+</div>
+    </div>
+  </body>
+</html>

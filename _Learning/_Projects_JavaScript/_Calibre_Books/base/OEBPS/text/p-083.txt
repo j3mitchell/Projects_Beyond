@@ -1,0 +1,37 @@
+        64              Algorithms: A Top-Down Approach
+        Using this lower bound, we conclude that the running time of the inner loop
+        is in Ω(1). Because the outer loop iterates n times, the running time of the
+        algorithm is in Ω(n).
+          Unfortunately, this lower bound does not match our upper bound of
+        O(n2). In some cases, we may not be able to make the upper and lower
+        bounds match. In most cases, however, if we work hard enough, we can
+        bring them together.
+          Clearly, the running time of a single iteration of the inner loop will
+        require a constant number of steps in the worst case. Let a>0denotethat
+        constant. The loop iterates n − i times, so that the total number of steps
+        required by the inner loop is (n−i)a. An iteration of the outer loop requires
+        a constant number of steps apart from the inner loop. Let b>0denotethat
+        constant. The loop iterates n times. However, because the number of steps
+        required for the inner loop depends on the value of i, which is diﬀerent for
+        each iteration of the outer loop, we must be more careful in computing the
+        total number of steps required by the outer loop. That number is given by
+                         n−1          n−1
+                      b +(n−i)a=b+a(n−i).
+                         i=0           i=0
+          The above summation can be simpliﬁed if we observe that the quantity
+        (n−i) takes on the values n,n−1,...,1. We can therefore rewrite the sum
+        by taking the terms in the opposite order:
+                                       n
+                          1+2+···+n=i.
+                                       i=1
+        Thus, the number of steps required by the inner loop is
+                                   n
+                              b +ai.
+                                  i=1
+        We can now use (2.1) from page 48 to conclude that the number of steps
+        taken by the outer loop is
+                                an(n+1)
+                             b +   2   .
+        The above expression is a polynomial in n with degree 2. The following
+        theorem gives us a way to characterize polynomials using asymptotic
+        notation.

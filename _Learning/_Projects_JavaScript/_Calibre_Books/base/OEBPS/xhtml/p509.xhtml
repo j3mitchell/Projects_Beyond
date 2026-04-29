@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 509</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-509.jpg" alt="Page 509" width="1282" height="1882"/>
+      <div class="ocr">           490                     Algorithms: A Top-Down Approach
+            Figure 15.9   Implementation of Eval, speciﬁed in Figure 15.4
+               Eval(v[0..n−1],k,l)
+                  m←one.Shift(k).Add(one); m ←one.Shift(4l).Add(one)
+                  half ← m.Shift(−1)
+                  pos ←new Array[0..nl−1]; neg ← new Array[0..nl−1]
+                  posCarry ← zero; negCarry ← zero
+                  for j ← 0 to n−1
+                     if v[j].CompareTo(half) &gt; 0
+                       negCarry ← negCarry.Add(m.Subtract(v[j]))
+                     else
+                       posCarry ← posCarry.Add(v[j])
+                     negBits ← negCarry.GetBits(0,l); negCarry ← negCarry.Shift(l)
+                     posBits ← posCarry.GetBits(0,l); posCarry ← posCarry.Shift(l)
+                     Copy(negBits[0..l −1],neg[jl..j(l +1)−1])
+                     Copy(posBits[0..l −1],pos[jl..j(l +1)−1]);
+                  posNum←posCarry.Shift(nl).Add(new BigNum(pos))
+                  negNum←negCarry.Shift(nl).Add(new BigNum(neg))
+                  returnToRing(posNum.Add(m.Subtract(ToRing(negNum,k))),k)
+                                                                  N
+           ToRing, Add,andSubtract. Thus, if we let n =2 , the running time
+                                             N
+           of the remaining code is in Θ(N2 ). Speciﬁcally, we can conclude that the
+                                                                         N
+           total number of iterations of each of the for loopsisinΘ(N2 ).
+                             K
+               Nowlet k =2 , and let us analyze the running time of a single iteration
+           of the second for loop, including the calls to ToRing, Add,andSubtract.
+                                                 k           k
+           Weﬁrst observe that for all i, d [i] ≤ 2 and d [i] ≤ 2 . Because the number
+           of bits added by the Shift is at most 2k,theShift therefore runs in
+               K                                                   K
+           O(2 ) time. Because the result of the Shift has O(2 )bits,thecallto
+                                K
+           ToRing runs in Θ(2 ) time. Likewise, it is easily seen that the remaining
+                                 K
+           operations run in O(2 ) time as well. A single iteration of the second for
+                                       K
+           loop therefore runs in Θ(2 ) time. We conclude that ModFft runs in
+                 N+K
+           Θ(N2       )time.
+               It is easily seen that the running time of PosConv, excluding the
+                                                         N+K
+           calls to ModFft and ModMult,isinΘ(2                ). Because the ﬁrst two
+                                                           K
+           arguments to ModMult must have at most 2          bits, we can describe the
+           running time of ModMult in terms of K. In particular, let f(K)denote
+           the worst-case running time of ModMult, assuming it is implemented
+                                                                                     K
+           using ModMultFft. Because ModMult is called no more than 2
+           times, the running time of PosConv is bounded above by a function in
+                 N+K       N
+           O(N2       )+2 f(K). Likewise, it is easily seen that NegConv has the
+           same asymptotic running time.
+</div>
+    </div>
+  </body>
+</html>

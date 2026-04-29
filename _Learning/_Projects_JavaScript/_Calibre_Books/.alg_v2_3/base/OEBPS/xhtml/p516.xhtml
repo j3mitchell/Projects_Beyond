@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 516</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-516.jpg" alt="Page 516" width="1282" height="1882"/>
+      <div class="ocr">                                  * The Fast Fourier Transform                     497
+            Figure 15.12   Implementation of NegConvSS, speciﬁed in Figure 15.10
+              NegConvSS(p[0..n−1],q[0..n−1],k)
+                negConv ←new Array[0..n−1]; m←one.Shift(k)
+                conv ←NonWrappedConv(p,q,k)
+                for j ← 0 to n−1
+                   if conv[j].CompareTo(conv[n+j])
+                      negConv[j] ← conv[j].Subtract(conv[n+j])
+                   else
+                      negConv[j] ← conv[j].Add(m).
+                                                   Subtract(conv[n+j])
+                return negConv
+              Precondition: p[0..n−1]andq[0..n−1]arearraysof BigNumseachhaving
+              at most k bits, and k is a Nat.
+              Postcondition: Returns an array r[0..2n−1] of BigNums giving the non-
+                                                                              k
+              wrapped convolution of p and q over the ring m,+, , where m =2.
+              NonWrappedConv(p[0..n−1],q[0..n−1],k)
+           refer to this convolution as conv[0..2b−1]. Element j of the negative wrapped
+                                                            k
+           convolution is then (conv[j] −conv[n+j]) mod 2 . The algorithm is shown
+           in Figure 15.12.
+               Recall that PolyMult (Figure 10.1 on page 334) computes a non-
+           wrapped convolution of two vectors over Z,+,·. We can therefore modify
+           this algorithm to operate on BigNums such that all operations are mod
+            k
+           2 . In order for the resulting algorithm to satisfy the speciﬁcation of
+           NonWrappedConv, we would also need to modify it to return an array
+           whose size is larger by one element, whose value will be 0. We leave the
+           details as an exercise.
+               In order to analyze the Schon¨ hage–Strassen algorithm, which is simply
+           the Multiply algorithm of Figure 15.3 with ModMult implemented using
+           ModMultSS, we ﬁrst observe that the analysis of EvalSS is similar to
+           the analysis of Eval in the previous section. Hence, its running time is
+                       K N+L                     K          N              L
+           in Θ(max(2 ,2       )), where k =2, n =2,andl =2. Because
+           PolyMult runs in Θ(nlg3) time, where n is the degree of the product,
+           NonWrappedConv can be implemented to run in O(nlg3M(k)) time,
+                                                                                    k
+           where M(k) is the time needed to multiply two k-bit BigNumsmod2.
+           Because M(k)mustbeinΩ(k), NegConvSS then runs in O(nlg3M(k))
+           time.
+</div>
+    </div>
+  </body>
+</html>

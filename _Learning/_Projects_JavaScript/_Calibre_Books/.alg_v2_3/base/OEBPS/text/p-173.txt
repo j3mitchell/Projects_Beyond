@@ -1,0 +1,25 @@
+           154                      Algorithms: A Top-Down Approach
+             Figure 5.3  Aheap — each priority is no smaller than any of its children
+           over a single priority queue.) Assuming for the moment that both of these
+           priority queues are nonempty, the new overall maximum must bethe larger of
+           the maximum priorities from each of these priority queues. We can therefore
+           ﬁndthenewmaximumbycomparingthesetwopriorities.Thecasesinwhich
+           one or both of the two priority queues are empty are likewise straightforward.
+               Wecanimplementtheabove idea by arranging the priorities into a heap,
+           as shown in Figure 5.3. This structure will be the basis of all of the remaining
+           PriorityQueue implementations presented in this chapter. In this ﬁgure,
+           integer priorities of several data items are shown inside circles, which we
+           will call nodes. The structure is referenced by its root node, containing the
+           priority 89. This value is the maximum of the priorities in the structure.
+           The remaining priorities are accessed via one of two references, one leading
+           to the left, and the other leading to the right. Each of these two groups
+           of priorities forms a priority queue structured in a similar way. Thus, as
+           we follow any path downward in the heap, the values of the priorities are
+           non-increasing.
+               Aheap is a special case of a more general structure known as a tree.Let
+           N be a ﬁnite set of nodes, each containing a data item. We deﬁne a rooted
+           tree comprised of N recursively as:
+           • a special object which we will call the empty tree if N = ∅;or
+           • a root node x ∈ N, together with a ﬁnite sequence T ,...,T 	 of children,
+                                                                   1      k
+              where

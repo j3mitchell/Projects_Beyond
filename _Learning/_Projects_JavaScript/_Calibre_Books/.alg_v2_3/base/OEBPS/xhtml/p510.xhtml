@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 510</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-510.jpg" alt="Page 510" width="1282" height="1882"/>
+      <div class="ocr">                                * The Fast Fourier Transform                491
+                                               L
+              In order to analyze Eval,letl =2. It is easily seen that excluding
+                                                                K N+L
+          the return statement, this function runs in Θ(max(2 ,2       )) time.
+          Furthermore, it is not hard to see that when the return statement is
+          executed, posNum and negNum each contain at most n(3 + l) bits; hence,
+                                              K N+L
+          ToRing(negNum,k) runs in Θ(max(2 ,2         )) time. Likewise, it is not
+                                                                      K N+L
+          hard to see that the entire return statement runs in Θ(max(2 ,2    ))
+          time.
+              We can now obtain an asymptotic recurrence for f(K), the worst-case
+          running time of ModMult. In what follows, we assume K ≥ 4. We ﬁrst
+                                           (K/2)+1         (K/2)−1
+          observe that if K is even, then b =2    and l =2       . Likewise, if K
+                      (K+1)/2          (K−1)/2
+          is odd, b =2      ,andl =2         . We can combine these two cases by
+                          (K+1)/2         (K−1)/2
+          saying that b =2         and l =2         . The running time of the for
+          loop is therefore in
+                                         (K+1)/2+(K−1)/2
+                              Θ(bl)=Θ(2                   )
+                                         K
+                                   =Θ(2 ).
+              In the call to NegConv, the number of elements in the arrays is
+               (K+1)/2                                (K−1)/2+2
+          b =2         , and the third parameter is 4l =2         . Applying the
+          our analysis of NegConv, we see that the running time of this call is in
+                K    (K+1)/2
+          O(K2 )+2           f((K −1)/2+2). Likewise, the call to Eval runs in
+              K
+          Θ(2 ) time. We therefore have
+                                   K     (K+1)/2
+                      f(K)∈O(K2 )+2              f((K −1)/2+2).         (15.2)
+                                                                          K
+              In order to simplify the above recurrence, let g(K)=f(K +3)/2 for
+          K≥1.Then
+                                     K+3     (K+4)/2
+                   g(K) ∈ O((K +3)2     )+2          f((K +2)/2+2)
+                                                K
+                                               2
+                        =O(K)+4f(K/2+3)
+                                       K/2
+                                      2
+                        =O(K)+4g(K/2).                                  (15.3)
+              Applying Theorem 3.35, we have g(K) ∈ O(K2). Thus, for K ≥ 4,
+                                           K−4
+                                  f(K)=2       g(K −3)
+                                           K−4     2
+                                        ∈2    O(K )
+                                             K 2
+                                        ⊆O(2 K ).
+</div>
+    </div>
+  </body>
+</html>

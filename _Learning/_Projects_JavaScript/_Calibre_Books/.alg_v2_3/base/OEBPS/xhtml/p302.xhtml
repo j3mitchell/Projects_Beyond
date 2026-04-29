@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 302</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-302.jpg" alt="Page 302" width="1282" height="1882"/>
+      <div class="ocr">                                    Storage/Retrieval II: Unordered Keys                        283
+                 Thus, for H2 , the constructor runs in Θ(n) expected time, and for
+                               p,m
+             H4     , the constructor runs in Θ(nl) expected time. It is not hard to show
+               p,l,m
+             that the constructor runs in Θ(nl) expected time for H1           as well; the details
+                                                                           l,m
+             are left as an exercise.
+                 It is easily seen that the space required by the ImmutableDictionary
+             is in Θ(n) in the worst case. However, the hidden constants can be rather
+             large. Speciﬁcally, the primary hash table can contain nearly 3n locations,
+             and the secondary hash tables can contain a total of nearly 18n locations.
+             As a result, nearly 21n array locations can be used to store n data items.
+             However, observe that the constructor for the family H1           will return a hash
+                                                                           l,m
+             function with size less than 2n, and the constructors for the families H2
+                                                                                                p,m
+             and H4       both return hash functions with size n.Furthermore,ifwewere
+                    p,l,m
+             to ﬁx a speciﬁc c-universal family of hash functions, we could reduce the
+             bound on the ﬁrst repeat loop to 2(c +1)n.
+                 Combining the above results, we see that the worst-case total number of
+             array locations can be reduced to:
+             • 10n for H1 ;
+                           l,m
+             • 5n for H2 ;or
+                         p,m
+             • 21n/4forH4         .
+                             p,l,m
+             Finally, we observe that because E[sumsq] &lt; (c +1)n, the expected total
+             number of array locations is no more than
+             • 6n for H1 ;
+                         l,m
+             • 3n for H2 ;or
+                         p,m
+             • 25n/8forH4         .
+                             p,l,m
+             These last bounds hold regardless of whether we change the bound on the
+             ﬁrst repeat loop.
+                 The Get operation is shown in Figure 7.13. It clearly runs in Θ(f(l))
+             time, where f(l) is the time needed to compute the hash function on a key
+             of length l.
+             7.7    Summary
+             If keys are natural numbers,we can implement DictionaryusingaVArray
+             andthusachieve constant-time accesses in the worst case. However, the space
+             usage of a VArray makes it impractical. For this reason, hash tables are
+             the preferred implementation in practice. Furthermore, hashing can be done
+             for arbitrary types of keys.
+</div>
+    </div>
+  </body>
+</html>

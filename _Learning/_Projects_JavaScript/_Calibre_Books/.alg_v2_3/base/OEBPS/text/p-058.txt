@@ -1,0 +1,26 @@
+                                       Proving Algorithm Correctness                           39
+            and 5 apply to portions of the array that do not contain p, these steps solve
+            strictly smaller problem instances.
+                 In what follows, we will develop a solution to the Dutch national ﬂag
+            problem. We will then combine that solution with the above reduction
+            to obtain a solution to the selection problem (we will simply use the
+            speciﬁcation for Median). We will then prove that the resulting algorithm
+            is correct.
+                 In order to conserve resources, we will constrain our solution to the Dutch
+            national ﬂag problem to rearrange items by swapping them. We will reduce
+            a large instance of the problem to a smaller instance. We begin by examining
+            the last item. If it is blue, then we can simply ignore it and solve what is
+            left. If it is red, we can swap it with the ﬁrst item and again ignore it and
+            solve what is left. If it is white, we need to ﬁnd out where it belongs; hence,
+            we temporarily ignore it and solve the remaining problem. We then swap it
+            with the ﬁrst blue item, or if there are no blue items, we can leave it where
+            it is. This algorithm is shown in Figure 2.4.
+                 If we were to implement this solution, or to analyze it using the
+            techniques of Chapter 3, we would soon discover that its stack usage is too
+            high. Furthermore, none of the recursive calls occur at either the beginning
+            or the end of the computation; hence, the recursion is not tail recursion, and
+            we cannot implement it bottom-up.
+                 We can, however, use a technique called generalization that will allow
+            us to solve the problem using a transformation. We ﬁrst observe that
+            the only reason we must wait until after the recursive calls to increment
+              Figure 2.4    Atop-down implementation DutchFlag, speciﬁed in Figure 2.3

@@ -1,0 +1,28 @@
+            586                       Algorithms: A Top-Down Approach
+            [112] R. E. Tarjan. Data Structures and Network Algorithms. Society for Industrial and
+                 Applied Mathematics, 1983.
+            [113] R. E. Tarjan. Amortized computational complexity. SIAM Journal on Algebraic and
+                 Discrete Methods, 6:306–318, 1985.
+            [114] A. H. Taub (ed). John Von Neumann: Collected Works, volume 5, Pergamon Press,
+                 1961.
+            [115] J. van Leeuwen.   Having a Grundy-numbering is NP-complete.     Report 207,
+                 Pennsylvania State University, University Park, PA, 1976.
+            [116] J. Vuillemin. A data structure for manipulating priority queues. Communications
+                 of the ACM, 21:309–315, 1978.
+            [117] R. A. Wagner and M. J. Fischer. The string-to-string correction problem. Journal
+                 of the ACM, 21:168–173, 1974.
+            [118] S. Warshall. A theorem on Boolean matrices. Journal of the ACM, 9:11–12, 1962.
+            [119] E. W. Weisstein. Collatz problem. From MathWorld —AWolframWebResource.
+                 http://mathworld.wolfram.com/CollatzProblem.html.
+            [120] H. Whitney. On the abstract properties of linear dependence. American Journal of
+                 Mathematics, 57:509–533, 1935.
+            [121] J. W. J. Williams. Algorithm 232: Heapsort. Communications of the ACM, 7:347–
+                 348, 1964.
+            [122] N. Wirth. Program development by stepwise reﬁnement. Communications of the
+                 ACM, 14:221–227, 1971.
+            [123] J. W. Wright. The change-making problem. Journal of the ACM, 22:125–128, 1975.
+            [124] A. C.-C. Yao. An O(|E|loglog|V|) algorithm for ﬁnding minimum spanning trees.
+                 Information Processing Letters, 4:21–23, 1975.
+            [125] F. F. Yao.  Eﬃcient dynamic programming using quadrangle inequalities.   In
+                 Proceedings of the 12th Annual ACM Symposium on Theory of Computing, pp. 429–
+                 435, 1980.

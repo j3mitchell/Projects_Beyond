@@ -1,0 +1,11 @@
+           336                     Algorithms: A Top-Down Approach
+            Figure 10.2   The MergeSort algorithm
+               Supposewe are given two sorted arrays. If either is empty, we can simply
+           use the other. Otherwise, the element with minimum key in the two arrays
+           needs to be ﬁrst in the sorted result. The element with minimum key in each
+           array is the ﬁrst element in the array. We can therefore determine the overall
+           minimum by comparing the keys of the ﬁrst elements of the two arrays. If
+           the keys are equal, in order to ensure stability, we must take the element
+           from the ﬁrst array. To obtain the remainder of the result, we merge the
+           remainder of the two input arrays. We have therefore transformed a large
+           instance of merging to a smaller instance.

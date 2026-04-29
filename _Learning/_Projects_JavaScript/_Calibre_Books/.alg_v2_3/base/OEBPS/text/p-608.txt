@@ -1,0 +1,49 @@
+                                                      Index                                         589
+             Goldberg, A. V., 463                            H
+             golden ratio, 49                                harmonic series, 341
+             Gong, W., 553                                   hashing, 248–288
+             Gonzalez, T., 579                                    c-universal, 272
+             Graham, R. L., 105                                   collision, 249
+             graphs, 309–327                                      compression map, 259
+                  acyclic, 313                                    division method, 255–259, 284
+                  adjacency list, 318–321, 325                    load factor, 254
+                  adjacency matrix, 315–318, 325                  perfect, 275–283
+                  articulation points, 425–430                    polynomial, 259–261, 284
+                  biconnected, 437                                rehashing, 254
+                  bipartite, 439                                  universal, 261–275, 284
+                  breadth-ﬁrst search, 386                   heaps, 153–187
+                  bridges, 437                                    binary, 179–187
+                  coloring, 439, 551                              leftist, 159–165
+                  connected components of, 374               Heideman, M. T., 500
+                  connected undirected, 327                  Hell, P., 553
+                  cycle in, 313                              Hirschberg, D. S., 388
+                  edge connectivity, 462                     Hoare, C. A. R., 53, 370
+                  Euler paths in, 327                        Hopcroft, J. E., 307, 327, 439,
+                  Hamiltonian cycle, 549                       463
+                  Hamiltonian path, 370                      Huﬀman, D. A., 388
+                  independent set, 521–522
+                  induced subgraph, 418                      I
+                  isomorphic, 549                            Ibarra,O.H.,579
+                  matching, 451–460, 522                     immutable structure, 126
+                  path cover, 462                            indicator random variable, 236
+                  reachability, 417–425                      induction, 27–29
+                  semiconnected, 438                              constructive, 345
+                  shortest paths, 379–380, 385–386,          insecure data structure, 120
+                     395–398                                 insertion sort (see sorting, insertion sort),
+                  simple cycle in, 313                         6
+                  simple path in, 443                        Int,38
+                  singly connected, 438                      interface, 110
+                  sink in, 312                               internal function, 118
+                  sparse, 321                                invariant
+                  strongly connected components,                  loop, 12
+                     432–436                                      structural, 112
+                  topological sort, 313–315, 430–432         inversion, 103
+                  transitive closure, 403                    InvertedPriorityQueue, 149
+                  transitively closed, 326                   iteration operator, 300
+                  universal sink detection, 312–313
+                  universal sink in, 312                     J
+                  vertex cover, 518–522, 578                 Jarn´ık, V., 387
+             greatest common divisor, 367                    Jiushao, Q., 500
+             group, 478                                      Johnson, D. B., 388
+                  abelian, 478                               Johnson, D. H., 500
+             Gubias, L. J., 244                              Johnson, D. S., 553, 579

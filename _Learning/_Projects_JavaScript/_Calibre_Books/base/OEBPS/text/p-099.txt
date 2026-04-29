@@ -1,0 +1,45 @@
+         80                Algorithms: A Top-Down Approach
+                       k
+         whenever n = n0b for a positive integer k, where X is either O, Ω, or Θ.
+         Then
+                              ⎧    q               q
+                              ⎪X(n g(n))     if a<b
+                              ⎪
+                              ⎨    q               q
+                         f(n) ∈ X(n g(n)lgn) if a = b
+                              ⎪
+                              ⎪
+                              ⎩    logb a          q
+                                X(n    )     if a>b.
+            Let us ﬁrst see that (3.7) ﬁts the form of Theorem 3.35. As we
+         have already observed, f is eventually non-decreasing (this requirement is
+         typically met by recurrences obtained in the analysis of algorithms). When
+             k
+         n=2,(3.7) simpliﬁes to
+                             f(n) ∈ 2f(n/2)+Θ(n).
+         Therefore, we can let n0 =1,a = b =2,q =1,andg(n)=1.Thisyields
+                 n
+         g (n)=g(2 ) = 1, which is smooth. Therefore, the second case applies,
+         yielding f(n) ∈ Θ(nlgn).                                  n
+            An important prerequisite for applying Theorem 3.35 is that g(n0b )
+         is smooth. Due to the exponential term, any function that satisﬁes this
+         property must be in O(lgkn)forsomeﬁxedk. This is not really a restriction,
+         however, because the term expressing the non-recursive part of the analysis
+         may be in X(nqg(n)) for arbitrary real q ≥ 0; hence, we can express most
+         polynomially-bounded functions. What is important is that we separate this
+         function into a polynomial part and a “polylogarithmic” part, because the
+         degree of the polynomial aﬀects the result.
+         Example 3.36. Let f : N → R≥0 be an eventually non-decreasing function
+         such that
+                           f(n) ∈ 3f(n/2) +Θ(n2lgn),
+                     k
+         whenever n =2 for a positive integer k.Wethenletn0 =1,a =3,b =2,
+         q =2,andg(n)=lgn.Then
+                                         n
+                                 g (n)=g(2 )
+                                          n
+                                      =lg2
+                                      =n
+                                                        q   2
+         is smooth. We can therefore apply Theorem 3.35. Because b =2 =4and
+         a = 3, the ﬁrst case applies. Therefore, f(n) ∈ Θ(n2lgn).

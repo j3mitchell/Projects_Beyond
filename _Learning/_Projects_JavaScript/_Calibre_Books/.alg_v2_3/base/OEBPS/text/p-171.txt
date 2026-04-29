@@ -1,0 +1,9 @@
+           152                      Algorithms: A Top-Down Approach
+             Figure 5.2  SortedArrayPriorityQueue implementation (partial) of the Prior-
+             ityQueue ADT
+               Let us now analyze the running time of Find. Clearly, each iteration of
+           the while loop runs in Θ(1) time, as does the code outside the loop. We
+           therefore only need to count the number of iterations of the loop.
+               Let f(n) denote the number of iterations, where n = hi − lo gives the
+           numberof elements in the search range. One iteration reduces the number of
+           elements in the range to either n/2 or n/2−1. The former value occurs

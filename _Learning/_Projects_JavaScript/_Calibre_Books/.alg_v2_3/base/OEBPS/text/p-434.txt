@@ -1,0 +1,36 @@
+                     Depth-First Search      415
+      rooted at next has strictly fewer nodes than does T, from the Induction
+      Hypothesis, the recursive call satisﬁes the postcondition with S denoting
+      the set of descendants of next.LetR be the set of descendants of next.Let
+      S denote the value of S at the end of the iteration; i.e., S = S ∪ R.We
+      must show that the invariant holds for S at the end of the iteration.
+        Let us ﬁrst determine the values in pre and post that have changed
+      from their initial values by the time the iteration completes. From the
+      invariant, only pre.Num(i), pre.Num(j), and post.Num(j) such that j ∈ S
+      have changed prior to the beginning of the iteration. From the Induction
+      Hypothesis, the recursive call only changes the values of pre.Num(j)and
+      post.Num(j)forj ∈ R. Thus, the only values to have changed from
+      their initial values are pre.Num(i), pre.Num(j), and post.Num(j)such
+      that j ∈ S. Furthermore because only values for j ∈ R are changed by
+      the iteration, it is still the case that pre.Num(i) > pre.Num(k) for all
+      k ∈ S ∪{i}.
+        Let j ∈ S and k ∈ S.Ifj ∈ R,thenpre.Num(j), post.Num(j),
+      pre.Num(k)andpost.Num(k) are unchanged by the iteration. Therefore,
+      because j ∈ S, from the invariant, it is still the case that pre.Num(j) >
+      pre.Num(k)andpost.Num(j) > post.Num(k). On the other hand, suppose
+      j ∈ R. Because k ∈ R, by the Induction Hypothesis, pre.Num(j) >
+      pre.Num(k)andpost.Num(j) > post.Num(k) at the end of the iteration.
+        Now let j,k ∈ S. We must show that j is a proper ancestor of k iﬀ
+      pre.Num(j) < pre.Num(k)andpost.Num(j) > post.Num(k).
+      ⇒: Suppose j is a proper ancestor of k. Then either j and k are both in
+      R or neither is in R. If neither j nor k is in R, then the iteration changes
+      none of their pre or post values. Hence, from the invariant, pre.Num(j) <
+      pre.Num(k)andpost.Num(j) > post.Num(k). On the other hand, if
+      j,k ∈ R then from the Induction Hypothesis, pre.Num(j) < pre.Num(k)
+      and post.Num(j) > post.Num(k).
+      ⇐:Supposepre.Num(j) < pre.Num(k)andpost.Num(j) > post.Num(k). If
+      j ∈ R, then from the Induction Hypothesis, k ∈ R,forifnot,pre.Num(j) >
+      pre.Num(k). Thus, from the Induction Hypothesis, j is a proper ancestor of
+      k.Ifj ∈ R, then from the Induction Hypothesis, k ∈ R, for otherwise,
+      post.Num(k) > post.Num(j). Then none of their pre or post values is
+      changed by the iteration. From the invariant, j is a proper ancestor of k.

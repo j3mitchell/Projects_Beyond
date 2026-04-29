@@ -1,0 +1,40 @@
+           354                     Algorithms: A Top-Down Approach
+           Because each iteration may contain a recursive call, this suggests that there
+           are a total of at most 3 recursive calls. However, note that whenever a
+           recursive call is made, the dividend is no less than the divisor, so that a
+           nonzero digit results in the quotient. Suppose the ﬁrst of the three digits of
+           the quotient is nonzero. Because the ﬁrst n bits of u are at most v,theonly
+           possible nonzero result for the ﬁrst digit is 1. The remainder of the quotient
+                                                                  n
+           is then formed by dividing a value strictly less than 2   by v,whichisat
+                 n−1
+           least 2   . This result is also at most 1, so that the second digit must be 0.
+           We conclude that no more than two recursive calls are ever made. In each
+           of these recursive calls, the divisor has n/2bits.
+               If n is odd and greater than 1, we increase the number of bits in v by 1.
+           The above reasoning then applies to n +1,wheren denotes the original
+           number of bits in v. We can therefore express the overall running time in
+           terms of n via the recurrence
+                                   f(n) ∈ 2f(n/2)+Θ(nlg3)
+           for n>1. Applying Theorem 3.35, we see that f(n) ∈ Θ(nlg3).
+               Let us now turn to the more general case. If m<n, it is easily seen
+           that the running time is in Θ(n). If m ≥ n, as we have already shown, the
+           worst-case number of recursive calls is in Θ(m/n), and the overhead is in
+           Θ(mnlg3−1). Because each of these recursive calls satisﬁes the special case
+           analyzed above, each runs in Θ(nlg3) time. Thus, the overall running time
+           is in Θ(mnlg3−1).
+               If we wish to express the running time in terms of the number of bits in
+           the larger of the two operands, it is easily seen that the worst case occurs
+           when m is larger, but n isaﬁxedfractionofm.IfN denotes the number of
+           bits in the larger operand, we then see that the running time is in Θ(Nlg3),
+           which is asymptotically the same as multiplication. Furthermore, it is not
+           hard to see that if we can improve the running time of multiplication to
+           O(N1+) for any ﬁxed positive , the running time of division will also be in
+           O(N1+)(orO(mn)).
+               In a later chapter, we will show that the running time of multiplication
+           can be improved to O(N lgN lglgN). When we use this running time, the
+           recurrence for the case in which
+                                                        n
+                                       v ≤ u<(v+1)2,
+           becomes
+                               f(n) ∈ 2f(n/2)+O(nlgnlglgn)

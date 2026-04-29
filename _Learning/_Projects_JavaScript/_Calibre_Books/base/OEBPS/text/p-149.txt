@@ -1,0 +1,38 @@
+         130                Algorithms: A Top-Down Approach
+         Case 2: ConsList(a,L : ConsList). If this constructor terminates
+         normally, then L refers to a ConsList. Let us therefore assume that this
+         is the case. Let L represent the sequence a ,...,a . isEmpty is set to
+                                             1     n
+         false, so the constructed instance is interpreted to be the nonempty sequence
+         a,a ,...,a . Because this is a ﬁnite sequence, the structural invariant and
+            1     n
+         postcondition both hold.
+         Maintenance: Because no operations change any representation variables,
+         maintenance holds trivially.
+         Security: Read access is explicitly given to the three representation
+         variables. However, isEmpty and tail are immutable, so this read access
+         cannot result in changes to either of them. Because head refers to a data
+         item that is not a part of the state, changes that may result from reading this
+         reference do not aﬀect the security of the ConsList. Finally, although the
+         parameter L to the two-argument constructor is copied to a representation
+         variable, because it refers to an immutable data item, security is not violated.
+         Termination: Because there are no loops or recursion, all constructors and
+         operations terminate.
+         Correctness: The only operations simply provide read access, and so are
+         trivially correct.                                        
+         Example 4.4. Suppose we construct an empty ConsListStack S,then
+         push data items a , a ,anda  in sequence onto S. Figure 4.11(a)
+                         1  2       3
+         illustrates the result of these operations. Suppose we then construct
+         T using ConsListStack(S). At this point T.elements is equal to
+         S.elements. If we then execute T.Pop() twice, T.elements is assigned
+         T.elements.Tail().Tail(), as shown in Figure 4.11(b). Note that this does
+         not aﬀect the contents of S. If we then push a onto T, we obtain the result
+                                             4
+         shown in Figure 4.11(c). Again, the contents of S are unchanged.
+            We conclude our discussion of ConsLists by noting that there are
+         some disadvantages to this implementation of Stack. The running time
+         of the Push operations is likely to be slower than either of the other
+         implementations because new memory is always allocated. Furthermore, this
+         memory is never explicitly released, so this implementation should only be
+         coded in a language that provides automatic garbage collection.

@@ -1,0 +1,5 @@
+                                         Priority Queues                             161
+             Figure 5.6  Example of performing a LeftistHeap.RemoveMax operation
+           to form larger leftist trees, we must be able to handle the case in which
+           two given leftist trees have nodes in common. The simplest way to handle
+           this situation is to deﬁne the implementation to be an immutable structure.

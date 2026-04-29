@@ -1,0 +1,27 @@
+           12                      Algorithms: A Top-Down Approach
+             Figure 1.7  Insertion sort implementation of Sort,speciﬁedinFigure1.1
+               Prior to the loop in IterativeInsert,wehave          We consider each test of
+           given a loop invariant, which is a statement that must   a loop exit condition to
+           be true at the beginning and end of each iteration of    mark the beginning/end of
+                                                                    an iteration.
+           the loop. Loop invariants will be an essential part of
+           the correctness proof techniques that we will introduce in the next chapter.
+           For now, however, we will use them to help us to keep track of what the loop
+           is doing.
+               The resulting sorting algorithm, commonly known as insertion sort, is
+           shown in Figure 1.7. Besides removing the two recursive calls, we have also
+           combined the two functions into one. Also, we have started the for loop at 1,
+           rather than at 2, as our earlier discussion suggested. As far as correctness
+           goes, there is no diﬀerence which starting point we use, as the inner loop
+           will not iterate when i = 1; however, it turns out that the correctness proof,
+           whichwewillpresentinthenextchapter,is simpler if we begin the loop at 1.
+           Furthermore, the impact on performance is minimal.
+               While analysis techniques can be applied to analyze stack usage, a far
+           morecommonapplication of these techniques is to analyze running time. For
+           example, we can use these techniques to show that while InsertionSort is
+           not, in general, a very eﬃcient sorting algorithm, there are important cases
+           in which it is a very good choice. In Section 1.6, we will present a case study
+           that demonstrates the practical utility of running time analysis.
+           1.5   Data Structures
+           One of the major factors inﬂuencing the performance of an algorithm is
+           the way the data items it manipulates are organized. For this reason, it is

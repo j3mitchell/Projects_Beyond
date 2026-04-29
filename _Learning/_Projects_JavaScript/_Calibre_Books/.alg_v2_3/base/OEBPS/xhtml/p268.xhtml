@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 268</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-268.jpg" alt="Page 268" width="1282" height="1882"/>
+      <div class="ocr">                                    Storage/Retrieval II: Unordered Keys                        249
+                 Typically, the universe of keys is much larger than m, the size of the hash
+             table. By choosing our array size m to be close to the number of elements
+             we need to store, we eliminate the space usage problem discussed in Section
+             7.1. However, because the number of possible keys will now be greater than
+             m,wemustdealwiththeproblemthathmustmapmorethanonepotential
+             key to the same index. When two actual keys map to the same index, it is
+             known as a collision.
+                 The potential for collisions is not just a theoretical issue unlikely to
+             occur in practice. Suppose, for example, that we were to randomly and
+             independently assign indices to n keys, so that for any given key k and
+             index i,0≤ i&lt;m, the probability that k is assigned i is 1/m.Wecan
+             model this scenario with a discrete probability space consisting of the mn
+             n-tuples of natural numbers less than m. Each tuple is equally likely, and
+             so has probability m−n. We can then deﬁne the random variable coll as the
+             number of collisions; i.e., coll(i ,...,i ) is the number of ordered pairs
+                                                  1       n
+             (i ,i ) such that i = i and j&lt;k.
+               j  k              j     k
+                 coll can be expressed as the sum of indicator random variables as follows:
+                                                        n−1   n
+                                                        
+                                  coll(i ,...,i )=               I(i = i ).
+                                         1       n                    j    k
+                                                        j=1k=j+1
+             Therefore,
+                                                  ⎡n−1     n              ⎤
+                                                  ⎣                     ⎦
+                                     E[coll]=E                 I(i = i )
+                                                                  j     k
+                                                    j=1k=j+1
+                                                n−1   n
+                                             =  E[I(i =i )]
+                                                                 j    k
+                                                j=1k=j+1
+                                                n−1   n
+                                             =  P(i =i ).
+                                                               j    k
+                                                j=1k=j+1
+             For each choice of i, j,andi , i can take on m possible values, one of which
+                                             j  k
+             is i . Because the probabilities of all elementary events are equal, it is easily
+                j
+             seen that P(i = i )=1/m for j&lt;k. Hence,
+                            j     k
+                                         n−1    n
+                              E[coll]=  1/m
+                                         j=1k=j+1
+</div>
+    </div>
+  </body>
+</html>

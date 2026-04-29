@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 050</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-050.jpg" alt="Page 050" width="1282" height="1882"/>
+      <div class="ocr">                                       Proving Algorithm Correctness                           31
+             • msuf =max(0,msuf +A[i]);
+             • m =max(m,msuf); and
+                
+             • i = i+1.
+            For 0 ≤ j ≤ n,letsj denote the maximum subsequence sum of A[0..j −1],
+            and let tj denote the maximum suﬃx sum of A[0..j−1]. From the invariant,
+            msuf = ti,andm = si. We need to show that msuf = ti and m = si.
+                 Using the deﬁnition of a maximum suﬃx sum, we have
+                         msuf =max(0,msuf +A[i])
+                                 =max(0,t +A[i])
+                                            i
+                                                 i−1                            
+                                 =max 0,max A[k]|0≤l≤i +A[i]
+                                                     k=l
+                                                    i−1                 
+                                                    
+                                 =max 0,A[i]+            A[k] | 0 ≤ l ≤ i
+                                                     k=l
+                                          i                      
+                                 =max 0,A[k]|0≤l≤i
+                                             k=l
+                                                              
+                                           i −1
+                                                               
+                                 =max          A[k] | 0 ≤ l ≤ i
+                                           k=l
+                                 =ti.
+                 Likewise, using the deﬁnitions of a maximum subsequence sum and a
+            maximum suﬃx sum, we have
+             m =max(m,msuf)
+                 =max(si,t)
+                             i
+                               h−1                                i−1                   
+                                                                                          
+                 =max max             A[k] | 0 ≤ l ≤ h ≤ i     , max       A[k] | 0 ≤ l ≤ i
+                                  k=l                                  k=l
+                                                    
+                           h−1
+                                                    
+                 =max          A[k] | 0 ≤ l ≤ h ≤ i
+                           k=l
+                 =si.
+</div>
+    </div>
+  </body>
+</html>

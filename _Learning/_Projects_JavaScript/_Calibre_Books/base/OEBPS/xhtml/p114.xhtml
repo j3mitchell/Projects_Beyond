@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 114</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-114.jpg" alt="Page 114" width="1282" height="1882"/>
+      <div class="ocr">                                      Analyzing Algorithms                        95
+           3.12   Summary
+           Asymptotic notation can be used to express the growth rates of functions
+           in a way that ignores constant factors and focuses on the behavior as the
+           function argument increases. We can therefore use asymptotic notation to
+           analyze performance of algorithms in terms of such measures as worst-case
+           running time or space usage. O and Ω are used to express upper and lower
+           bounds, respectively, while Θ is used to express the fact that the upper and
+           lower boundsaretight. o gives us the ability to abstract away low-order terms
+           when we don’t want to ignore constant factors. ω provides a dual for o.
+              Analysis of iterative algorithms typically involves summations. Theo-
+           rem 3.31 gives us a powerful tool for obtaining asymptotic solutions for
+           summations. Analysis of recursive algorithms, on the other hand, typically
+           involves recurrence relations. Theorems 3.34 and 3.35 provide asymptotic
+           solutions for the most common forms of recurrences.
+              The analyses of the various algorithms for the maximum subsequence
+           sum problem illustrate the utility of asymptotic analysis. We saw that the
+           ﬁve algorithms have worst-case running times shown in Figure 3.7. These
+           results correlate well with the actual running times shown in Figure 1.15.
+              The results of asymptotic analyses can also be used to predict perfor-
+           mance degradation. If an algorithm’s running time is in Θ(f(n)), then as n
+           increases, the running time of an implementation must lie between cf(n)and
+           df (n) for some positive real numbers c and d. In fact, for most algorithms,
+           this running time will approach cf(n) for a single positive real number c.
+           Assumingthatthisconvergence occurs,ifwerunthealgorithmonsuﬃciently
+           large input, we can approximate c by dividing the actual running time by
+           f(n), where n is the size of the input.
+            Figure 3.7  Asymptotic worst-case running times of maximum subsequence sum
+            algorithms
+</div>
+    </div>
+  </body>
+</html>

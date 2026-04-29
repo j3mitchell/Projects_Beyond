@@ -1,0 +1,37 @@
+           428                    Algorithms: A Top-Down Approach
+            Figure 13.10  Algorithm for ﬁnding articulation points in a connected undirected
+            graph
+             Precondition: G refers to a connected undirected Graph.
+             Postcondition: Returns an array A[0..G.Size()−1] of booleans such that
+             A[i]istrue iﬀ i is an articulation point in G.
+             ArtPts(G)
+                n←G.Size(); s ←new ArtSearcher(n); sel ← new Selector(n)
+                Dfs(G,0,sel,s)
+                return s.ArtPoints
+                                    ()
+           nothing. We have also not speciﬁed any preconditions or postconditions
+           for the constructor or any of the operations. The reason for this is that
+           we are only interested in what happens when we use this structure with a
+           depth-ﬁrst search. It therefore doesn’t make sense to prove its correctness
+           in every context. As a result, we don’t need to make this structure secure.
+           Furthermore, the code in each of the operations is so simple that specifying
+           preconditions and postconditions is more trouble than it is worth. As we will
+           see, it will be a straightforward matter to prove that the algorithm that uses
+           this structure is correct.
+              We can now construct an algorithm that uses depth-ﬁrst search to ﬁnd
+           the articulation points in a connected undirected Graph G. The algorithm is
+           shown in Figure 13.10. Let n be the number of vertices and a be the number
+           of edges in G, and suppose G is implemented as a ListGraph. Because each
+           of the operations in ArtSearcher runs in Θ(1) time, it is easily seen that
+           the call to Dfs runs in Θ(a)time,thesameasReachDFS. The remaining
+           statements run in Θ(n) time. Because G is connected, n ∈ O(a), so the entire
+           algorithm runs in Θ(a)time.
+               To prove that ArtPts is correct, we need to show that the call to Dfs
+           results in s.artPoints containing the correct boolean values. In order to prove
+           this, it is helpful to prove ﬁrst that s.highest contains the correct values. This
+           proof uses the fact that Dfs performs a traversal of a depth-ﬁrst spanning
+           tree of G.
+           Lemma13.4. Let G be a connected undirected Graph with n vertices. Let
+           sel be a Selector of size n in which all elements are selected, and let s be
+           a newly-constructed ArtSearcher of size n.ThenDfs(G,0,sel,s) results
+           in s.highest[i] having the value speciﬁed in Equation (13.1) for 1 ≤ i<n.

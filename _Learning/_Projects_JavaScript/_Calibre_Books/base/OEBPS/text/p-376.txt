@@ -1,0 +1,18 @@
+                                      Divide and Conquer                          357
+            Figure 10.8  Partial implementation of Divide, speciﬁed in Figure 10.6, using an
+            approximate reciprocal
+               The line tangent to f at x0 has slope f(x0) and includes the point
+           (x0,f(x0)). To ﬁnd its x-intercept, we need to go to the left of x0 adistance
+           of f(x0)/f(x0) (or if this value is negative, we go to the right a distance of
+           −f(x0)/f(x0)). The new estimate x1 is therefore given by
+                                    x1 = x0 −f(x0)/f(x0).
+           If f(x)=1/x−y,thenf(x)=−x−2. The new estimate is therefore
+                                      x1 = x0 − 1/x0 −y
+                                                  −x−2
+                                                      0
+                                                        2
+                                         =x0+x0−yx
+                                                        0
+                                                    2
+                                         =2x0−yx .
+                                                    0

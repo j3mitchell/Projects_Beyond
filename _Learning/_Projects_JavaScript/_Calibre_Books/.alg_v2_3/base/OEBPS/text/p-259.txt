@@ -1,0 +1,27 @@
+           240                    Algorithms: A Top-Down Approach
+            Figure 6.26  Running times of the OrderedDictionary operations for various
+            implementations
+            Notes:
+            • n is the number of elements in the dictionary.
+            • The constructor and the Size operation each run in Θ(1) worst-case
+              time for each implementation.
+            • The VisitInOrder operation runs in Θ(n) worst-case time for each
+              implementation, assuming that the Visit operation for the given
+              Visitor runs in Θ(1) time.
+            • Unless otherwise noted, all running times are worst-case.
+           theory. Because we are only interested in asymptotic bounds, probabilities
+           which are diﬃcult to compute exactly can often be bounded by probabilities
+           that are easier to compute.
+           6.6  Exercises
+           Exercise 6.1. Prove the correctness of BSTDictionary.TraverseInOr-
+           der, shown in Figure 6.7.
+           Exercise 6.2. Draw the result of inserting the following keys in the order
+           given into an initially empty binary search tree:
+                                34,65,75,54,19,45,11,23,90,15
+           Exercise 6.3. Draw the result of deleting each of the following keys from
+           the tree shown in Figure 6.10, assuming that it is an ordinary binary search
+           tree. The deletions are not cumulative; i.e., each deletion operates on the
+           original tree.
+           a. 55
+           b. 74
+           c. 34

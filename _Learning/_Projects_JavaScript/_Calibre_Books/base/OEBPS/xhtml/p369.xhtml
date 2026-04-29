@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 369</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-369.jpg" alt="Page 369" width="1282" height="1882"/>
+      <div class="ocr">            350                      Algorithms: A Top-Down Approach
+            obtained above from the preﬁx of u. We then append the rest of u to
+            this diﬀerence. Finally, we obtain the remaining digits of the quotient by
+            dividing the resulting value by v. If we ensure that the result of this last
+            division has exactly m−k digits (by padding with zeros if necessary), then
+            the digits we obtain complete the quotient. We have therefore reduced the
+            division problem to a smaller instance of itself. The reduction is not quite a
+            transformation, but it can easily be expressed as a loop.
+                This algorithm can easily be applied to the division of an m-bit binary
+            number u by an n-bit binary number v. In fact, we really don’t need to
+            approximate the ﬁrst signiﬁcant bit — it can’t be a 0, so it must be a 1. We
+            do, however, need to determine the preﬁx of u as described above. We then
+            subtract v from the preﬁx and append the remainder of u. We obtain the
+            remaining bits by dividing this value by v and inserting zeros if necessary.
+                In the above algorithm, we perform a Θ(n)-bit subtraction for each 1 bit
+            of the quotient. Furthermore, each subtraction is preceded by at least one
+            Θ(n)-bit comparison. Because the number of 1 bits in the quotient may be as
+            manyasm−n+1,theworst-casenumberofcomparisonsandsubtractionsof
+            Θ(n)-bit numbersis (m−n+1).TherunningtimeisthereforeinΘ(n(m−n)),
+            which is worse than what we would like.
+                We can instead group the bits of u and v into digits of some radix r,
+            where r is a power of 2. However, for any ﬁxed radix r, this decreases the
+            number of comparisons by at most a constant factor, so that the asymptotic
+            running time does not improve. Applying the divide-and-conquer principle,
+            wemight try breaking v into two digits. For now, let’s assume the number of
+                                                         n/2
+            bits n in v is even. Our radix is therefore 2   .Toobtainanapproximation
+            of the ﬁrst digit of the quotient, we recursively divide the ﬁrst one or two
+            digits of u by the ﬁrst digit of v.
+                If n is odd and greater than 1, we can multiply both u and v by 2 without
+            changing the quotient. These multiplications have the eﬀect of appending a
+            zero as the least signiﬁcant bit, so that the resulting length is even. Because
+            n is greater than 1, dividing the length of the resulting divisor by 2 yields
+            a smaller subproblem. For n =1,v = 1, so the quotient is simply u.We
+            have therefore reduced the division problem to smaller instances of itself.
+            The resulting algorithm is shown in Figure 10.7. We assume the existence of
+            two constants zero and one,whichrefertoBigNumswithvaluesof0and1,
+            respectively.
+                Wewill now analyze the running time of DivideDC. We begin with the
+            while loop. In order to analyze this loop, we need to know how large prod,
+            rem,andapprox might be. From the invariant of the main loop, rem ≤ v−1
+</div>
+    </div>
+  </body>
+</html>

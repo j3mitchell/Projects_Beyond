@@ -1,0 +1,33 @@
+                               NP-Completeness                    533
+         For the elements xi ∈ X, yj ∈ Y,andz ∈ Z,wehaveforthematching
+                                         k
+         items the weights
+                        r4 + r3                 +i+1
+                        r4 + r3        +(j+1)r
+                        r4 + r3 +(k +1)r2
+         and for any non-matching item the weights
+                       r4 ++i+1
+                       r4 ++(j+1)r
+                       r4 +3r3 +(k+1)r2
+         Furthermore,
+                  B=4r4+3r3+(2m+1)r2+(2m+1)r+2m+1.
+            To complete the reduction, we must assign a value to r.Aswehave
+         observed, r must be larger than the sum of any four digits occurring in the
+         same column. Thus, r must be strictly larger than both 8m and 12. Because
+         m≥1,wecan satisfy these constraints by setting r =13m.Wethenhave
+                              B/5<(4r4+4r3)/5
+                                  <(4r4+r4)/5
+                                  =r4,
+         so that every weight is larger than B/5. Furthermore, each weight is less
+         than
+                               4    3   4   4
+                              r +4r <r +r /3
+                                     =4r4/3
+                                     <B/3.
+            We must now show that the above reduction is pseudopolynomial. We
+                                          4        4
+         ﬁrst observe that no weight is larger than 2r =2(13m) , which is polynomial
+         in the size of the instance of 3DM. Furthermore, it is easily seen that all
+         the weights can be constructed in a time linear in the size of the instance of
+         3DM.Wetherefore have the following theorem.
+         Theorem 16.17. 4-Part is NP-hard in the strong sense.

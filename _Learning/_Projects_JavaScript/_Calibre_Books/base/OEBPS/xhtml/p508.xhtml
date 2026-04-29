@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 508</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-508.jpg" alt="Page 508" width="1282" height="1882"/>
+      <div class="ocr">                                     * The Fast Fourier Transform                       489
+             Figure 15.7   The Fast Fourier Transform algorithm over a modular ring
+                 ModFft(p[0..n−1],k,inv)
+                    m←one.Shift(k).Add(one); d ← new Array[0..n−1]; mid ← n/2
+                    if n =1
+                       d[0] ← p[0]
+                    else
+                       p ←new Array[0..mid−1]; p ←new Array[0..mid−1]
+                       for i ← 0 to mid −1
+                          p [i] ← p[2i]; p [i] ← p[2i +1]
+                       d ←ModFft(p,k,inv)
+                       d ←ModFft(p ,k,inv)
+                       for i ← 0 to mid −1
+                          if inv
+                             oddVal ← ToRing(d[i].Shift(2k−2ki/n),k)
+                          else
+                             oddVal ← ToRing(d[i].Shift(2ki/n),k)
+                          d[i] ← ToRing(d [i].Add(oddVal),k)
+                          d[i + mid] ← ToRing(d [i].Add(m.Subtract(oddVal)),k)
+                    return d
+                                                          k
+             Figure 15.8   Algorithm for computing x mod (2 +1)
+                   ToRing(x,k)
+                      numDig      x.NumBits()/k ; m ← one.Shift(k).Add(one)
+                      rem←x.GetBits(k(numDig −1),k)
+                      // Invariant:
+                      // rem = x.GetBits((i+1)k,x.NumBits()−(i+1)k)modm
+                      for i ← numDig −2 to 0 by −1
+                         next ← x.GetBits(ik,k)
+                         if rem.CompareTo(next) &gt; 0
+                            next ← next.Add(m)
+                         rem←next.Subtract(rem)
+                      return rem
+            clearly runs in Θ(k) time. The number of iterations is n/k
+−1, where n
+            is the number of bits in x. The loop therefore runs in Θ(n) time, provided
+            n&gt;k. Because the initialization runs in Θ(k) time, the entire algorithm
+            runs in Θ(max(n,k)) time.
+                In order to analyze ModFft, let us ﬁrst ignore the computations whose
+            running times depend on k, namely, the calculation of m and the calls to
+</div>
+    </div>
+  </body>
+</html>

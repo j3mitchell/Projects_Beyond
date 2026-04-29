@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 032</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-032.jpg" alt="Page 032" width="1282" height="1882"/>
+      <div class="ocr">                                           Introduction                               13
+           essential that we include data structures in our study of algorithms. The
+           themes that we have discussed up to this point all apply to data structures,
+           but in a somewhat diﬀerent way.
+               For example, a speciﬁcation of a data structure must certainly include
+           preconditions and postconditions for the operations on the structure. In
+           addition, the speciﬁcation must in some way describe the information
+           represented by the structure, and how operations on the structure aﬀect
+           that information. As a result, proofs of correctness must take into account
+           this additional detail.
+               While the analysis techniques of Chapter 3 apply directly to operations
+           on data structures, it will be necessary to introduce a new technique that
+           analyzes sequences of operations on a data structure. Furthermore, even the
+           language we are using to express algorithms will need to be enriched in order
+           to allow design and analysis of data structures. We will present all of these
+           extensions in Chapter 4.
+           1.6   ACase Study: Maximum Subsequence Sum
+           We conclude this chapter by presenting a case study that illustrates the
+           practical impact of algorithm eﬃciency. The ineﬃciencies that we will
+           address all can be discovered using the analysis techniques of Chapter 3. This
+           case study will also demonstrate the usefulness of the top-down approach in
+           designing signiﬁcantly more eﬃcient algorithms.
+               Let us consider the problem of computing the maximum sum of any
+           contiguous sequence in an array of numbers (see Figure 1.8). The numbers
+           in the array may be positive, negative, or zero, and we consider the empty
+           sequence to have a sum of 0. More formally, given an array A[0..n − 1] of
+           numbers, where n ∈ N,themaximum subsequence sum of A is deﬁned to be
+                                      j−1                     
+                                 max A[k]|0≤i≤j≤n .
+                                        k=i
+               Note that when i = j, the sum has a beginning        Similar conventions hold for
+           index of i and an ending index of i−1. By convention,    products, except that an
+           we always write summations so that the index (k in       empty product is assumed
+                                                                    to have a value of 1.
+           this case) increases from its initial value (i)toits
+           ﬁnal value (j − 1). As a result of this convention, whenever the ﬁnal value
+           is less than the initial value, the summation contains no elements. Again by
+           convention, such an empty summation is deﬁned to have a value of 0. Thus,
+           in the above deﬁnition, we are including the empty sequence and assuming
+</div>
+    </div>
+  </body>
+</html>

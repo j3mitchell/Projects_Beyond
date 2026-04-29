@@ -1,0 +1,35 @@
+                                  Divide and Conquer                    337
+             Putting it all together, we have the MergeSort algorithm shown in
+          Figure 10.2. Note that in the Merge function, when the loop terminates,
+          either i>mor j>n. Hence, either A[i..m]orB[j..n]isempty.Asa
+          result, only one of the two calls to Copy (see Figure 1.18 on page 22 for its
+          speciﬁcation) will have any eﬀect.
+             It is easily seen that Merge runs in Θ(m+n) time. Therefore, the time
+          required for MergeSort excluding the recursive calls is in Θ(n). For n>1
+          a power of 2, the following recurrence gives the worst-case running time of
+          MergeSort:
+                                f(n) ∈ 2f(n/2)+Θ(n).
+          From Theorem 3.35, f(n) ∈ Θ(nlgn).
+          10.3  Quick Sort
+          Though merge sort and heap sort both run in Θ(nlgn)timeintheworst
+          case, another divide-and-conquer algorithm is more commonly used when
+          stability is not required. As was suggested in Exercise 2.17, sorting can be
+          reduced to the Dutch national ﬂag problem, which was introduced in Section
+          2.4. We ﬁrst select from the array to be sorted a pivot element p,whichwe
+          use to determine the colors of the elements, as follows:
+          • If x.Key() <p.Key(), then x is red.
+          • If x.Key() = p.Key(), then x is white.
+          • If x.Key() >p.Key(), then x is blue.
+          By solving the resulting Dutch national ﬂag problem, we will have parti-
+          tioned the array into three sections:
+          • The ﬁrst section consists of all elements with keys less than p.Key().
+          • The second section consists of all elements with keys equal to p.Key().
+          • The third section consists of all elements with keys greater than p.Key().
+          By sorting the ﬁrst and third sections, we will have sorted the array. This
+          general strategy is known as quick sort.
+             Following the divide-and-conquer paradigm, we would like to select the
+          pivot so that after the array has been partitioned, the ﬁrst and third sections
+          have roughly the same number of elements. Thus, the median element would
+          be a good choice for p. As we will show in the next section, it is possible to
+          ﬁnd the median in Θ(n) time in the worst case. We saw in Section 3.6 that
+          the Dutch national ﬂag problem can be solved in Θ(n) time. Because each

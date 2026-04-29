@@ -1,0 +1,49 @@
+                                                     NP-Completeness                                            519
+                    Onerather simplistic approach is ﬁrst to decide whether F is satisﬁable,
+               then to construct one of two ﬁxed graphs — one that has a vertex cover of
+               size 1, or one that does not. However, because 3-Sat is NP-hard, we cannot
+               decide in polynomial time whether F is satisﬁable unless P = NP.Asa
+               result, such an approach will probably never work.
+                    Instead, we need to construct an instance of VC whose solution will
+               give us a solution to our original instance of 3-Sat. In order to do this, we
+               should try to see what the two problems have in common. A particularly
+               useful technique is to compare the proofs of membership in NP.Oftenwe
+               can ﬁnd a reduction that has the side-eﬀect of transforming each proof φ ∈B
+                                                     
+               for one problem to a proof φ for the other.
+                    Let F be a given 3-CNF formula with n clauses, C ,...,C .For
+                                                                                                 1         n
+               1 ≤ i ≤ n,letα , α ,andα be the three literals in clause C (if there are
+                                    i1    i2         i3                                            i
+               fewer than three literals in C ,wesetα                 and, if necessary, α         to equal α ).
+                                                     i             i3                          i2               i1
+               Aproofforthisinstanceof3-Satrepresentsanassignment of boolean values
+               to the variables. A proof for an instance of VC represents a set of vertices.
+               Perhaps we can associate the selection of a boolean value to the selection of
+               one of two possible vertices. In particular, let us construct, for each variable
+               xi in F, two vertices xi and ¬xi, together with an edge {xi,¬xi}.Then
+               any vertex cover must include either xi or ¬xi.Furthermore,bychoosing
+               an appropriate size for the vertex cover, we might be able to prohibit the
+               simultaneous inclusion of both xi and ¬xi.
+                    In order to complete the reduction, we need to ensure that any vertex
+               cover of size k describes a satisfying assignment for F,andthatforany
+               satisfying assignment for F, there is a vertex cover of size k that describes
+               it. To this end, we will add more structure to the graph we are constructing.
+               We know that for a satisfying assignment, each clause contains at least one
+               true literal. In order to model this constraint with a graph, let us construct,
+               for each clause C , the vertices c , c ,andc , along with the edges {c ,c },
+                                     i                   i1   i2         i3                                i1   i2
+               {c ,c },and{c ,c }. Then any vertex cover must contain at least two of
+                  i2   i3            i3   i1
+               these three vertices.
+                    Finally, for 1 ≤ i ≤ n and 1 ≤ j ≤ 3, we construct an additional edge
+               {c ,α }. For example, Figure 16.7 shows the graph constructed from the
+                  ij   ij
+               3-CNF formula (x1∨¬x2∨x3)∧(¬x1∨x3). By setting k = m+2n,wherem
+               is the number of variables and n is the number of clauses in F, we force any
+               vertex cover of size k to contain exactly one of the two vertices constructed
+               for each variable and exactly two of the three vertices constructed for each
+               clause. In order to cover all of the edges {c ,α }, the vertex cover must be
+                                                                        ij    ij
+               such that in each clause C , there is at least one literal α                     that belongs to
+                                                   i                                         ij

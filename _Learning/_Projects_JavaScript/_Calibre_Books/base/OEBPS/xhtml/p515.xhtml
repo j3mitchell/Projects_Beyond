@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 515</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-515.jpg" alt="Page 515" width="1282" height="1882"/>
+      <div class="ocr">           496                     Algorithms: A Top-Down Approach
+            Figure 15.11   Implementation of EvalSS, speciﬁed in Figure 15.10
+               EvalSS(u[0..n−1],v[0..n−1],k,l)
+                  m←one.Shift(2l).Add(one)
+                  m ←one.Shift(lgn+1)
+                  half ← m.Shift(lgn); full ← half.Shift(1)
+                  pos ←new Array[0..nl−1]; neg ← new Array[0..nl−1]
+                  posCarry ← zero; negCarry ← zero
+                  for j ← 0 to n−1
+                     if v[j] ≥ u[j]
+                       diﬀ ←v[j].Subtract(u[j])
+                     else
+                       t ← u[j].Subtract(v[j]).GetBits(0,lgn+1)
+                       diﬀ ←m.Subtract(new BigNum(t))
+                     w←diﬀ.Shift(2l).Add(diﬀ).Add(u[j])
+                     if w.CompareTo(half) &gt; 0
+                       negCarry ← negCarry.Add(full.Subtract(w))
+                     else
+                       posCarry ← posCarry.Add(w)
+                     negBits ← negCarry.GetBits(0,l); negCarry ← negCarry.Shift(l)
+                     posBits ← posCarry.GetBits(0,l); posCarry ← posCarry.Shift(l)
+                     Copy(negBits[0..l −1],neg[jl..j(l +1)−1])
+                     Copy(posBits[0..l −1],pos[jl..j(l +1)−1])
+                  posNum←posCarry.Shift(nl).Add(new BigNum(pos))
+                  negNum←negCarry.Shift(nl).Add(new BigNum(neg))
+                  M←one.Shift(k).Add(1)
+                  returnToRing(posNum.Add(M.Subtract(ToRing(negNum,k))),k)
+           m ((a −a )modm )+a &lt;mm .Thevalueguaranteed byTheorem15.9
+             1   2    1        2    1     1  2
+           is therefore
+                                2l
+                              (2  +1)((v[j] −u[j]) mod 2b)+u[j].
+                                 2l
+           We can multiply by 2 +1 using a bit shift and an addition. We can then
+                                                                 2l+1
+           determine wj by comparing the above value with b(2       ) and subtracting
+               2l
+           2b(2  +1) if necessary. The algorithm is shown in Figure 15.11.
+               In order to implement NegConvSS, we must be able to compute a
+           negative wrapped convolution over a ring Zm,+,·,wherem is a power
+           of 2. However, because the values of the vectors are much smaller than those
+           used in the other convolution, we don’t need to be quite as careful regarding
+           the eﬃciency of this algorithm. Speciﬁcally, we don’t need to use the FFT.
+                                                                             k
+           Instead, we can ﬁrst compute a non-wrapped convolution mod 2 .Letus
+</div>
+    </div>
+  </body>
+</html>

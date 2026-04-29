@@ -1,0 +1,39 @@
+                                     Network Flow and Matching                          443
+            14.1   The Ford–Fulkerson Algorithm
+            Aﬂowfor a given network can be found by ﬁnding a simple path (i.e., one
+            in which no vertices are repeated) from the source to the sink. We will refer
+            to such a path as anaugmenting path. If no augmenting path exists, then the
+            maximum ﬂow must be 0. Otherwise, suppose m is the minimum capacity
+            of any edge in some particular augmenting path. We can clearly place a ﬂow
+            of m on each edge in that path. We can then solve the smaller network ﬂow
+            problem obtained by reducing the capacity of each edge on the augmenting
+            path by m, and removing any edge whose capacity would become 0. If we
+            measure the size of a problem instance as the value of a maximum ﬂow, then
+            the resulting problem instance is clearly smaller. We can then combine the
+            ﬂow obtained from the solution to the smaller problem with the ﬁrst ﬂow
+            we obtained.
+                The above approach clearly ﬁnds a ﬂow for a given network. Unfor-
+            tunately, that ﬂow is not guaranteed to be a maximum ﬂow. To see why,
+            consider the ﬂow network in Figure 14.1. Suppose the ﬁrst augmenting path
+            found is 0,2,4,1,3,5. We can put a ﬂow of 1 on each of these edges. In
+            the smaller instance, each of these edges would be removed, so that there is
+            no augmenting path in the resulting network. The ﬂow found on the smaller
+            instance is therefore empty, so that the ﬁnal ﬂow has value 1. As we have
+            already seen, a maximum ﬂow for this network has value 2.
+                The most obvious approach to repairing this algorithm is to be more
+            careful in how we choose the augmenting path. However, it turns out that a
+            more straightforward approach is to be more careful in how we construct the
+            smaller problem instance. The problem with the reduction described above
+            is that once we decide to place a ﬂow on an edge, we cannot reverse that
+            decision. If we are more careful, we can construct a smaller instance that
+            allows us to reverse these decisions.
+                Speciﬁcally, when we decrease the capacity of an edge by m,wealso
+            increase by m the capacity of the edge going the opposite direction. If there
+            is no such edge, we add it to the graph. When we combine the two ﬂows, we
+            allow ﬂows in opposite directions to cancel each other; i.e., if edge (x,y)has
+            ﬂow k and edge (y,x)hasﬂowk ≤ k,wesettheﬂowon(x,y)tok−k and
+            the ﬂow on (y,x) to 0. Note that because any edge added to the graph by
+            the reduction will have a capacity of m, and the initial ﬂow will be m in the
+            opposite direction, the combination of the two ﬂows will result in no ﬂow on
+            any edge that was added to the graph. We can therefore remove these edges
+            from the resulting ﬂow.

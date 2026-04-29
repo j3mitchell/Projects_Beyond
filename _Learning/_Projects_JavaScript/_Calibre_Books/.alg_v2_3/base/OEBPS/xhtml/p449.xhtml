@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 449</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-449.jpg" alt="Page 449" width="1282" height="1882"/>
+      <div class="ocr">           430                     Algorithms: A Top-Down Approach
+           Case 1: i =0.ThenartPoints[i]issettotrue iﬀ rootChildren &gt; 1inthe
+           call to PostProc(0). rootChildren is only changed during the processing
+           of vertex 0. It is initialized in PreProc(0) to 0 and incremented by 1 in
+           TreePostProc(e) for each tree edge (0,j). When PostProc(0) is called,
+           rootChildren therefore contains the number of children of vertex 0, which is
+           the root of the depth-ﬁrst spanning tree. As we have observed earlier, the
+           root is an articulation point iﬀ it has more than one child.
+           Case 2: i&gt;0. Then artPoints[i]issettotrue iﬀ s.highest[j] has a value
+           equal to s.pre.Num(i)inthecalltoTreePostProc(e), where e =(i,j)
+           for some vertex j. Because (i,j) is passed to TreePostProc, j must be
+           a child of i. From Lemma 13.4, the call to Dfs sets s.highest[j]tothe
+           correct value, as deﬁned in Equation (13.1). Furthermore, an examination of
+           the proof of Lemma 13.4 reveals that this value is set by the processing of
+           vertex j. This processing is done prior to the call to TreePostProc(e), so
+           that s.highest[j] has the correct value by the time it is used. Furthermore,
+           s.pre.Num(i)issettoitspropervaluebyPreProc(i), which is also called
+           before TreePostProc(e). As we have already shown, i is an articulation
+           point iﬀ s.highest[j]=s.pre.Num(i) for some child j of i.                
+           13.5   Topological Sort Revisited
+           In Section 9.2, we gave an algorithm for ﬁnding a topological sort of a
+           directed acyclic graph. This algorithm ran in Θ(n+a)timeforaListGraph
+           with n vertices and a edges. In this section, we give an alternative algorithm
+           that illustrates the use of depth-ﬁrst search on directed acyclic graphs.
+               We ﬁrst note that a shortcoming of the Dfs algorithm is that it only
+           processes vertices that are reachable from the root. In an arbitrary graph,
+           there may be no vertex from which every vertex is reachable; hence it may
+           be impossible to ﬁnd a depth-ﬁrst spanning tree (or any spanning tree) for
+           the graph.
+               To remedy this shortcoming, we provide the algorithm DfsAll,shown
+           in Figure 13.11. In order to understand its postcondition, it helps compare
+           its behavior with that of Dfs. In particular, suppose G has n vertices, and
+                
+           let G be the graph obtained by adding a new vertex n to G and edges from n
+           to every other vertex in the graph. Notice that the behavior of the for loop
+                                                                            
+           in DfsAll(G,s) is exactly the same as the behavior of Dfs(G ,n,sel,s),
+           except that DfsAllonlyprocesses the vertices and edges in G.Inparticular,
+                                                                              
+           each time Dfs is called by DfsAll, it traverses a subtree of G rooted
+</div>
+    </div>
+  </body>
+</html>

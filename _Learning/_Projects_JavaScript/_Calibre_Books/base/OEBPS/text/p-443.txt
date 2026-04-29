@@ -1,0 +1,32 @@
+           424                     Algorithms: A Top-Down Approach
+               The point at which the proof of Theorem 13.2 fails for directed graphs
+           is the initial assumption that j is unselected before k is. For an undirected
+           graph, one of the endpoints of the edge will be unselected ﬁrst, and it doesn’t
+           matter which endpoint we call j. However, with a directed edge, either the
+           source or the destination may be unselected ﬁrst, and we must consider both
+           cases. Given the assumption that the source is unselected ﬁrst, the remainder
+           of the proof follows. We therefore have the following theorem.
+           Theorem 13.3. Let G be a directed graph with n vertices such that all
+           vertices are reachable from i, and let sel be a Selector of size n in which
+           all elements are selected. Suppose we call Dfs(G,i,sel,s),wheres is a
+           Searcherof size n. Then for every edge (j,k) processed as a non-tree edge,
+           if j is unselected before k is, then j is an ancestor of k.
+               Thus, if we draw a depth-ﬁrst spanning tree with subtrees listed from
+           left to right in the order we unselect them (as in Figure 13.8), there will be
+           no edges leading from left to right. As we can see from Figure 13.8, all three
+           remaining possibilities can occur, namely:
+           • edges from ancestors to descendants (we call these forward edges if they
+              are not in the tree);
+           • edges from descendants to ancestors (we call these back edges); and
+           • edges from right to left (we call these cross edges).
+           Theorem13.3 gives us the property we need to make use of depth-ﬁrst search
+           with directed graphs.
+               Asaﬁnalobservation, we note that back edges in directed graphs always
+           form cycles, because there is always a path along the tree edges from a vertex
+           to any of its descendants. Hence, a directed acyclic graph cannot have back
+           edges.
+            Figure 13.8   Example of depth-ﬁrst search on a directed graph
+                                    0                           0
+                              13 13
+                              24 24
+                                   (a)                          (b)

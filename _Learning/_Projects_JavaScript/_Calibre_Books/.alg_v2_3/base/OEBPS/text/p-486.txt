@@ -1,0 +1,39 @@
+                                 * The Fast Fourier Transform                    467
+           product of two polynomials p(x)andq(x) is therefore represented by the
+           vector
+                                                   −1
+                                        (pA·qA)A ,
+           where “·” denotes the component-wise product of two vectors of the same
+           size.
+              Themainproblemwiththisapproachisthatthemultiplications ofa1×n
+           vector with an n×narray would appear to require Ω(n2) time. However, this
+           running time can be improved if we choose the points x ,...,x    cleverly.
+                                                                0       n−1
+           In order to do this, we need to allow them to be chosen from the set of
+           complex numbers, C. We also need to deﬁne, for any n ≥ 1, a principal nth
+           root of unity as any value ω ∈ C such that
+           • ωn =1;and
+           • for 1 ≤ j<n,
+                                             n−1
+                                             ωij=0.
+                                             i=0
+              Wewill show how to ﬁnd such values in C. First, however, let us consider
+           why having a principal nth root of unity might be helpful. Given a principal
+           nth root of unity ω,letA be the n×n matrix such that A = ωij.Givena
+                                                                   ij
+           1×nvector p, the product pA is said to be the discrete Fourier transform of
+           p with respect to ω.Notethatifp is the coeﬃcient vector for a polynomial
+           p(x), then pA gives the values of p(ωj)for0≤ j<n.
+              In what follows, we will develop a divide-and-conquer algorithm for
+           computing a DFT. To simplify matters, let’s assume that n is a power of 2.
+           The following theorem shows an important property of principal nth roots
+           of unity when n is a power of 2. We will use this property in designing our
+           divide-and-conquer algorithm.
+           Theorem 15.1. Let ω be a principal nth root of unity, where n ≥ 2 is a
+           power of 2.Thenω2 is a principal (n/2)nd root of unity.
+                              n        2 n/2
+           Proof.   Because ω =1,(ω )       =1.Let1≤j<n/2. Then 1 ≤ 2j<n.
+           Because ω is a principal nth root of unity, we have
+                                        n−1
+                                        ωi(2j) =0.
+                                         i=0

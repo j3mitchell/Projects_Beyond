@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 377</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-377.jpg" alt="Page 377" width="1282" height="1882"/>
+      <div class="ocr">           358                     Algorithms: A Top-Down Approach
+            Figure 10.9   The Newtonian iteration
+               In order to see how quickly the Newtonian iteration converges to 1/y,
+           suppose we have an estimate x0 =(1+)/y,where is some real number.
+           Applying the iteration, we have
+                                                 2
+                                   x1 =2x0 −yx
+                                                 0         
+                                         2(1 +)       1+ 2
+                                      =     y    −y      y
+                                         2+2−1−2−2
+                                      =           y
+                                         1−2
+                                      = y .                                      (10.1)
+           Thus, each iteration squares the error term .For1/2 ≤ y&lt;1, it is not hard
+           to show that an initial estimate of 3/2 yields
+                                         −1/4 ≤ &lt;1/2;
+           hence, the number of bits of accuracy doubles with each iteration.
+               Although this technique does converge rapidly to 1/y,thenumberof
+           iterations depends on the degree of accuracy we require. Unfortunately, each
+           iteration requires a multiplication by y, so that the time required cannot be
+           proportional to the time for a single multiplication of values having roughly
+</div>
+    </div>
+  </body>
+</html>

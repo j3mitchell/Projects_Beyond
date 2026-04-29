@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 578</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-578.jpg" alt="Page 578" width="1282" height="1882"/>
+      <div class="ocr">                               Approximation Algorithms                559
+          items are given in nondecreasing order of value-to-weight ratios, and that no
+          item’s weight exceeds the weight bound. It is easily seen that this algorithm
+          produces a solution in Θ(n2) time. The following theorem shows how well it
+          approximates an optimal solution in the worst case.
+          Theorem 17.3. KnapsackApprox yields an approximation ratio of at
+          most 2 on all inputs that satisfy the precondition. Furthermore, for every
+           ∈ R&gt;0, there is some input for which the approximation ratio is at least
+          2−.
+          Proof.  We begin by showing the lower bound. Let  ∈ R&gt;0,andwithout
+          loss of generality, assume &lt;1. We ﬁrst deﬁne the weight bound as
+                                           4
+                                     W=2  .
+          Wethen construct the following set of three items:
+          • The ﬁrst item has weight 1 and value 2.
+          • The second and third items each have a weight and value of W/2.
+             Theoptimal solution clearly consists of the second and third items. This
+          solution has value W. Each iteration of the outer loop of KnapsackApprox
+          yields a solution containing the ﬁrst item and one of the other two. The
+          solution returned by this algorithm therefore has a value of W/2+2.The
+          approximation ratio is therefore
+                                 W = 2W
+                               W +2 W+4
+                                2
+                                     =2− 8
+                                           W+4
+                                     =2−       8
+                                           24/ +4
+                                     ≥2− 8
+                                           8/
+                                     =2−.
+             Now consider an arbitrary input to KnapsackApprox.Foragiven
+          solution X,letV(X)denotethevalueofX. Suppose KnapsackApprox
+          returns a solution A,andletS be an optimal solution. Let i be the index of
+          some element with maximum value in S, and consider iteration i of the outer
+          loop. Let A be the solution chosen by this iteration. We will show A has
+                   i                                                 i
+</div>
+    </div>
+  </body>
+</html>

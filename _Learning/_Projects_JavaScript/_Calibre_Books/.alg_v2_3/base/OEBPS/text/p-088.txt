@@ -1,0 +1,39 @@
+                                     Analyzing Algorithms                         69
+           Deﬁnition 3.26. Letf : N → R≥0. f is said to be eventually non-decreasing
+           if there is a natural number n0 such that f(n) ≤ f(n+1) whenever n ≥ n0.
+           Deﬁnition 3.27. Let f : N → R≥0. f is said to be eventually positive if
+           there is a natural number n0 such that f(n) > 0 whenever n ≥ n0.
+           Deﬁnition 3.28. Let f : N → R≥0 be an eventually non-decreasing and
+           eventually positive function. f is said to be smooth if there exist a real
+           number c and a natural number n0 such that f(2n) ≤ cf(n) whenever
+           n≥n0.
+           Example 3.29. f(n)=n is a smooth function. Clearly, f is eventually
+           non-decreasing and eventually positive, and f(2n)=2f(n) for all n ∈ N.
+                                    n
+           Example 3.30. f(n)=2 is not smooth. f is eventually non-decreasing,
+                                                2n     2
+           and eventually positive, but f(2n)=2 = f (n) for all n ∈ N. Because f
+           is unbounded, for any real c, f(2n) >cf(n) for all suﬃciently large n.
+              We will soon discuss in more detail which functions are smooth. First,
+           however, let’s see why this notion is important. Suppose we want to give
+           asymptotic bounds for a summation of the form
+                                          g(n)
+                                          Ω(f(i))
+                                          i=1
+           for some smooth function f. The following theorem, whose proof is outlined
+           in Exercise 3.13, can then be applied.
+           Theorem 3.31. Let f : N → R≥0 be a smooth function,g: N → N be an
+           eventually non-decreasing and unbounded function, and let X denote either
+           O, Ω, or Θ.Then
+                                g(n)
+                                X(f(i))⊆X(g(n)f(g(n))).
+                                i=1
+              Thus, if we know that f is smooth, we have an     We leave as an exercise the
+           asymptotic solution to the summation. We therefore   proof that this containment
+           need to examine the property of smoothness more      is proper.
+           closely. The following theorem can be used to show a
+           wide variety of functions to be smooth.
+           Theorem 3.32. Let f : N → R≥0 and g : N → R≥0 be smooth functions,
+           and let c ∈ R≥0. Then the following functions are smooth:
+           • f(n)+g(n);
+           • f(n)g(n);

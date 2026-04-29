@@ -1,0 +1,45 @@
+           360                      Algorithms: A Top-Down Approach
+                                                                               −k−2
+               In order to keep the ﬁrst term suﬃciently small, we need β<2         .In
+                                                                         −k−3
+           order to leave room for the other two terms, let us take β ≤ 2     .Inother
+           words, we will use the ﬁrst k +3bitsofy in applying the iteration. Then as
+           long as |α|≤1/2, we have
+                                          2      −k−1    −k−2     −k−5
+                            4β +4αβ+α β ≤2            +2       +2
+                                                 −k
+                                             ≤2 .
+               Let us now consider the case in which the value inside the absolute value
+           bars in (10.2) is negative. We can now ignore the ﬁrst and third terms. We
+           therefore need
+                                         2       2αβ      −k
+                                      yα +γ− y ≤2 .
+           Here, we can safely replace α by −|α|.Forﬁxedα, β,andγ in the resulting
+           inequality, the ﬁrst term is maximized when y is maximized, but the third
+           term is maximized when y is minimized. It therefore suﬃces to ensure that
+                                        2                 −k
+                                      α +γ+4|α|β ≤2 .
+                               −k−3                        −(k+1)/2           −k−2
+           Again taking β ≤ 2       , we only need |α|≤2            and γ ≤ 2      .We
+           then have
+                           2                 −k−1    −k−2     k−1−(k+1)/2
+                          α +γ+4|α|β ≤2           +2       +2
+                                             −k
+                                         ≤2 ,
+           provided k ≥ 1.
+               We can satisfy the constraints on α and γ by ﬁnding an approximation
+                    −(k+1)/2
+           within 2           , and returning k + 3 bits of the result of applying the
+           iteration (recall that the result has one bit to the left of the radix point).
+           Note that if we take k as the size of the problem instance, we are reducing
+           the problem to an instance roughly half the original size. We therefore have
+           a divide-and-conquer algorithm.
+               In order to complete the algorithm, we need to handle the base cases.
+           Because (k +1)/2 <konly when k>2, these cases occur for k ≤ 2. It
+           turns out that these cases are important for ensuring that the approximation
+           is at least 1 and strictly less than 2. From (10.1), the result of the iteration
+           is never more than 1/y (here y denotes the portion we are actually using
+           in computing the iteration). Thus, if y>1/2, the estimate is less than 2.
+           Furthermore, if y =1/2, an initial estimate less than 2 will ensure that some
+           error remains, so that the result is still strictly less than 2. Finally, provided
+           <1,theresult is always closer to 1/y than the initial estimate. Thus, if we

@@ -1,0 +1,29 @@
+                                     Divide and Conquer                        361
+          make sure that our base case gives a value that is less than 2 and no worse
+          an estimate than 1 would be, the approximation will always be in the proper
+          range.
+              Weleave it as an exercise to show that the estimate
+                                          11−8y
+                                              4
+          satisﬁes the speciﬁcation and the requirements discussed above for k ≤ 2.
+          8y is simply the ﬁrst 3 bits of y. Because 1/2 ≤ y<1, 4 ≤8y < 8. The
+          numerator is therefore always a 3-bit natural number. The ﬁnal division by
+          4 simply puts the radix point in the proper place.
+              The algorithm is shown in Figure 10.10. We use the variable len to store
+          the value k + 3, which, except in the base case, is both the number of bits
+          we use from y and the number of bits we return. We assume the existence
+          of a constant eleven referring to a BigNum with value 11. Before we do the
+          subtraction, we must make sure the radix points in the operands line up.
+          Theapproximation x0 has one bit to the left of the implicit radix point. The
+          multiplication of x0 by 2 simply moves the radix point to the right one place.
+          Asaresult,theimplicit radix point in 2x0 is x0.NumBits()−2 fromthe right
+                                                       2
+          in x0. Theimplicit radix point in the product yx is len+2(x0.NumBits()−1)
+                                                       0
+          bits from the right. In order for the radix points to line up, we therefore
+          need to pad the value stored in x0 with len + x0.NumBits() zeros prior to
+          subtracting.
+              Let us now analyze the running time of RecipNewton. Suppose we use
+          amultiplication algorithm that runs in O(M(n)) time, where n is the number
+            Figure 10.10  Implementation of Reciprocal, speciﬁed in Figure 10.8, using
+            Newton’s method with divide-and-conquer

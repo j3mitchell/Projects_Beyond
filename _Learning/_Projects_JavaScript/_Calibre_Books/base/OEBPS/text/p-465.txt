@@ -1,0 +1,55 @@
+          446                 Algorithms: A Top-Down Approach
+                                                
+          capacity of any edge in P,andlet(G ,u,v,C) be the residual network of
+                                                                    
+          (G,u,v,C) with respect to P. Then the maximum ﬂow for (G ,u,v,C) has
+          value k −m.
+          Proof.  Let F be a maximum ﬂow for (G,u,v,C). Then F has value k.
+                      1                                       1
+          To simplify our discussion, let us interpret F as a function F : V ×V → Z,
+                                               1             1
+          where V is the set of vertices in G, such that F (x,y) gives the ﬂow over
+                                                   1
+          (x,y) minus the ﬂow over (y,x); if either of these edges does not exist, we
+          use 0 for this edge’s ﬂow.
+                                            
+             Let us assign ﬂows to the edges of G as follows:
+          1. If (x,y) ∈ P and F (x,y) ≥ m, assign a ﬂow of F (x,y) − m to (x,y).
+                             1                          1
+            Because C((x,y)) = C((x,y))−m, the ﬂow on this edge does not exceed
+            the capacity.
+          2. If (x,y) ∈ P and F (x,y) <m, assign a ﬂow of m − F (x,y)to(y,x).
+                             1                              1
+            Because C((y,x)) = C((y,x)) + m if (y,x) ∈ G,orC((y,x)) = m if
+            (y,x) ∈ G, the ﬂow on this edge does not exceed the capacity.
+          3. If (x,y) ∈ P,(y,x) ∈ P,andF (x,y) > 0, assign a ﬂow of F (x,y)
+                                         1                          1
+            to (x,y). Because C((x,y)) = C((x,y)), the ﬂow on this edge does not
+            exceed its capacity.
+          4. Assign a ﬂow of 0 to all other edges.
+             Because the above construction essentially reduces the ﬂow F by m
+                                                                   1
+          along P, the sum of incoming ﬂows equals the sum of outgoing ﬂows for all
+                    
+          vertices in G except u and v. This assignment is therefore a network ﬂow,
+          which we will denote F .Furthermore,P contains exactly one edge incident
+                             2
+          on u — the ﬁrst edge, which we will call (u,w). The eﬀect of Steps 1 and 2
+          therefore decreases the net ﬂow from u by m.ThevalueofF is therefore
+                                                              2
+          k − m. From Lemma 14.1, the combination of F withaﬂowofm along
+                                                    2
+          P gives a ﬂow of k for (G,u,v,C). Because this is true for any ﬂow on
+                 
+          (G,u,v,C),andbecausekisthemaximumﬂowfor(G,u,v,C),weconclude
+                                                  
+          that F must be a maximum ﬂow for (G ,u,v,C).                  
+               2
+             Thoughthisreductionisnotatransformation, we can implement it using
+          a loop by maintaining a graph in which the ﬂows on augmenting paths are
+          combined as they are found. The resulting algorithm, known as the Ford–
+          Fulkerson algorithm, is shown in Figure 14.3. Because the Graph ADT (see
+          Figure 9.3 on page 311) provides no operation for removing an edge, we
+          will allow the residual graph to have edges with capacity 0. The proof of
+          correctness is easily shown using Theorem 14.2; the details are left as an
+          exercise.

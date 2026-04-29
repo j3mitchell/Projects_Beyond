@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 290</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-290.jpg" alt="Page 290" width="1282" height="1882"/>
+      <div class="ocr">                                    Storage/Retrieval II: Unordered Keys                        271
+             and h      (h   (k)) = j is
+                   p,a,b  p,s
+                                        p−1 1 = 1.
+                                             p       p(p−1)         p2
+                 Nowconsider the case in which h         (k)=h (k). From Lemma 7.6, this
+                                                       p,s        p,s
+             case occurs with probability 1/p. For any value of a,1≤ a&lt;p,andany
+             value of i,0≤ i&lt;p, there is exactly one value of b such that 0 ≤ b&lt;pand
+                                          (ah   (k)+b)modp=i.
+                                              p,s
+             Thus, each value of i is reached with probability 1/p. Therefore, for each
+             natural number i&lt;p, the probability that h            (h   (k)) = h      (h   (k)) =
+                                                               p,a,b  p,s         p,a,b  p,s
+             i is 1/p2.
+                 Thus, for a hash function h chosen from H4              , h(k)=imodm and
+                                                                    p,l,m
+             h(k)=j modm,wherei and j are natural numbers less than p chosen
+             independently with uniform probability. Furthermore, i mod m = j mod m
+             iﬀ i−j is divisible by m. Because p−(p mod m) is divisible by m, for any i,
+             exactly 1 of every m values j such that 0 ≤ j&lt;p−(p mod m) is such that
+             i − j is divisible by m. Likewise, for any j,exactly1ofeverym values i
+             such that 0 ≤ i&lt;p−(pmodm) is such that i − j is divisible by m (see
+                                           2                2
+             Figure 7.9). Thus, of the p − (p mod m) pairs in which at least one value
+             is less than p − (p mod m), exactly
+                                                2               2
+                                               p −(pmodm)
+                                                       m
+                                                                           2
+             pairs result in collisions. Of the remaining (p mod m) pairs, only those in
+             which i = j result in collisions. There are exactly p mod m such pairs. Thus,
+             the probability of a collision is exactly
+                 2               2                    2                                 2
+               p −(pmodm) +pmodm = p +m(pmodm)−(pmodm)
+                       mp2                p2                        mp2
+                                                 = 1 + (m−(pmodm))(pmodm). (7.4)
+                                                    m                   mp2
+                 Clearly, m − (p mod m) is always positive and p mod m is always
+             nonnegative. Furthermore, because p is prime, the only way p mod m can
+             be 0 is if m =1orm = p. A hash table of size 1 is simply a ConsList,
+             and selecting m = p would defeat the purpose of combining H3 with H2 .
+                                                                                    p,l        p,m
+             Thus, for all reasonable values of m, the second fraction on the right-hand
+             side of (7.4) is strictly positive; therefore, H4       is not a universal family.
+                                                               p,l,m
+</div>
+    </div>
+  </body>
+</html>

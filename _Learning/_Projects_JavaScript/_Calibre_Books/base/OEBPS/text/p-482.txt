@@ -1,0 +1,26 @@
+                               Network Flow and Matching                463
+          your running time analysis, you may assume the graph is represented as a
+          ListGraph. Prove the correctness of your algorithm.
+          14.6  Notes
+          The NetworkFlow algorithm is due to Ford and Fulkerson [42]. The
+          running-timeanalysis of the use of breadth-ﬁrst search in the Ford–Fulkerson
+          algorithm is due to Edmonds and Karp [37] and Dinic [30]. Asymptotically
+          faster algorithms exist — to date, the fastest known is due to Goldberg and
+          Rao [57]. Their algorithm has a running time in
+                                  2/3 1/2     2
+                          O(min(n   ,a )alg(n /a+2)lgC),
+          where C is the maximum capacity of any edge.
+             The technique of ﬁnding a maximum-sized matching using augmenting
+          paths is due to Berge [13]. He showed that in an arbitrary undirected graph,
+          a matching is of maximum size iﬀ no augmenting path exists. Finding
+          augmenting paths in arbitrary undirected graphs is more challenging,
+          however, because we must avoid returning to the same vertex from which we
+          started. The ﬁrst eﬃcient algorithm for ﬁnding an augmenting path in an
+          arbitrary undirected graph is due to Edmonds [35]. The algorithm suggested
+          by Exercise 14.8 is due to Hopcroft and Karp [64], and is the asymptotically
+          fastest known algorithm for ﬁndinga maximum-sized matching in a bipartite
+          graph. The structure of this exercise is based on a problem in Cormen, et al.
+                     √
+          [25]. An O(a n) algorithm for arbitrary undirected graphs was later given
+          by Micali and Vazirani [93].
+             Asolution to Exercise 14.6 is given by Ford and Fulkerson [43].

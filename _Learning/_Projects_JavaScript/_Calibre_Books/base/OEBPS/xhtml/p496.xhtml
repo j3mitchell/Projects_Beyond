@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 496</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-496.jpg" alt="Page 496" width="1282" height="1882"/>
+      <div class="ocr">                                      * The Fast Fourier Transform                           477
+              Figure 15.2   Algorithm for computing a positive wrapped convolution over C using
+              the Fast Fourier Transform
+                 Precondition: p[0..n−1] and q[0..n−1] are arrays of Complexes, and n
+                 is a positive Nat.
+                 Postcondition: Returns the positive wrapped convolution of p and q.
+                 Convolution(p[0..n−1],q[0..n−1])
+                    m←2lgn ; p ←new Array[0..m−1]; q ←new Array[0..m−1]
+                    Copy(p[0..n−1],p[0..n−1]); Copy(q[0..n−1],q[0..n−1])
+                    for i ← n to m−1
+                       p [i] ← 0; q [i] ← 0
+                    ω ←cos(2π/m)+isin(2π/m)
+                    ptrans ← Fft(p ,ω); qtrans ← Fft(q ,ω)
+                    rtrans ← new Array[0..m−1]
+                    for i ← 0 to m−1
+                       rtrans[i] ← ptrans[i]qtrans[i]
+                    r ←Fft(rtrans,1/ω); r ← new Array[0..n−1]
+                    for i ← 0 to n−1
+                       r[i] ← r [i]/m
+                    return r
+            approximations. The Convolution algorithm is therefore very useful in
+            practice.
+            15.2    Commutative Rings
+            In Exercise 10.5 (page 364), we suggested that the polynomial multiplication
+            algorithm of Section 10.1 could be adapted to multiply two arbitrary-
+            precision natural numbers in Θ(nlg3) time, where n is the number of bits
+            in the product. Because we now have a Θ(nlgn) algorithm for multiplying
+            polynomials, we might conclude that it could be used to multiply arbitrary-
+            precision natural numbersin Θ(nlgn)time.However, therearetwoproblems
+            with this conclusion. First, Convolution uses complex numbers having
+            inﬁnite binary representations. It turns out that if we are careful, we can use
+            ﬁnite approximations and still obtain correct results for arbitrary-precision
+            multiplication. The second problem is more serious, though. Note that both
+            Convolution and Fft perform multiplications involving values derived
+            from the vectors they are processing. These values can become much larger
+            than the original elements of the vectors, so that recursive calls would need
+            to be made to do these multiplications. This has the eﬀect of increasing the
+            running time.
+</div>
+    </div>
+  </body>
+</html>

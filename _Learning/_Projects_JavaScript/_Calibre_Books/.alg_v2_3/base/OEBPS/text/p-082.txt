@@ -1,0 +1,40 @@
+                               Analyzing Algorithms                63
+         ⇐: Suppose (3.3) holds whenever n ≥ n0. From the ﬁrst inequality, g(n) ∈
+         Ω(f(n)). From the second inequality, g(n) ∈ O(f(n)). Therefore, g(n) ∈
+         Θ(f(n)).                                                  
+            Thedeﬁnition of Θ also gives us the following corollary to Theorem 3.11.
+         Corollary 3.14. Let f : N → R≥0 and g : N → R≥0.Theng(n) ∈ Θ(f(n))
+         iﬀ f(n) ∈ Θ(g(n)).
+            In order to apply these deﬁnitions to the analysis of algorithms, a
+         few more results regarding manipulation of the notation are helpful. The
+         following theorem is analogous to Theorem 3.8. Its proof is left as an exercise.
+         Theorem 3.15. Suppose f (n) ∈ Ω(g (n)) and f (n) ∈ Ω(g (n)).Then
+                              1        1        2       2
+         1.f(n)f (n) ∈ Ω(g (n)g (n)); and
+            1   2        1   2
+         2.f(n)+f (n)∈Ω(max(g (n),g(n))).
+            1     2            1    2
+            By combining Theorems 3.8 and 3.15, we obtain the following corollary.
+         Corollary 3.16. Suppose f (n) ∈ Θ(g (n)) and f (n) ∈ Θ(g (n)).Then
+                               1       1        2        2
+         1. f (n)f (n) ∈ Θ(g (n)g (n)); and
+            1   2        1   2
+         2. f (n)+f (n) ∈ Θ(max(g (n),g (n))).
+            1     2            1    2
+            The following two theorems are also useful for simplifying expressions
+         using asymptotic notation. The proofs of both are left as exercises.
+         Theorem 3.17. Let f(n):N → R≥0 and g(n):N → R≥0 such that f(n) ∈
+         O(g(n)) (or equivalently,g(n) ∈ Ω(f(n))).Then:
+         1. O(f(n)) ⊆ O(g(n)).
+         2. Ω(g(n)) ⊆ Ω(f(n)).
+         Theorem 3.18. Let f(n):N → R≥0 and g(n):N → R≥0 such that f(n) ∈
+         Θ(g(n)).ThenΘ(f(n)) = Θ(g(n)).
+            Let us now use the above deﬁnitions and results to continue our analysis
+         of MaxSumBU. Clearly, the body of the loop must take some positive
+         numberofsteps,soits runningtimeisinΩ(1).Furthermore,theloopiterates
+         n times. We may therefore use Theorem 3.15 to conclude that the running
+         time of the algorithm is in Ω(n). Because we have already shown the running
+         time to be in O(n), it therefore is in Θ(n).
+            Let us now analyze the lower bound for MaxSumOpt. Again, the inner
+         loop has a running time in Ω(1). Its number of iterations ranges from 1 to n,
+         so the best lower bound we can give on the number of iterations is in Ω(1).

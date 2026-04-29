@@ -1,0 +1,46 @@
+          492                 Algorithms: A Top-Down Approach
+                                                      K 2
+          The running time of ModMult is therefore in O(2 K ). We can therefore
+          conclude that the running time of MultFft is in
+                                 lgn   2         2
+                             O(2     lgn )=O(nlg n),
+          where n is the number of bits in the product.
+             The above analysis is almost suﬃcient to show that the running time of
+          MultFftis in Θ(nlg2n). Speciﬁcally, we only need to show that there are
+          inputs for each suﬃciently large n such that the call to ModMult is made
+          on each iteration of the ﬁrst loop in PosConv. Unfortunately, such a proof
+          would be quite diﬃcult. On the other hand, it seems unlikely that our upper
+          bound on this algorithm’s worst-case running time can be improved.
+          15.4  The Sch¨onhage–Strassen Algorithm
+          In this section, we will show how to improve the multiplication algorithm of
+          the preceding section to achieve a running time in O(nlgnlglgn). In order
+          to see what we need to improve, consider recurrence (15.2). Speciﬁcally,
+                      (K+1)/2
+          consider the 2      f((K − 1)/2 + 2) term. The coeﬃcient is b,the
+          number of calls made to ModMult in PosConv, and the argument to f is
+          lg(4l), the size of each recursive call. If we add lgb to the size of the recursive
+          calls, we get K + 2, where the 2 is the lg of the multiplier for l that we use
+          to deﬁne the ring in which the FFT will be computed.
+                                                 (K+c)/2
+             Let us suppose, more generally, that b =2    and that the size of
+          therecursivecallis(K − c)/2 + d,wherec and d are natural numbers.
+          Then the recurrence becomes
+                                 K     (K+c)/2
+                     f(K)∈O(K2 )+2            f((K −c)/2+d).       (15.1)
+                                         K
+          Now letting g(K)=f(K −c+2d)/2 ,wehave
+           g(K)=f(K−c+2d)
+                        K
+                       2
+                                K−c+2d     (K+2d)/2
+                ∈ O((K −c+2d)2        )+2          f((K −2c+2d)/2+d)
+                                             K
+                                            2
+                           d
+                =O(K)+2 f(K/2−c+2d)
+                                 K/2
+                                2
+                          d
+                =O(K)+2g(K/2).
+             By Theorem 3.35, if d>1, g(K) ∈ O(Kd), as for recurrence (15.3);
+          however, if d =1,theng(K) ∈ O(KlgK). It then follows that f(K) ∈

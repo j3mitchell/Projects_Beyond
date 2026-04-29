@@ -1,0 +1,36 @@
+          294                   Algorithms: A Top-Down Approach
+          Find repeatedly. We would therefore like to improve its performance. In the
+          next section we will examine a simple way to do this.
+          8.3  AShort Tree Implementation
+          Because the worst-case runningtime for Find is proportional to the height of
+          the tree, we can improve the worst-case performance by controlling heights
+          of the trees. In order to accomplish this, when we merge two trees, we will
+          always make the tree with smaller height the child of the root of the other
+          tree. If both trees have the same height, we arbitrarily choose one as the
+          child. Note that by using this technique, the only way we can increase the
+          height of a tree is to merge it with another tree of the same height. We will
+          show that as a result, the heights of the trees are always at most logarithmic
+          in their number of nodes.
+             As we did in analyzing the heights of AVL trees (Section 6.2), let us
+          computetheminimumnumberofnodesrequiredtoachieveatreeofheight h,
+          assuming we always make the tree with smaller height the child. Let f(h)
+          give this number. Then f(0) = 1. In order to build a tree with height h>0
+          using the fewest nodes, we must merge two trees of height h−1, each having
+          the fewest nodes possible. Thus, each of the two merged trees must have
+          f(h−1) nodes. The total number of nodes is given by the recurrence
+                                    f(h)=2f(h−1).
+                                         h
+             It is easily seen that f(h)=2,sothath =lgf(h). Thus, if k is the
+          number of nodes in a tree of height h,wehave
+                                       h=lgf(h)
+                                         ≤lgk.
+          We conclude that if the universe contains n elements, then no tree has a
+          height greater than lgn.
+             In order to be able to merge trees in this way, we need to keep track of the
+          height of each tree. For this purpose, we include an additional representation
+          variable height[0..n − 1]. Our structural invariant will then be that for
+          0 ≤ i<n, height[i]isthemaximumof0andheight[j] + 1 for all j = i
+          such that parent[j]=i,andthat0≤ parent[i] <n. Note that because
+          height[parent[i]] > height[i] whenever parent[i] = i, each value i must have
+          an ancestor j such that parent[j]=j; thus, the elements of the universe
+          must be grouped into trees rooted at nodes with parent[i]=i.

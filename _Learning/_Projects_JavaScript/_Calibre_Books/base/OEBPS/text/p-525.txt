@@ -1,0 +1,40 @@
+                   506                                      Algorithms: A Top-Down Approach
+                     Figure 16.2           Algorithm for evaluating a boolean expression.
+                        Precondition:               F is a BinaryTreeNode referring to the root of a
+                        nonempty boolean expression tree, and A[1..n]isanarrayofBools.
+                        Postcondition: Returns the value of F assuming that the variable repre-
+                        sented by i has value A[i]ifi ≤ n,orfalse if i>n.
+                        BoolEval(F,A[1..n])
+                            if F.LeftChild() = nil
+                                 if F.Root() ≤ n
+                                      return A[F.Root()]
+                                 else
+                                      return false
+                            else if F.Data() = not
+                                 return not BoolEval(F.LeftChild(),A)
+                            else
+                                 l ← BoolEval(F.LeftChild(),A)
+                                 r ←BoolEval(F.RightChild(),A)
+                                 if F.Root() = and
+                                      return l and r
+                                 else
+                                      return l or r
+                         We will begin by adopting a couple of con-                                               An artiﬁcially long input
+                   ventions. First, we will assume that each problem                                              would result in an arti-
+                   instance is a bit string. Certainly, we can encode other                                       ﬁcially  low running time
+                                                                                                                  when expressed in terms of
+                   types of input data as bit strings, provided the set                                           the length of the input.
+                   of all instances is countable. We do need to ensure,
+                   however, that this encoding is done in such a way that the length of the
+                   encoding is not unnecessarily long. With this convention, we can now express
+                   the running time of an algorithm in terms of the length of its input string.
+                   This gives us a uniform way of expressing the running times of all algorithms
+                   for all problems. Second, we will view a decision problem as a subset of its
+                   instances. Speciﬁcally, let I denote the set of all bit strings that encode
+                   boolean expressions. We can then let Sat denote the set of all expressions
+                   in I that are satisﬁable. It will also be convenient to use Sat to denote the
+                   problem itself. In general, given a set of instances I, we will refer to any
+                   subset X ⊆ I as a decision problem over I.
+                         We must now address the question of how eﬃcient is “eﬃcient”. We
+                   will somewhat arbitrarily delineate the “eﬃcient” algorithms as those that
+                   operate within a running time bounded by some polynomial in the length

@@ -1,0 +1,39 @@
+                                               Priority Queues                                   171
+             that 0 ≤ P(e) ≤ 1andthat
+                                                 P(e)=1.
+                                                 e∈S
+                 As a simple example, consider the ﬂipping of a fair coin. The probability
+             space is {heads,tails}, and each of these two elementary events has probabil-
+             ity 1/2. For a more involved example, let T be a binary tree, and consider
+             the probability space PathT consisting of paths from the root of T to empty
+             subtrees. We leave as an exercise to show that if T has n nodes, then it
+             has n + 1 empty subtrees; hence PathT has n + 1 elements. In order that
+             it be a probability space, we need to assign a probability to each path. The
+             probability of a given path of length k should be the same as the probability
+             of the sequence of k coin ﬂips that yields this path in the Merge algorithm;
+                                                                                            −k
+             thus, if the path corresponds to k ﬂips, its probability should be 2              .We
+             leave as an exercise to prove that the sum of these probabilities is 1 for any
+             binary tree.
+                 An important element of expected-case analysis is the notion of a
+             discrete random variable, which is a function f : S → R,whereS is a
+             discrete probability space. In this text, we will restrict our random variables
+             to nonnegative values. For an example of a random variable, let lenT(e)
+             give the length of a path e in the probability space PathT deﬁned above.
+             The expected value of a random variable f over a                 More precisely, len (e) is
+                                                                                            T
+             probability space S is deﬁned to be                              the number of coin ﬂips
+                                                                              that are needed to generate
+                                                                             e.
+                               E[f]=        f(e)P(e).
+                                        e∈S
+             Thus, by multiplying the value of the random variable for each elementary
+             event by the probability of that elementary event, we obtain an average value
+             for that variable. Note that it is possible for an expected value to be inﬁnite.
+             If the summation converges, however, it converges to a unique value, because
+             all terms are nonnegative.
+             Example5.4. LetT beabinarytreewith nnodes,suchthat all paths from
+             the root to empty subtrees have the same length. Because the probability of
+             each path is determined solely by its length, all paths must have the same
+             probability. Because there are n+1 paths and the sum of their probabilities
+             is 1, each path must have probability 1/(n+1). In this case, E[lenT]issimply

@@ -1,0 +1,44 @@
+                                    Storage/Retrieval II: Unordered Keys                        281
+             • if table[i] = nil, then the array stored there is indexed 0..s − 1, where s is
+               thesizeoffunctions[i];
+             • if an element with key k is stored at table[i][j], then hash.Index(k)=i
+               and functions[i].Index(k)=j;and
+             • size = n, the total number of keys stored.
+             We interpret the Keyed items stored as the elements of the Immutable-
+             Dictionary, together with their associated keys.
+                 The implementation of the constructor is shown in Figure 7.12. Based
+             on the above discussion, the ﬁrst repeat loop is expected to iterate no more
+             than twice. Furthermore, it is easily seen that each iteration of this loop runs
+             in Θ(nf(l)+g(n)) time in the worst case, where g(n)isthetimerequired
+             by the HashFunction constructor, and f(l) is the time required by the
+             Index operation on keys of length l. In order to simplify the discussion that
+             follows, we will assume that the HashFunction constructor runs in O(n)
+             time; consequently, the expected running time of this loop is in Θ(nf(l)).
+             The eﬀect of this loop is to create a HashFunction hash andanarray
+             t[0..hash.Size() − 1] that is essentially an ordinary hash table for hash.
+                 The analysis of the remainder of the algorithm is somewhat more
+             involved, but again relies heavily on the above discussion. The outer loop
+             constructs a secondary hash table for each t[i] and places it in table[i]. Each
+             iteration of the repeat loop generates a hash function and attempts to
+             construct a secondary hash table for the elements at t[i]. It iterates until it
+             has a secondary hash table with no collisions. By the above discussion, the
+             expected number of iterations is in Θ(1). Let ni be the number of elements
+             at t[i]. Then the for loop iterates n2 times, and the while loop iterates ni
+                                                      i
+             times in the worst case. Therefore, the repeat loop requires Θ(n2 +nif(l))
+                                                                                       i
+             expected time.
+                 The expected running time of the entire for loop is then in
+                         m−1                       m−1           m−1
+                          Θ(n2+nif(l))= Θ(n2)+Θ(nif(l))
+                                   i                        i
+                          i=0                      i=0            i=0
+                                                     	m−1 
+           	      m−1 
+
+                                                =Θ n2 +Θ f(l)ni
+                                                              i
+                                                        i=0                   i=0
+                                                =Θ((c+1)n)+Θ(nf(l))
+                                                =Θ(nf(l)).
+             The total expected running time of the constructor is therefore in Θ(nf(l)).

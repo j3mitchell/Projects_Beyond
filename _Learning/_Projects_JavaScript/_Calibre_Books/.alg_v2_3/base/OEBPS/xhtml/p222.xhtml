@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 222</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-222.jpg" alt="Page 222" width="1282" height="1882"/>
+      <div class="ocr">                                      Storage/Retrieval I: Ordered Keys                          203
+             than any key in the left child of t; hence, moving it to the root of t maintains
+             the BST structure.
+                 Wecan ﬁnd the smallest key in a nonempty BST by ﬁrst looking at the
+             left child of the root. If it is empty, then the root contains the smallest key.
+             Otherwise, the smallest key is in the left child. This is a transformation,
+             and so can be implemented using a loop. The complete implementation of
+             Remove is shown in Figure 6.7. Figure 6.8 shows the result of deleting 54
+             from the BST shown in Figure 6.5. Speciﬁcally, because 54 has two children,
+             it is replaced by the smallest key (64) in its right child, and 64 is replaced
+             by its right child (71).
+                 The VisitInOrder operation requires us to apply v.Visit to each data
+             item in the BST, in order of keys. If the BST is empty, then there is
+             nothing to do. Otherwise, we must visit all of the data items in the left
+             child prior to visiting the root, then we must visit all of the data items in
+             the right child. Because the left and right children are themselves BSTs,
+             they comprise smaller instances of this problem. Applying the top-down
+             approach in a straightforward way, we obtain the recursive internal function
+             TraverseInOrdershowninFigure6.7.
+                 The above algorithm implemented by TraverseInOrder is known as
+             aninorder traversal. Inorder traversal applies strictly to binary trees, but two
+             other traversals apply to rooted trees in general. A preorder traversal visits
+             the root prior to recursively visiting all of its children, whereas a postorder
+             traversal visits the root after recursively visiting all of its children.
+                 Let us now analyze the running time of Find.Letn be the number
+             of data items in the BST. Clearly, the time required outside the loop and
+             the time for a single iteration of the loop are each in Θ(1). We therefore
+             need to analyze the worst-case number of iterations of the loop. Initially, t
+             refers to a BST with n nodes. A single iteration has the eﬀect of resetting t
+             to refer to one of its children. In the worst case, this child may contain all
+             nodes except the root. Thus, in the worst case, the loop may iterate n times.
+             This can happen, for example, if all left children are empty, so that elements
+             refers to a BST that consists of a single chain of nodes going to the right
+             (see Figure 6.9). The worst-case running time is therefore in Θ(n).
+             Example 6.2. Suppose we build a BSTDictionary by inserting n items
+             with integer keys 1,2,...,n, in that order. As each key is inserted, it is
+             larger than any key already in the BST. It is therefore inserted to the right
+             of every key already in the BST. The result is shown in Figure 6.9. It is
+             easily seen that to insert key i requires Θ(i) time. The total time to build
+             the BSTDictionary is therefore in Θ(n2), by Theorem 3.31.
+</div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,22 @@
+                                      Storage/Retrieval I: Ordered Keys                          199
+              Figure 6.3    Interface extending Dictionary to OrderedDictionary
+              Figure 6.4    Printer implementation of Visitor
+             the statement,
+                                    d.VisitInOrder(new Printer()).
+                 In order to implement OrderedDictionary, it is possible to store the
+             dataitemsinasortedarray,aswedidwithSortedArrayPriorityQueue
+             in Section 5.1. Such an implementation has similar advantages and disad-
+             vantages to those of SortedArrayPriorityQueue. Using binary search,
+             we can ﬁnd an arbitrary data item in Θ(lgn) time, where n is the number
+             of items in the dictionary. Thus, the Get operation can be implemented
+             to run in Θ(lgn) time. However, to add or remove an item requires Θ(n)
+             time in the worst case. Thus, Put and Remove are ineﬃcient using such
+             an implementation. The fact that the elements of an array are located
+             contiguously allows random access, which, together with the fact that the
+             elements are sorted, facilitates the fast binary search algorithm. However, it
+             is exactly this contiguity that causes updates to be slow, because in order
+             to maintain sorted order, elements must be moved to make room for new
+             elements or to take the place of those removed.
+                 If we were to use a linked list instead of an array, we would be able
+             to change the structure without moving elements around, but we would no
+             longer be able to use binary search. The “shape” of a linked list demands

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 343</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-343.jpg" alt="Page 343" width="1282" height="1882"/>
+      <div class="ocr">           324                     Algorithms: A Top-Down Approach
+           single initialization should be suﬃcient. Thus, if we can ﬁnd a way to avoid
+           repeated initializations of A, we will be able to achieve Θ(n + a) running
+           time without using virtual initialization.
+               Consider what happens if we simply omit every initialization of A except
+                                                                                 
+           the ﬁrst. If, when processing edge (i,j), we ﬁnd edge (i ,j), for some i &lt;i,
+           recorded in A[j], then we know that no other edge (i,j)hasyetbeen
+           processed. We can then simply record (i,j)inA[j], as if no edge had
+           been recorded there. If, on the other hand, we ﬁnd that (i,j) has already
+           been recorded in A[j], we know that we have found a parallel edge.
+               As a ﬁnal simpliﬁcation to this algorithm, we note that there is really
+           no reason to store Edges in the array. Speciﬁcally, the only information we
+           need to record in A[j] is the most recent (i.e., the largest) vertex i for which
+           an edge (i,j) has been found. Thus, A can be an array of integers. We can
+           initialize A to contain only negative values, such as −1, to indicate that
+           no such edge has yet been found. The resulting ListGraph constructor is
+           shown in Figure 9.10. It is easily seen to run in Θ(n+a) time and use Θ(n)
+            Figure 9.10   Constructor for building a ListGraph from a ListMultigraph
+</div>
+    </div>
+  </body>
+</html>

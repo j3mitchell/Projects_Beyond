@@ -1,0 +1,16 @@
+                                             Graphs                                  311
+             Figure 9.3  The Graph ADT
+               Although in practice it may be beneﬁcial to deﬁne separate ADTs for
+           directed and undirected graphs, respectively, it will simplify our presentation
+           if we specify a single Graph ADT, as shown in Figure 9.3. This actually
+           speciﬁes a directed graph, but we can use it to represent an undirected graph
+           if we make sure that whenever (i,j) is an edge, then (j,i)isanedgewiththe
+           same associated information. We can therefore use the same ADT for both
+           types of graph, though the speciﬁcation itself will never guarantee that the
+           graph is undirected.
+               This speciﬁcation uses the data type Edge, which is implemented by
+           three readable representation variables, source, dest,anddata. We assume
+           that it contains a constructor Edge(i,j,x), which sets source to i, dest to j,
+           and data to x. It contains no other operations other than the three accessor
+           operations, so it is an immutable structure. Although we place no restrictions
+           on the values stored in its representation variables, the speciﬁcation of

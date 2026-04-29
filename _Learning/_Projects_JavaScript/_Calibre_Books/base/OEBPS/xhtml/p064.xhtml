@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 064</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-064.jpg" alt="Page 064" width="1282" height="1882"/>
+      <div class="ocr">                                       Proving Algorithm Correctness                           45
+            2.5    Mutual Recursion
+            The techniques we have presented up to this point are suﬃcient for proving
+            the correctness of most algorithms. However, one situation can occur which
+            reveals a ﬂaw in these techniques. Speciﬁcally, it is possible to prove
+            correctness using these techniques, when in fact the algorithm is incorrect.
+            The situation leading to this inconsistency is known as mutual recursion.In
+            a simple case, we have one algorithm, A, which calls another algorithm, B,
+            which in turn calls A. More generally, we may have a sequence of algorithms,
+            A ,...,A ,whereA calls A             for 1 ≤ i&lt;n,andA calls A .
+              1        n            i        i+1                        n         1
+                 For example, suppose we were to implement Median, as speciﬁed in
+            Figure 2.7, by reducing it to the selection problem. This reduction is
+            straightforward, as it is easily seen that the median is just the n/2nd
+            smallest element. We therefore have the algorithm shown in Figure 2.8. Its
+            proof of correctness is trivial.
+                 We therefore have the algorithm SelectByMedian, which correctly
+            implements Select if we use a correct implementation of Median.Wealso
+            havethealgorithmMedianBySelect,whichcorrectlyimplementsMedian
+            if we use a correct implementation of Select. The problem arises when
+            we use both of these implementations together. The proof of correctness
+            for the resulting implementation contains circular reasoning. In fact, the
+            implementation is not correct, as can be seen if we replace the call to Median
+            in Figure 2.7 with the call, SelectByMedian(A[1..n],n/2). We now have
+            a recursive call whose argument is no smaller than that of the original call.
+            As a result, we have inﬁnite recursion.
+                 Though we will not prove it here, it turns out that nontermination is
+            the only way in which combining correct algorithms in a mutually recursive
+            fashion can result in an incorrect implementation. Thus, if we can prove
+            that the implementation terminates, we can conclude that it is correct. In
+            Chapter 3, we will present techniques for showing not just termination, but
+            the time it takes for an algorithm to terminate. These techniques will be
+            general enough to apply to mutually recursive algorithms.
+              Figure 2.8   Animplementation of Median, speciﬁed in Figure 2.7, using Select,as
+              speciﬁed in Figure 1.1
+</div>
+    </div>
+  </body>
+</html>

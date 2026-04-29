@@ -1,0 +1,38 @@
+          112                   Algorithms: A Top-Down Approach
+          4.2  ASimple Stack Implementation
+          Theﬁrststepindesigninganimplementation foradatastructureistodecide
+          upon a representation of the data. Perhaps the simplest representation of a
+          stack is an array storing the sequence of elements. Because we will want to
+          push additional elements onto the stack, we should use an array larger than
+          the number of elements. We therefore need a way to ﬁnd the last element
+          of the sequence, or the top element of the stack. We can accomplish this by
+          keeping track of the number of elements in the stack.
+             Such a representation is a bit too simple, because the size of the array
+          limits the size of the stack — i.e., once we have constructed the array, we have
+          limited the size of the sequence we can represent. In order to accommodate
+          this shortcoming, we will associate with each of these stacks a capacity,which
+          gives the maximum number of elements it can hold. Later, we will consider
+          howthisrestriction might be removed. As a result of this restriction, we must
+          modify our speciﬁcation of the Push operation so that if n is strictly less
+          than the stack’s capacity, then Push(a) adds a to the end of the sequence.
+          In order to be able to check this condition, we will replace the IsEmpty
+          operation with a more general Size operation that returns the number of
+          elements in the stack.
+             Our representation, therefore, consists of:
+          • an Array elements[1..M]forsomeM ≥ 0; and
+          • a Nat size.
+          The value M above is not an explicit part of the representation, but we
+          assume that we can obtain its value by using the function SizeOf, speciﬁed
+          in Figure 1.20 on page 23.
+             In order to make sense of a given representation, we need an inter-
+          pretation, which relates a given set of values for the variables in the
+          representation to a speciﬁc instance of the formal deﬁnition. The variables
+          used by the interpretation may include not only the representation vari-
+          ables, but also variables that may be accessed using the representation
+          variables. In our present example, elements[1..size] describes the stack
+          elements[1],...,elements[size],andSizeOf(elements) gives the capacity
+          of the stack.
+             The above interpretation is problematic when size is outside the bounds
+          of the array. We therefore need a mechanism to ensure that the values of
+          a given representation are valid. To this end we use a structural invariant.
+          Thisinvariant is a statement about the values of the representation variables,

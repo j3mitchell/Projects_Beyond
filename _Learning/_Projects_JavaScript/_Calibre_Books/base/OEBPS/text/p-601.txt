@@ -1,0 +1,50 @@
+             582                          Algorithms: A Top-Down Approach
+              [19] J. L. Carter and M. N. Wegman. Universal classes of hash functions. Journal of
+                   Computer and System Sciences, 18:143–154, 1979.
+              [20] B. Chazelle.  A minimum spanning tree algorithm with inverse-ackermann type
+                   complexity. Journal of the ACM, 47:1028–1047, 2000.
+              [21] D. Cheriton and R. E. Tarjan. Finding minimum spanning trees. SIAM Journal on
+                   Computing, 5:724–742, 1976.
+              [22] V. Chvatal, D. A. Klarner, and D. E. Knuth.        Selected combinatorial research
+                   problems. Technical Report STAN-CS-72-292, Stanford University, 1972.
+              [23] S. A. Cook. The complexity of theorem-proving procedures. In Proceedings of the
+                   3rd Annual ACM Symposium on Theory of Computing, pp. 151–158, 1971.
+              [24] J. W. Cooley and J. W. Tukey. An algorithm for the machine calculation of complex
+                   Fourier series. Mathematics of Computation, 19:297–301, 1965.
+              [25] T.H.Cormen,C.E.Leiserson,R.L.Rivest,andC.Stein.Introduction to Algorithms,
+                   2nd edition, McGraw-Hill, 2001.
+              [26] C. A. Crane. Linear lists and priority queues as balanced binary trees. Techni-
+                   cal Report STAN-CS-72-259, Computer Science Department, Stanford University,
+                   Stanford, CA, 1972.
+              [27] E. W. Dijkstra. A note on two problems in connexion with graphs. Numerische
+                   Mathematik, 1:269–271, 1959.
+              [28] E. W. Dijkstra. The structure of “THE”-multiprogramming system. Communica-
+                   tions of the ACM, 11:341–346, 1968.
+              [29] E. W. Dijkstra. A Discipline of Programming. Prentice-Hall, Englewood Cliﬀs, NJ,
+                   1976.
+              [30] E. A. Dinic. Algorithm for solution of a problem of maximum ﬂow in a network with
+                   power estimation. Soviet Mathematics Doklady, 11:1277–1280, 1970.
+              [31] G. D´osa. The tight bound of ﬁrst ﬁt decreasing bin-packing algorithm is FFD(I) ≤
+                   11/9OPT(I)+6/9. In B. Chen, M. Paterson, and G. Zhang (eds), Combinatorics,
+                   Algorithms, Probabilistic and Experimental Methodologies, pp. 1–11, Springer Berlin
+                   Heidelberg, 2007.
+              [32] G. D´osa and J. Sgall. Optimal analysis of best ﬁt bin packing. In J. Esparza,
+                   P. Fraigniaud, T. Husfeldt, and E. Koutsoupias (eds), Automata, Languages, and
+                   Programming, pp. 429–441, Springer Berlin Heidelberg, 2014.
+              [33] A. I. Dumey. Indexing for rapid random access memory systems. Computers and
+                   Automation, 5:6–9, 1956.
+              [34] J. P. Eckert and J. W. Mauchly. Progress report on the edvac, September 1945.
+              [35] J. Edmonds. Paths, trees, and ﬂowers. Canadian Journal of Mathematics, 17:449–
+                   467, 1965.
+              [36] J. Edmonds. Matroids and the greedy algorithm. Mathematical Programming, 1:127–
+                   136, 1971.
+              [37] J. Edmonds and R. M. Karp. Theoretical improvements in algorithmic eﬃciency for
+                   network ﬂow problems. Journal of the ACM, 19:248–264, 1972.
+              [38] L. Euler.   Solutio problematis ad geometriam situs pertinentis.       Commetarii
+                   Academiae Scientiarum Imperialis Petropolitanae, 8:128–140, 1736.
+              [39] S. Even. Graph Algorithms, 2nd edition. Cambridge University Press, 2012.
+              [40] R. W. Floyd. Algorithm 97: Shortest path. Communications of hte ACM, 5:345,
+                   1962.
+              [41] R. W. Floyd. Algorithm 245: Treesort. Communications of the ACM, 7:701, 1964.
+              [42] L. R. Ford and D. R. Fulkerson. Maximal ﬂow through a network. Canadian Journal
+                   of Mathematics, 8:399–404, 1956.

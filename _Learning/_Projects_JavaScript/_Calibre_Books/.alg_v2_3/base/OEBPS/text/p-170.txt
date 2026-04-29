@@ -1,0 +1,38 @@
+                      Priority Queues        151
+      the Put operation to the problem of ﬁnding the correct location to insert a
+      given priority p. This location is the index i,0≤ i ≤ size, such that
+      • if 0 ≤ j<i,thenelements[j].Key() <p;and
+      • if i ≤ j<size,thenp ≤ elements[j].Key().
+      Because the priorities are sorted, elements[i].Key() = p iﬀ there is an item
+      in the array whose priority is p.Furthermore,ifnosuchitemexists,i gives
+      the location at which such an item should be inserted.
+        Wecanapplythetop-down approach to derive a search technique called
+      binary search. Assume we are looking for the insertion point in an array
+      A[lo..hi − 1]; i.e., the insertion point i will be in the range lo ≤ i ≤ hi.
+      Further assume that lo < hi, for otherwise, we must have lo = i = hi. Recall
+      that the divide-and-conquer technique, introduced in Section 3.7, reduces
+      large instances to smaller instances that are a ﬁxed fraction of the size of the
+      original instance. In order to apply this technique, we ﬁrst look at the priority
+      of the middle data item — the item with index mid = (lo+hi)/2.Ifthekey
+      of this item is greater than or equal to p,theni can be no greater than mid,
+      whichinturnisstrictlylessthanhi.Otherwise,i must be strictly greater
+      than mid, which in turn is greater than or equal to lo. We will therefore
+      have reduced our search to a strictly smaller search containing about half
+      the elements from the original search.
+        Note that this reduction is actually a transformation — a reduction in
+      which the solution to the smaller problem is exactly the solution to the
+      original problem. Recall from Section 2.4 that a transformation can be
+      implemented as a loop in a fairly straightforward way. Speciﬁcally, each
+      iteration of the loop will reduce a large instance to a smaller instance. When
+      the loop terminates, the instance will be the base case, where lo = hi.
+        Prior to the loop, lo and hi must have values 0 and size, respectively.
+      Our invariant will be that 0 ≤ lo ≤ hi ≤ size, that items with indices less
+      than lo have a key less than p, and that elements with indices greater than
+      or equal to hi have a key greater than or equal to p. Thus, the index i to be
+      returned will always be in the range lo ≤ i ≤ hi. When the loop terminates,
+      we will have lo = hi; hence, we can return either lo or hi. This algorithm is
+      given as the Find function in Figure 5.2, where a partial implementation of
+      SortedArrayPriorityQueue is given. The Expand function copies the
+      contents of its argument into an array of twice the original size, as in Section
+      4.3. The remainder of the implementation and its correctness proof are left
+      as an exercise.

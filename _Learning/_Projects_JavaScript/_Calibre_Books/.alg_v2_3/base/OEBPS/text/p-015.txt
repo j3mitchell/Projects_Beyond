@@ -1,0 +1,33 @@
+           xiv                     Algorithms: A Top-Down Approach
+                9.4 AdjacencyListImplementation ...............318
+                9.5 Multigraphs ..........................321
+                9.6 Summary............................325
+                9.7 Exercises............................325
+                9.8 Notes..............................327
+           III   Algorithm Design Techniques                                      329
+           10. Divide and Conquer                                                 331
+                10.1 PolynomialMultiplication...................332
+                10.2 MergeSort...........................335
+                10.3 QuickSort...........................337
+                10.4 Selection ............................342
+                10.5 IntegerDivision ........................348
+                10.6 *Newton’sMethod......................355
+                10.7 Summary............................363
+                10.8 Exercises............................363
+                10.9 Notes..............................370
+           11. Optimization I: Greedy Algorithms                                  371
+                11.1 JobScheduling.........................372
+                11.2 Minimum-CostSpanningTrees................374
+                11.3 Single-SourceShortestPaths.................379
+                11.4 HuﬀmanCodes.........................380
+                11.5 Summary............................384
+                11.6 Exercises............................385
+                11.7 Notes..............................387
+           12. Optimization II: Dynamic Programming                               389
+                12.1 MakingChange ........................389
+                12.2 ChainedMatrixMultiplication................393
+                12.3  All-Pairs Shortest Paths . . . . . . ..............395
+                12.4 TheKnapsackProblem....................397
+                12.5 Summary............................400
+                12.6 Exercises............................400
+                12.7 Notes..............................408

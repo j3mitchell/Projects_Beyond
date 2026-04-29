@@ -1,0 +1,38 @@
+           434                      Algorithms: A Top-Down Approach
+           Case 2: (j,k) is either a forward edge or a tree edge. Then i and j are both
+                                              
+           ancestors of k. Because j is in G , it can be postorder processed no later
+           than i. Therefore, j cannot be a proper ancestor of i. j must therefore be a
+           descendant of i.
+           Case 3: (j,k) is a cross edge. Then k is postorder processed before j
+           is. Because j is postorder processed between k and i, and because k is a
+           descendant of i, j must also be a descendant of i.                         
+               The above theorem suggests the following approach to ﬁnding the con-
+           nected components of G. We ﬁrst do a depth-ﬁrst search on the entire graph
+           using a postorder VisitCounter post. We then select all of the vertices. To
+           see how we might ﬁnd an arbitrary strongly-connected component, suppose
+           someofthecomponentshavebeenfoundandunselected.Weﬁndtheselected
+           vertex i that has maximum post.Num(i). We then ﬁnd all vertices j from
+           among the selected vertices such that there is a path from j to i containing
+           only selected vertices.
+               We have to be careful at this point because the set of selected vertices
+           may not be exactly the set of vertices that are postorder processed no later
+           than i. Speciﬁcally, there may be a vertex j that belongs to one of the
+           components that have already been found, but which is postorder processed
+           beforei. However, Theorem 13.6 tells us that because j belongs to a diﬀerent
+           component than i, there is no path from j to i. Therefore, eliminating such
+           nodeswill not interfere with the correct identiﬁcation of a strongly connected
+           component. We conclude that the vertices that we ﬁnd comprise the strongly
+           connected component containing i.
+               In order to be able to implement this algorithm, we need to be able to
+           ﬁnd all vertices j from which i is reachable via selected vertices. This is
+           almost the same as the reachability problem covered in Section 13.2, except
+           that the edges are now directed, and we must follow the edges in the wrong
+           direction. It is not hard to see that we can use depth-ﬁrst search to ﬁnd all
+           vertices reachable from a given vertex i in a directed graph. In order to be
+           able to use this algorithm to ﬁnd all vertices j from which i is reachable, we
+           must reverse the direction of the edges.
+               Because DfsAll processes all of the edges in the graph, we can use it
+           to build a new graph in which all of the edges have been reversed. In fact,
+           we can use the same depth-ﬁrst search to record the order of the postorder
+           processing of the vertices. We use three representation variables:

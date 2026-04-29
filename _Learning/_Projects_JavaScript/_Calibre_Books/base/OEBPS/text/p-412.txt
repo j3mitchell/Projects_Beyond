@@ -1,0 +1,40 @@
+                                Optimization II: Dynamic Programming                     393
+            problem because any sub-collection of an optimal collection of coins is itself
+            an optimal collection for the value it yields; otherwise, we could replace
+            the sub-collection with a smaller sub-collection yielding the same value, and
+            obtain a better solution to the original instance.
+                The principle of optimality usually applies to         A simple path in a graph is
+            optimization problems, but not always in a con-            a path in which each vertex
+            venient way. For example, consider the problem of          appears at most once.
+            ﬁnding a longest simple path in a graph from a given vertex u to a given
+            vertex v. If we take a portion of the longest path, say from x to y,this
+            subpath is not necessarily the longest simple path from x to y in the original
+            graph. However, it is guaranteed to be the longest simple path from x to y
+            in the subgraph consisting of only those vertices on that subpath and all
+            edges between them in the original graph. Thus, a subproblem consists of
+            a start vertex, a ﬁnal vertex, and a subset of the vertices. Because a graph
+                                  n
+            with n vertices has 2   subsets of vertices, there are an exponential number
+            of subproblems to solve. Thus, in order for dynamic programming to be an
+            eﬀective design technique, the principle of optimality must apply in a way
+            that yields relatively few subproblems.
+                One characteristic that often leads to relatively few subproblems, while
+            at the same time causing direct recursive implementations to be quite
+            expensive, is that the top-down solution results in overlapping subproblems.
+            As we have already discussed, the top-down solution for the change-
+            making problem can result in two subproblems which have a subproblem
+            in common. This overlap results in redundant computation in the direct
+            recursive implementation. On the other hand, it reduces the total number of
+            subproblems, so that the dynamic programming approach is more eﬃcient.
+            12.2    Chained Matrix Multiplication
+            Recall that the product AB,whereA is a k ×m matrix and B is an m×n
+            matrix, is the k × n matrix C such that
+                                     m
+                             Cij = A B          for 1 ≤ i ≤ k,1 ≤ j ≤ n.
+                                         il  lj
+                                    l=1
+            If we were to compute the matrix product by directly computing each of the
+            kn sums, we would perform a total of kmn scalar multiplications.
+                Now suppose we wish to compute the product,
+                                             MM ···M ,
+                                               1  2       n

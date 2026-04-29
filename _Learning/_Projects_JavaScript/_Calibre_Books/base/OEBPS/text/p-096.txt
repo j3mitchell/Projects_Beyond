@@ -1,0 +1,41 @@
+                               Analyzing Algorithms                 77
+            We must be careful that each recursive call is of a strictly smaller size.
+         Wewishtodividethearrayinhalf,asnearlyaspossible.Webeginbyﬁnding
+         the midpoint between lo and hi; i.e.,
+                                mid = lo +hi.
+                                         2
+            Note that if hi > lo,thenlo ≤ mid < hi. In this case, we can split
+         A[lo..hi]intoA[lo..mid]andA[mid+1..hi], and both sub-arrays are smaller
+         than the original. However, a problem occurs when lo = hi — i.e., when the
+         array contains only one element — because in this case mid = hi. In fact, it is
+         impossible to divide an array of size 1 into two subarrays, each smaller than
+         the original. Fortunately, it is easy to solve a one-element instance directly.
+         Furthermore, it now makes sense to consider an empty array as a special
+         case, because it can only occur when we begin with an empty array, and not
+         as a result of dividing a nonempty array in half. We will therefore require in
+         our precondition that lo ≤ hi, and that both are natural numbers.
+            We can compute the maximum suﬃx sum as in MaxSumBU (see
+         Figure 1.14 on page 18), and the maximum preﬁx sum in a similar way.
+         The entire algorithm is shown in Figure 3.3. Note that the speciﬁcation has
+         been changed from the one given in Figure 1.9. However, it is a trivial matter
+         to give an algorithm that takes as input A[0..n−1] and calls MaxSumDC if
+         n>0,orreturns0ifn=0.Suchanalgorithmwouldsatisfythespeciﬁcation
+         given in Figure 1.9.
+            This algorithm contains two recursive calls on arrays of size n/2 and
+         n/2, respectively. In addition, it calls MaxSuffixBU on an array of size
+         n/2 and MaxPrefixBU on an array of size n/2. These two algorithms
+         are easily seen to have running times in Θ(n); hence, if f(n) denotes the
+         worst-case running time of MaxSumDC on an array of size n,wehave
+                         f(n) ∈ f(n/2)+f(n/2)+Θ(n)           (3.7)
+         for n>1.
+            This equation does not ﬁt the form of Theorem 3.34. However, suppose
+                                                                 k
+         we focus only on those values of n that are powers of 2; i.e., let n =2 for
+                                  k
+         some k>0, and let g(k)=f(2 )=f(n). Then
+                                      k
+                             g(k)=f(2 )
+                                      k−1      k
+                                 ∈2f(2   )+Θ(2)
+                                               k
+                                 =2g(k−1)+Θ(2 )                  (3.8)

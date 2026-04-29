@@ -1,0 +1,3 @@
+           52                      Algorithms: A Top-Down Approach
+            Figure 2.13   Algorithm for Permutations
+            Figure 2.14   The algorithm for Exercise 2.15

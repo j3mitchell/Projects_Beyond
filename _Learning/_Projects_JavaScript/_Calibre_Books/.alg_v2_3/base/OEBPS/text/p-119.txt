@@ -1,0 +1,33 @@
+         100               Algorithms: A Top-Down Approach
+         * Exercise 3.14. Prove that for every smooth function f : N → R≥0 and
+         every eventually non-decreasing and unbounded function g : N → N,and
+         every X ∈{O,Ω,Θ},
+                          g(n)
+                          X(f(i))=X(g(n)f(g(n))).
+                          i=1
+         [Hint: First identify a property that every function in the set on the left-hand
+         side must satisfy, but which functions in the set on the right-hand side need
+         not satisfy.]
+         Exercise 3.15. Prove Theorem 3.32.
+         Exercise 3.16. Analyze the worst-case running time of the following code
+         fragments, assuming that n represents the problem size. Express your result
+         as simply as possible using Θ-notation.
+         a. for i ← 0 to 2n
+             for j ← 0 to 3n
+                k ←k+i+j
+         b. for i ← 1 to n2
+                        3
+             for j ← i to i
+                k ←k+1
+       *c.i←n
+           while i>0
+                        2
+             for j ← 1 to i
+                x←(x+j)/2
+             i ←i/2
+         Exercise 3.17. Give asymptotic solutions to the following asymptotic
+         recurrences. In each case, you may assume that f : N → R≥0 is an eventually
+         non-decreasing function.
+         a.
+                              f(n) ∈ 2f(n−1)+Θ(1),
+           for n>0.

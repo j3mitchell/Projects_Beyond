@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 024</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-024.jpg" alt="Page 024" width="1282" height="1882"/>
+      <div class="ocr">                                            Introduction                               5
+           because there are exactly k distinct values less than or equal to 10. However,
+           if we were to adopt this deﬁnition, there would be no kth smallest element
+           for k = 6. Because A is sorted, it would be better to conclude that the
+           kth smallest is A[k] = 9. Note that all elements strictly less than 9 are
+           in A[1..4]; i.e., there are strictly fewer than k elements less than the kth
+           smallest. Furthermore, rearranging A would not change this fact. Likewise,
+           observe that all the elements in A[1..5] are less than or equal to 9; i.e.,
+           there are at least k elements less than or equal to the kth smallest. Again,
+           rearranging A would not change this fact.
+               Theaboveexamplesuggeststhattheproperdeﬁnitionofthekthsmallest
+           element of an array A[1..n]isthevaluex such that
+           • there are fewer than k elements A[i] &lt;xand
+           • there are at least k elements A[i] ≤ x.
+           It is possible to show, though we will not do so here, that for any array A[1..n]
+           and any positive integer k ≤ n, there is exactly one value x satisfying both
+           of the above conditions. We will therefore adopt this deﬁnition of the kth
+           smallest element.
+               The complete speciﬁcation for the selection problem is shown in
+           Figure 1.1. To express the data types of n and the elements of A,weuseNat
+           to denote the natural number type and Number to denote the number type.
+           Note that Nat is a subtype of Number —everyNat is also a Number.In
+           order to place fewer constraints on the algorithm, we have included in the
+           postcondition a statement that the elements of A[1..n] may be permuted (i.e.,
+           rearranged). In order for a speciﬁcation to be precise, the postcondition must
+           state when side-eﬀects such as this may occur. In order to keep speciﬁcations
+           from becoming overly wordy, we will adopt the convention that no values
+           may be changed unless the postcondition explicitly allows the change.
+             Figure 1.1  Speciﬁcation for the selection problem
+</div>
+    </div>
+  </body>
+</html>

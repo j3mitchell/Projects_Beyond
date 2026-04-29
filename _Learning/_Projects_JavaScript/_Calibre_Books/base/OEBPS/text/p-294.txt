@@ -1,0 +1,21 @@
+                                    Storage/Retrieval II: Unordered Keys                        275
+             table. We can then compute the new hash values for each k by looking up
+             h(k) and computing h(k)mod2m.
+                          31
+                 If p =2 −1andmisapowerof2,thenpmodm=m−1.Substituting
+             this value into (7.4), we see that the probability of a collision is
+                                       1 + m−1 < 1 +               1
+                                                  2             31      2
+                                       m      mp        m (2 −1)
+                                                        1      −61
+                                                     < m+2 .
+             7.6    Perfect Hashing
+             In this section, we consider a restricted form of Dictionary for which
+             Put and Remove are not allowed; i.e., updates will never be made to the
+             structure after it is created. In order for such a structure to be useful, we
+             need to modify the constructor to receive as input the elements to be stored.
+             The formal speciﬁcation of the ImmutableDictionary ADT is shown in
+             Figure 7.10.
+                 If we expect to make a large number of accesses to an ImmutableDic-
+             tionary, it might make sense to invest more time in constructing it if we
+              Figure 7.10    The ImmutableDictionary ADT

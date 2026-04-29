@@ -1,0 +1,38 @@
+                                    Storage/Retrieval II: Unordered Keys                        257
+              Figure 7.7     The Index operation for the DivisionMethod implementation of
+              HashFunction
+                 One advantage of the division method is that it can be applied quickly.
+             Because the multiplication is by a power of 2, it can be implemented by
+             shifting to the left by w bits. The addition then adds a w-bit number to
+             a number whose binary representation ends in w zeros; hence, the addition
+             can be accomplished via a bitwise or. Otherwise, there is only an application
+             of the mod operator for each word of the key.
+                 The eﬀectiveness of the division method as a hash function depends on
+             the value chosen for the table size. Knowing that we cannot prevent bad
+             cases from ever occurring, the best we can do is to try to avoid bad behavior
+             on cases which may be likely to occur. If data were random, our job would
+             be much simpler, because we could take advantage of this randomness to
+             generate a random distribution in the table. Real data sets, however, tend to
+             contain patterns. We need our hash function to perform well in the presence
+             of these patterns.
+                 Suppose, for example, that the table size m = 255, and that each byte of
+             the key is a character encoded in ASCII. From the binomial theorem ((6.15)
+             on page 242), we can write the key as
+                                     l               l
+                                    l−i                         l−i
+                                       256    k =       (255 +1)     k
+                                                i                      i
+                                   i=1              i=1
+                                                     l   l−i      
+                                                     l−i               j
+                                                 =                   255 k .
+                                                                j           i
+                                                    i=1 j=0
+             Each term of the inner sum such that j>0 is divisible by 255; hence,
+             computing the key mod 255 yields:
+                               	 l             
+                 l
+                                  i−1                         
+                                      256    k    mod255=          k mod255.
+                                              i                      i
+                                  i=1                          i=1

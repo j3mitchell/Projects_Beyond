@@ -1,0 +1,43 @@
+                                                  NP-Completeness                                        537
+              time of any simulation of an algorithmic step. Thus, if we have an algorithm
+              that runs in p(n) steps, the RAM simulation will run in no more than
+              p(p(n)) steps, which is still polynomial in n.Furthermore,ifthevaluesof
+              the natural numbers in the algorithm are bounded by p(n), then so are the
+              values in the memory locations of the RAM.
+                   Conversely, it is not hard to write an algorithm                 We must also make sure
+                                                                                          p(n)
+              to simulate a polynomial-time RAM. We can use                         that 2     bounds each
+              variables to store the value of the program counter                   constant appearing in the
+                                                                                    RAMprogram.
+              and the indices of the next available bits of the two
+              input streams. In addition, we can use a VArray (see Section 9.5) to store
+              the memory locations used by the RAM. Note that because the values of
+                                                                             p(n)
+              all memory locations must always be less than 2                    ,wherep(n)issome
+              polynomial in the number of bits in the two input streams, all memory
+                                                                                             p(n)
+              locations that can be accessed have addresses strictly less than 2                  .Wecan
+                                                       p(n)
+              therefore use a VArray of size 2              to keep track of the RAM’s memory. It
+              is then a straightforward matter to simulate the RAM using constant time
+              for each instruction, plus some constant time for initialization.
+                   Using RAMs, we now have a slightly diﬀerent characterization of NP.
+              Speciﬁcally, NP is the set of all decision problems X such that there exist
+              • polynomials p(n)andp(n); and
+              • aRAMM deciding a problem Y ⊆ I ×B,whereI is the set of instances
+                 for X;
+              such that
+              • M terminates within p(|x| +|φ|) steps on input (x,φ);
+                                                                                                  p(|x|+|φ|)
+              • all memory locations of M maintain values strictly less than 2
+                 given input (x,φ);
+              • for each x ∈ I, x ∈ X iﬀ there is a proof φ ∈Bsuch that (x,φ) ∈ Y;and
+              • for each x ∈ X,thereisaφ ∈Bsuch that (x,φ) ∈ Y and |φ|≤p(|x|).
+                   Thus, to reduce an arbitrary problem X ∈NPto Sat, we need to
+              construct from a given x ∈ I,whereI is the set of instances of X,aboolean
+              formula F such that F is satisﬁable iﬀ there is a φ ∈Bwith |φ|≤p(|x|)
+              such that M outputs 1 on input (x,φ). Furthermore, the running time of the
+              construction of F must be bounded by some polynomial in |x|. In designing
+              the construction, we may utilize p(n), p(n), and M, which depend only on
+              the problem X; however, the instance x is the input for the construction, so
+              that we cannot know it in advance.

@@ -1,0 +1,41 @@
+         530               Algorithms: A Top-Down Approach
+         and 3DM are all NP-complete in the strong sense. However, these results
+         are rather uninteresting because none of their instances contain numbers
+         that can become large in comparison to the length of the input without
+         rendering the problem trivial.
+           In what follows, we will show a problem with potentially large numbers
+         to be NP-complete in the strong sense. We will use a restricted form of
+         polynomial many-one reduction motivated by the following theorem.
+         Theorem 16.16. Let f be a polynomial many-one reduction from problem
+         X to problem Y,whereX is NP-hard in the strong sense. Suppose that f
+         satisﬁes the following properties:
+         (1) there is a polynomial p1 such that p1(|f(x)|) ≥|x| for every instance x
+            of X;and
+         (2) there is a two-variable polynomial p2 such that each integer constructed
+            has a value no greater than p2(|x|,μ(x)),whereμ(x) denotes the
+            maximum value of any integer in x.
+         Then Y is NP-hard in the strong sense.
+         Proof. Because X is NP-hard in the strong sense, there is some poly-
+         nomial p such that X is NP-hard. If the reduction is then applied to
+                          p
+         X , all numbers constructed will have values bounded by p (|x|,p(|x|)), by
+          p                                           2
+         Property 2. Furthermore, by Property 1, these values are no more than
+         p2(p1(|f(x)|),p(p1(|f(x)|))), which is a polynomial in the length of the
+         instance constructed. The reduction from X to Y therefore shows that Y
+                                          p
+         is NP-hard in the strong sense.                        
+           We say that a polynomial many-one reduction is a pseudopolynomial
+         reduction, denoted by ≤pp, if it satisﬁes the properties given in Theorem
+                            m
+         16.16.
+           Let us now consider other partitioning problems. For a ﬁxed natural
+         number k>1, the k-partition problem (k-Part) is deﬁned as follows. The
+         input consists of kn items, each having a positive integer weight, such that
+         the sum of the weights is Bn for some positive integer B.Furthermore,each
+         weight w must satisfy
+                               B <w< B .
+                              k+1       k−1
+         Thequestionweaskiswhethertheknitemscanbepartitionedintondisjoint
+         subsets, each having total weight exactly B. Note that the constraints on
+         the weights imply that each subset will contain exactly k items.

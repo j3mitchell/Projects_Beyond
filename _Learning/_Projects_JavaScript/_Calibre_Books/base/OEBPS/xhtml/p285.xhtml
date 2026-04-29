@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 285</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-285.jpg" alt="Page 285" width="1282" height="1882"/>
+      <div class="ocr">         266                Algorithms: A Top-Down Approach
+         ⇐: Suppose a and m are relatively prime. We will show that if ai mod m =
+         aj mod m,where0≤ i&lt;mand 0 ≤ j&lt;m,theni = j.Thus,eachofthe
+         mpossible values of i will result in a distinct value of ai mod m. Because
+         only m distinct values of ai mod m are possible, it will follow that one of the
+         values of i must yield ai mod m = b.
+            Suppose ai mod m = aj mod m. Then there exist natural numbers q1
+         and q2 such that
+                             ai −q1m = aj −q2m
+                              a(i −j)=(q1−q2)m,
+         so that a(i − j) is divisible by m. Because a and m are relatively prime, it
+         mustbethecasethat(i−j) is divisible by m. Given the ranges for i and j,
+         itmustbethecasethat|i−j| &lt;m. The only multiple of m with absolute
+         value strictly less than m is 0; hence, i = j.           
+            For our next universal family, we will interpret the keys as natural
+         numbers and assume that there is some maximum value for a key. Let
+         p be a prime number strictly larger than this maximum key value. Our
+         hash functions will consist of two steps. The ﬁrst step will map each key
+         to a unique natural number less than p. We will design this part so that,
+         depending on which hash function is used, a distinct pair of keys will be
+         mapped with uniform probability to any of the pairs of distinct natural
+         numbers less than p. The second step will apply the division method to scale
+         the value to an appropriate range.
+            For the ﬁrst step, let
+                            h   (k)=(ak+b)modp,                 (7.1)
+                             p,a,b
+         for a and b strictly less than p. Consider distinct keys k and k.Wethen
+         have
+          (h  (k) −h   (k)) mod p =((ak +b)modp−(ak +b)modp)modp
+           p,a,b    p,a,b
+                                =a(k−k)modp,
+         from Exercise 7.5. Because k − k =0andp is prime, Theorem 7.3 tells us
+         that for each natural number j&lt;p, there is a unique a,0≤ a&lt;p,such
+         that
+                         j = a(k −k)modp
+                           =(h   (k) −h  (k)) mod p,
+                              p,a,b    p,a,b
+</div>
+    </div>
+  </body>
+</html>

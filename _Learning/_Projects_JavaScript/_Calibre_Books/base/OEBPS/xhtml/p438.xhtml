@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 438</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-438.jpg" alt="Page 438" width="1282" height="1882"/>
+      <div class="ocr">                                        Depth-First Search                          419
+            Figure 13.5   Reachability algorithm for undirected graphs
+              Precondition: G refers to an undirected Graph, and i and j are Nats
+              strictly less than G.Size().
+              Postcondition: Returns true iﬀthereisapathinG from i to j.
+              Reachable(G,i,j)
+                n←G.Size(); sel ← new Selector(n)
+                pre ← new VisitCounter(n); post ← new VisitCounter(n)
+                ReachDFS(G,i,sel,pre,post)
+                return not sel.IsSelected(j)
+              Precondition: G refers to an undirected graph, i is a Nat such that
+              i&lt;G.Size(), sel refers to a Selector of size G.Size(), pre and post refer
+              to VisitCounters of size G.Size(), and sel.IsSelected(i)=true.
+              Postcondition: Unselects each j such that j is reachable from i in G ,
+              where G denotes the subgraph of G induced by the set of selected vertices.
+              ReachDFS(G,i,sel,pre,post)
+                sel.Unselect(i); pre.Visit(i); L ← G.AllFrom(i)
+                while not L.IsEmpty()
+                   next ← L.Head().Dest(); L ← L.Tail()
+                   if sel.IsSelected(next)
+                      ReachDFS(G,next,sel,pre,post)
+                post.Visit(i)
+               We can now traverse the graph using almost the same algorithm as
+           PrePostTraverse — the only diﬀerences are that pre and post are not
+           needed, and we must check that a vertex has not already been visited before
+           we traverse it. We call this traversal a depth-ﬁrst search (DFS). The entire
+           algorithm is shown in Figure 13.5. We retain pre and post in order to
+           maintain a close relationship between ReachDFSand PrePostTraverse.
+               Let G be an undirected Graph,andleti ∈ N such that i&lt;G.Size().
+           Further let sel be a Selector of size G.Size() in which all elements are
+           selected, and let pre and post be VisitCountersofsizeG.Size() in which
+           all values are 0. Supposewe invoke ReachDFS(G,i,sel,pre,post).Wedeﬁne
+                              
+           a directed graph G as follows, based on the behavior of this invocation:
+               
+           • G has the same vertices as G;
+               
+           • G has the edge (j,k)iﬀacallReachDFS(G,j,sel,pre,post)ismade,
+              which in turn calls ReachDFS(G,k,sel,pre,post).
+</div>
+    </div>
+  </body>
+</html>

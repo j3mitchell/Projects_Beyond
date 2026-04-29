@@ -1,0 +1,35 @@
+          30                  Algorithms: A Top-Down Approach
+             Suppose we wish to show that property P holds upon completion of a
+          given loop. Suppose further that we can show each of the following:
+          1. Initialization: The invariant holds prior to the ﬁrst loop iteration.
+          2. Maintenance: If the invariant holds at the beginning of an arbitrary
+            loop iteration, then it must also hold at the end of that iteration.
+          3. Termination: The loop always terminates.
+          4. Correctness: Whenever the loop invariant and the loop exit condition
+            both hold, then P must hold.
+          It is not hard to show by induction on the number of loop iterations that
+          if both the initialization and maintenance steps hold, then the invariant
+          holds at the end of each iteration. If the loop always terminates, then the
+          invariant and the loop exit condition will both hold when this happens. The
+          correctness step then guarantees that property P will hold after the loop
+          completes. The above four steps are therefore suﬃcient to prove that P
+          holds upon completion of the loop.
+             We now illustrate this proof technique by showing correctness of Max-
+          SumBU. In our informal justiﬁcation of this algorithm, we used equations
+          (1.1) and (1.2); however, because we did not prove these equations, our proof
+          of correctness should not use them.
+          Theorem 2.5. MaxSumBU satisﬁes its speciﬁcation.
+          Proof.  Suppose the precondition holds initially. We will show that when
+          the loop ﬁnishes, m contains the maximum subsequence sum of A[0..n−1],
+          so that the postcondition is satisﬁed. Note that the loop invariant states that
+          mis the maximum subsequence sum of A[0..i−1].
+          Initialization: Before the loop iterates the ﬁrst time, i has a value of 0.
+          Themaximumsubsequencesumof A[0..−1] is deﬁned to be 0. m is initially
+          assigned this value. Likewise, the maximum suﬃx sum of A[0..−1] is deﬁned
+          to be 0, and msuf is initially assigned this value. Therefore, the invariant
+          initially holds.
+          Maintenance: Suppose the invariant holds at the beginning of some
+          iteration. We ﬁrst observe that because the iteration occurs, 0 ≤ i ≤ n − 1;
+                                                        
+          hence, A[i] is a valid array location. Let msuf , m and i denote the values
+          of msuf, m and i, respectively, at the end of this iteration. Then

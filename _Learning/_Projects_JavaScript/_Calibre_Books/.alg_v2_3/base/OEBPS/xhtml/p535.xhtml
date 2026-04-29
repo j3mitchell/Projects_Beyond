@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 535</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-535.jpg" alt="Page 535" width="1282" height="1882"/>
+      <div class="ocr">           516                      Algorithms: A Top-Down Approach
+             Figure 16.5  Algorithm for constructing a CNF formula from a normalized expression
+             tree
+             Precondition: F is a BinaryTreeNode referring to a normalized boolean
+             expression tree, and m refers to a MutableNat larger than the absolute
+             valueofanyvariableinF.
+             Postcondition: Returns a ConsList representing a CNF formula F that
+             satisﬁes properties P -P with respect to F. m has a value larger than the
+                                 1  3
+             absolute value of any variable in the returned formula.
+             NormalizedToCnf(F,m)
+                root ←F.Root()
+                if root = and or root = or
+                   l ← NormalizedToCnf(F.LeftChild(),m)
+                   r ←NormalizedToCnf(F.RightChild(),m)
+                   if root = or
+                      x←m.Data(); l ←AddToClauses(l,x)
+                      r ←AddToClauses(r,−x); m.SetData(x+1)
+                   return Append(l,r)
+                else
+                   c ←new ConsList(root,new ConsList())
+                   return new ConsList(c,new ConsList())
+             Precondition: F is a (possibly empty) ConsList representing a CNF
+             formula, and α is a nonzero Int.
+             Postcondition: Returns a ConsList obtained by adding the literal α to
+             each clause in F.
+             AddToClauses(F, α)
+                if F.IsEmpty()
+                   return F
+                else
+                   h←newConsList(α,F.Head())
+                   t ← AddToClauses(F.Tail(),α)
+                   return new ConsList(h,t)
+               As a second example, let us further restrict our inputs by limiting
+           the number of literals in each clause. We say that a CNF formula is in
+           k-conjunctive normal form (or k-CNF) if no clause contains more than k
+           literals. We then deﬁne k-Sat to be the problem of determining satisﬁability
+           for a given k-CNF formula. Though we won’t show it here, it turns out that
+           2-Sat ∈P. In what follows, we will show that 3-Sat is NP-complete.
+</div>
+    </div>
+  </body>
+</html>

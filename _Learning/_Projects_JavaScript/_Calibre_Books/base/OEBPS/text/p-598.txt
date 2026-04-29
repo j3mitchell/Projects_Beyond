@@ -1,0 +1,24 @@
+                               Approximation Algorithms                 579
+          b. Use part (a) to prove that if there is a polynomial-time algorithm with
+            a bounded approximation ratio for approximating the size of a largest
+            clique in a given graph, then there is a polynomial approximation scheme
+            for this problem.
+          17.8  Notes
+          Theconcept of a polynomial-time approximation algorithm was ﬁrst formal-
+          ized by Gareyet al. [50] and Johnson [73]. In fact, much of the foundational
+          work in this area is due to Garey and Johnson — see their text [54] for a
+          summary of the early work. For example, they proved Theorem 17.4 [53]. A
+          detailed analysis of bin packing, including an 11B∗ +4 upper bound on the
+                                                  9
+          approximation ratio for ﬁrst-ﬁt decreasing, is given by Johnson [72]. This
+          boundwas later improved to 11B∗+ 2 by Dos´ a [31], who showed this bound
+                          17       9     3
+          to be tight. The 10B∗ upper bound for the ﬁrst-ﬁt algorithm is due to
+          Garey et al. [49], and a close relationship between best-ﬁt and ﬁrst-ﬁt was
+          established by Johnson et al. [71]. D´osa and Sgall [32] later showed that the
+          upper bound for best-ﬁt is also 17B∗.
+                                      10
+             Thepolynomialapproximation schemesuggested byExercise 17.1 for the
+          knapsack problem is due to Sahni [102]. The fully polynomial approximation
+          scheme of Section 17.2 is due to Ibarra and Kim [69]. Theorem 17.7 was
+          shown by Sahni and Gonzalez [101].

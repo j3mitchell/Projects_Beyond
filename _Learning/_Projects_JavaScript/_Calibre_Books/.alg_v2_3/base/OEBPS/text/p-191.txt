@@ -1,0 +1,37 @@
+            172                      Algorithms: A Top-Down Approach
+            the arithmetic mean, or simple average, of all of the lengths:
+                                   E[lenT]=  lenT(e)P(e)
+                                              e∈PathT
+                                           = 1         lenT(e).
+                                              n+1e∈Path
+                                                          T
+            Furthermore, because the lengths of all of the paths are the same, E[lenT]
+            must be this length, which we will denote by k.
+                                                                                        −k
+                We have deﬁned the probability of a path of length k to be 2               .
+            Furthermore, we have seen that all probabilities are 1/(n+1). We therefore
+            have
+                                            −k
+                                           2   =1/(n+1).
+            Solving for k,wehave
+                                            k =lg(n+1).
+            Thus, E[lenT]=lg(n+1).
+                The discrete random variable lenT is always a natural number. When
+            this is the case, its expected value is often easier to analyze. To show why,
+            weﬁrst need to deﬁne an event, which is any subset of the elementary events
+            in a discrete probability space. The probability of an event A is the sum of
+            the probabilities of its elementary events; i.e.,
+                                          P(A)=P(e).
+                                                   e∈A
+            Note that because the sum of the probabilities of all elementary events in
+            a discrete probability space is 1, the probability of an event is never more
+            than 1.
+                The following theorem gives a technique for computing expected values
+            of discrete random variables that range over the natural numbers. It uses
+            predicates like “f = i” to describe events; e.g., the predicate “f = i” deﬁnes
+            the event in which f has the value i,andP(f = i) is the probability of this
+            event.
+            Theorem 5.5. Let f : S → N be a discrete random variable. Then
+                                                 ∞
+                                         E[f]=P(f ≥i).
+                                                 i=1

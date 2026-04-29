@@ -1,0 +1,43 @@
+                                 Storage/Retrieval II: Unordered Keys                   261
+            typically be satisﬁed if we choose an r with 5-9 bits (i.e., between 16 and
+            512). The division method can then be used to obtain an index into the
+            table. Because it will be applied to a single word, its computation consists
+            of a single mod operation.
+            7.4   Universal Hashing
+            Though the techniques discussed so far are widely used and work well in
+            practice, we cannot prove much of anything useful about their performance.
+            In this section, we consider how to use randomization to yield a hashing
+            strategy with provably good expected behavior.
+                We cannot simply store data items in random array locations because
+            we would then be unable to ﬁnd them quickly. We can, however, randomly
+            select a hash function from a set of alternatives. If the set of potential hash
+            functions is chosen well, we can prove that the resulting hash table will be
+            expected to have few collisions.
+                Let U be our universe of keys, and let H be some countable set of hash
+            functions of the form h : U → M,whereM is the set of natural numbers less
+            than m. Let us also suppose that each element of H has some probability, so
+            that H is a discrete probability space. Two distinct keys k and k collide for
+                                                                        1      2
+            h ∈Hiﬀ h(k )=h(k ). Taking h(k )andh(k ) as random variables over
+                          1        2               1          2
+            H, we see that the probability that these keys collide is P(h(k )=h(k )). If
+                                                                             1       2
+            two values from M are chosen independently with uniform probability, then
+            the probability that they are the same is 1/m. We therefore say that a H is
+            a universal family of hash functions if for any two keys in U, the probability
+            that they collide is no more than 1/m.AsweshowedinSection7.2,this
+            probability bound implies that for any hash table access, the expected length
+            of the list searched is in Θ(1).
+                Several universal families of hash functions have been deﬁned, but most
+            of them require some number theory in order to prove that they are universal
+            families. In what follows, we present a universal family that is easier to
+            understandat the cost of requiring a bit more computational overhead. Then
+            in the next section, we will show how number theory can be utilized to deﬁne
+            universal families whose hash functions can be computed more eﬃciently.
+                Suppose each key k ∈ U is encoded by l bits. Ideally, we would like to
+            generate each function mapping U into M with equal probability. However,
+                                                    l
+            doing so is too expensive. There are 2 keys in U,andm possible values to
+            which each could be mapped. The total number of possible hash functions is
+                         l
+            therefore m2 . Uniquely identifying one of these functions therefore requires

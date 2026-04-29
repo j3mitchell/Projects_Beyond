@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 028</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-028.jpg" alt="Page 028" width="1282" height="1882"/>
+      <div class="ocr">                                       Introduction                          9
+          formally justify the reasoning used above — namely, that we can assume
+          that a recursive call meets its speciﬁcation, provided its input is of a smaller
+          size than that of the original call, where the size is some natural number.
+             The ability to prove algorithm correctness is quite possibly the most
+          underrated skill in the entire discipline of computing. First, knowing how
+          to prove algorithm correctness also helps us in the design of algorithms.
+          Speciﬁcally, once we understand the mechanics of correctness proofs, we can
+          design the algorithm with a proof of correctness in mind. This approach
+          makes designing correct algorithms much easier. Second, the exercise of
+          working through a correctness proof — or even sketching such a proof —
+          often uncovers subtle errors that would be diﬃcult to ﬁnd with testing alone.
+          Third, this ability brings with it a capacity to understand speciﬁc algorithms
+          on a much deeper level. Thus, the ability to prove algorithm correctness is
+          a powerful tool for designing and understanding algorithms. Because these
+          activities are closely related to programming, this ability greatly enhances
+          programming abilities as well.
+             The proof techniques we will introduce ﬁt nicely with the top-down
+          approach to algorithm design. As a result, the top-down approach itself
+          becomes an even more powerful tool for designing and understanding
+          algorithms.
+          1.4  Algorithm Analysis
+          Once we have a correct algorithm, we need to be able to evaluate how
+          well it does its job. This evaluation essentially boils down to an analysis
+          of the resource usage of the algorithm, where the resources might be time or
+          memory, for example. In Chapter 3, we will present tools for mathematically
+          analyzing such resource usage. For now, let us discuss this resource usage
+          less formally.
+             Consider the InsertSort algorithm given in Figures 1.3 and 1.4, for
+          example. If we were to implement this algorithm in a programming language
+          and run it on a variety of examples, we would discover that for suﬃciently
+          large inputs — typically a few thousand elements — the program will
+          terminate abnormally due to a stack overﬂow. This problem is not, strictly
+          speaking, an error in the algorithm, but instead is a reﬂection of the fact
+          that it uses the machine’s runtime stack ineﬃciently. Using the analysis
+          tools of Chapter 3, it is possible to show that this algorithm’s stack usage
+          is linear in the size of the array. Because the runtime stack is usually much
+          smaller than the total memory available, we usually would like the stack
+</div>
+    </div>
+  </body>
+</html>

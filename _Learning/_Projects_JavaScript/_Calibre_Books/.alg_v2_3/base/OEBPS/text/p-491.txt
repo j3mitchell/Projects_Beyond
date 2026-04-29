@@ -1,0 +1,46 @@
+           472                     Algorithms: A Top-Down Approach
+            Figure 15.1   The Fast Fourier Transform algorithm
+                 Precondition: p[0..n−1] is an array of Complexes, n is a Nat containing
+                 a power of 2, and ω is a Complex containing a principal nth root of unity.
+                 Postcondition: Returns the DFT of p with respect to ω.
+                 Fft(p[0..n−1],ω)
+                   d ←new Array[0..n−1]; mid ←n/2
+                   if n =1
+                      d[0] ← p[0]
+                   else
+                      p ←new Array[0..mid−1]; p ←new Array[0..mid−1]
+                      for i ← 0 to mid −1
+                        p [i] ← p[2i]; p [i] ← p[2i +1]
+                                  2
+                      d ←Fft(p,ω)
+                                   2
+                      d ←Fft(p ,ω)
+                      υ ←1
+                      // Invariant: d[0..i−1] and d[mid..mid +i−1] contain the correct
+                      // values for the DFT of p,andυ = ωi.
+                      for i ← 0 to mid −1
+                        d[i] ← d [i]+υ(d [i])
+                        d[i + mid] ← d [i] − υ(d [i])
+                        υ ←υω
+                   return d
+           Theorem 15.3. Let A be the n × n matrix such that for 0 ≤ i<nand
+                              ij                                                  −1
+           0 ≤ j<n,A =ω , where ω is a principal nth root of unity. Then A           is
+                        ij
+           the matrix B, where Bij = ω−ij/n.
+           Proof.    Wemust show that AB = I,where
+                                            ⎧
+                                            ⎨1ifi=j
+                                       Iij =
+                                            ⎩0otherwise,
+           for 0 ≤ i<nand 0 ≤ j<n.LetC =AB.Then
+                                             n−1
+                                       Cij = A B
+                                                  ik  kj
+                                             k=0
+                                             n−1
+                                           =ωikω−kj/n
+                                             k=0
+                                               n−1
+                                           = 1 ωk(i−j).
+                                             n k=0

@@ -1,0 +1,29 @@
+           432                     Algorithms: A Top-Down Approach
+            Figure 13.12   TopSortSearcher implementation of Searcher
+            TopSortSearcher(n)
+               order ← new Array[0..n−1]; loc ← n
+            TopSortSearcher.PostProc(i)
+               loc ← loc −1; order[loc] ← i
+            Figure 13.13   Topological sort algorithm using depth-ﬁrst search
+             Precondition: G is a directed acyclic graph.
+             Postcondition: Returns an array listing the vertices of G in topological
+             order.
+             DfsTopSort(G)
+                n←G.Size(); s ← new TopSortSearcher(n)
+                DfsAll(G,s)
+                return s.Order()
+           running time is clearly in Θ(n+a), where n is the number of vertices and a
+           is the number of edges in G. We leave the proof of correctness as an exercise.
+           13.6   Strongly Connected Components
+           Let G =(V,E) be a directed graph. We say that G is strongly connected
+           if for each pair of vertices u and v, there is a path from u to v. For an
+           arbitrary directed graph G,letS ⊆ V.WesaythatS is a strongly connected
+           component of G if
+           • the subgraph of G induced by S is strongly connected; and
+           • for any subset S ⊆ V,ifS ⊆ S and the subgraph of G induced by S is
+              strongly connected, then S = S.
+           Thus, the strongly connected component containing a given vertex i is the
+           set of vertices j such that there are paths from i to j and from j to i.
+               It is easily seen that the strongly connected components of a directed
+           graph G =(V,E) partition the V into disjoint subsets. We wish to design
+           an algorithm to ﬁnd this partition.

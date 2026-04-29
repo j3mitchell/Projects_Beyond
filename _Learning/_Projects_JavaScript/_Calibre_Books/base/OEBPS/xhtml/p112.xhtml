@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 112</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-112.jpg" alt="Page 112" width="1282" height="1882"/>
+      <div class="ocr">                          Analyzing Algorithms          93
+          Note that for f : N → R and g : R≥0 → R,iff(n)=g(n) for every
+        n∈N,it follows immediately from the above deﬁnition that
+                          lim f(n) = lim g(x),
+                         n→∞     x→∞
+        whenever the latter limit exists. It is also possible to deﬁne inﬁnite limits,
+        but for our purposes we only need ﬁnite limits as deﬁned above. Given this
+        deﬁnition, we can now formally relate limits to asymptotic notation.
+        Theorem 3.60. Let f : N → R≥0 and g : N → R≥0.Then
+        1.g(n) ∈ o(f(n)) iﬀ limn→∞g(n)/f(n)=0and
+        2.g(n) ∈ Θ(f(n)) if limn→∞g(n)/f(n)=x&gt;0.
+          Note that part 3.60 is an “if and only if”, whereas part 3.60 is an “if”.
+        The reason for this is that there are four possibilities, given arbitrary f and
+        g:
+        1. limn→∞g(n)/f(n) = 0. In this case g(n) ∈ o(f(n)) and f(n) ∈ ω(g(n)).
+        2. limn→∞f(n)/g(n) = 0. In this case f(n) ∈ o(g(n)) and g(n) ∈ ω(f(n)).
+        3. limn→∞g(n)/f(n)=x&gt;0. In this case, g(n) ∈ Θ(f(n)) and f(n) ∈
+         Θ(g(n)). (Note that limn→∞f(n)/g(n)=1/x &gt; 0.)
+        4. Neither limn→∞g(n)/f(n) nor limn→∞f(n)/g(n) exists. In this case, we
+         can only conclude that g(n) ∈ o(f(n)) and f(n) ∈ o(g(n)) — we do not
+         have enough information to determine whether g(n) ∈ Θ(f(n)).
+        Proof of Theorem 3.60
+        1. This follows immediately from the deﬁnitions of limit and o.
+        2. Suppose limn→∞g(n)/f(n)=x&gt;0. Then for every positive real number
+         c, there is a natural number n0 such that
+                         x−c&lt;g(n)/f(n)&lt;x+c
+         whenever n ≥ n0. Multiplying the above inequalities by f(n), we have
+                      (x−c)f(n) &lt;g(n) &lt; (x+c)f(n).
+         Because these inequalities hold for every positive real number c,and
+         because x&gt;0, we may choose c = x/2, so that both x − c and x + c
+         are positive. Therefore, g(n) ∈ Θ(f(n)).       
+          Apowerful tool for evaluating limits of the form given in Theorem 3.60
+        is L’Hˆopital’s rule, which we present without proof in the following theorem.
+</div>
+    </div>
+  </body>
+</html>

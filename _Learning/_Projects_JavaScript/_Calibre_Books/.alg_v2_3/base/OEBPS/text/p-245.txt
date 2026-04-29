@@ -1,0 +1,27 @@
+           226                     Algorithms: A Top-Down Approach
+           6.4   Skip Lists
+           Weconclude this chapter by returning to the idea of using an ordered linked
+           list to implement OrderedDictionary. Recall that the diﬃculty with this
+           idea is that items must be accessed sequentially, so that a binary search
+           cannot be used to ﬁnd an item. A skip list overcomes this diﬃculty by using
+           additional references to skip over portions of the list (see Figure 6.23). Using
+           these additional references, a binary search can be approximated.
+               The main building block for a skip list is the data type SkipListNode,
+           which represents a data item, its key, a level n ≥ 1, and a sequence of n
+           values, each of which is either a SkipListNode or empty. The representation
+           consists of three variables:
+           • data:adataitem;and
+           • key:aKey;
+           • links[1..n]: an array of (possibly nil) SkipListNodes.
+           We interpret data as the represented data item, key as its associated key,
+           SizeOf(links)asthelevel of the SkipListNode,andlinks[i]astheith
+           element of the sequence, where empty is represented by nil. We allow
+           read access to key and data. The complete implementation is shown in
+           Figure 6.24.
+               We represent the OrderedDictionary with four variables:
+           • start: a non-nil SkipListNode;
+           • end: a non-nil SkipListNode;
+           • maxLevel:aNat;and
+           • size:aNat.
+            Figure 6.23   Askip list
+              Note:

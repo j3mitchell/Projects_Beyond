@@ -1,0 +1,39 @@
+                    Approximation Algorithms 569
+      to the problem, we can ﬁnd such an algorithm. The metric traveling
+      salesperson problem is the restriction of the traveling salesperson problem to
+      inputs in which the edges of the graph satisfy the triangle inequality; i.e., if
+      u, v,andw are vertices, then
+             weight({u,w}) ≤ weight({u,v})+weight({v,w}).
+      The triangle inequality is satisﬁed, for example, if the vertices represent
+      points in the plane, and the edge weights represent distances. In what
+      follows, we will present a polynomial-time approximation algorithm yielding
+      an approximation ratio bounded by 2 for this problem.
+        We ﬁrst observe that if we remove any edge from a Hamiltonian cycle,
+      we obtain a spanning tree of the graph. Furthermore, the weight of this
+      spanning tree must be less than the weight of the Hamiltonian cycle. Hence,
+      an MSTwill have a weight strictly less than the weight of a minimum-weight
+      Hamiltonian cycle. Now consider a tour of an MST that follows a depth-ﬁrst
+      search — that is, we go from vertex u to vertex v when the call on u makes
+      acallonv, and we go from v to u when the call on v returns. In this way,
+      we traverse each edge exactly twice and reach each vertex at least once,
+      returning to the vertex from which we started. Clearly, the weight of the
+      edges in this tour (counting each edge exactly twice) is less than twice the
+      weight of a minimum-weight Hamiltonian cycle.
+        We now wish to convert this tour to a Hamiltonian cycle by taking
+      shortcuts. Speciﬁcally, when the tour would return to a vertex that it has
+      already reached, we skip ahead to the next vertex in the tour that has not
+      yet been reached (see Figure 17.3). When we have reached all vertices, we
+      return to the starting point.
+        It is easily seen by induction that if the triangle inequality is satisﬁed,
+      then the weight of edge {u,v} is no more than the sum of the weights of
+      the edges on any simple path from u to v. It is easily seen that when a path
+      from u to v is replaced by edge {u,v} in the above conversion, that path is
+      a simple path, because all edges in the tour that reach vertices that have
+      already been reached must go from children to parents; hence, the path in
+      the tour from u to v takes edges from children to parents, followed by a
+      single edge from a parent to v, which is reached for the ﬁrst time in the
+      tour. Clearly, no vertex can be repeated in such a path. As a result, the
+      weight of this Hamiltonian cycle is less than twice the weight of an optimal
+      Hamiltonian cycle.
+        Notice that because this Hamiltonian cycle reaches the vertices in
+      the same order that they are ﬁrst reached in the depth-ﬁrst search, the

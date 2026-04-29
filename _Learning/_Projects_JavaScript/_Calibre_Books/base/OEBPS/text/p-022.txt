@@ -1,0 +1,28 @@
+                                      Chapter 1
+                                 Introduction
+          A large software system consists of many components, each designed to
+          perform a speciﬁc task. The overall quality of a given system is determined
+          largely by how well these components function individually and interact
+          with each other and the external environment. The focus of this book is
+          on individual components — algorithms and data structures — that can be
+          used in a wide variety of software systems. In this chapter, we will present
+          an overview of what these components are and how we will study them
+          throughout the remainder of the book. In the course of this overview, we
+          will illustrate a top-down approach for thinking about both algorithms and
+          data structures. This approach will provide an essential framework for both
+          designing and understanding algorithms and data structures.
+          1.1  Speciﬁcations
+          Before we can design or analyze any software component — including an
+          algorithm or a data structure — we must ﬁrst know what it is supposed
+          to accomplish. A formal statement of what a software component is meant
+          to accomplish is called a speciﬁcation. Here, we will discuss speciﬁcally the
+          speciﬁcation of an algorithm. The speciﬁcation of a data structure is similar,
+          but a bit more involved. For this reason, we will wait until Chapter 4 to
+          discuss the speciﬁcation of data structures in detail.
+             Suppose, for example, that we wish to ﬁnd the kth smallest element
+          of an array of n numbers. Thus, if k = 1, we are looking for the smallest
+          element in the array, or if k = n, we are looking for the largest. We will refer
+          to this problem as the selection problem.Evenforsuchaseeminglysimple
+          problem, there is a potential for ambiguity if we are not careful to state the
+          problem precisely. For example, what do we expect from the algorithm if k
+                                            3

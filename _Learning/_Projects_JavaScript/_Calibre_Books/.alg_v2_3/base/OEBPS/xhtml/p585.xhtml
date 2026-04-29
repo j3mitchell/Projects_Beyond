@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 585</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-585.jpg" alt="Page 585" width="1282" height="1882"/>
+      <div class="ocr">           566                     Algorithms: A Top-Down Approach
+            Figure 17.2   First-ﬁt approximation algorithm for bin packing
+              Precondition: W is a positive Nat, and w[1..n]isanarrayofpositive
+              Nats such that for 1 ≤ i ≤ n, w[i] ≤ W.
+              Postcondition: Returns an array B[1..k]ofConsListsofNats i such
+              that 1 ≤ i ≤ n. For 1 ≤ i ≤ n, i occurs in exactly one ConsList in B[1..k].
+              For 1 ≤ i ≤ k,ifS is the set of integers in B[i], then
+                                               wj ≤ W.
+                                           j∈S
+              BinPackingFF(W, w[1..n])
+                B←newArray[1..n]; slack ←new Array[1..n]; numBins ← 0
+                for i ← 1 to n
+                   j ←1
+                   while j ≤ numBins and w[i] &gt; slack[j]
+                      j ←j+1
+                   if j&gt;numBins
+                      numBins ←numBins+1;B[j]←new ConsList(); slack[j] ← W
+                   B[j] ← new ConsList(i,B[j]); slack[j] ← slack[j]−w[i]
+                return B[1..numBins]
+           is placed, it cannot increase the number of bins that are no more than half
+           full. Suppose w[i] ≤ W/2. Then if there is a bin that is no more than half
+           full, w[i] will ﬁt into this bin. Thus, the only case in which the number of
+           bins that are no more than half full increases is if there are no bins that are
+           no more than half full. In this case, the number cannot be increased to more
+           than one.
+               We conclude that the packing returned by this algorithm has at most
+           one bin that is no more than half full. Suppose this packing consists of k
+           bins. The total weight must therefore be strictly larger than (k − 1)W/2.
+           Theoptimal packing must therefore contain more than (k−1)/2bins.Thus,
+           the number of bins in the optimal packing is at least
+                                           	              	
+                                       k−1 +1= k+1
+                                         2              2
+                                                  ≥k/2.
+           The approximation ratio is therefore at most 2.                           
+</div>
+    </div>
+  </body>
+</html>

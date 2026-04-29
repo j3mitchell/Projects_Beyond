@@ -1,0 +1,41 @@
+           170                    Algorithms: A Top-Down Approach
+           SimpleHeap.Merge performs badly because all recursive calls use right
+           children, and their results all form right children. Leftist heaps and skew
+           heaps avoid this bad performance by using the results of the recursive calls
+           as left children, at least part of the time. Another approach is to use diﬀerent
+           children in diﬀerent calls. Speciﬁcally, when we make a recursive call, we can
+           ﬂipacointodeterminewhichchildtouse.
+              The resulting Merge function is shown in Figure 5.12; the remainder
+           of the implementation of RandomizedHeap is identical to the implemen-
+           tations of SimpleHeap and SkewHeap. We assume that the FlipCoin
+           function returns heads or tails randomly with uniform probability. Thus, each
+           call to FlipCoin returns heads with probability 1/2, regardless of the results
+           of any prior calls. This function can typically be implemented using a built-
+           in random number generator. Most platforms provide a function returning
+           random values uniformly distributed over the range of signed integers on
+           that platform. In a standard signed integer representation, the negative
+           values comprise exactly half the range. The FlipCoin function can therefore
+           generate a random integer and return heads iﬀ that integer is negative.
+              It usually makes no sense to analyze the worst-case running time for a
+           randomized algorithm, because the running time usually depends on random
+           events. For example, if a given heap consists of a single path with n nodes, the
+           algorithm could follow exactly that path. However, this could only happen
+           for one particular sequence of n coin ﬂips. If any of the ﬂips diﬀer from
+           this sequence, the algorithm reaches a base case and terminates at that
+           point. Because the probability of ﬂipping this exact sequence is very small
+           for large n, a worst-case analysis seems inappropriate. Perhaps more to the
+           point, a worst-case analysis would ignore the eﬀect of randomization, and so
+           does not seem appropriate for a randomized algorithm.
+              Instead, we can analyze the expected running time of a randomized
+           algorithm. The goal of expected-case analysis is to bound the average
+           performance over all possible executions on a worst-case input. For an
+           ordinary deterministic algorithm, there is only one possible execution on
+           any given input, but for randomized algorithms, there can be many possible
+           executions depending on the random choices made.
+              Expected-case analysis is based on the expected    Aset is said to countable if
+           values of random variables over discrete probability  each element can be labeled
+           spaces. A discrete probability space is a countable   with a unique natural num-
+                                                                 ber.
+           set of elementary events,eachhavingaprobability.
+           For an elementary event e in a discrete probability space S,wedenotethe
+           probability of e by P(e). For any discrete probability space S,werequire

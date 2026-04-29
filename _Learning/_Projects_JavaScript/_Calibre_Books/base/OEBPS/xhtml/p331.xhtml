@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 331</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-331.jpg" alt="Page 331" width="1282" height="1882"/>
+      <div class="ocr">          312                   Algorithms: A Top-Down Approach
+          Graph.AllFrom ensures that any Edge in the ConsList returned by
+          this operation will have natural numbers for source and dest and a non-nil
+          value for data.
+             In the next two sections, we will consider two applications of the Graph
+          ADT. Each of these applications will result in a graph algorithm. We will
+          then examine two implementations of Graph and analyze the running
+          times of their operations. We will also analyze the space usage of each
+          implementation. Using these analyses, we will analyze the running times
+          of the two algorithms with each of these implementations.
+          9.1  Universal Sink Detection
+          Our ﬁrst example is somewhat contrived, but it serves as a useful introduc-
+          tion to graph algorithms. To begin, we deﬁne a sink in a directed graph
+          G=(V,E)tobeavertexv with no outgoing edges. A universal sink is a
+          sink v such that for every vertex u = v,(u,v) ∈ E. In this section, we will
+          examine the problem of ﬁnding a universal sink in a directed graph, if one
+          exists.
+             We ﬁrst observe that a directed graph can have at most one universal
+          sink. Let us therefore consider the related problem of returning a universal
+          sink in a nonempty graph if one exists, or returning an arbitrary vertex
+          otherwise. We will then reduce the universal sink detection problem to this
+          variant. Suppose we consider any two distinct vertices, u and v (if there is
+          only one vertex, clearly it is a universal sink). If (u,v) ∈ E,thenu cannot be
+                                                         
+          a sink. Otherwise, v cannot be a universal sink. Let G be the graph obtained
+          by removing from G one vertex x that is not a universal sink, along with
+          all edges incident on x.IfG has a universal sink w,thenw must also be a
+                           
+          universal sink in G . We have therefore transformed this problem to a smaller
+          instance. Because this reduction is a transformation, we can implement it
+          using a loop.
+             In order to implement this algorithm using the Graph ADT, we need to
+          generalize the problem to a subgraph of G comprised of the vertices i,...,j
+          and all edges between them. If j&gt;i, we can then eliminate either i or j
+          from the range of vertices, depending on whether (i,j) is an edge. Note that
+          by generalizing the problem in this way, we do not need to modify the graph
+          whenweeliminate vertices — we simply keep track of i and j, the endpoints
+          of the range of vertices we are considering. If there is an edge (i,j), we
+          eliminate vertex i by incrementing i; otherwise, we eliminate vertex j by
+          decrementing j. When all vertices but one have been eliminated (i.e., when
+          i = j), the remaining vertex must be the universal sink if there is one.
+</div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,41 @@
+                             Approximation Algorithms              563
+            Wecanclearly compute the scaled values in O(n)time.Ifv ≥ 2(k+1)n,
+         the sum of the scaled values is no more than
+                                nv =  nv 
+                                d       v
+                                      (k+1)n
+                                  ≤    nv
+                                     v−(k+1)n
+                                      (k+1)n
+                                     (k +1)n2v
+                                  = v−(k+1)n
+                                     (k +1)n2v
+                                  ≤    v/2
+                                  =2(k+1)n2.
+                                                            3
+         In this case, the dynamic programming algorithm runs in O(kn )time.
+            If v<2(k +1)n,thend = 1, so that we use the original values. In this
+         case, the sum of the values is no more than
+                                nv < 2(k +1)n2,
+                                                               3
+         so that again, the dynamic programming algorithm runs in O(kn )time.
+                                                                   3
+         Thus, the total running time of the approximation algorithm is in O(kn ).
+         Because this running time is polynomial in k and n, and because the
+         approximation ratio is no more than 1+1, this algorithm is a fully polynomial
+                                        k
+         approximation scheme.
+         17.3  Bin Packing
+         Exercise 16.27 introduced the bin packing problem as a decision problem.
+         Its input consists of a set of items, each having a positive integer weight wi,
+         a positive integer weight bound W, and a positive integer k.Thequestion
+         we ask is whether the items can be partitioned into k disjoint subsets, each
+         having a total weight of no more than W. The corresponding optimization
+         problem does not include the input k, but instead asks for the minimum
+         number of subsets into which the items can be partitioned such that the
+         weight bound is satisﬁed. As is suggested by Exercise 16.27, the decision
+         problem BP is strongly NP-complete. As a result, it is easily seen that the
+         optimization problem is NP-hard in the strong sense.
+            Ideally, we would like to have a fully polynomial approximation scheme
+         for bin packing. However, the following theorem tells us that unless P = NP,
+         a fully polynomial approximation scheme does not exist.

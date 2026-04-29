@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 365</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-365.jpg" alt="Page 365" width="1282" height="1882"/>
+      <div class="ocr">         346                 Algorithms: A Top-Down Approach
+         In order to be able to apply the induction hypothesis to each f(c n), we
+                                                               i
+         need c n &gt; 0. Therefore we assume that n ≥ n ,where
+               i                                2
+                         n ≥max{n ,n,1/c |1≤i≤m}.
+                          2        0  1   i
+         Let
+                                       m
+                                   c = c.
+                                          i
+                                       i=1
+         By the Induction Hypothesis,
+                                     m
+                              f(n) ≤ bc n+an
+                                          i
+                                     i=1
+                                       m
+                                   ≤bnc +an
+                                          i
+                                       i=1
+                                   =bcn+an
+                                   =(bc+a)n.
+         Thus, f(n) ≤ bn if
+                                 bc +a ≤ b
+                                   a a ≤ b(1 −c)
+                                 1−c ≤b,
+         as 1 −c&gt;0.
+         Base: We must still show the claim for 0 &lt;n&lt;n. In other words, we need
+                                                 2
+         b ≥ f(n)/n for 0 &lt;n&lt;n. We can satisfy this constraint and the one above
+                             2
+         if b =max{a/(1 − c),f(n)/n | 0 &lt;n&lt;n} (note that because this set is
+                                            2
+         ﬁnite and nonempty, it must have a maximum element).        
+            Returning to recurrence 10.4, we see that Theorem 10.2 applies if M&gt;4.
+         Thus, if we set M =5,wehavef(n) ∈ O(n). The entire algorithm is shown
+         in Figure 10.5.
+            Now that we have described the algorithm precisely, let us analyze its
+         running time more carefully to be sure that it is, in fact in Θ(n). It is easily
+         seen that the running time is in Ω(n). We need for the recurrence
+                         f(n) ∈ f(n/5)+f(3n/4)+O(n)          (10.5)
+</div>
+    </div>
+  </body>
+</html>

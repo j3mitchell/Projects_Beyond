@@ -1,0 +1,41 @@
+       382           Algorithms: A Top-Down Approach
+       two bits per character, yielding a bit string of length 22. However, the bit
+       string produced by the given encoding has length 21.
+         The speciﬁc problem we wish to address in this section is that of
+       producing a tree that yields a minimum-length encoding for a given text.
+       We will not concern ourselves with the counting of the characters in the
+       text; rather, we will assume that a frequency table has been produced and is
+       provided as our input. This frequency table gives the number of occurrences
+       of each character in the text. To simplify matters, we will assume that none
+       of the characters in the table has a frequency of 0. Furthermore, we will not
+       concern ourselves with producing the encoding from the tree; i.e., our output
+       consists solely of a binary tree storing the information we need in order to
+       extract each character’s code.
+         Weﬁrstneedtoconsider how we can determine the length of an encoded
+       string for a particular encoding tree. Note that when we decode a bit string,
+       wetraverse exactly one edge in the tree for each bit of the encoding. One way
+       to determine the length of the encoding is therefore to compute the number
+       of times each edge would be traversed during decoding. A given edge (u,v)
+       is traversed once for each occurrence of each character in the subtree rooted
+       at v. For a subtree t, let us therefore deﬁne weight(t) to be the total number
+       of occurrences of all characters in t. For an encoding tree T,wecanthen
+       deﬁne cost(T) to be the sum of the weights of all proper subtrees of T.
+       (Note that weight(T) will always be the length of the given text.) cost(T)
+       then gives the length of the encoding based on T. For a given frequency
+       table, we deﬁne a Huﬀman tree to be an encoding tree with minimum cost
+       for that table.
+         Let us now generalize the problem so that the input is a collection of
+       trees, t ,...,t , each of which encodes a portion of the frequency table. We
+           1   n
+       assume that each character in the frequency table occurs in exactly one
+       of the input trees, and that the frequency table has a Huﬀman tree that
+       contains all of the input trees as subtrees. Note that if all of the trees are
+       single nodes, this input is just the information from the frequency table. If
+       the input consists of more than one tree, we need to merge two of the trees
+       by making them the children of a new root. Furthermore, we need to be able
+       to do this so that the frequency table has a Huﬀman tree containing all of
+       the resulting trees as subtrees. We claim that merging two trees of minimum
+       weight will produce such a tree.
+       Theorem 11.3. Let T be a Huﬀman tree for a frequency table F,andlet
+       t ,...,t be subtrees of T such that n>1 and each leaf of T occurs in exactly
+       1    n

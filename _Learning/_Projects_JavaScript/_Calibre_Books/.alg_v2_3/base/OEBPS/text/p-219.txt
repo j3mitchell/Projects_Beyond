@@ -1,0 +1,20 @@
+           200                      Algorithms: A Top-Down Approach
+           a sequential search; hence, look-ups will be slow. In order to provide
+           fast updates and retrievals, we need a linked structure on which we can
+           approximate a binary search.
+           6.1   Binary Search Trees
+           ConsiderthebinarytreestructureshowninFigure6.5. Integerkeys ofseveral
+           data items are shown in the nodes. Note that the value of the root is roughly
+           the median of the keys in the structure; i.e., about half of the remaining keys
+           are smaller. The smaller keys are all in the left child, whereas the larger keys
+           are all in the right child. The two children are then structured in a similar
+           way. Thus, if our search target is smaller than the key at the current node,
+           welook in the left child, and if it is larger, we look in the right child. Because
+           this type of search approximates a binary search, this structure is called a
+           binary search tree.
+               More formally we deﬁne a binary search tree (BST) to be a binary tree
+           satisfying the following properties:
+           • Each node contains a data item together with its key.
+           • If the BST is nonempty, then both of its children are BSTs, and the key
+              in its root node is
+             Figure 6.5  Abinary search tree

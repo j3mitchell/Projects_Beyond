@@ -1,0 +1,46 @@
+                                        Disjoint Sets                           301
+                                300
+           no more than about 2    . Hence, there is not nearly enough matter in the
+                                                                          A4(1)
+           universe to store A (1) in binary. Because α(n) ≤ 4 for all n<2     ,we
+                             4
+           can see that α grows very slowly.
+              To summarize, we deﬁne our potential function Φ so that
+                                              n−1
+                                       Φ(s)=φ (i),
+                                                   s
+                                              i=0
+           where
+                          ⎧0ifrank[i]=0
+                          ⎨                                       s
+                  φ (i)= α(n)rank [i]ifparent[i]=i
+                    s     ⎩          s                              s
+                            (α(n)−f(s,i))ranks[i]−g(s,i)otherwise,
+           for α, f,andg as deﬁned above. Before we can complete the amortized
+           analysis, we need to show that both f and g satisfy the properties outlined
+           in the discussion above.
+           Lemma 8.1. Let s be a state of a CompressedDisjointSets of size n,
+           and let 0 ≤ i<nsuch that parent [i] = i and rank [i] > 0.Then
+                                           s               s
+                                      0 ≤ f(s,i) <α(n).
+           Proof.   First, because the rank of the parent of i is strictly larger than that
+           of i,wehave
+                               ranks[parents[i]] ≥ ranks[i]+1
+                                               =A(rank [i]),
+                                                   0      s
+           from the deﬁnition of A . Thus, from the deﬁnition of f, f(s,i) ≥ 0.
+                                 0
+              It is not hard to show that each A is nondecreasing — we leave the
+                                                 k
+           details as an exercise. Using this fact, along with the deﬁnition of α and the
+           fact that no rank exceeds lgn,wehave
+                              A    (ranks[i]) ≥ A   (1)
+                                α(n)             α(n)
+                                             >lgn
+                                             ≥ranks[parents[i]].
+           Thus, from the deﬁnition of f, f(s,i) <α(n).                          
+           Lemma 8.2. Let s be a state of a CompressedDisjointSets of size n,
+           and let 0 ≤ i<nsuch that parent [i] = i and rank [i] > 0.Then
+                                           s               s
+                                    0 <g(s,i) ≤ rank [i].
+                                                     s

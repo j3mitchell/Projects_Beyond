@@ -1,0 +1,38 @@
+                                    Approximation Algorithms                        573
+            Figure 17.6   Approximation algorithm for maximum cut
+               Precondition: G is a Graph representing a complete undirected graph
+               with positive Nat edge weights, and k is a Nat such that 2 ≤ k<n, where
+               n is the number of vertices in G.
+               Postcondition: Returns an array cut[0..n − 1] such that for 0 ≤ i<n,
+               1 ≤ cut[i] ≤ k.IfW is the sum of the weights of the edges in G, then the
+               weight of the cut described by cut[0..n − 1] is at least W(k − 1)/k.
+               MaxCut(G,k)
+                  n←G.Size(); cut ← new Array[0..n−1]
+                  clusterInc ← new Array[1..k]
+                  for i ← 0 to n−1
+                     for j ← 1 to k
+                       clusterInc[j] ← 0
+                     for j ← 0 to i−1
+                       clusterInc[cut[j]] ← clusterInc[cut[j]] + G.Get(i,j)
+                     m←1
+                     for j ← 2 to k
+                       if clusterInc[j] < clusterInc[m]
+                          m←j
+                     cut[i] ← m
+                  return cut[0..n−1]
+           Proof.    For a given vertex i,letWi denote the sum of the weights of all
+           edges {i,j} such that 0 ≤ j<i. At the end of iteration i, the value of the
+           cut increases by Wi − clusterInc[m], where clusterInc[m] is the sum of the
+           weights of the edges from i to other vertices in partition m. m is chosen so
+           that clusterInc[m] is minimized; hence, for each partition other than m,the
+           sumoftheweightsoftheedgesfromi to vertices in that partition is at least
+           clusterInc[m]. We therefore have
+                                      clusterInc[m] ≤ Wi/k.
+               The value of the cut therefore increases by at least Wi(k − 1)/k on
+           iteration i. Because the value of the cut is initially 0, the ﬁnal value of the
+           cutisatleast
+                                  n−1                    n−1
+                                  Wi(k−1) = k−1Wi
+                                  i=0     k           k   i=0
+                                                 = k−1W,
+                                                      k

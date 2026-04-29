@@ -1,0 +1,14 @@
+           128                      Algorithms: A Top-Down Approach
+             Figure 4.8  ConsListStack implementation of Stack
+               We will now complete the implementation of ConsListStack by
+           implementing ConsList. Our representation consists of the following:
+           • a readable Bool isEmpty;
+           • a readable element head;and
+           • a readable ConsList tail.
+           If isEmpty is true, then we interpret the ConsList to represent an empty
+           sequence. Otherwise, we interpret head as the ﬁrst element of the sequence,
+           and tail as the remainder of the sequence. As our structural invariant,
+           we require a ConsList to represent a ﬁnite sequence according to the
+           above interpretation. The representation of the ConsList a ,a ,a ,a  is
+                                                                          1  2  3  4
+           illustrated in Figure 4.9.

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 209</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-209.jpg" alt="Page 209" width="1282" height="1882"/>
+      <div class="ocr">          190                   Algorithms: A Top-Down Approach
+             In Section 5.5, we introduced the basics of expected-case analysis
+          for randomized algorithms. Speciﬁcally, we showed how discrete random
+          variables can be deﬁned and manipulated in order to analyze expected
+          running time. In Section 6.4, we will develop this theory more fully.
+          5.8  Exercises
+          Exercise 5.1. Complete the implementation of SortedArrayPriority-
+          Queue showninFigure5.2byaddingaconstructorandimplementations
+          of the MaxPriority and RemoveMax operations. Prove that your
+          implementation meets its speciﬁcation.
+          Exercise 5.2. Prove that SimpleHeap, shown in Figure 5.5, meets its
+          speciﬁcation.
+          Exercise 5.3. Show the result of ﬁrst inserting the sequence of priorities
+          below into a leftist heap, then executing one RemoveMax.
+                               34,12,72,15,37,49,17,55,45
+          Exercise 5.4. Prove that LeftistTree, shown in Figure 5.7, meets its
+          speciﬁcation.
+          Exercise 5.5. Prove that LeftistHeap, shown in Figure 5.8, meets its
+          speciﬁcation.
+          * Exercise 5.6. Prove that for any n ∈ N, if we insert a sequence of n
+          strictly decreasing priorities into an initially empty leftist heap, we obtain a
+          leftist heap with null path length lg(n +1).
+          Exercise 5.7. Instead of keeping track of the null path lengths of each
+          node, a variation on LeftistTree keeps track of the number of nodes in
+          each subtree, and ensures that the left child has as many nodes as the right
+          child. We call this variation a LeftHeavyTree.
+           a. Give an implementation of LeftHeavyTree. The structure must be
+              immutable, and each constructor must require only Θ(1) time.
+           b. Prove by induction on the number of nodes n inthetreethatinany
+              LeftHeavyTree, the distance from the root to the rightmost empty
+              subtree is no more than lg(n +1).
+           c. Using the result of part 5.7, show that if we use LeftHeavyTrees
+              instead of LeftistTrees in the implementation of LeftistHeap,the
+              runningtimes of the operations are still in O(lgn), where n is the number
+              of elements in the priority queue.
+</div>
+    </div>
+  </body>
+</html>

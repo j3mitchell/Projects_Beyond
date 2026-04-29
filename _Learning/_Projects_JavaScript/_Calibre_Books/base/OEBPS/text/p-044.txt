@@ -1,0 +1,27 @@
+                                    Chapter 2
+                 Proving Algorithm Correctness
+          In Chapter 1, we speciﬁed several problems and presented various algorithms
+          for solving these problems. For each algorithm, we argued somewhat
+          informally that it met its speciﬁcation. In this chapter, we introduce a
+          mathematical foundation for more rigorous proofs of algorithm correctness.
+          Such proofs not only give us more conﬁdence in the correctness of our
+          algorithms, but also help us to ﬁnd subtle errors. Furthermore, some of the
+          tools we introduce here are also used in the context of analyzing algorithm
+          performance.
+          2.1  The Basics
+          First consider the algorithm SimpleSelect, shown in Figure 1.2 on page 7.
+          This algorithm is simple enough that ordinarily we would not bother to give
+          a formal proof of its correctness; however, such a proof serves to illustrate the
+          basic approach. Recall that in order for an algorithm to meet its speciﬁcation,
+          it must be the case that whenever the precondition is satisﬁed initially, the
+          postcondition is also satisﬁed when the algorithm ﬁnishes.
+          Theorem 2.1. SimpleSelect meets the speciﬁcation given in Figure 1.1.
+          Proof.  First, we assume that the precondition for SimpleSelect(A[1..n])
+          is satisﬁed initially; i.e., we assume that initially A[1..n] is an array of
+          numbers, 1 ≤ k ≤ n,andbothk andnarenaturalnumbers.Thisassumption
+          immediately implies the precondition for Sort(A[1..n]), namely, that A[1..n]
+          is an array of numbers, and that n is a natural number. In order to talk about
+          both the initial and ﬁnal values of A without confusion, let us represent the
+                            
+          ﬁnal value of A by A and use A only to denote its initial value. Because
+                                         25

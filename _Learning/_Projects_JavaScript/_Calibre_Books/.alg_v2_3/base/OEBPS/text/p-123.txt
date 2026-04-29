@@ -1,0 +1,32 @@
+          104                 Algorithms: A Top-Down Approach
+          Exercise 3.32. Prove Theorem 3.56.
+          Exercise 3.33. Prove that if g(n) ∈ o(f(n)), then O(g(n)) ⊆ o(f(n)).
+          ** Exercise 3.34. Find two smooth functions f : N → R≥0 and g : N →
+          R≥0 such that g(n) ∈ O(f(n)), but g(n) is in neither Θ(f(n)) nor o(f(n)).
+          Exercise 3.35. Prove that for any real numbers a>1andb>1,
+                                 O(logan)=O(logbn).
+          * Exercise 3.36. Prove that
+                                  lg(n!) ∈ Θ(nlgn).
+          3.14  Notes
+          Asymptotic notation predates electronic computing by several decades.
+          Big-O notation was introduced by Bachman [7] in 1894, but with a meaning
+          slightly diﬀerent from our deﬁnition. In the original deﬁnition, O(f(n)) was
+          usedtodenoteaspeciﬁc,butunknown,functionbelongingtothesetwehave
+          deﬁned to be O(f(n)). According to the original deﬁnition, it was proper to
+          write,
+                                2n2 +7n−4=O(n2).
+          However, one would never have written,
+                                O(n2)=2n2+7n−4.
+          Thus, the “=” symbol was used to denote not equality, but a relation that
+          is not even symmetric.
+             Over the years, many have observed that a set-based deﬁnition, as we
+          have given here, is more sound mathematically. In fact, Brassard [16] claims
+          that as long ago as 1962, a set-based treatment was taught consistently
+          in Amsterdam. It was Brassard’s paper [16], however, that in 1985 ﬁrst
+          made a strong case for using set-based notation consistently. Though we
+          are in full agreement with his position, use of the original deﬁnition is
+          still widespread. Alternatively, some authors give set-based deﬁnitions, then
+          abuse the notation by using “=” instead of “∈”or“⊆”. For a justiﬁcation of
+          this practice, see Knuth [82] or Cormen, et al. [25]. For more information on
+          the development of asymptotic notation, including variations not discussed
+          here, see Brassard [16].

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 391</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-391.jpg" alt="Page 391" width="1282" height="1882"/>
+      <div class="ocr">          372                 Algorithms: A Top-Down Approach
+          11.1  Job Scheduling
+          Consider the job scheduling problem discussed in Chapter 8. Recall that
+          we are given n jobs, each requiring one unit of execution time and having
+          its own deadline. Suppose that, in addition, each job has a positive integer
+          value.Wewishtoschedulethejobsonasingleserversoastomaximizethe
+          total value of those jobs which meet their deadlines. Because jobs which do
+          not meet their deadlines do not contribute any value, we will assume that no
+          jobs are scheduled after their deadlines — if a job can’t meet its deadline, we
+          simply don’t schedule it. At this point, we are not assuming any particular
+          scheduling strategy, such as the one given in Chapter 8; instead, we are
+          trying to ﬁnd an optimal strategy.
+             In deriving a greedy algorithm in a top-down fashion, the ﬁrst step is to
+          generalize the problem so that a partial solution is given as input. We assume
+          as a precondition that this partial solution can be extended to an optimal
+          solution. Our task is then to extend it in some way so that the resulting
+          partial solution can be extended to an optimal solution. If we characterize
+          the size of such an instance as the diﬀerence between the size of a complete
+          solution and the given partial solution, we will have reduced a large instance
+          toasmallerinstance.
+             The input to the generalized scheduling problem is a set X =
+          {x ,...,x } of jobs and a partial schedule sched of these jobs. To be
+            1     m
+          more precise, let sched[1..n] be an array of natural numbers such that if
+          sched[t] = 0, then no job has been scheduled in the time slot ending at
+          time t;otherwise,ifsched[t]=i,thenjobxi is scheduled in this time slot.
+          If all the jobs in X either have been scheduled or cannot be scheduled, we
+          are ﬁnished — the precondition that this schedule can be extended to an
+          optimal schedule implies that it must be an optimal schedule. Otherwise,
+          our task is to schedule some job xi so that the resulting partial schedule can
+          be extended to a schedule of maximum value. If we take the size of a partial
+          schedule to be the number of unscheduled jobs in X, we will have reduced a
+          large instance to a smaller instance.
+             We must now decide upon the criterion to use to extend a partial
+          schedule. Of the remaining jobs that can meet their deadlines, it would make
+          sense to schedule the one with the highest value. Furthermore, in order to
+          impact the fewest deadlines of other jobs, it would make sense to schedule it
+          as late as possible. In what follows, we will show that this selection criterion
+          always results in an optimal schedule.
+</div>
+    </div>
+  </body>
+</html>

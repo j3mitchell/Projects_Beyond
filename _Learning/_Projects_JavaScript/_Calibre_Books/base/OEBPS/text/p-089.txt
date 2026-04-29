@@ -1,0 +1,40 @@
+            70                       Algorithms: A Top-Down Approach
+            • fc(n); and
+            • f(g(n)), provided g is unbounded.
+                The proof is left as an exercise. Knowing that f(n)=n is smooth, we
+            can apply Theorem 3.32 to conclude that any polynomial is smooth. In fact,
+                               √          √
+            such functions as    n and n 2 arealsosmooth.Wecanextendthisideato
+            logarithms as well. In particular, let lgx denote the base-2 logarithm; i.e.,
+                                                 lgx
+                                                2   =x                                 (3.4)
+            for all positive x.
+            Example3.33. lgnissmooth.Clearlylgniseventually non-decreasing and
+            eventually positive. Furthermore, lg(2n)=1+lgn ≤ 2lgn whenever n ≥ 2.
+                Thus far, the only example we have seen of a non-smooth function
+                n
+            is 2 . Indeed, almost any polynomial-bounded, eventually non-decreasing,
+            eventually positive function we encounter will turn out to be smooth.
+            However, we can contrive exceptions. For example, we leave it as an exercise
+                            lglgn
+                           2
+            to show that 2         ∈O(n), but is not smooth.
+                Wecannowcontinue the analysis of the lower bound for MaxSumOpt.
+            As we showed in the previous section, the lower bound on the running time
+            of the inner loop is in
+                                               n−1
+                                               Ω(1).
+                                               k=i
+            In order to apply Theorem 3.31, we need to rewrite the sum so that the
+            summation index begins at 1:
+                                         n−1         n−i
+                                         Ω(1)=Ω(1).
+                                         k=i         k=1
+            Theorem 3.31 still does not quite apply because the upper limit, n − i,
+            is not a function of one variable. In order to overcome this diﬃculty, we
+            can introduce an auxiliary variable N, which we deﬁne to be n−i. Because
+            i<ninthealgorithm, this deﬁnition makes sense — N is a natural number.
+            The lower bound can now be expressed as
+                                                N
+                                               Ω(1).
+                                               k=1

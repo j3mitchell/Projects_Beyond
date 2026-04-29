@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 084</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-084.jpg" alt="Page 084" width="1282" height="1882"/>
+      <div class="ocr">                                                Analyzing Algorithms                                     65
+              Theorem 3.19. Let p(n) be a polynomial of degree
+              k whose coeﬃcient for nk is positive, and let f(n):                  We state the theorem in
+                                                                                   this way to make it clear
+              N → R≥0 such that for some n0 ∈ N,f(n)=p(n)                          that p(n) is allowed to be
+                                                                                   negative for n&lt;n. f(n)
+                                                          k                                        0
+              whenever n ≥ n0.Thenf(n)∈ Θ(n ).                                     can be the “patched” ver-
+                                                                                   sion of p(n), though this is
+                                                                                   not required.
+              Proof.      Let
+                                                             k
+                                                   p(n)=ani.
+                                                                  i
+                                                            i=0
+              Then let A =max{a | 0 ≤ i ≤ k} and n =max{1,n }. Note that because
+                                       i                        1               0
+              a &gt;0, A&gt;0. Then whenever n ≥ n1,
+               k
+                                                   f(n)=p(n)
+                                                              k
+                                                         =aini
+                                                            i=0
+                                                              k
+                                                         ≤Ani
+                                                            i=0
+                                                                k
+                                                         ≤Ank
+                                                               i=0
+              because n ≥ 1. Thus,
+                                                              k
+                                                 f(n) ≤ Ank
+                                                             i=0
+                                                       =A(k+1)nk.
+              Letting c = A(k +1),wehavef(n) ≤ c nk whenever n ≥ n .
+                         1                                      1                        1
+                               
+                  Now let A =min{0,a | 0 ≤ i&lt;k}. Then whenever n ≥ n ,
+                                              i                                            1
+                                            f(n)=p(n)
+                                                               k−1
+                                                   =aknk+aini
+                                                               i=0
+                                                               k−1
+                                                          k      i
+                                                   ≥akn +           An
+                                                               i=0
+</div>
+    </div>
+  </body>
+</html>

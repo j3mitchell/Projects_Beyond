@@ -1,0 +1,39 @@
+                                    Basic Techniques for Data Structures                        139
+             if we subtract 1 from the number of 1s in value, we obtain a valid potential
+             function.
+                 Let us now analyze the amortized cost of Increment relative to this
+             potential function. Suppose the actual cost is k (i.e., the loops both iterate
+             k times). The change in potential is simply the number of 1s in value after
+             the operation, minus the number of 1s in value before the operation (the
+             two −1s cancel each other when we subtract). The while loop removes k 1s
+             from c.Theif statement adds a 1. The for loop does not change the number
+             of 1s. The total change is therefore 1 − k. The amortized cost is then the
+             actual cost plus the change in potential, or
+                                               k+(1−k)=1.
+             Wecantherefore conclude that the amortized running time of the IterBin-
+             Counter operations is in O(1).
+                 Let us now use this technique to analyze the amortized performance of
+             ExpandableArrayStack. We ﬁrst observe that operations which result
+             in an error run in Θ(1) time and do not change the state of the structure;
+             hence, we can ignore these operations. As we did in Section 4.3, we will
+             again amortize the number of loop iterations; i.e., the actual cost of an
+             operation will be the number of loop iterations performed by that operation.
+             An operation that does not require expanding the array performs no loop
+             iterations, and an operation that requires expanding the array performs n
+             loop iterations, where n is the size of the stack prior to the operation.
+                 We now need an appropriate potential function. We ﬁrst note that the
+             Pop operation not only is cheap, but it also improves the state of the stack
+             by making more array locations available. We therefore don’t need to focus
+             on this operation when looking for a potential function. Instead, we need
+             to focus on the Push operation. A Push that does not expand the array is
+             inexpensive, but degrades the future performance by reducing the number of
+             available array locations. We therefore want the potential function to increase
+             by at most a constant in this case. A Push that requires an array expansion
+             is expensive — requiring n iterations — but improves the performance of
+             the structure by creating additional array locations. We want the potential
+             function to decrease by roughly n in this case.
+                 We mentioned earlier that we wanted the potential function to be a
+             measure of how full the array is. Perhaps the most natural measure is n/k,
+             where n is the number of elements in the stack and k is the size of the array.
+             This function is 0 when n is 0 and is always nonnegative. Furthermore,
+             because n ≤ k, n/k never exceeds 1; hence, no operation can increase this

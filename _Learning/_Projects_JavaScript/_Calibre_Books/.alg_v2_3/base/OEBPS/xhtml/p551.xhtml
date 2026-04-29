@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 551</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-551.jpg" alt="Page 551" width="1282" height="1882"/>
+      <div class="ocr">         532                Algorithms: A Top-Down Approach
+         • For any weight constructed from xi ∈ X, we assign i+1 to the ﬁrst digit
+           and 0 to the second and third digits.
+         • For any weight constructed from yj ∈ Y, we assign j + 1 to the second
+           digit and 0 to the ﬁrst and third digits.
+         • For any weight constructed from z ∈ Z, we assign k+1 to the third digit
+                                      k
+           and0totheﬁrsttwodigits.
+         • For a triple x ,y ,z , we assign the ﬁrst three digits the values 2m − i,
+                      i  j k
+           2m−j,and2m−k,respectively.
+         B will therefore have 2m +1 as each of its three low-order digits.
+            Note that because each weight constructed from a triple has a value of
+         at least m + 1 in each of its three low-order digits, no two of these weights
+         can be grouped together. Furthermore, because all three low-order digits of
+         any weight constructed from an element of X ∪Y ∪Z have values no more
+         than m, and at least two of these values are 0, in order to reach a sum of
+         Bwith only four weights, at least one must correspond to a triple. Thus, in
+         any 4-partition, each group must contain exactly one weight corresponding
+         to a triple, and the other three weights must correspond to the elements of
+         that triple.
+            We will use the fourth digit to enforce the constraint that for any four
+         items grouped together, the items corresponding to elements from X∪Y ∪Z
+         are either all matching items or all non-matching items. We therefore assign
+         the fourth digits as follows:
+         • for each matching item: 1;
+         • for each non-matching item from X ∪Y:0;
+         • for each non-matching item from Z:3;and
+         • for each item from W:0.
+         The fourth digit of B will therefore be 3. Furthermore, because any group
+         must have one item from each of W, X, Y,andZ, it must contain either
+         three matching items or three non-matching items. Setting the digits in this
+         way therefore ensures that the set of weights has a 4-partition iﬀ W contains
+         a matching.
+            Finally, in order to ensure that each weight is greater than B/5andless
+         than B/3, we set the ﬁfth digit of all weights to 1. As a result, the ﬁfth digit
+         of B is 4. We will see that by choosing r to be suﬃciently large, all weights
+         will be within the proper range.
+            To summarize, for a triple x ,y ,z ,wehavetheweight
+                                   i j  k
+                        r4 +(2m−k)r2+(2m−j)r+2m−i.
+</div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,42 @@
+          576                 Algorithms: A Top-Down Approach
+          vertices in the same cluster via edges whose weights are all x.Thus,the
+          approximation ratio is x, which can be chosen to be arbitrarily large. We
+          can therefore see that even though the maximum cut and minimum cluster
+          optimization problems are essentially the same, the MaxCut algorithm
+          yields vastly diﬀerent approximation ratios relative to the two problems.
+             To carry this idea a step further, we will now show that the minimum
+          cluster problem has no approximation algorithm with a bounded approxi-
+          mation ratio unless P = NP.Foragiven ∈ R>0 and integer k ≥ 2, let the
+          -Approx-k-Cluster problem be the problem of ﬁnding, for a given com-
+          plete undirected graph G with positive integer edge weights, a k-cut whose
+          sum of cluster weights is at most W∗(1+), where W∗ is the minimum sum
+          of cluster weights. Likewise, let -Approx-Cluster be the corresponding
+          problem with k provided as an input. We will show that for every positive 
+          and every integer k ≥ 3, the -Approx-k-Cluster problem is NP-hard in
+          the strong sense. Because -Approx-3-Cluster ≤pp -Approx-Cluster,
+                                                     T
+          it will then follow that this latter problem is also NP-hardinthestrong
+          sense. Whether the result extends to -Approx-2-Cluster is unknown at
+          thetimeofthiswriting.
+          Theorem17.9. For every  ∈ R>0 and every k ≥ 3, -Approx-k-Cluster
+          is NP-hard in the strong sense.
+          Proof.  As is suggested by Exercises 16.23 and 16.24, the problem of
+          deciding whether a given undirected graph is k-colorable is NP-complete for
+          each k ≥ 3. Let us refer to this problem as k-Col. Because k-Col contains
+          no large integers, it is NP-complete in the strong sense. We will now show
+          that k-Col ≤pp -Approx-k-Cluster,sothat-Approx-k-Cluster is
+                      T
+          NP-hard in the strong sense for k ≥ 3.
+             Let G =(V,E) be a given undirected graph. Let n be the number
+          of vertices in G. We can assume without loss of generality that n>k,
+                                                                  
+          for otherwise G is clearly k-colorable. We construct G =(V,E )tobe
+          thecompletegraphonV. We assign an edge weight of n21+ to edge
+          {u,v}∈E if {u,v}∈E;otherwise,weassignitaweightof1.Clearly,
+          this construction can be completed in time polynomial in n.Furthermore,
+          because  is a ﬁxed constant, all integers have values polynomial in n.
+                                       
+             Suppose we have a k-cut of G such that the ratio of its cluster weight
+          to the minimum cluster weight is at most 1 + . If the given cluster weight
+          is less than n21+, then all edges connecting vertices in the same cluster
+          must have weight less than n21+; hence none of them belong to E.

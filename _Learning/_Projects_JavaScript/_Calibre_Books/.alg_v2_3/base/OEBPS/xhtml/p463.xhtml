@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 463</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-463.jpg" alt="Page 463" width="1282" height="1882"/>
+      <div class="ocr">           444                     Algorithms: A Top-Down Approach
+            Figure 14.2   Examples of residual graphs
+              (a)                                   (b)
+                 sink     1    5     1                   sink     1     5    1
+                      3434
+                                1                                       1
+                     1                    1                  1                     1
+                      1212
+                          11 11
+              source           0                       source           0
+               Let us now formalize the construction outlined above. Let (G,u,v,C)
+           be a ﬂow network, and let P be the set of edges in some augmenting path.
+           Let m be the minimum capacity of any edge in P. We deﬁne the residual
+                                                                                    
+           network of (G,u,v,C) with respect to P to be the ﬂow network (G ,u,v,C),
+                          
+           where G and C are deﬁned as follows:
+               
+           • G is constructed from G by removing any edges in P with capacity m
+             and by adding edges (y,x) such that (x,y) ∈ P and (y,x) is not an edge
+             in G.
+                                                                   
+           • C ((x,y)) is deﬁned as follows for each edge (x,y) ∈ G :
+             –If(x,y) ∈ P, C((x,y)) = C((x,y))−m.
+             –If(y,x) ∈ P and (x,y)isanedgeinG, C((x,y)) = C((x,y))+m.
+             –If(y,x) ∈ P and (x,y) is not an edge in G, C((x,y)) = m.
+             –Otherwise,C((x,y)) = C((x,y)).
+               Thus, Figure 14.2(a) shows the residual network for the ﬂow network in
+           Figure 14.1 with respect to the augmenting path 0,2,4,1,3,5. This graph
+           has an augmenting path: 0,1,4,5. The residual network with respect to
+           this augmenting path is shown in Figure 14.2(b). There is no augmenting
+           path in this graph. If we combine the ﬂows obtained by assigning a ﬂow of
+           1 to each edge in the respective paths, the ﬂows on the edges (4,1) in the
+           original graph and (1,4) in the graph in Figure 14.2(a) cancel each other
+           out. The resulting ﬂow therefore has a ﬂow of 1 on each edge except (4,1)
+           in the original network. This ﬂow has a value of 2, which is maximum.
+</div>
+    </div>
+  </body>
+</html>

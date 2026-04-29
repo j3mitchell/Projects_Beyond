@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 402</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-402.jpg" alt="Page 402" width="1282" height="1882"/>
+      <div class="ocr">                                     Optimization I: Greedy Algorithms                         383
+             one of t ,...,t .Supposeweight(t ) ≤ weight(t ) ≤··· ≤weight(t ).Let
+                      1       n                     1               2                      n
+             tn+1 be the binary tree formed by making t1 and t2 the left and right children,
+             respectively, of a new root. Then there is a Huﬀman tree T for F containing
+             t ,t ,...,t     as subtrees.
+              3  4       n+1
+             Proof.     If tn+1 is a subtree of T,thenwecanletT = T.Furthermore,if
+             T has a subtree with t1 as the right child and t2 astheleftchild,wecan
+             simply swap t1 with t2 and let the resulting tree be T.Otherwise,t1 and
+             t2 are not siblings in T. Furthermore, neither can be a subtree of the other
+             because they have no leaves in common. Let node x be the lowest common
+             ancestor of t1 and t2 in T; i.e., x is an ancestor of both t1 and t2, but neither
+             child of x is. We consider two cases.
+             Case 1: The path from x to t1 is no longer than the path from x to t2.Let
+             t be the sibling of t2 in T. Without loss of generality, assume t is the left
+             child and t2 is the right child (otherwise, we can swap them). Clearly, t can
+             be neither t1 nor t2. Furthermore, it cannot be a proper subtree of any of
+             t ,...,t , because then t would also be a proper subtree of the same tree.
+              1      n                   2
+             Finally, t cannot contain t1 as a proper subtree, because then the path from
+             x to t1 would be longer than the path from x to t2. We conclude that t must
+             contain one or more of t ,...,t . We can therefore swap t with t, letting
+                                         3       n                              1
+             the result be T.
+                 Because t contains one or more of t ,...,t , weight(t ) ≤ weight(t);
+                                                            3       n           1
+             hence, weight(t) − weight(t1) ≥ 0. The swap then causes the weights of all
+             nodes except x on the path from x to the parent of t1 in T to increase
+             by weight(t) − weight(t1). Furthermore, it causes the weights of all nodes
+             except xonthepathfromxtotheparentoft2 inT todecreasebyweight(t)−
+             weight(t1). No other nodes change weight. Because there are at least as many
+             nodes on the path from x to t2 in T as on the path from x to t1 in T,the
+             swap cannot increase the cost of the tree. Therefore T is a Huﬀman tree.
+             Case 2: The path from x to t1 is longer than the path from x to t2.In
+             this case we assume without loss of generality that t1 is a left child, and
+             we swap its sibling with t2. Because Case 1 doesn’t rely on the fact that
+             weight(t1) ≤ weight(t2), the same reasoning holds for this case.                    
+                 Weassume the frequency table is provided via two arrays:
+             • chars[1..n], which contains the characters in the table; and
+             • freq[1..n], which contains positive integers giving the frequencies of the
+               corresponding characters.
+</div>
+    </div>
+  </body>
+</html>

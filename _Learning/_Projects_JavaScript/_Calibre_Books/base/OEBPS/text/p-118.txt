@@ -1,0 +1,32 @@
+                               Analyzing Algorithms                 99
+         * Exercise 3.13. The goal of this exercise is to prove Theorem 3.31. Let
+         f : N → R≥0 be a smooth function, g : N → N be an eventually non-
+         decreasing and unbounded function, and h : N → R≥0.
+         a. Show that if h(n) ∈ O(f(n)), then there exist natural numbers n0 and
+           n1,apositiverealnumberc, and a non-negative real number d such that
+           for every n ≥ n1,
+                              g(n)        g(n)
+                              h(i)≤d+cf(g(n)).
+                              i=1         i=n0
+         b. Use part (a) to prove that
+                             g(n)
+                             O(f(i))⊆O(g(n)f(g(n))).
+                              i=1
+         c. Show that if h(n) ∈ Ω(f(n)), then there exist natural numbers n0 and n1
+           and positive real numbers c and d such that for every n ≥ n0,
+                                   f(n) ≥ f(2n)/d,
+           and for every n ≥ n1,both
+                            g(n)       g(n)
+                            h(i)≥  cf(g(n)/2),
+                            i=1      i=g(n)/2
+           and
+                                     g(n) ≥ 2n0
+           hold.
+         d. Use part (c) to prove that
+                             g(n)
+                             Ω(f(i))⊆Ω(g(n)f(g(n))).
+                              i=1
+         e. Use parts (b) and (d) to prove that
+                             g(n)
+                             Θ(f(i))⊆Θ(g(n)f(g(n))).
+                              i=1

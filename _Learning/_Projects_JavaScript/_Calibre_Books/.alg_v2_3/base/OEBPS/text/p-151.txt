@@ -1,0 +1,40 @@
+      132          Algorithms: A Top-Down Approach
+        In order to motivate this technique, it is helpful to think of amortized
+      analysis using an analogy. Suppose we have a daily budget for gasoline for a
+      car. We want to track our gasoline purchases to ensure that we don’t exceed
+      this budget. Further suppose that we begin tracking these expenses when the
+      tank is full. We may then have several days in which we spend no money on
+      gasoline. At some point, we will reﬁll the tank, thus incurring a large expense
+      which may be greater than our daily budget. However, if we amortize this
+      cost over all of the days since we last ﬁlled the tank, we will hopefully ﬁnd
+      that we have remained within our daily budget for each of these days.
+        One way to monitor our budget more closely is to consider the potential
+      cost of ﬁlling the tank at the end of each day. Speciﬁcally, suppose that we
+      have a very precise gas gauge on our car. In order to keep the analogy simple,
+      we will also suppose that the cost of gasoline remains constant. At the end
+      of each day, we could then measure the amount of gasoline in the tank and
+      compute the cost of potentially ﬁlling the tank at that point.
+        For example, suppose gasoline costs $3 per gallon. Further suppose that
+      on consecutive days, we ﬁnd that our 10-gallon tank contains 8 gallons and
+      6.5 gallons, respectively. On the ﬁrst day, the potential cost of ﬁlling the
+      tank was $6, as the tank would hold 2 additional gallons (see Figure 4.12).
+      Onthesecond day, the potential cost was $10.50, as the tank would hold 3.5
+      additional gallons. Assuming that no gasoline was added to the tank that
+      day, the cost of the gasoline used that day was then $4.50 — the diﬀerence
+      in the two potential costs.
+        Ondays in which we ﬁll the tank, the computation is only slightly more
+      complicated. Note that on these days, the potential cost is likely to decrease.
+      For example, suppose that the previous day’s level (day 4 in Figure 4.12)
+      was 3 gallons, today’s level is 9 gallons, and that we spent $24 to purchase 8
+      gallons of gasoline. The potential cost of ﬁlling the tank has decreased from
+      $21 to $3; hence, the change in potential cost is negative $18. However, we
+      should include the cost of the gasoline we actually purchased, resulting in
+      an amortized cost of $6 for that day. In general, we compute the amortized
+      cost by adding the actual cost to the change in potential cost.
+        Note that this amortization process is somewhat pessimistic, as we are
+      assessing costs before we actually incur them; however, it is a safe way of
+      verifying our budget. Speciﬁcally, suppose we sum up the amortized costs
+      for any sequence of days, beginning with a day in which the tank is full.
+      The sum of changes in potential costs will be the net change in potential
+      cost. Because the tank is initially full, the initial potential cost is 0; hence
+      the net change in potential cost is the ﬁnal potential cost. The remainder of

@@ -1,0 +1,43 @@
+          578                 Algorithms: A Top-Down Approach
+          17.7  Exercises
+          Exercise 17.1. Give an approximation algorithm that takes an instance of
+          the knapsack problem and a positive integer k and returns a packing with
+          an approximation ratio of no more than 1 + 1. Your algorithm must run in
+                                                k
+          O(nk+1) time. Prove that both of these bounds (approximation ratio and
+          running time) are met by your algorithm.
+          Exercise 17.2. Suppose we were to modify the knapsack problem to allow
+          as many copies as we wish of any of the items. Show that the greedy
+          algorithm yields an approximation ratio of no more than 2 for this variation.
+          Exercise 17.3. The best-ﬁt algorithm for bin packing considers the items
+          in the given order, always choosing the largest-weight bin in which the item
+          will ﬁt. Show that the approximation ratio for this algorithm is no more
+          than 2.
+          ** Exercise 17.4. Let  be any ﬁxed positive real number. Demonstrate
+          how dynamic programming can be combined with the ﬁrst-ﬁt-decreasing
+          algorithm to obtain a pseudopolynomial-time approximation algorithm for
+          bin packing with approximation ratio no more than 11 +.Youmayusethe
+                                                       9
+          fact that the ﬁrst-ﬁt-decreasing algorithm always produces a packing using
+          at most 11B∗ + 2 bins, where B∗ is the minimum number of bins possible.
+                 9      3
+          * Exercise 17.5.
+          a. Prove that NotAllEqual-3-Sat ≤pp k-Cluster for each ﬁxed k ≥ 2,
+                                            m
+            so that, from the result of Exercise 16.6, k-Cluster is NP-hardinthe
+            strong sense for k ≥ 2.
+          b. Prove that Cluster is strongly NP-complete.
+          * Exercise 17.6. Give an approximation algorithm with approximation
+          ratio bounded by 2 for the problem of ﬁnding a minimum-sized vertex
+          cover. Your algorithm should run in O(n + a) time, assuming the graph
+          is implemented as a ListGraph. Prove both the approximation ratio and
+          the running time.
+          * Exercise 17.7.
+                                                           2     2   
+          a. Given an undirected graph G =(V,E), we deﬁne G =(V ,E)such
+            that for u = u ,u  and v = v ,v  in V 2, {u,v}∈E iﬀ for every i,
+                          1  2           1 2
+            1 ≤ i ≤ 2, either u = v or {u ,v}∈E. Prove that the size of the largest
+                            i   i     i i
+                      2   2
+            clique in G is k ,wherek is the size of the largest clique in G.

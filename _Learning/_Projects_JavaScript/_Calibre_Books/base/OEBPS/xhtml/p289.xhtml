@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 289</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-289.jpg" alt="Page 289" width="1282" height="1882"/>
+      <div class="ocr">              270                           Algorithms: A Top-Down Approach
+                  Astraightforward attempt to achieve these goals is to combine H3 with
+                                                                                                   p,l
+              H2 . Speciﬁcally, we deﬁne
+                p,m
+                                      4                            2             3
+                                   H       ={h ◦h |h ∈H ,h ∈H }.
+                                      p,l,m      1     2    1      p,m    2      p,l
+              Hash functions in this family are of the form,
+                                    h(k)=h          (h   (k)) mod m
+                                               p,a,b  p,s
+                                              	 l               
+
+                                           = aak +b modpmodm,                                        (7.3)
+                                                        i i
+                                                  i=1
+              where a,b,andeacha are natural numbers, and a = 0. We deﬁne
+                                            i
+              the probability of each element of H4                  by selecting a,b,andeachai
+                                                              p,l,m
+              independently with uniform probability. (We leave it as an exercise to show
+              that the same probability distribution for H4                can be achieved by setting
+                                                                     p,l,m
+              a = 1 and selecting b and each a independently with uniform probability.)
+                                                      i
+                  Because H2        is a universal family, it causes any pair of distinct keys to
+                                p,m
+              collide with probability at most 1/m. However, H3 also causes distinct keys
+                                                                           p,l
+              to collide with probability 1/p. When the function from H2                    is applied to
+                                                                                       p,m
+              equal values, it yields equal values. We must therefore be careful in analyzing
+              the probability of collisions for H4          .
+                                                       p,l,m
+                  Let us ﬁrst consider the case in which two distinct keys k and k are
+                                                             3
+              mapped to distinct values by h            ∈H .From Lemma 7.6, the probability
+                                                     p,s     p,l
+              that this occurs is
+                                                   1−1=p−1.
+                                                         p       p
+              Furthermore, from Lemma 7.4, h                 (h   (k)) and h        (h    (k)) are with
+                                                        p,a,b  p,s              p,a,b  p,s
+              uniformprobability any pair of distinct natural numbersless than p,provided
+              a and b are chosen independently with uniform probability such that 1 ≤
+              a&lt;pand 0 ≤ b&lt;p. Because there are p(p−1) pairs of distinct natural
+              numbers less than p, this probability is
+                                                           1     .
+                                                       p(p−1)
+              Therefore, given any two distinct keys k and k, and any two distinct natural
+              numbers i and j strictly less than p, the probability that h                  (h    (k)) = i
+                                                                                       p,a,b   p,s
+</div>
+    </div>
+  </body>
+</html>

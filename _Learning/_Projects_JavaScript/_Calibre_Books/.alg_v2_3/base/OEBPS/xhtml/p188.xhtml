@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 188</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-188.jpg" alt="Page 188" width="1282" height="1882"/>
+      <div class="ocr">                                         Priority Queues                            169
+           are left as an exercise). Thus, a SkewHeap provides a simple, yet eﬃcient,
+           implementation of PriorityQueue.
+               We should caution, however, that it does not make sense to amortize
+           space usage, as this usage does not accumulate over time. Speciﬁcally, the
+           worst-case stack space usage of Merge, as for leftist heaps, is proportional
+           to its worst-case running time. Hence, the worst-case stack space usage is
+           in Θ(n). On the other hand, it is possible to reorganize this algorithm so
+           that it uses iteration, rather than recursion. Although the algorithm given
+           in Figure 5.9 is not tail recursive, it is possible to order the operations so
+           that the recursion can be removed in a similar way. We leave the details
+           as an exercise. Removing the recursion in this way reduces the total space
+           usage to Θ(1).
+           5.5   Randomized Heaps
+           For all of the heap implementations we have seen so far, the merge uses
+           the right child in the recursive call. This choice is not necessary for the
+           correctness of any of the algorithms, but does impact their performance.
+            Figure 5.12   The RandomizedHeap.Mergeinternal function
+</div>
+    </div>
+  </body>
+</html>

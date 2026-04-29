@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 495</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-495.jpg" alt="Page 495" width="1282" height="1882"/>
+      <div class="ocr">           476                    Algorithms: A Top-Down Approach
+                                                                     −1
+           Finally, multiplying the above summation on the right by A   ,weobtaina
+           vector whose jth component is
+                   n−1n−1n−1                        n−1n−1n−1
+                   piqkω(i+k)lω−lj/n= 1 piqkω(i+k−j)l
+                   l=0 i=0 k=0                    n l=0 i=0 k=0
+                                                    n−1n−1     n−1
+                                               = 1 piqkω(i+k−j)l.
+                                                  n i=0 k=0     l=0
+              We now observe that in the exponent for ω above, 1 − n ≤ i + k − j ≤
+           2n−2. Because ωn = 1, we can multiply any of the terms by either ωn or
+           ω−n without changing its value. Hence, because ω is a principal nth root of
+           unity,
+                      n−1           ⎧
+                       (i+k−j)l ⎨n if i+k−j =0ori+k−j =n
+                          ω        =
+                      l=0           ⎩0otherwise. −1
+           Therefore, the jth component of (pA·qA)A      is
+                                    j          n−1
+                                   piqj−i+  piqj−i+n.
+                                   i=0         i=j+1
+           Wewill refer to this vector as the positive wrapped convolution of p and q.We
+           will denote this operation by p⊗q. Note that if either pi or qj is 0 whenever
+           i +j ≥ n, the second summation in the above deﬁnition is 0, so that we can
+           reduce the problem of computing an ordinary convolution to the problem of
+           computing a positive wrapped convolution.
+              Figure 15.2 gives an algorithm for computing a positive wrapped
+           convolution using the Fast Fourier Transform. Note that m is the smallest
+           power of 2 no larger than n,sothatn ≤ m&lt;2n. Assuming each arithmetic
+           operation can be performed in Θ(1) time, the running time excluding the
+           calls to Fft is in Θ(n). If k =lgm, the running time for each call to Fft is
+                  k
+           in Θ(k2 )=Θ(nlgn). The overall running time is therefore in Θ(nlgn). It
+           is easily seen that this algorithm can be used to multiply two polynomials
+           over C in Θ(nlgn) time, where n is the degree of the product.
+              Throughout this discussion, we have been assuming that we can store
+           arbitrary complex numbers and perform arithmetic operations on them
+           in Θ(1) time. These assumptions are rather dubious. However, for most
+           scientiﬁc and engineering applications, it is suﬃcient to use ﬂoating-point
+</div>
+    </div>
+  </body>
+</html>

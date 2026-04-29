@@ -1,0 +1,45 @@
+          134                    Algorithms: A Top-Down Approach
+              As we assumed our potential gasoline cost to be initially 0, so also we
+          require that Φ maps the initial state (usually an empty data structure) to 0.
+          Each operation, by changing the state of the data structure, also changes the
+          value of Φ. An increase in Φ corresponds to using gasoline, whereas a decrease
+          in Φ correspondsto addinggasoline to the tank (though not necessarily ﬁlling
+          it, as Φ might not reach 0). Thus, for ExpandableArrayStack,wewould
+          want the potential function to increase when a Push that does not expand
+          the array is performed, but to decrease when either a Pop or a Push that
+          expands the array is performed.
+              Let σ denote the state of a data structure prior to some operation, and
+          let σ denote the state of that structure following the operation. We then
+          deﬁne the change in Φ to be Φ(σ)−Φ(σ). We further deﬁne the amortized
+          cost of the operation relative to Φ to be the actual cost plus the change in Φ.
+              Theabovedeﬁneswhatapotential function is and suggests how it might
+          be used to perform amortized analysis. It does not, however, tell us precisely
+          how we can obtain a potential function. We will address this issue in detail
+          shortly; for now however, we will show that an amortized analysis using any
+          valid potential function will give a true upper bound on amortized cost. The
+          proof is essentially the same argument that we gave justifying our use of the
+          potential gasoline cost for amortized analysis.
+          Theorem 4.5. Let Φ be a valid potential function for some data structure;
+          i.e., if σ0 is the initial state of the structure, then Φ(σ0)=0, and if σ is any
+          state of the structure, then Φ(σ) ≥ 0. Then for any sequence of operations
+          from the initial state σ0, the sum of the amortized costs of the operations
+          relative to Φ is at least the sum of the actual costs of the operations.
+          Proof.    Let o ,...,o  be a sequence of operations from σ ,andletσ be
+                         1     m                                   0          i
+          the state of the data structure after operation oi has been performed. Also,
+          let c be the actual cost of o appliedtostateσ   .Then
+               i                     i                 i−1
+                   m                          m       m         m−1
+                                                              
+                      (c +Φ(σ )−Φ(σ      )) =    c +     Φ(σ )−     Φ(σ )
+                       i      i       i−1         i         i           i
+                   i=1                        i=1    i=1         i=0
+                                              m
+                                           =c +Φ(σ )−Φ(σ )
+                                                  i      m       0
+                                              i=1
+                                              m
+                                           ≥c,
+                                                  i
+                                              i=1
+          because Φ(σm) ≥ 0andΦ(σ0)=0.                                          

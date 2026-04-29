@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 283</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-283.jpg" alt="Page 283" width="1282" height="1882"/>
+      <div class="ocr">           264                    Algorithms: A Top-Down Approach
+           is a universal family of hash functions. In the proof and the implementation
+           that follows, we use ⊗ to denote bitwise exclusive-or.
+           Theorem 7.2. Let l be a positive integer and m be a power of 2.ThenH1
+                                                                                  l,m
+           is a universal family of hash functions.
+           Proof.   Suppose k and k are two keys diﬀering in bit position i. Without
+           loss of generality, suppose the ith bit of k is 0 and the ith bit of k is 1.
+           Let k be the key obtained from k by changing the ith bit to 0. Let tj be
+           the discrete random variable giving the value of the jth component of s for
+           s ∈ Sl,m,andleth(x) be the random variable giving the hash value of x ∈ U.
+           Then h(k)=h(k)⊗ti.Thus,h(k)=h(k)iﬀh(k)=h(k)⊗ti.
+              Because the ith bits of both k and k are 0, we can evaluate h(k)and
+           h(k) knowing only t ,...,t  ,t   ,...t. For each choice of these values,
+                                1      i−1 i+1     l            
+           there is exactly one value of ti for which h(k)=h(k ) ⊗ ti,namelyti =
+           h(k)⊗h(k). There are then ml−1 hash functions for which k and k collide.
+           Because each hash function occurs with probability m−l,
+                                  P(h(k)=h(k)) = ml−1m−l
+                                                  =1/m.                            
+              To represent an instance of this family, we use a readable Nat size and
+           an array indices[1..l]ofNats; we assume for now that l, the number of bits
+                                                                   i
+           in a key, is ﬁxed. Our structural invariant is that size =2 for some natural
+           number i,andthatfor1≤ j ≤ l, indices[j] &lt; size. The implementation
+           is shown in Figure 7.8. It uses a function Random, which takes a positive
+           integer n as input and returns, with uniform probability, any natural number
+           strictly less than n. It is easily seen that both the constructor and the Index
+           operation run in Θ(l) time, assuming Random runs in Θ(1) time.
+              If we use this implementation of HashFunction with the HashTable
+           implementation shown in Figures 7.5 and 7.6, the expected search time is in
+           Θ(1). Furthermore, it is not hard to show that the expected amortized cost
+           of rehashing is in Θ(l).
+              Inmanyapplications,thekeylengthsmayvary,andwemaynotknowthe
+           maximumlengthinadvance. Suchsituations can be handled easily, provided
+           wemaypadkeyswithzeroswithoutproducingothervalidkeys.Thispadding
+           may be done safely if the length of the key is encoded within the key, or if
+           each key is terminated by some speciﬁc value. We can therefore consider each
+           key as having inﬁnite length, but containing only ﬁnitely many 1s. We can
+           ensure that we have bit strings for indices[1..i]forsomei.Ifweencountera
+           key with a 1 in bit position j&gt;i, we can generate bit strings for positions
+</div>
+    </div>
+  </body>
+</html>

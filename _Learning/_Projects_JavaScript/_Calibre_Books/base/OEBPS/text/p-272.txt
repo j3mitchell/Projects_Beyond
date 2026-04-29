@@ -1,0 +1,43 @@
+                                    Storage/Retrieval II: Unordered Keys                        253
+                 The proof of the above theorem is simply the observation that if it were
+             not true — i.e., if h maps at most n −1elementstoeachi — then the size
+             of U could be at most m(n−1). Though this result looks bad, what it tells
+             us is that we really want h to produce a random distribution of the keys so
+             that the list lengths are more evenly distributed throughout the table.
+                 For the remainder of this section, therefore, we will assume that the
+             key distribution is modeled by a discrete probability space hashDist.The
+             elementary events in hashDist are the same as those in the probability
+             distribution deﬁned above: all n-tuples of natural numbers less than m.
+             Again, the n positions in the tuple correspond to n keys, and their values
+             give their indices in the hash table. Regarding probabilities, however, we
+             will make a weaker assumption, namely, the probability that any two given
+             distinct positions are equal is at most ,where0<<1. Our earlier
+             probability space satisﬁes this property for  =1/m, but we will see in
+             Sections 7.4 and 7.5 that other spaces do as well.
+                 In what follows, we will analyze the expected length of the ConsList
+             searched for an arbitrary key, assuming a distribution modeled by hashDist.
+             In the next section we will show how to deﬁne deterministic hash functions
+             that approximate this distribution well enough to work very well in practice.
+             Then in Sections 7.4 and 7.5, we will show how to guarantee this behavior
+             using randomization.
+                 For a given search in the hash table, suppose there are a total of n keys
+             in the table together with the key for which we are searching. Thus, if the
+             given key is in the hash table, there are n keys in the hash table; otherwise,
+             there are n − 1. We will use hashDist to model the distribution of these n
+             keys, where the nth key is the one for which we are searching. Let len be the
+             discrete random variable giving the number of positions equal to position n in
+             a given element of hashDist. Then if the given key is in the hash table, E[len]
+             gives the expected length of the ConsList searched; otherwise, E[len] − 1
+             gives this expected length.
+                 We can express len as the sum of indicator random variables as follows:
+                                                     n
+                                             len = I(i =i ),
+                                                           j    n
+                                                    j=1
+             where i denotes position j of an elementary event. Applying linearity of
+                     j
+             expectation, we have
+                                                     n
+                                         E[len]=E[I(i =i )]
+                                                              j     n
+                                                    j=1

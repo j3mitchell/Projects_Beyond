@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 354</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-354.jpg" alt="Page 354" width="1282" height="1882"/>
+      <div class="ocr">                                  Divide and Conquer                    335
+          degrees are the same if n is odd. Therefore, we need to be careful to note the
+          degrees of each polynomial we construct. By choosing m = n/2, we ensure
+          that m ≥ n−m. Thus, we can add the two halves of a polynomial by ﬁrst
+          recording the low-order half, then adding in the high-order half, yielding a
+          polynomial of degree m −1. After the recursive multiplications, P and P
+                                                                   1      2
+          will both have degree 2(m − 1), but P will have degree 2(n − m − 1). To
+                                           3
+          construct P,wecanﬁrstcopyP and P to the proper locations, and ﬁll
+                                      1      3
+          in 0 for the coeﬃcient of x2m−1. We can then add P [i] − P [i] − P [i]to
+                                                        2      1     3
+          the coeﬃcient of xm+i; however, because P has a diﬀerent degree than P
+                                               3                          1
+          and P , we use a separate loop to subtract this polynomial.
+               2
+             From Figure 10.1 and Exercise 3.26 (page 103), it is evident that a total
+          of Θ(n) time is needed apart from the recursive calls. Thus, we can describe
+          the running time with the following recurrence:
+                                f(n) ∈ 3f(n/2)+Θ(n),
+          whenever n&gt;1 is a power of 2. From Theorem 3.35, f(n) ∈ Θ(nlg3).
+          Because lg3 ≈ 1.59, this algorithm is an improvement over the brute-force
+          calculation.
+          10.2  Merge Sort
+          In Section 5.6, we saw that we can sort using a worst-case running time
+          in Θ(nlgn) using heap sort (Figure 5.20). However, as was suggested by
+          Exercise 5.25, heap sort is not stable when sorting Keyed items; i.e., items
+          with equal keys can be reordered by heap sort. In this section, we will apply
+          divide-and-conquer to obtain a stable sorting algorithm that also runs in
+          Θ(nlgn)timeintheworstcase.
+             Wecan apply divide-and-conquer to sorting by ﬁrst dividing in half any
+          array with more than one element and sorting the two halves. We then need
+          to combine the two sorted halves into a single sorted array. We have therefore
+          reduced the sorting problem to the problem of merging two sorted arrays into
+          a single sorted array. Furthermore, in order to ensure stability, we require
+          the following behavior for a merging algorithm:
+          • If two elements in the same input array have equal keys, they remain in
+            the same order in the output array.
+          • If an element x from the ﬁrst input array has a key equal to some element
+            y in the second input array, then x must precede y in the output array.
+</div>
+    </div>
+  </body>
+</html>

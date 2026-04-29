@@ -1,0 +1,37 @@
+                                      Storage/Retrieval I: Ordered Keys                          207
+             nonempty trees. Because each of these calls makes two recursive calls, the
+             total number of recursive calls is exactly 2n. Including the initial call the
+             total number of calls made to TraverseInOrder is 2n+1. Because each
+             of these calls runs in Θ(1) time (excluding the time taken by v.Visit), the
+             total time is in Θ(n). Note that we cannot hope to do any better than this
+             because the speciﬁcation requires that v.Visit be called n times.
+                 Because TraverseInOrder is recursive, we should also consider the
+             stack space usage. Again, analyzing the stack space in terms of the number
+             of nodes is rather diﬃcult, but it turns out to be much easier to do the
+             analysis in terms of the height of the tree. As with Find, this analysis also
+             gives us useful information about the performance of TraverseInOrder.
+                 Let f(h) be the worst-case stack space used by TraverseInOrder on
+             atreeofheighth.Thenifh>0, f(h)isinΘ(1)plusthemaximumofthe
+             amount of space used the two recursive calls in the worst case. Because at
+             least one of the two children has height h − 1, f(h) ≥ f(h − 1); i.e., f(h)is
+             nondecreasing. Then in the worst case, the maximum space used by one of
+             the recursive calls is f(h − 1). We therefore have the following recurrence:
+                                           f(h) ∈ f(h−1)+Θ(1),
+             for h>0. By Theorem 3.34, f(h) ∈ Θ(h). In the worst case, h = n − 1,
+             where n is the number of data items; hence, the worst-case stack space usage
+             is in Θ(n).
+                 The above analysis tells us that if we want to keep the stack space usage
+             for TraverseInOrder reasonable, we need to ensure that the heights of
+             the trees are small. Thus, ensuring that the height of a binary tree is in
+             Θ(lgn) would ensure not only good performance for Find, but also good
+             stack space usage for TraverseInOrder.
+             6.2    AVL Trees
+             In this section, we present a variant of binary search trees that guarantees
+             logarithmic height. As a result, we obtain an implementation of Ordered-
+             Dictionary for which the Get, Put,andRemove operations all run in
+             Θ(lgn)time.
+                 The key to keeping the height of a binary tree relatively small is in
+             maintaining balance. The trick is to be able to achieve balance without too
+             muchoverhead; otherwise the overhead in maintaining balance may result in
+             poor overall performance. Consequently, we need to be careful how we deﬁne
+             “balance”, so that our balance criterion is not too diﬃcult to maintain.

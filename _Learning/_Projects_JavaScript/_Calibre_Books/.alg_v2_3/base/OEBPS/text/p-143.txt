@@ -1,0 +1,43 @@
+           124                       Algorithms: A Top-Down Approach
+           may be few enough that they do not signiﬁcantly impact the algorithm’s
+           overall performance. In such a case, it makes sense to consider the worst-
+           case performance of an entire sequence of operations, rather than a single
+           operation. This idea is the basis for amortized analysis.
+               Withamortized analysis, we consider an arbitrary sequence of operations
+           performedonaninitiallyemptydatastructure.Wethendoaformofworst-
+           case analysis of this sequence of operations. Clearly, longer sequences will
+           have longer running times. In order to remove the dependence upon the
+           length of the sequence, we amortize the total running time of the sequence
+           over the individual operations in the sequence. For the time being, this
+           amortization will simply be to compute the average running time for an
+           individual operation in the sequence; later in this chapter we will generalize
+           this deﬁnition. The analysis is still worst-case because the sequence is
+           arbitrary — we are ﬁnding the worst-case amortized time for the operations
+           on the data structure.
+               For example, consider any sequence of n operations on an initially empty
+           stack constructed with ExpandableArrayStack(k). We ﬁrst analyze the
+           worst-case running time of such a sequence. We can use the techniques
+           presented in Chapter 3, but the analysis is easier if we apply a new technique.
+           We ﬁrst analyze the running time ignoring all iterations of the for loop in
+           the Push operation and any loop overhead that results in the execution of
+           an iteration. Having ignored this code, it is easily seen that each operation
+           requires Θ(1) time, so that the entire sequence requires Θ(n)time.
+               We now analyze the running time of all iterations of the for loop
+           throughout the entire sequence of operations. In order to accomplish this,
+           wemustcomputethetotal numberof iterations. The array will be expanded
+           to size 2k the ﬁrst time the stack reaches size k+1. For this ﬁrst expansion,
+           the for loop iterates k times. The array will be expanded to size 4k the ﬁrst
+           time the stack reaches size 2k + 1. For this expansion, the loop iterates 2k
+                                                                   i+1
+           times. In general, the array will be expanded to size 2    k theﬁrsttimethe
+                                i                                   i
+           stack reaches size 2 k + 1, and the loop will iterate 2 k times during this
+           expansion. Because the sequence contains n operations, the stack can never
+           exceed size n. Therefore, in order to compute an upper bound on the total
+                                                  i
+           number of iterations, we must sum 2 k for all i ≥ 0 such that
+                                      i
+                                     2 k +1≤n
+                                            i
+                                           2 ≤(n−1)/k
+                                            i ≤ lg(n − 1) − lgk.

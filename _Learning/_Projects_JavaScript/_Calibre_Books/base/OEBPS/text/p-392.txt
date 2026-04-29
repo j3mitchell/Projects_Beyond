@@ -1,0 +1,36 @@
+                                     Optimization I: Greedy Algorithms                         373
+                 In order to simplify reasoning about this strategy, let us observe that
+             because we will not be changing any scheduling decisions that have already
+             been made, the values of the jobs scheduled so far have no eﬀect on future
+             decisions — their values are simply added to the total value of the schedule.
+             As a result, all we really need to know about the schedule constructed so far
+             is what time slots are still available. Furthermore, maximizing the values of
+             jobs scheduled in the remaining slots will maximize the total value, because
+             the values of all scheduled jobs are simply added together.
+                 We can therefore focus our attention on the following version of the
+             problem. The input consists of a set X of (unscheduled) jobs and an array
+             avail[1..n] of boolean values. A valid schedule either assigns a job xi into
+             a time slot t such that t is no more than the deadline of xi and avail[t]=
+             true, or it does not schedule xi. The goal is to maximize the total value of
+             scheduled jobs. The following theorem shows that an optimal schedule can
+             be constructed by selecting the job with maximum value and scheduling it
+             at the latest possible time, assuming it can be scheduled.
+             Theorem 11.1. Let X = {x ,...,x } be a set of jobs, and let avail[1..n]
+                                              1        m
+             be an array of boolean values indicating the time slots at which jobs may
+             be scheduled. Let xk be a job having maximum value, and suppose there is
+             some t no greater than the deadline of xk such that avail[t]=true.Lett0
+             be the maximum such t. Then there is an optimal schedule in which xk is
+             scheduled at the time slot ending at time t0.
+             Proof.     Let sched[1..n] be an optimal schedule and suppose sched[t0] = k.
+             We consider two cases.
+             Case 1: sched[t1]=k. Because t0 is the latest available time slot for
+             x , t <t. Therefore, by swapping the values of sched[t ]andsched[t ],
+              k   1    0                                                       1                0
+             we violate no deadlines and do not change the value of the schedule. The
+             resulting schedule must therefore be optimal.
+             Case 2: xk is not scheduled in sched.Letj = sched[t0]. We ﬁrst observe
+             that j = 0, because in this case we could obtain a schedule with higher value
+             by scheduling xk in sched[t0]. Because xk is a job having maximum value,
+             the value of xk is at least the value of xj. Therefore, by scheduling xk at
+             sched[t0] instead of xj, we retain an optimal schedule.                             

@@ -1,0 +1,39 @@
+          48                   Algorithms: A Top-Down Approach
+             Some algorithms might contain both recursion and iteration. In such
+          cases, both techniques should be used. Because the algorithm is recursive,
+          its correctness should be shown using induction. In order to complete the
+          induction, the loops will need to be handled by proving initialization,
+          maintenance, termination, and correctness. In Chapter 4, we will see
+          how these techniques can be extended to proving the correctness of data
+          structures.
+             Though correctness proofs are useful for ﬁnding errors in algorithms
+          and for giving us conﬁdence that algorithms are correct, they are also quite
+          tedious. On the other hand, if an algorithm is fully speciﬁed and designed in
+          a top-down fashion, and if proper loop invariants are provided, working out
+          the details of a proof is usually not very hard. For this reason, we will not
+          provide many correctness proofs in the remainder of this text, but will leave
+          them as exercises. We will instead give top-down designs of algorithms and
+          provide invariants for most of the loops contained in them.
+          2.8  Exercises
+          Exercise 2.1. Induction can be used to prove solutions for summations.
+          Use induction to prove each of the following:
+             (a) The arithmetic series:
+                                         n
+                                         n(n+1)
+                                           i =    2   .                   (2.1)
+                                        i=1
+             (b) The geometric series:
+                                        n       n+1
+                                       xi=x −1,                          (2.2)
+                                       i=0       x−1
+                for any real x =1.
+          Exercise 2.2. Let
+                                      ⎧1ifn=0
+                                      ⎪
+                                      ⎪
+                                      ⎨n−1
+                                f(n)= 
+                                      ⎪
+                                      ⎪ f(i)ifn>0.
+                                      ⎩i=0              n−1
+          Use induction to prove that for all n>0, f(n)=2  .

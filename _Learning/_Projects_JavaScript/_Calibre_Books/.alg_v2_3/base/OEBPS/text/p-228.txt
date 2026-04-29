@@ -1,0 +1,42 @@
+                                      Storage/Retrieval I: Ordered Keys                          209
+             h ≥ 1, the number of nodes in the two children are g(h − 1) and g(h − 2).
+             Then for h ≥ 1,
+                                       g(h)=g(h−1)+g(h−2)+1,                                   (6.1)
+             where g(−1) = 0 (the number of nodes in an empty tree) and g(0) = 1 (the
+             number of nodes in a tree of height 0).
+             Example 6.3. Consider the subtree rooted at 25 in Figure 6.10. It is of
+             height 1, and its two children are minimum-sized subtrees of height 0 and
+             −1, respectively. It is therefore a minimum-sized AVL tree of height 1, so
+             g(1) = 2. Likewise, the subtrees rooted at 53 and 74 are also minimum-sized
+             AVLtrees of height 1. The subtrees rooted at 31 and 79 are then easily seen
+             to be minimum-sized AVL trees of height 2, so g(2) = 4. In like manner it
+             can be seen that g(3) = 7, g(4) = 12, and the entire tree is a minimum-sized
+             AVL tree of height 4.
+                 Recurrence (6.1) does not ﬁt any of the forms we saw in Chapter 3.
+             However, it is somewhat similar to the form of Theorem 3.34. Recall that we
+             only need a lower bound for g(n). In what follows, we will derive a recurrence
+             that ﬁts the form of Theorem 3.34 and gives a lower bound for g(n).
+                 We ﬁrst observe that g must be a nondecreasing function. Thus, for
+             h≥1, if
+                                           g (h)=2g (h−2)+1,
+                                            1          1
+             where g (h)=g(h)forh<1, then
+                      1
+                                                 g (h) ≤ g(h),                                 (6.2)
+                                                  1
+             for all h ≥−1.
+                 Now if we let g (h)=g (2h) for all h,weobtain
+                                   2        1
+                                          g (h)=g (2h)
+                                           2         1
+                                                 =2g (2h−2)+1
+                                                      1
+                                                 =2g (2(h−1))+1
+                                                      1
+                                                 =2g (h−1)+1.
+                                                      2
+             g then ﬁts the form of Theorem 3.34. Applying this theorem, we obtain
+              2
+                                                              h
+                                                g (h) ∈ Θ(2 ).
+                                                 2

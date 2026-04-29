@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 350</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-350.jpg" alt="Page 350" width="1282" height="1882"/>
+      <div class="ocr">                       Chapter 10
+                Divide and Conquer
+      In Part I of this text, we introduced several techniques for applying the top-
+      down approach to algorithm design. We will now take a closer look at some
+      of these techniques. In this chapter, we will look at the divide-and-conquer
+      technique.
+        As we stated in Chapter 3, the divide-and-conquer technique involves
+      reducing a large instance of a problem to one or more instances having a
+      ﬁxed fraction of the size of the original instance. For example, recall that
+      the algorithm MaxSumDC, shown in Figure 3.3 on page 78, reduces large
+      instances of the maximumsubsequencesumproblemtotwosmallerinstances
+      of roughly half the size.
+        Though we can sometimes convert divide-and-conquer algorithms to
+      iterative algorithms, it is usually better to implement them using recursion.
+      Onereasonis that typical divide-and-conquer algorithms implemented using
+      recursion require very little stack space to support the recursion. If we divide
+      an instance of size n into instances of size n/b whenever n is divisible by b,
+      we can express the total stack usage due to recursion with the recurrence
+                     f(n) ∈ f(n/b)+Θ(1).
+      Applying Theorem 3.35 to this recurrence, we see that f(n) ∈ Θ(lgn). The
+      other reason for retaining the recursion is that when a large instance is
+      reduced to more than one smaller instance, removing the recursion can be
+      diﬃcult and usually requires the use of a stack to simulate at least one
+      recursive call.
+        Because divide-and-conquer algorithms are typically expressed using
+      recursion, the analysis of their running times usually involves the asymptotic
+      solution of a recurrence. Theorem 3.35 almost always applies to this
+      recurrence. Not only does this give us a tool for analyzing running times,
+                          331
+</div>
+    </div>
+  </body>
+</html>

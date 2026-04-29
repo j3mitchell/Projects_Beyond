@@ -1,0 +1,42 @@
+          564                    Algorithms: A Top-Down Approach
+          Theorem 17.4. Let p(x,y) be an integer-valued       Recall that |x| denotes the
+          polynomial, and let X be an optimization problem    numberofbitsintheencod-
+          whose optimal value on any input x is a natural     ing of x and µ(x) denotes
+                                                              the maximum value of any
+          number bounded above by p(|x|,μ(x)).Ifthereisa integerencoded withinx.
+          fully polynomial approximation scheme for X,then
+          there is a pseudopolynomial algorithm for obtaining
+          an optimal solution for X.
+          Proof.   The pseudopolynomial algorithm operates as follows. Given an
+          input x, it ﬁrst computes k = p(|x|,μ(x)). It then uses the fully polynomial
+          approximation scheme to approximate a solution with an approximation
+          ratio bounded by 1 + 1.LetV be the value of the approximation, and let
+                               k
+          V∗ be the value of an optimal solution. If the problem is a minimization
+          problem, we have
+                                        V ≤1+1,
+                                        V∗       k
+                                         V ≤V∗+V∗,
+                                                    k
+                                    V −V∗ ≤ V∗
+                                              k
+                                           <1.
+          Because both V and V∗ are natural numbers and V ≥ V∗, we conclude that
+          V = V∗. Furthermore, because the fully polynomial approximation scheme
+          runs in time polynomial in |x| and p(|x|,μ(x)), it is a pseudopolynomial
+          algorithm.
+              An analogous argument applies to maximization problems.         
+              Because the minimum number of bins needed is clearly no more than
+          the length of the input to the bin packing problem, Theorem 17.4 applies to
+          this problem. Indeed, the condition that the optimal solution is bounded by
+          a polynomial in the length of the input and the largest integer in the input
+          holds for most optimization problems. In these cases, if the given problem
+          is strongly NP-hard (as is bin packing), there can be no fully polynomial
+          approximation scheme unless P = NP.
+              If we cannot obtain a fully polynomial approximation scheme for bin
+          packing, we might still hope to ﬁnd a polynomial approximation scheme.
+          However, the theory of NP-hardness tells us that this is also unlikely. In
+          particular, for a ﬁxed positive integer k,letk-BP denote the problem of
+          deciding whether, for a given instance of bin packing, there is a solution
+          using at most k bins. It is easily seen that Part ≤p 2-BP,sothat2-BP is
+                                                         m

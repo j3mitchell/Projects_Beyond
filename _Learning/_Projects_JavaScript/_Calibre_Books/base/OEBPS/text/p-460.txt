@@ -1,0 +1,27 @@
+                       Chapter 14
+            Network Flow and Matching
+      In this chapter, we examine the network ﬂow problem, a graph problem to
+      which many problems can be reduced. In fact, some problems that don’t
+      even appear to be graph problems can be reduced to network ﬂow, yielding
+      eﬃcient algorithms. We begin by deﬁning the problem.
+        Let Z denote the set of integers, and let Z>0 denote the set of positive
+      integers. A ﬂow network is a 4-tuple (G,u,v,C), where
+      • G=(V,E) is a directed graph;
+      • u ∈ V is the source vertex;
+      • v ∈ V is the sink vertex;and
+      • C : E → Z>0 gives a positive integer capacity for each edge.
+      For example, Figure 14.1 shows a ﬂow network whose source is 0, whose sink
+      is 5, and whose edges all have capacity 1. Intuitively, the capacities represent
+      the maximum ﬂow that the associated edges can support. We are interested
+      in ﬁnding the maximum total ﬂow from u to v that the network can support.
+        The above deﬁnition is more general than what is typical. The standard
+      deﬁnition prohibits incoming edges to the source and outgoing edges from
+      the sink. However, this more general deﬁnition is useful for the development
+      of our algorithms.
+        In order to deﬁne formally a network ﬂow, we need some additional
+      notation. For a vertex x in a directed graph, let
+      • x← ={(w,x) ∈ E}, the set of incoming edges to x;and
+      • x→ ={(x,y) ∈ E}, the set of outgoing edges from x.
+      Aﬂow for a ﬂow network ((V,E),u,v,C) is function F : E → N such that
+      • for each e ∈ E, F(e) ≤ C(e); and
+                          441

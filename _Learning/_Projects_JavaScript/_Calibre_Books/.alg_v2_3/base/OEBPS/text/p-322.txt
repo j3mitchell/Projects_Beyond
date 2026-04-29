@@ -1,0 +1,50 @@
+                                            Disjoint Sets                               303
+            operation, at least d − α(n) − 2 nodes decrease in potential, and no nodes
+            increase in potential. As a result, we will have shown the amortized cost to
+            be at most α(n)+2∈ O(α(n)).
+                First, we will show that no potentials increase as a result of Find(j).
+            Because the Find operation does not change any ranks and does not change
+            which nodes are roots, no leaves or roots can change potential. The potential
+            foranyothernodei can change only due to changes in f and g. Because i
+            cannot receive a parent with a smaller rank as a result of path compression,
+            f(s,i) ≥ f(s,i). If f(s,i)=f(s,i), then clearly g(s,i) ≥ g(s,i). In this
+            case, the potential does not increase. If, on the other hand, f(s,i) >f(s,i),
+            from Lemma 8.2 and the fact that path compression leaves all ranks
+            unchanged, g(s,i)−g(s,i) < ranks[i]. Then
+                       φ (i) − φ (i)=     (α(n)−f(s,i))rank [i] −g(s,i)
+                        s        s                              s
+                                        − (α(n)−f(s,i))ranks[i]+g(s,i)
+                                     < (f(s,i)−f(s,i))ranks[i]+ranks[i]
+                                     ≤ 0.
+            In this case, the potential of i decreases.
+                The only nodes whose parents change are ancestors of j, and no ranks
+            change. Hence, the only nodes whose potentials change are ancestors of
+            j. The ancestors of j include a root and at most one leaf. For the other
+            ancestors i, from Lemma 8.1, there can be at most α(n)distinctvaluesfor
+            f(s,i). For a given value k,eachnodei with f(s,i)=k except the one
+                                                                
+            nearest the root has a proper ancestor i with f(s,i )=k. We will show that
+            all of these nodes — i.e., at least d − α(n) − 2ofthed ancestors of j —
+            decrease in potential as a result of the Find.
+                Let i be an ancestor of j in s such that i is neither a leaf nor a root
+                                                       
+            and such that for some proper ancestor i of i other than the root, f(s,i)=
+                                                            
+            f(s,i )=k. We have already shown that if f(s ,i) >f(s,i), the potential of
+            i decreases. Therefore, suppose f(s,i)=f(s,i)=k.Then
+                                                        
+                    ranks [parents[i]] ≥ ranks[parents[i ]]
+                                                     
+                                       ≥A (ranks[i])              (deﬁnition of f)
+                                           k
+                                       ≥A (ranks[parent [i]])
+                                           k               s
+                                               (g(s,i))
+                                       ≥A (A         (ranks[i]))  (deﬁnition of g)
+                                           k   k
+                                           (g(s,i)+1)
+                                       =A           (ranks[i])
+                                           k
+                                           (g(s,i)+1)
+                                       =A           (ranks[i]).
+                                           k

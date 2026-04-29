@@ -1,0 +1,40 @@
+                               Approximation Algorithms                 567
+             It can be shown via a much more complicated argument that if the
+          optimal packing uses B∗ bins, then BinPackingFF gives a packing using
+          no more than 17B∗ bins. Thus, as B∗ increases, the upper bound on
+                        10
+          the approximation ratio approaches 17/10. If we ﬁrst sort the items by
+          nonincreasing weight, it can be shown that this strategy (known as ﬁrst-
+          ﬁt decreasing)givesapackingusingnomorethan11B∗ + 2 bins. Note
+                                                         9     3
+          that although this upper bound is less than 3/2asB∗ increases, this does
+          not give a polynomial-time algorithm for -ApproxBP for any <3/2,
+          as the proof of Theorem 17.5 essentially shows the hardness of deciding
+          whether B∗ = 2. Furthermore, Theorem 17.5 does not preclude the existence
+          of a pseudopolynomial algorithm with an approximation ratio bounded by
+          some value less than 3/2. We leave it as an exercise to show that dynamic
+          programming can be combined with the ﬁrst-ﬁt decreasing strategy to yield,
+          for any positive , an approximation algorithm with an approximation ratio
+          bounded by 11 +.
+                     9
+          17.4  The Traveling Salesperson Problem
+          Exercise 16.28 introduced the traveling salesperson problem as a decision
+          problem, TSP. Its input consists of a complete undirected graph G with
+          positive integer edge weights and a positive integer k. The question we ask
+          is whether there is a Hamiltonian cycle in G with total weight no more
+          than k. As is suggested by Exercise 16.28, TSP is strongly NP-complete.
+          The corresponding optimization problem does not include the input k, but
+          instead asks for the Hamiltonian cycle in G with minimum weight. It is
+          easily seen that this problem is NP-hard in the strong sense. Clearly, a
+          minimum weight Hamiltonian cycle has weight no more than nW,wheren
+          is the number of vertices in G and W is the maximum weight of any edge in
+          G; hence, by Theorem 17.4, there can be no fully polynomial approximation
+          scheme for the optimization problem unless P = NP.
+             For >0, let -ApproxTSP be the problem of ﬁnding, for a given
+          undirected graph G with positive integer edge weights, a Hamiltonian cycle
+          with approximation ratio no more than 1+. In what follows, we will show
+          that -ApproxTSPisNP-hardinthestrongsenseforeverypositive .Asa
+          result, there can be no polynomial or pseudopolynomial algorithm for ﬁnding
+          an approximation with any bounded approximation ratio unless P = NP.
+          Theorem 17.7. For every positive , -ApproxTSP is NP-hard in the
+          strong sense.

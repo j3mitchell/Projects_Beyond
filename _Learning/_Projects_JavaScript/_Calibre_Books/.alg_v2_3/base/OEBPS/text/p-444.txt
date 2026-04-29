@@ -1,0 +1,39 @@
+                                  Depth-First Search                    425
+             In the next three sections, we will show how to use depth-ﬁrst search to
+          design algorithms for connected undirected graphs, directed acyclic graphs,
+          and directed graphs.
+          13.4  Articulation Points
+          As we mentioned at the beginning of this chapter, an articulation point in
+          a connected undirected graph is any vertex whose removal yields a discon-
+          nected graph. If, for example, a given graph represents a communications
+          network, then an articulation point is a node whose failure would partition
+          the network. It would therefore be desirable to know if a given network
+          contains any articulation points.
+             Let G be a connected undirected graph, and let T be a depth-ﬁrst
+          spanning tree for G. We ﬁrst note that it is easy to tell if the root of T
+          is an articulation point. If T has only one child, then the removal of its
+          root from G cannot disconnect G — the tree edges continue to connect the
+          graph. On the other hand, from Theorem 13.2, G can have no edges between
+          diﬀerent subtrees of T.Thus,ifT has more than one child, its root must be
+          an articulation point of G. We therefore conclude that the root of T is an
+          articulation point of G iﬀ it has more than one child.
+             The above property suggests the following algorithm. Let n be the
+          number of vertices and a be the number of edges in G.Wedon separate
+          depth-ﬁrst searches, using a diﬀerent vertex as the root for each search. As
+          we process the tree edges (either in preorder or in postorder), we count the
+          numberofchildrenoftheroot.Afterthesearch completes, wethendetermine
+          whethertherootisanarticulationpointbyexaminingthenumberofchildren
+          it has. It is not hard to see that we could construct such an algorithm with
+          running time in Θ(na), provided G is implemented as a ListGraph.
+             In order to obtain a more eﬃcient algorithm, let us consider some vertex
+          i other than the root of T. If there are no back edges in G, then the removal
+          of i disconnects G if i has at least one child. In this case, G is partitioned into
+          one connected component for each child of i, plus a connected component
+          containing all vertices that are not descendants of i. If, however, there are
+          back edges, these back edges may connect all of these partitions together.
+          Note, however, that from Theorem 13.2, no back edge can connect partitions
+          containing two diﬀerent children of i. In particular, if a back edge does
+          connect a partition containing a child of i with another partition, it leads
+          fromaproperdescendantofitoaproperancestorofi.Wethereforeconclude
+          that i is an articulation point iﬀ i has at least one child j in T such that no
+          descendant of j is adjacent to a proper ancestor of i.

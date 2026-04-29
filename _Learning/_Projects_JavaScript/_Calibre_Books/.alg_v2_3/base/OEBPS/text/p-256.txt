@@ -1,0 +1,40 @@
+                                      Storage/Retrieval I: Ordered Keys                          237
+                                                 =nE[I(len ≥ i)]
+                                                 =nP(len≥i)
+                                                       1−i
+                                                 =n2 .
+                 Clearly, E[numi] > 1iﬀi<1+lgn. This suggests that maxLevel should
+             typically be about lgn (however, this is not a proof of the expected value
+             of maxLevel). Because we already know that the while loop is expected
+             to iterate no more than once for each level, this suggests that the overall
+             running time is logarithmic in n (assuming l is suﬃciently small). While we
+             don’t have quite enough yet to show this, we can now show a logarithmic
+             bound on the ﬁrst term in (6.9):
+                                    ∞               ∞
+                                                  
+                                       E[taili] ≤      (min(1,E[numi]))
+                                   i=1             i=1
+                                                   lgn         ∞
+                                                                1−i
+                                                =        1+             n2
+                                                    i=1      i=lgn+1
+                                                                ∞
+                                                               −lgn−i
+                                                =lgn+n           2
+                                                               i=0
+                                                                1−lgn
+                                                =lgn+n2
+                                                                1−lgn
+                                                ≤lgn+n2
+                                                =lgn+2.                                     (6.11)
+                 In order to complete the analysis of Find, we must consider the second
+             term in (6.9), namely, E[max(maxLevel,l)]. It would be nice if we could use a
+             property like the linearity of expectation to conclude that this value is equal
+             to max(E[maxLevel],E[l]); however, such a property does not necessarily
+             hold (see Exercise 6.16). On the other hand, because maxLevel and l are
+             nonnegative, we can use the fact that max(maxLevel,l) ≤ maxLevel + l.
+             Therefore,
+                               E[max(maxLevel,l)] ≤ E[maxLevel +l]
+                                                        =E[maxLevel]+E[l].                    (6.12)
+                 For the case in which Find is called from Put, we know that E[l]=2.We
+             therefore need to evaluate E[maxLevel]. Note that maxLevel is the number

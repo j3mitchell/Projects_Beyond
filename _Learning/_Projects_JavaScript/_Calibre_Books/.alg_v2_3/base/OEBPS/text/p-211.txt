@@ -1,0 +1,36 @@
+         192                Algorithms: A Top-Down Approach
+         * Exercise 5.12. Restructure SkewHeap.Merge to replace the recursion
+         with a loop. Your algorithm should use only Θ(1) space (apart from the
+         space already used by the heaps). Prove that the data structure obtained
+         by replacing the Merge function in SimpleHeap with this revised function
+         meets the speciﬁcation given in Figure 5.1.
+         Exercise 5.13. Prove that RandomizedHeap, obtained by replacing the
+         Merge function in SimpleHeap (Figure 5.5) with the function shown in
+         Figure 5.12, meets speciﬁcation given in Figure 5.1.
+         Exercise 5.14. Prove by induction on n that any binary tree with n nodes
+         has exactly n+1 empty subtrees.
+         Exercise 5.15. Prove by induction on the number of nodes in a binary tree
+         T, that the sum of the probabilities in PathT is 1.
+         Exercise 5.16. The goal of this exercise is to prove Theorem 5.5. Let f :
+         S →Nbeadiscrete random variable.
+          a. Prove by induction on n that
+                       n            n
+                                  
+                         iP(f = i)=   P(f ≥i)−nP(f ≥n+1).
+                      i=0          i=1
+          b. Prove that for every n ∈ N,
+                      ∞            n
+                      iP(f =i)≥iP(f =i)+nP(f ≥n+1).
+                      i=0          i=0
+          c. Using the fact that if g(i) ≥ 0 for all i,then
+                                ∞           n
+                               g(i)= lim g(i),
+                               i=0      n→∞i=0
+            prove that if E[f] is ﬁnite, then
+                               lim nP(f ≥ n+1)=0.
+                               n→∞
+          d. Prove Theorem 5.5.
+         Exercise 5.17. Prove Theorem 5.9.
+         Exercise 5.18. Let S be the set of all sequences of four ﬂips of a fair coin,
+         where each sequence has probability 1/16. Let h be the discrete random
+         variable giving the number of heads in the sequence.

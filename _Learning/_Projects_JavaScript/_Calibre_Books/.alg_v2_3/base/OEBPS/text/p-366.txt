@@ -1,0 +1,12 @@
+                                       Divide and Conquer                           347
+            Figure 10.5   Alinear-time algorithm for the selection problem
+           to give an upper bound on the running time of the algorithm for suﬃciently
+           large n. Clearly, the number of elements in the ﬁrst recursive call is n/5.
+           Furthermore, if we ignore the recursive calls, the time needed is in O(n)(note
+           that the time needed to sort 5 elements is bounded by a constant because
+           the number of elements is constant). However, the number of elements in the
+           second recursive call is not always bounded above by 3n/4.Consider,for
+           example, the array A[1..13] with A[i]=i for 1 ≤ i ≤ 13. The values 3 and
+           8 will be placed in T[1] and T[2], respectively. The value assigned to p will
+           therefore be 3. If k>3, ten elements will be passed to the second recursive
+           call, but 3 · 13/4 =9.

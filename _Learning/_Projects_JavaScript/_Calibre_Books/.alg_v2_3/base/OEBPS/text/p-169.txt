@@ -1,0 +1,15 @@
+           150                      Algorithms: A Top-Down Approach
+             Figure 5.1  The PriorityQueue ADT
+           5.1   Sorted Arrays
+           Our ﬁrst implementation of PriorityQueue maintains the data in an
+           expandable array, sorted in nondecreasing order of priorities. The repre-
+           sentation consists of two variables:
+           • elements[0..M −1]: an array of Keyed items, each containing a data item
+              with its associated priority as its key, in order of priorities; and
+           • size: an integer giving the number of data items.
+           Implementation of the RemoveMax operation is then trivial — after
+           verifying that size is nonzero, we simply decrement size by 1 and then return
+           elements[size].Data(). Clearly, this can be done in Θ(1) time. Similarly, the
+           MaxPriority operation can be trivially implemented to run in Θ(1) time.
+               In order to implement Put(x,p), we must ﬁnd the correct place to insert
+           x so that the order of the priorities is maintained. Let us therefore reduce

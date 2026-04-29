@@ -1,0 +1,39 @@
+                                    Basic Techniques for Data Structures                        121
+             calls, some operation x.Op2 is then called (see Figure 4.5). At this point,
+             the structural invariant is false, and the operation’s correctness cannot be
+             guaranteed. This scenario is known as a callback.Notethatitdoesnotmatter
+             howlongthesequence of nested calls is. In particular, the function call made
+             by x.Op1 may be a direct call to x.Op2, or it may be a recursive call.
+                 Though callbacks are common in software systems, they are more
+             problematic than beneﬁcial in the design of data structures. Furthermore, as
+             is the case for mutual recursion, callbacks may be impossible to detect when
+             we are designing a single data structure, as we may need to call a function
+             whose implementation we don’t have. For these reasons, we will assume that
+             if a callback is attempted, a runtime error results. Our correctness proofs
+             will then rest on the assumption that data structures and algorithms are not
+             combined in such a way as to result in a callback.
+                 Given this assumption, once initialization, main-           A locking mechanism can
+             tenance, and security are shown, it can be shown by             be used to cause any call-
+             induction that the structural invariant holds between           back to generate a runtime
+                                                                             error.
+             execution of any operations that construct or alter an
+             instance of the data structure. Note that the structural invariant will hold
+             after the structure is constructed, regardless of whether preconditions to
+             operations are met. Thus, we can be convinced that a structural invariant
+             holds even if operations are not invoked properly. Because we can know
+             that the structural invariant holds, we can then use it in addition to the
+             precondition in proving the correctness of an individual operation.
+             4.3    Expandable Arrays
+             SimpleStack does not quite implement the Stack ADT because each
+             SimpleStack must be constructed with a ﬁxed capacity. We will now
+             present a true implementation of Stack.
+                 WecanusethebasicideafromSimpleStackifwehaveawaytoperform
+             a Push when the array is full. Our solution will be to construct a new, larger
+             array, and to copy the elements in the stack to this new array. This new array
+             then replaces the original array. We now have room to add the new element.
+                 Thoughthisideaissimple,therearesomeperformanceissuestoconsider.
+             In particular, Θ(n)timeisrequiredtocopyn elements from one array to
+             another. We might be willing to pay this performance price occasionally, but
+             if we are not careful, the overall performance of manipulating a stack may
+             be signiﬁcantly degraded. Suppose, for example, that the new array contains
+             only one more location than the original array. Consider what happens if we

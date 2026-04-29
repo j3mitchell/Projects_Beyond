@@ -1,0 +1,36 @@
+                                    Basic Techniques for Data Structures                        141
+             because k must be strictly larger than n, and both are integers. Because no
+             loop iterations are performed in this case, the actual cost is 0; hence, the
+             amortized cost is less than 4.
+                 In order to complete the analysis, we must consider the Pop operation.
+             Because n is initially positive and decreases by 1, and because k remains the
+             same, the change in potential is
+                                  2(n−1)2       2n2     2n2 −4n+2−2n2
+                                      k      − k =                 k
+                                                     = 2−4n
+                                                           k
+                                                     <0.
+             The actual cost is 0. The amortized cost is therefore less than 0.
+                 In each case, the amortized cost is in O(1). Because the time for each
+             loop iteration and the time required by each operation apart from the loop
+             iterations are both in O(1), we conclude that the amortized running time of
+             the stack operations is in O(1).
+             4.6    Summary
+             We have shown how the top-down design paradigm can be applied to the
+             design of data structures. In many cases, we can reduce the implementation
+             of an ADT to the implementation of simpler or lower-level ADTs. In other
+             cases, we can reduce the implementation to a common design pattern. The
+             algorithms we have used for implementing the operations of ADTs have been
+             quite simple. As we examine more advanced data structures in the following
+             chapters, we will see that the algorithms in the implementations also use the
+             top-down approach as presented in Chapter 1.
+                 Applying the top-down approach yields clean techniques for proving
+             that implementations of ADTs meet their speciﬁcations. The techniques are
+             similar to those presented in Chapter 2, but additionally require proving
+             security of the implementations. Borrowing some ideas from modular and
+             object-oriented languages, we have supplied a computational model that
+             facilitates security in a straightforward way. This model also facilitates
+             the implementation of immutable structures, which in some cases yield
+             performance beneﬁts by eliminating the need to copy data. However, use
+             of immutable structures tends to increase the amount of dynamic memory
+             allocation and requires the presence of an automatic garbage collector.

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 197</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-197.jpg" alt="Page 197" width="1282" height="1882"/>
+      <div class="ocr">         178                Algorithms: A Top-Down Approach
+         Theorem 5.9 (Linearity of Expectation). Let f, g,andh be discrete
+                                                            i
+         random variables for all i ∈ N,andleta ∈ R≥0.Then
+                             E[af +g]=aE[f]+E[g],
+         and
+                                
+ ∞     ∞
+                              E h =E[h].
+                                     i         i
+                                 i=0     i=0
+            The proof of this theorem is straightforward and left as an exercise.
+         It is important to realize not only what this theorem says, but also what it
+         doesn’t say. For example, it is not necessarily the case that E[fg]=E[f]E[g],
+                  f    E[f]
+         or that E[2 ]=2  —see Exercise 5.18 for speciﬁc counterexamples. We
+         must therefore be very careful in working with expected values, as they do
+         not always behave as our intuition might suggest.
+            Applying Theorems 5.9 and 5.7 to our analysis, we now see that
+                    E[c(lenS +lenT)] = c(E[lenS]+E[lenT])
+                                   ≤c(lg(|S|+1)+lg(|T|+1))
+                                   ≤2clg(|S|+|T|+2),
+         where |S| and |T| denote the sizes of S and T, respectively. Thus, the
+         expected running time of Merge is in O(lgn), where n is the total number
+         of nodes in the two heaps. It follows that the expected running times of Put
+         and RemoveMaxare also in O(lgn).
+            Aclose examination of Example 5.4 reveals that the bound of lg(n+1)
+         on E[lenT] is reached when n + 1 is a power of 2. Using the fact that lg is
+         smooth, we can then show that the expected running time of Merge is in
+         Ω(lgn); the details are left as an exercise. Thus, the expected running times
+         of Put and RemoveMax are in Θ(lgn).
+            It is also clear that the stack space usage of Merge is proportional to the
+         depthofrecursion,which is proportional to the runningtime. As a result, the
+         expected stack space usage of Merge, and hence of Put and RemoveMax,
+         is in Θ(lgn). While this result is positive, it might be worthwhile to consider
+         the worst-case stack space usage, as high stack space usage will cause a
+         program to terminate abnormally. In the worst case, all nodes in a single
+         tree can be in the same path, and Merge can follow this path to the end.
+         Hence, in the worst case, Merge, Put,andRemoveMax can use Θ(n)
+         stack space. On the other hand, the recursion can be removed in a similar
+</div>
+    </div>
+  </body>
+</html>

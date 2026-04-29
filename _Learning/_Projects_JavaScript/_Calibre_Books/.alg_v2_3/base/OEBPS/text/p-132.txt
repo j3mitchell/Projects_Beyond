@@ -1,0 +1,37 @@
+                                    Basic Techniques for Data Structures                        113
+             and perhaps other variables that can be accessed using the representation
+             variables. It should be true at virtually all times. The only exception is that
+             we allow it to be temporarily violated while an operation is modifying the
+             structure, provided that it is true by the time the operation completes. The
+             structural invariant for our present example will be:
+                                       0 ≤ size ≤ SizeOf(elements).                           (4.1)
+                 The values of the representation variables, together with all values used
+             by the interpretation and the structural invariant, comprise the state of the
+             data structure. Thus, the state of our stack implementation consists of the
+             value of size, the array elements, and the values stored in elements[1..size].
+             (We will clarify shortly the distinction between the array and the values
+             stored in the array.)
+                 We can now complete our implementation by giving algorithms for the
+             SimpleStack constructor and operations. These algorithms are shown in
+             Figure 4.4.
+                 Note that the preconditions and postconditions for the constructor and
+             operations are stated in terms of the deﬁnition of a stack, not in terms of our
+             chosen representation. For example, the precondition for the Push operation
+             could have been stated as,
+                                         size < SizeOf(elements).
+             However, preconditions and postconditions for operations on data structures
+             should specify the externally observable behavior of the operation, and
+             hence should not refer to the representation of the structure. Thus, the
+             preconditions and postconditions still make sense even if we change the
+             representation.
+                 The performance of these operations can be analyzed using the tech-
+             niques given in Chapter 3. It is easily seen that each of the operations Push,
+             Pop,andSize operate in Θ(1) time. Analysis of the constructor is more
+             problematic because we must include the time for constructing an array.
+             This time depends on such factors as how the operating system allocates
+             memory and whether the elements are initialized to some default value. For
+             the sake of simplicity, we will assume that the memory can be allocated in
+             constant time, and that the array will not be initialized. Thus, the time to
+             construct a new array is in Θ(1), and the constructor operates in Θ(1) time.
+                 Provingcorrectness of operations on a data structure is similar to proving
+             correctness of ordinary algorithms. There are ﬁve parts:

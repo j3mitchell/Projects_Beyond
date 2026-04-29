@@ -1,0 +1,31 @@
+           574                     Algorithms: A Top-Down Approach
+           where W is the sum of all edge weights in G. Clearly, the maximum cut can
+           benomorethanW.Theapproximation ratio is therefore bounded above by
+                                         W       = k
+                                     (k −1)W/k      k −1 1
+                                                 =1+k−1.
+                                                                                     
+               Though the algorithm MaxCut yields a ﬁxed bound on the approxima-
+           tion ratio for approximating a maximum cut, it is perhapssurprisingthat the
+           same algorithm yields unbounded approximation ratios for approximating a
+           minimumcluster, even though the two optimization problems are essentially
+           the same. We can see why this is the case by examining instances that cause
+           the approximation ratio for MaxCut to approach the upper bound shown
+           in Theorem 17.8.
+               For k ≥ 2, consider a complete undirected graph G =(V,E), where
+                              2
+           V ={i∈N|i<k}.Wepartition V into k groups such that for 0 ≤ j<k,
+           group j is the set {i ∈ N | jk ≤ i<(j +1)k}; thus, each group contains
+           k vertices. We now assign weights to the edges in G such that if vertices u
+           and v are in the same group, then {u,v} has weight 1; otherwise, {u,v} has
+           weight x,wherex is some suﬃciently large natural number. (See Figure 17.7
+           for the case in which k =2.)
+            Figure 17.7   AbadcaseforMaxCut
+                                0       1              1
+                                       x                 x
+                               x
+                                                  x
+                                                                max cut
+                                23
+                                        1
+                                     approximation

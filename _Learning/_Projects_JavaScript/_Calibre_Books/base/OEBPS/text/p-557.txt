@@ -1,0 +1,45 @@
+         538                Algorithms: A Top-Down Approach
+            Because we can use any polynomial-time M that decides Y,wecan
+         simplify matters further by making a couple of assumptions about M.First,
+         we can assume that M contains at least one Halt(1) instruction — if
+         there is no input yielding a “yes” answer, we can always include such an
+         instruction at an unreachable location. Second, because statements that
+         cannot be executed due to error conditions have the same eﬀect as Halt(0),
+         and because the instruction set is powerful enough to check any run-time
+         error conditions, we can assume that all statements can be executed without
+         error.
+            In addition, we make some simplifying assumptions regarding the
+         polynomials p and p. First, we note that by removing any negative terms
+         from p, we obtain a polynomial that is nondecreasing and never less than
+         the original polynomial. Thus, we can assume that p is nondecreasing, so
+         that p(|x|+p(|x|)) will give an upper bound on the number of steps executed
+         by M on an input (x,φ)with|φ|≤p(|x|). Furthermore, because p(n+p(n))
+         is a polynomial, we can assume that p(n) is an upper bound on the number
+         of steps taken by M on any input (x,φ) such that |x| = n and |φ|≤p(n).
+         Note that with these assumptions, p(n) ≥ p(n) for all n. We can therefore
+         choose p(n)=p(n), so that we can use a single polynomial p to bound both
+         |φ| and the number of steps executed by M. Finally, we can choose p so that
+         p(n) ≥ n for all n ∈ N.
+            As the ﬁrst step in our construction, we need boolean variables to
+         represent the various components of the state of M at various times in its
+         execution. First, we need variables describing the input sequences x and φ.
+         For x, we will use the variables x[k]for1≤ k ≤ n,wheren is the length
+         of x. Because φ is unknown, even during the execution of the construction,
+         we cannot know its exact length; however, we do know that its length is no
+         more than p(n). We therefore will use the variables φ[k]for1≤ k ≤ p(n)to
+         represent φ.
+            We also need variables to keep track of which bits are unread at each
+         step of the execution of M. For this purpose, we will use the variables
+                                                              
+         x [k]for0≤ i ≤ p(n)and0≤ k ≤ n, plus the variables φ [k]for
+          i                                                    i
+         0 ≤ i ≤ p(n)and0≤ k ≤ p(n). We want x [k]tobetrue iﬀ the kth
+                                                i
+                                                                  
+         bit of x has not been read after i execution steps. Likewise, we want φ [k]
+                                                                   i
+         to be true iﬀ the kth bit of φ exists and has not been read after i execution
+         steps.
+            We then need to record the value of the program counter at each
+         execution step. We will use the variables pij for 0 ≤ i ≤ p(n)and0≤ j<P
+         for this purpose, where P denotes the number of instructions in the program

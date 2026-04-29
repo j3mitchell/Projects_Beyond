@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 159</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-159.jpg" alt="Page 159" width="1282" height="1882"/>
+      <div class="ocr">        140             Algorithms: A Top-Down Approach
+        function by more than 1. However, this also means that no operation causes
+        it to decrease by more than 1. Therefore, it does not ﬁt the characteristics
+        we need for a tight amortized analysis.
+          In order to overcome this problem, let us try multiplying n/k by some
+        value in order to give it more of a range. Because we need for the function to
+        decrease by about n when we expand the array, it will need to have grown
+        by about n after we have done n Pushes; hence, it needs to exhibit at least
+        linear growth. n/k is bounded by a constant; hence, to cause it to be linear
+        in n, we would want to multiply it by a function that is linear in n.This
+        suggests that we might want to try some function of the form an2/k,where
+        a is some positive real number to be determined later.
+          Using this potential function, consider the amortized cost of a Push
+        operation that expands the array. Prior to the operation, n = k. Therefore,
+        the change in potential is
+                         2   2    2           2
+                   a(n+1) −an = an +2an+a−2an
+                     2n     n          2n
+                               =−an+a+ a
+                                  2     2n
+                                  an    a
+                               ≤−2 +a+2
+                               =−an+3a.
+                                  2   2
+        When we add the actual cost of n, we need the result to be bounded by
+        a ﬁxed constant. We can accomplish this by setting a =2.Thepotential
+        function 2n2/k therefore results in an amortized cost of no more than 3 in
+        this case.
+          Now let us consider the amortized cost of a Push operation that does
+        not expand the array. Because n increases by 1 and k does not change, the
+        change in the potential function 2n2/k is
+                          2   2    2         2
+                    2(n+1) − 2n = 2n +4n+2−2n
+                       k     k         k
+                               = 4n+2
+                                   k
+                                  n+1
+                               =4     2
+                                     k
+                               &lt;4
+</div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,24 @@
+           180                     Algorithms: A Top-Down Approach
+            Figure 5.14   Abinaryheap
+           this key is at least as large as any key in the priority queue, but no larger
+           than any key in the sorted part, we can extend the sorted part to include
+           this location (see Figure 5.13(c)).
+               Wetherefore need to be able to represent a heap using an array. One way
+           to accomplish this is to number the nodes left-to-right by levels, as shown
+           in Figure 5.14. The numbers we have assigned to the nodes can be used
+           as array indices. In order to avoid ambiguity, there should be no “missing”
+           nodes; i.e., each level except possibly the last should be completely full, and
+           all of the nodes in the last level should be as far to the left as possible. This
+           scheme for storing a heap is known as a binary heap.
+               Note that a binary heap is very nearly balanced. We saw in Example 5.4
+           that in a completely balanced binary tree with n nodes, the length of any
+           path to an empty subtree is lg(n+1). This result holds only for tree sizes that
+           can be completely balanced. However, it is not hard to show that for any n,
+           if a binary tree with n nodes is balanced as nearly as possible, the length
+           of the longest path to an empty subtree is lg(n +1) (or equivalently, the
+           height is lg(n+1)−1). We will show that this fact allows us to implement
+           both Put and RemoveMax for a binary heap in Θ(lgn)time.
+               Note that each level of a binary heap, except the ﬁrst and possibly the
+           last, contains exactly twice as many nodes as the level above it. Thus, if we
+           were to number the levels starting with 0 for the top level, then each level i
+           (except possibly the last) contains exactly 2i nodes. It follows from (2.2)

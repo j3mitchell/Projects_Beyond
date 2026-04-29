@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 479</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-479.jpg" alt="Page 479" width="1282" height="1882"/>
+      <div class="ocr">          460                 Algorithms: A Top-Down Approach
+          ﬁrst won’t help either. Furthermore, using breadth-ﬁrst search won’t help
+          because it will process just as many edges when no augmenting path exists.
+          On the other hand, this algorithm is not the most eﬃcient one known for
+          this problem. In the exercises, we explore how it might be improved.
+             Although the optimizations we made over a direct reduction to network
+          ﬂow did not improve the asymptotic running time of the algorithm, the
+          resulting algorithm may have other advantages. For example, suppose we are
+          trying to match jobs with job applicants. Each applicant may be qualiﬁed
+          for several jobs. We wish to ﬁll as many jobs as possible, but still assign
+          jobs so that priority is given to those who applied earlier. If we process the
+          applicants in the order in which they applied, we will obey this priority.
+          14.4  Summary
+          The network ﬂow problem is a general combinatorial optimization problem
+          to which many other problems can be reduced. Although the Ford–Fulkerson
+          algorithm can behave poorly when the maximum ﬂow is large in comparison
+          to the size of the graph, its ﬂexibility makes it useful for those cases in which
+          the maximum ﬂow is known to be small. For cases in which the maximum
+          ﬂow may be large, the Edmonds–Karp algorithm, which is simply the Ford–
+          Fulkerson algorithm using breadth-ﬁrst search to ﬁnd augmenting paths,
+          performs adequately.
+             Thebipartite matching problem is an example of a problem which occurs
+          quite often in practice and which can be reduced to network ﬂow to yield a
+          reasonably eﬃcient algorithm. Furthermore, a careful study of the reduction
+          yields insight into the problem that leads to a more general algorithm.
+          14.5  Exercises
+          Exercise 14.1. Prove Equation (14.1) on page 442. [Hint: Show by
+          induction that the net ﬂow out of any set of vertices including the source
+          but not the sink is equal to the left-hand side.]
+          Exercise 14.2. Prove that NetworkFlow, shown in Figure 14.3, meets
+          its speciﬁcation.
+          Exercise 14.3. Implement CopyGraph, speciﬁed in Figure 14.3, to return
+          a ListGraph and run in O(n+a) time, where n is the number of vertices
+          and a is the number of edges in the given graph.
+</div>
+    </div>
+  </body>
+</html>

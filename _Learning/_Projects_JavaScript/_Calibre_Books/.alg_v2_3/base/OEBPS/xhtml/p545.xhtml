@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 545</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-545.jpg" alt="Page 545" width="1282" height="1882"/>
+      <div class="ocr">            526                      Algorithms: A Top-Down Approach
+            we include ¬x ,a ,b  for 1 ≤ i ≤ n.Thus,eacha            and b    is included
+                            i  xi  xi                                xi      xi
+            exactly once. Then for clause i, because A is a satisfying assignment there
+            is at least one literal α   that is true in A. Because α     has not yet been
+                                     ij                               ij
+            included in M, we can include the triple α ,c,d in M.Thus,M includes
+                                                         ij  i  i
+            each c and d exactly once.
+                  i       i
+                At this point M includes no item more than once, but does not include
+            any of the e sorf s. Furthermore, because exactly mn+n of the x sand¬x s
+                        i     i                                                 i         i
+            have been included, (m−1)n have not yet been included. Let β ,...,β
+                                                                             1       (m−1)n
+            denote the xisand¬xis that have not yet been included. We complete M
+            by including β ,e,f for 1 ≤ i ≤ (m−1)n. It is now easily seen that M is
+                            i  i  i
+            a matching.                                                                   
+            16.7   Partitioning and Strong NP-Completeness
+            In this section, we will look at partitioning problems related to the 0-1
+            knapsack problem of Section 12.4. These are the ﬁrst NP-complete problems
+            wewill have seen in which numbers play a signiﬁcant role. As we will see, the
+            NP-completeness of a number problem does not always imply intractability.
+            For this reason, we will introduce a stronger notion of NP-completeness.
+                The most basic partitioning problem consists of a set of items, each
+            having a positive integer weight. The problem is to decide whether the items
+            can be partitioned into two disjoint subsets having identical total weight.
+            More formally, let w ,...,w denote the weights of the items. We wish to
+                                  1       n
+            decide whether there is a subset S ⊆{1,...,n} such that
+                                           wi=wi.
+                                           i∈S       i∈S
+            The problem is known as the partition problem,orPart. We leave it as an
+            exercise to show that Part ∈NP. We will show that Part is NP-hard,
+            and therefore NP-complete.
+                Before showing the NP-hardness of Part, however, we ﬁrst observe that
+            this problem is a special case of the 0-1 knapsack problem in which the values
+            are equal to the weights and the weight bound W is half the total weight. In
+            Section 12.4, we sketched an algorithm to solve this problem in O(nW)time.
+            Clearly, this same algorithm can be applied to Part. This would seem to
+            imply that Part ∈P, so that showing Part to be NP-hard would amount
+            to showing P = NP.
+                However, the O(nW) algorithm does not prove that Part ∈P.The
+            reason is that we have deﬁned P to be the set of decision problems that
+</div>
+    </div>
+  </body>
+</html>

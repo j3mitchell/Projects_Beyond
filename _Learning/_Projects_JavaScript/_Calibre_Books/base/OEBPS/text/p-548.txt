@@ -1,0 +1,42 @@
+                        NP-Completeness           529
+       we don’t expect them to be very long. For example, about 300 bits are
+       suﬃcient to encode in binary the estimated number of elementary particles
+       in the universe. Thus, because there is an algorithm for Part whose running
+       time is a low-order polynomial in the length of the input and the values
+       encoded in the input, it seems unreasonable to consider this problem to be
+       intractable.
+         In order to accommodate numbersin the input, we say that an algorithm
+       is pseudopolynomial if its running time is bounded by some polynomial
+       in the length of the input and the largest integer encoded in the input.
+       Thus, the O(nW) algorithm for 0-1 knapsack (and hence partition) is
+       pseudopolynomial. Whenever the numbers in a decision problem’s input
+       refer to physical quantities, we consider the problem to be tractable if
+       it has a pseudopolynomial algorithm. However, if the numbers are purely
+       mathematical entities (as, for example, in cryptographic applications), we
+       consider the problem to be tractable only if it belongs to P.
+         We would also like to extend the notion of NP-hardness to account for
+       numbers in the input. To this end, we ﬁrst deﬁne a way to restrict a decision
+       problem so that no integer in an instance is too large. Speciﬁcally, for a
+       decision problem X and a function f : N → R≥0, we deﬁne X to be the
+                                             f
+       restriction of X to instances x in which no integer has a value larger than
+       f(|x|). We then say that X is NP-hard in the strong sense if there is a
+       polynomial p such that X is NP-hard. If, in addition, X ∈NP,wesay
+                       p
+       that X is NP-complete in the strong sense.
+         Suppose we were to ﬁnd a pseudopolynomial algorithm for a strongly
+       NP-hard problem. When we restrict the problem so that its instances
+       have integers bounded by some polynomial, the pseudopolynomial algorithm
+       becomes truly polynomial, so that the restricted problem would be in P.
+       Furthermore, this restricted problem is still NP-hard in the ordinary sense.
+       Thus, by Theorem 16.4, we would have shown that P = NP. It therefore
+       seems highly unlikely that there is a pseudopolynomial algorithm for any
+       strongly NP-hard problem.
+         In order to show a problem to be NP-hard in the strong sense, we
+       must ensure that the reduction produces numbers whose values are bounded
+       above by some polynomial in the length of the instance we construct. The
+       proof of Cook’s Theorem in Section 16.8 does not construct large integers;
+       hence, Sat is NP-complete in the strong sense. Furthermore of all of the
+       NP-hardness proofs we have presented so far, only the proof that Part
+       is NP-hard constructs integers whose values are not bounded by some
+       polynomial in the length of the input. As a result, CSat,3Sat, VC, IS,

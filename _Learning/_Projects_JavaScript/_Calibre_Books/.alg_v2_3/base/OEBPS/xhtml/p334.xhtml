@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 334</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-334.jpg" alt="Page 334" width="1282" height="1882"/>
+      <div class="ocr">                                   Graphs                         315
+            The proof of Theorem 9.2 is constructive; i.e., it gives an algorithm for
+         ﬁnding a topological sort. First, we ﬁnd a vertex v0 with no incoming edges.
+         v will come ﬁrst in the topological sort. The remainder of the topological
+          0
+         sort is obtained by removing v0 and ﬁnding a topological sort of the resulting
+         graph. We have therefore transformed the problem to a smaller instance.
+            Theabove sketch is missing a few details. For example, we need to know
+         howtoﬁndavertexwithnoincomingedges.Also,ourGraphADTprovides
+         nomechanismforremovingvertices. Inorder toovercome theseproblems, we
+         will maintain an array incount[0..n −1] so that incount[i]givesthenumber
+         of edges to i from vertices not yet in the topological sort. When we add
+         avertexi to the topological sort, we do not need to remove it from the
+         graph; instead, we can simply decrement incount[j] for all j adjacent to i.
+         To initialize incount, we can simply examine each edge (i,j) and increment
+         incount[j].
+            In order to speed up ﬁnding the next vertex in the topological sort, let
+         us keep track of all vertices i for which incount[i]=0.WecanuseaStack
+         for this purpose. After we initialize incount, we can traverse it once and
+         push each i such that incount[i] = 0 onto the stack. Thereafter, when we
+         decrement an entry incount[i], we need to see if it reaches 0, and if so, push
+         it onto the stack. The algorithm is shown in Figure 9.6.
+         9.3  Adjacency Matrix Implementation
+         Ourﬁrstimplementationof Graphwillhaveasinglerepresentationvariable:
+         • edges[0..n −1,0..n −1].
+         Our structural invariant will be that edges[i,i]=nil for 0 ≤ i&lt;n.We
+         interpret edges[i,j] as giving the information associated with edge (i,j),
+         provided this value is non-nil. We interpret a nil value for edges[i,j]as
+         indicating the absence of an edge (i,j). The full implementation is shown in
+         Figure 9.7.
+            Each of the operations Size, Put,andGet runs in Θ(1) time. The
+         constructor is easily seen to run in Θ(n2)time.TheAllFrom operation
+         clearly runs in Θ(n) time, where n is the number of vertices in the graph.
+         The space usage is clearly in Θ(n2).
+            We can now analyze the running times of the algorithms given in the
+         previous two sections. We will ﬁrst consider UniversalSink from Figure
+         9.4. Let n be the number of vertices in G.Thewhile loop begins with
+         j −i = n−1 and decreases j −i each iteration. Because it terminates when
+</div>
+    </div>
+  </body>
+</html>

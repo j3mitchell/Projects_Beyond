@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 433</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-433.jpg" alt="Page 433" width="1282" height="1882"/>
+      <div class="ocr">           414                     Algorithms: A Top-Down Approach
+            Figure 13.2   Preprocessing algorithm for ancestry test
+              Precondition: T isaGraphrepresentingarootedtreewithedgesdirected
+              from parents to children. pre and post are VisitCounters whose size n is
+              the number of nodes in T,andi is a Nat strictly less than n.
+              Postcondition: Let S be the set of descendants of i.Foreveryj ∈ S
+              and every node k    S, pre.Num(j) &gt; pre.Num(k) and post.Num(j) &gt;
+              post.Num(k). For any j,k ∈ S, j is a proper ancestor of k iﬀ pre.Num(j) &lt;
+              pre.Num(k)andpost.Num(j) &gt; post.Num(k).          If node k     S,then
+              pre.Num(k)andpost.Num(k) are unchanged.
+              PrePostTraverse(T,i,pre,post)
+                pre.Visit(i); L ← T.AllFrom(i)
+                // Invariant: The postcondition holds with S denoting the set of
+                // proper descendants of i that are not descendants of any node in L,
+                // except that pre.Num(i) has been changed to be larger than
+                // pre.Num(k) for every k   S∪{i}.
+                while not L.IsEmpty()
+                   next ← L.Head().Dest(); L ← L.Tail()
+                   PrePostTraverse(T,next,pre,post)
+                post.Visit(i)
+           Theorem 13.1. PrePostTraverse satisﬁes its speciﬁcation.
+           Proof.    By induction on n,thesizeofT.
+           Induction Hypothesis: Assume that PrePostTraverse satisﬁes its
+           speciﬁcation for every tree with strictly fewer than n nodes.
+           Induction Step: Assume the precondition is satisﬁed. We must show the
+           correctness of the invariant.
+           Initialization: The call to pre.Visit(i)makespre.Num(i) larger than any
+           other values in pre. Otherwise, no other values in pre or post have been
+           changed from their initial values. At the beginning of the loop, L contains
+           the children of i and S = ∅. The invariant is therefore satisﬁed.
+           Maintenance:Supposetheinvariant holds at the beginning of an iteration.
+           Clearly, the precondition holds for the recursive call. Because the subtree
+</div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 063</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-063.jpg" alt="Page 063" width="1282" height="1882"/>
+      <div class="ocr">       44             Algorithms: A Top-Down Approach
+       Induction Step: Suppose the precondition is satisﬁed. By Lemma 2.8, the
+       while loop will terminate with A[1..n] being a permutation of its original
+       elements such that A[1..r]arelessthanp, A[r+1..r+w]areequaltop,and
+       A[r +w+1..n]aregreaterthanp. We consider three cases.
+       Case 1: k ≤ r. In this case, there are at least k elements less than p,
+       so the kth smallest is less than p. Because A[1..r] are all the elements
+       smaller than p,thekth smallest of A[1..n]isthekth smallest of A[1..r].
+       Because p is an element of A[1..n]thatisnotinA[1..r], r&lt;n.Furthermore,
+       because k ≤ r, the precondition of Select is satisﬁed by the recursive call
+       SelectByMedian(A[1..r],k). By the Induction Hypothesis, this recursive
+       call returns the kth smallest element of A[1..r], which is the kth smallest of
+       A[1..n].
+       Case 2: r&lt;k≤ r+w. In this case, there are fewer than k elements less
+       than p and at least k elements less than or equal to p. p is therefore the kth
+       smallest element.
+       Case 3: r +w&lt;k. In this case, there are fewer than k elements less than
+       or equal to p.Thekth smallest must therefore be greater than p.Itmust
+       therefore be in A[r + w +1..n]. Because every element in A[1..r + w]is
+       less than the kth smallest, the kth smallest must be the (k − (r + w))th
+       smallest element in A[r +w +1..n]. Because p is an element of A[1..n]that
+       is not in A[r + w +1..n], r + w +1&gt; 1, so that the number of elements in
+       A[r + w +1..n]islessthann.LetusrefertoA[r +w +1..n]asB[1..n −
+       (r + w)]. Then because r + w&lt;k,1≤ k − (r + w), and because k ≤ n,
+       k−(r+w)≤n−(r+w).Therefore,theprecondition for Selectis satisﬁed
+       bytherecursivecallSelectByMedian(B[1..n−(r+w)],k−(r+w)). By
+       the Induction Hypothesis, this recursive call returns the (k − (r + w))th
+       smallest element of B[1..n −(r +w)] = A[r +w +1..n]. This element is the
+       kth smallest of A[1..n].                      
+         In some cases, a recursive call might occur inside a loop. For such
+       cases, we would need to use the induction hypothesis when reasoning about
+       the loop. As a result, it would be impossible to separate the proof into a
+       lemma dealing with the loop and a theorem whose proof uses induction
+       and the lemma. We would instead need to prove initialization, maintenance,
+       termination, and correctness of the loop within the induction step of the
+       induction proof.
+</div>
+    </div>
+  </body>
+</html>

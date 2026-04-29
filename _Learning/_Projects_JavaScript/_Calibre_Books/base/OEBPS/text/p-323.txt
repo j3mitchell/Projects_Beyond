@@ -1,0 +1,25 @@
+           304                    Algorithms: A Top-Down Approach
+           Because f(s,i)=k, g(s,i) >g(s,i), so that φ (i) <φ(i).              
+                                                        s       s
+              The above theorems show that the amortized running times of Merge
+           and Find are in O(α(n)). However, α appears to be a somewhat contrived
+           function. We have argued intuitively that α increases very slowly, but we
+           have not formally compared it with any better-known slow-growing function
+           like lg or lg lg. We address this issue more formally in the Exercises. For now,
+           we will simply state that the collection of functions A form a variation of
+                                                               k
+           Ackermann’s function,andthatα is one way of deﬁning its inverse. There
+           have actually been several diﬀerent 2- or 3-variable functions that have been
+           called Ackermann’s function, and all grow at roughly the same rapid rate.
+           8.5  Summary
+           Tree-based implementations of disjoint sets provide very eﬃcient Merge
+           andFindoperations,particularly whenpathcompression isused.Theworst-
+           case running times for these operations are in Θ(1) and Θ(lgn), respectively,
+           for both ShortDisjointSets and CompressedDisjointSets. The latter
+           implementation yields nearly constant amortized running time. A summary
+           of the running times of the operations for the diﬀerent implementations is
+           shown in Figure 8.7. As we will see in later chapters, these structures are
+           very useful in the design of eﬃcient algorithms.
+            Figure 8.7 Comparison of running times of the DisjointSets operations for various
+            implementations
+            Notes:

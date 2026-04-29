@@ -1,0 +1,42 @@
+                                                  Analyzing Algorithms                                       89
+                   Having the above theorems, we can now complete the analysis of Add-
+              Matrices. Because we are analyzing the algorithm with respect to two
+              parameters, we view n as the 2-variable function f(m,n)=n,andweview
+              masthe2-variable function g(m,n)=m. We can then apply Corollary 3.46
+              to Θ(m)Θ(n) to obtain a running time in Θ(mn). Alternatively, because n
+              is smooth, we could apply Theorem 3.50 to obtain
+                                                   m
+                                                  Θ(n)⊆Θ(mn).
+                                                   i=1
+                   Theresults from this section give us the tools we need to analyze iterative
+              algorithms with two natural parameters. Furthermore, all of these results
+              can be easily extended to more than two parameters. Recursive algorithms,
+              however, present a greater challenge. In order to analyze recursive algorithms
+              using more than one natural parameter, we need to be able to handle
+              asymptotic recurrences in more than one variable. This topic is beyond the
+              scope of this book.
+              3.10      Little-o and Little-ω
+              Occasionally, we would like to use asymptotic notation without ignoring
+              constant factors. Consider, for example, f(n)=3n2+7n+2.Asn increases,
+              the 7n + 2 term becomes less relevant. In fact, as n increases, the ratio
+              3n2/f(n) approaches 1. We might therefore wish to say that f(n)is3n2,
+              plus some low-order terms. We would like to be able to express the fact that
+              these low-order terms are insigniﬁcant as n increases. To this end, we give
+              the following deﬁnitions.
+              Deﬁnition 3.51. Let f : N → R≥0. o(f(n)) is the
+              set of all functions g : N → R≥0 such that for every                    o(f(n))  is  pronounced
+              positive real number c, there is a natural number n                     “little-oh of f of n”.
+                                                                                0
+              such that g(n) <cf(n) whenever n ≥ n0.
+              Deﬁnition 3.52. Let f : N → R≥0. ω(f(n)) is the
+              set of all functions g : N → R≥0 such that for every                    ω(f(n))   is pronounced
+              positive real number c, there is a natural number n                     “little-omega of f of n”.
+                                                                                0
+              such that g(n) >cf(n) whenever n ≥ n0.
+              Example 3.53. 7n+2∈o(n2). In proof, suppose c>0. We need to ﬁnd a
+                                                                  2
+              natural number n0 such that 7n+2<cn whenever n ≥ n0.Weﬁrstobserve
+              that this inequality holds if n>0and(7+2/n)/c < n. The left-hand side
+              of this inequality is maximized when n = 1; therefore, if n ≥9/c +1,
+                             2
+              7n+2<cn.

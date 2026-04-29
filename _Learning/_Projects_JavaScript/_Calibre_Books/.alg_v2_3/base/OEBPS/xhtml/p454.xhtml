@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 454</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-454.jpg" alt="Page 454" width="1282" height="1882"/>
+      <div class="ocr">                                       Depth-First Search                          435
+           • a readable ListMultigraph reverse (recall from Section 9.5 that if we
+              know we will not attempt to add parallel edges, it is more eﬃcient to add
+              edges to a ListMultigraph and construct a ListGraph from it);
+           • a readable array order[0..n −1]; and
+           • a natural number loc.
+           As we process each edge, we add its reverse to reverse.Aswepostorder
+           process each vertex, we add it to order as we did for topological sort
+           (Figure 13.12). The resulting RevSearcher is shown in Figure 13.14.
+               Once DfsAll is called with a RevSearcher, we need to perform
+           a second depth-ﬁrst search on the entire reversed graph. The Searcher
+           we need for this search uses a readable array components[0..n − 1] in
+           which it will store values indicating the component to which a given vertex
+           belongs, along with a natural number count to keep track of the number
+           of strongly connected components completely found. It also includes an
+           operation NextComp,usedtoindicatethatastronglyconnectedcomponent
+           has been found completely. Its implementation is shown in Figure 13.15.
+               Because the second depth-ﬁrst search must start each tree at a particular
+           vertex, we need to modify DfsAll slightly. The resulting algorithm is shown
+           in Figure 13.16. We leave it as an exercise to show that this algorithm runs
+            Figure 13.14   RevSearcher implementation of Searcher
+            RevSearcher(n)
+               reverse ← new ListMultigraph(n)
+               order ← new Array[0..n−1]; loc ← n
+            RevSearcher.TreePreProc(e)
+               reverse.Put(e.Dest(),e.Source(),e.Data())
+            RevSearcher.OtherEdgeProc(e)
+               reverse.Put(e.Dest(),e.Source(),e.Data())
+            RevSearcher.PostProc(i)
+               loc ← loc −1; order[loc] ← i
+</div>
+    </div>
+  </body>
+</html>

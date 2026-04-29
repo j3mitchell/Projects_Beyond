@@ -1,0 +1,44 @@
+                                Optimization II: Dynamic Programming                     399
+            0 ≤ j ≤ W:
+                          ⎧0ifi=0
+                          ⎨
+                  V (j)=                                                              (12.4)
+                   i        V    (j)ifi>0,j<w
+                          ⎩ i−1                                                i
+                            max(V     (j),V    (j −w )+v )otherwise.
+                                   i−1      i−1       i     i
+            The optimal value is then given by Vn(W).
+                It is not hard to see that the optimal value can be computed in Θ(nW)
+            time and space using dynamic programming — the details are left as an
+            exercise. However, suppose W is much larger than the values of the items.
+            In this case, another approach might be more appropriate. Let
+                                                     n
+                                              V =v.
+                                                        i
+                                                    i=1
+            Let us then compute the minimum weight required to achieve each possible
+            value v ≤ V . The largest value v yielding a minimum weight no larger than
+            W is then our optimal value.
+                Taking this approach, we observe that item n is either in the set of items
+            for which value v can be achieved with minimum weight, or it isn’t. If it
+            is, then the minimum weight can be computed by removing item n and
+            ﬁnding the minimum weight needed to achieve a value of v−vn.Otherwise,
+            the minimum weight can be computed by removing item n. The following
+            recurrence therefore gives the minimum weight Wi(j) needed to achieve a
+            value of exactly j from the ﬁrst i items, for 0 ≤ i ≤ n,0≤ j ≤ V:
+                        ⎧0ifj=0
+                        ⎪
+                        ⎪
+                        ⎨∞                                        if i =0,j>0
+               Wi(j)=                                                                 (12.5)
+                        ⎪W (j)ifi>0,0<j<v
+                        ⎪ i−1                                                     i
+                        ⎩min(W       (j),W    (j −v )+w )otherwise.
+                                 i−1       i−1       i     i
+            The optimal value is then the maximum j ≤ V such that Wn(j) ≤ W.
+                It is not hard to see that a dynamic programming algorithm based on
+            this recurrence can ﬁnd the optimal value in Θ(nV) time and space. Again,
+            we leave the details as an exercise. Note that we could potentially improve
+            the algorithm further if we could ﬁrst ﬁnd a better upper bound than V for
+            the optimal value. This would allow us to reduce the number of columns we
+            need to computein our array. We will explore this idea further in Chapter 17.

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 278</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-278.jpg" alt="Page 278" width="1282" height="1882"/>
+      <div class="ocr">                                    Storage/Retrieval II: Unordered Keys                        259
+                 One drawback to the Put operation as shown in Figure 7.6, is that
+             when rehashing is performed, all of the hash values must be recomputed
+             from scratch. When the division method is used on long keys, this can lead
+             to a signiﬁcant amount of computation.
+                 An improvement is to use a combination of two hash functions. The
+             ﬁrst hash function produces an index in a range that may be too large
+             to be used as a table size, but which is small enough to ﬁt into a single
+             machine word. This ﬁrst hash function is called a compression map.The
+             second hash function is then applied to the result of the compression map
+             to produce an index into the actual table. Because the compression map
+             generates an index that will ﬁt into a single machine word, the computation
+             of the hash table index from the compression map index can be done quickly;
+             for example the division method would consist of a single mod operation.
+             Thus, if we save the result of the compression map with the element we are
+             storing, we can perform rehashing by applying a new hash function to the
+             stored compression map index. We leave the implementation details of such
+             aschemeasanexercise.
+                 The division method could be used for both of the hash functions
+             in such a scheme. However, if the modulus is near the maximum value
+             that can be stored in a single machine word, double-word arithmetic is
+             required. An alternative that avoids double-word arithmetic for computing
+             the compression map is polynomial hashing.
+                 In order to motivate polynomial hashing, let’s consider what happens
+             when we pack four bytes, k ,k ,k ,andk , into a 4-byte word. If we wish
+                                             1  2   3        4
+             to retain all of the information, we might produce the value
+                                             3          2
+                                       k 256 +k 256 +k 256+k .
+                                        1          2          3        4
+             Polynomial hashing generalizes this technique by producing, for a given key
+             k ,...,k,
+               1       l
+                                            	 l         
+
+                                               l−i               w
+                                                  k r      mod2 ,
+                                                   i
+                                              i=1
+             wherewisthenumberofbitsinamachineword,excludinganysignbit.The
+                           w
+             ﬁnal “mod 2 ” describes the eﬀect of overﬂow in a w-bit unsigned integer.
+             Thus, if an unsigned integer is used, this operation need not be explicitly
+             performed.
+</div>
+    </div>
+  </body>
+</html>

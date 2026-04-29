@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 107</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-107.jpg" alt="Page 107" width="1282" height="1882"/>
+      <div class="ocr">         88                  Algorithms: A Top-Down Approach
+             In a similar way, the following extension to Theorem 3.15 can be shown.
+         The proof is left as an exercise.
+         Theorem 3.45. Suppose f (m,n)     ∈ Ω(g (m,n)) and f (m,n)    ∈
+                                  1              1             2
+         Ω(g (m,n)), where g and g are strictly non-decreasing. Then
+            2              1     2
+         1.f(m,n)f (m,n)∈Ω(g (m,n)g (m,n)); and
+             1      2          1      2
+         2.f(m,n)+f (m,n)∈Ω(max(g (m,n),g(m,n))).
+             1        2               1       2
+             We therefore have the following corollary.
+         Corollary 3.46. Suppose f (m,n)   ∈ Θ(g (m,n)) and f (m,n) ∈
+                                   1             1             2
+         Θ(g (m,n)), where g and g are strictly non-decreasing. Then
+             2             1     2
+         1.f(m,n)f (m,n)∈Θ(g (m,n)g (m,n));and
+             1      2          1      2
+         2.f(m,n)+f (m,n)∈Θ(max(g (m,n),g(m,n))).
+             1        2               1       2
+             Before we can extend Theorem 3.31 to more than one variable, we must
+         ﬁrst extend the deﬁnition of smoothness. In order to do this, we must ﬁrst
+         extend the deﬁnitions of eventually non-decreasing and eventually positive.
+         Deﬁnition 3.47. Let f : N × N → R≥0. f is said to be eventually non-
+         decreasing if there is a natural number n0 such that f(m,n) ≤ f(m +1,n)
+         and f(m,n) ≤ f(m,n+1) whenever both m ≥ n0 and n ≥ n0.
+         Deﬁnition 3.48. Let f : N×N → R≥0. f is said to be eventually positive if
+         there is a natural number n0 such that f(m,n) &gt; 0 whenever both m ≥ n0
+         and n ≥ n0.
+         Deﬁnition 3.49. Let f : N × N → R≥0 be an eventually non-decreasing
+         and eventually positive function. f is said to be smooth if there exist a
+         real number c and a natural number n0 such that f(2m,n) ≤ cf(m,n)and
+         f(m,2n) ≤ cf(m,n) whenever both m ≥ n0 and n ≥ n0.
+             Thefollowing extension to Theorem 3.31 can now be shown — the proof
+         is left as an exercise.
+         Theorem 3.50. Let f : N×N → R≥0 be a strictly non-decreasing smooth
+         function. Let g : N → N be an eventually non-decreasing and unbounded
+         function, and let X denote either O, Ω,orΘ.Then
+                         g(m)
+                          X(f(i,n))⊆X(g(m)f(g(m),n)).
+                          i=1
+</div>
+    </div>
+  </body>
+</html>

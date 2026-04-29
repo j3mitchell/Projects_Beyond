@@ -1,0 +1,27 @@
+          96                    Algorithms: A Top-Down Approach
+              For example, our implementation of MaxSum-      Theresults of ﬂoating-point
+          Iter took 24 seconds to process an input of size    computations in this discus-
+           13                                3                sion are all rounded to two
+          2   =8,192. Dividing 24 by (8,192) ,weobtaina signiﬁcantdigits.
+                             −11              3         12
+          value of c =4.4 ×10   . Evaluating cn for n =2 ,
+          we obtain a value of 3.0 seconds. This matches the actual running time
+                                      13
+          measured on an input of size 2 . Thus, the running time does appear to be
+          converging to cn3 for suﬃciently large n.
+              Figure 3.8 shows a plot of the functions estimating the running times
+          of the various maximum subsequence sum implementations, along with the
+          measured running times from Figure 1.15. The functions were derived via
+          the technique outlined above using the timing information from Figure 1.15,
+          taking the largest data set tested for each algorithm. We have extended
+          both axes to show how these functions compare as n grows as large as 230 =
+          1,073,741,824.
+              For example, consider MaxSumIter and MaxSumBU.Aswehave
+          already shown, the function estimating the running time of MaxSumIter is
+          f(n)=(4.4×10−11)n3.WewereabletorunMaxSumBUonanarrayofsize
+           30
+          2   —itranin0.99seconds.Ontheotherhand,weestimatetherunningtime
+                                                         30           16
+          for MaxSumIteron an array of this size to be f(2 )=5.4×10     seconds,
+           Figure 3.8  Estimated performance of implementations of maximum subsequence
+           sum algorithms

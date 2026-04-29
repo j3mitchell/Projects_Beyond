@@ -1,0 +1,41 @@
+           384                     Algorithms: A Top-Down Approach
+            Figure 11.4   Algorithm for constructing a Huﬀman tree
+            Precondition: chars[1..n]isanarrayofChars, n ≥ 1, and freq[1..n]isan
+            array of positive Nats.
+            Postcondition: ReturnsaBinaryTreeNoderepresentingaHuﬀmantree
+            for text including freq[i] occurrences of char[i], for 1 ≤ i ≤ n.
+            HuffmanTree(chars[1..n], freq[1..n])
+               q ←new InvertedPriorityQueue()
+               for i ← 1 to n
+                  t ← new BinaryTreeNode(); t.SetRoot(chars[i])
+                  q.Put(t,freq[i])
+               // Invariant: q contains BinaryTreeNodes which are subtrees of
+               // some Huﬀman tree for the given frequency table, and whose priorities
+               // are their weights as deﬁned by the frequencies of the characters
+               // contained in their leaves. Each character in chars[1..n] occurs in
+               // exactly one leaf of one tree.
+               while q.Size() > 1
+                  w ←q.MinPriority(); t ←q.RemoveMin()
+                   1                    1
+                  w2 ←q.MinPriority(); t2 ← q.RemoveMin()
+                  t ← new BinaryTreeNode(); t.SetLeft(t ); t.SetRight(t )
+                                                         1              2
+                  q.Put(t,w +w )
+                           1   2
+               return q.RemoveMin()
+               The algorithm should then return a BinaryTreeNode representing a
+           Huﬀman tree for the frequency table. The data in the leaves are characters,
+           and all other data items in the tree are nil. The algorithm is shown in
+           Figure 11.4. We maintain the trees in an InvertedPriorityQueue using
+           the weights of the trees as priorities.
+               Because each iteration of the for loop adds an element to an initially
+           empty priority queue, iteration i runs in Θ(lgi)time.Thefor loop therefore
+           runs in Θ(nlgn) time. After the for loop completes, q contains n elements.
+           Each iteration of the while loop removes two elements from q and adds
+           one element. The loop therefore iterates n−1 times. Each iteration runs in
+           O(lgn) time. The running time of the while loop is therefore in O(nlgn),
+           so that the algorithm runs in Θ(nlgn)time.
+           11.5    Summary
+           Greedy algorithms provide an eﬃcient mechanism for solving certain opti-
+           mization problems. The major steps involved in the construction of a greedy
+           algorithm are:

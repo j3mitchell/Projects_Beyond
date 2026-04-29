@@ -1,0 +1,27 @@
+                                      Chapter 4
+              Basic Techniques for Data Structures
+          Algorithms must manipulate data, often in large quantities. Therefore, the
+          way in which an algorithm stores and accesses data can have a signiﬁcant
+          impact on performance. The principles developed in the ﬁrst three chapters
+          apply to data structures, but in a somewhat diﬀerent way than to algorithms.
+          In this chapter, we will examine the ways in which top-down design, correct-
+          ness proofs, and performance analysis can be applied to data structures. We
+          will use rather simple data structures as examples. In succeeding chapters,
+          we will apply these techniques to more involved structures.
+          4.1  Stacks
+          One of the strengths of both top-down design and object-oriented design is
+          their use of abstraction to express high-level solutions to problems. In fact,
+          we can apply abstraction to the problems themselves to obtain high-level
+          solutions to many similar problems. Such high-level solutions are known
+          as design patterns. For example, consider the “undo” operation in a word
+          processor. We have some object that is undergoing a series of modiﬁcations.
+          Anapplication of the “undo” operation restores the object to its state prior
+          to the last modiﬁcation. Subsequentapplications of “undo”restoretheobject
+          to successively earlier states in its history.
+             Wehavecapturedtheessenceofthe“undo”operationwithoutspecifying
+          any of the details of the object being modiﬁed or the functionality of the
+          documentformatter inwhich it will appear. In fact, our description is general
+          enough that it can apply to other applications, such as a spreadsheet or the
+          search tree viewer on this book’s web site. We have therefore speciﬁed a
+          design pattern for one aspect of functionality of an application.
+                                           109

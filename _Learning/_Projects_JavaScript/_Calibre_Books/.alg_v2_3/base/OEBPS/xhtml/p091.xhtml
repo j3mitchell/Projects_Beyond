@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 091</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-091.jpg" alt="Page 091" width="1282" height="1882"/>
+      <div class="ocr">         72                Algorithms: A Top-Down Approach
+         This summation does not immediately ﬁt the form of Theorem 3.31, as the
+         starting value of the summation index J is 0, not 1. We can rewrite this
+         sum as
+                            n−i      n−i+1
+                            Θ(J)=  Θ(J−1).
+                            J=0       J=1
+         What we have done here is simply to shift the range of J upward by 1 (i.e.,
+         from 0,...,n− i to 1,...,n− i + 1), and to compensate for this shift by
+         subtracting 1 from each occurrence of J in the expression being summed.
+         NowfromTheorem 3.19, J−1 ∈ Θ(J), and from Theorem 3.18, Θ(J−1) =
+         Θ(J); hence, the running time of the middle loop is in
+                                  n−i−1
+                                   Θ(J).
+                                   J=1
+            Finally, we let N = n −i+1, which is a natural number because i ≤ n.
+         This gives us a running time of
+                                    N
+                                   Θ(J).
+                                   J=1
+         Applying Theorem 3.31 to the above sum, we ﬁnd that the running time of
+         themiddleloopisinΘ(N2). The running time of the outer loop is then in
+                              n        n+1
+                             Θ(N2)=Θ(N2).
+                             i=0       N=1
+         Applying Theorem 3.31 to this sum, we ﬁnd that the running time of this
+         loop is in
+                                      3      3
+                              Θ((n+1))=Θ(n )
+         by Theorems 3.19 and 3.18.
+         3.6  Analyzing While Loops
+         To analyze algorithms with while loops, we can use the same techniques as
+         we have used to analyze for loops. For example, consider InsertionSort,
+         shown in Figure 1.7 on page 12. Let us consider the while loop. The value
+         of j begins at i and decreases by 1 on each loop iteration. Furthermore, if
+         its value reaches 1, the loop terminates. The loop therefore iterates at most
+</div>
+    </div>
+  </body>
+</html>

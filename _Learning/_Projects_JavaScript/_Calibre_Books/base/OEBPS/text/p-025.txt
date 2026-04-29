@@ -1,0 +1,38 @@
+          6                    Algorithms: A Top-Down Approach
+          1.2  Algorithms
+          Oncewehaveaspeciﬁcation, we need to produce an algorithm to implement
+          that speciﬁcation. This algorithm is a precise statement of the computational
+          steps taken to produce the results required by the speciﬁcation. An algorithm
+          diﬀers from a program in that it is usually not speciﬁed in a programming
+          language. In this book, we describealgorithms usinga notation that is precise
+          enoughtobeimplementedasaprogramminglanguage,butwhichisdesigned
+          to be read by humans.
+             Astraightforward approach to solving the selection problem is as follows:
+          1. Sort the array in non-decreasing order.
+          2. Return the kth element.
+          If we already know how to sort, then we have solved our problem; otherwise,
+          we must come up with a sorting algorithm. By using sorting to solve the
+          selection problem, we say that we have reduced the selection problem to the
+          sorting problem.
+             Solving a problem by reducing it to one or more simpler problems is the
+          essence of the top-down approach to designing algorithms. One advantage to
+          thisapproachisthatitallowsustoabstractawaycertaindetailssothatwecan
+          focus on the main steps of the algorithm. In this case, we have a selection
+          algorithm,butouralgorithmrequiresasortingalgorithmbeforeitcanbefully
+          implemented.Thisabstraction facilitates understandingofthealgorithm at a
+          high level. Speciﬁcally, if we know what is accomplished by sorting — but not
+          necessarily how it is accomplished — then because the selection algorithm
+          consists of very little else, we can readily understand what it does.
+             When we reduce the selection problem to the sorting problem, we need
+          a speciﬁcation for sorting as well. For this problem, the precondition will be
+          that A[1..n] is an array of Numbers, where n ∈ N. Our postcondition will be
+          that A[1..n] is a permutation of its initial values such that for 1 ≤ i<j≤ n,
+          A[i] ≤ A[j] — i.e., that A[1..n] contains its initial values in nondecreasing
+          order. Our selection algorithm is given in Figure 1.2. Note that Sort is only
+          speciﬁed — its algorithm is not provided.
+             LetusnowreﬁnetheSimpleSelectalgorithmofFigure1.2bydesigning
+          a sorting algorithm. We will reduce the sorting problem to the problem of
+          inserting an element into a sorted array. In order to complete the reduction,
+          we need to have a sorted array in which to insert. We have thus returned to
+          our original problem. We can break this circularity, however, by using the
+          top-down approach in a diﬀerent way. Speciﬁcally, we reduce larger instances

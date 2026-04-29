@@ -1,0 +1,41 @@
+                                NP-Completeness                    527
+         can be decided in a time polynomial in the length of their inputs. We claim
+         that nW is not necessarily polynomial in the length of the input to Part.
+         To see why, note that the number of bits required to encode an integer is
+         logarithmic in the value of the integer; hence, the value is exponential in the
+         length of the encoding. Because W is one of the integers given as input, nW
+         is not bounded by a polynomial in the length of the input.
+            The relationship between the value of an integer and the length of its
+         binary encoding is essential to the NP-hardness of Part, as its proof will
+         illustrate. We will now present that proof, which is a reduction from 3DM.
+            Let W, X, Y,andZ represent an instance of 3DM,where
+         • X ={x ,...,x   };
+                 0     m−1
+         • Y ={y ,...,y  };
+                0     m−1
+         • Z ={z ,...,z  };and
+                0     m−1
+         • W ={w ,...,w   } such that each w ∈ X ×Y ×Z.
+                 0      n−1              i
+         Wewill construct a weight for each triple, plus two additional weights.
+            Suppose x ,y ,z ∈W. The weight we construct for this triple will be
+                     i j  k
+                              2m+i       m+j        k
+                        (n+1)     +(n+1)     +(n+1).
+         If we were to express this weight in radix n + 1, it would consist entirely of
+         1s and 0s and have exactly three 1s. The positions of the three 1s in this
+         encoding determine the three components of the triple as follows:
+                         i digits    j digits    k digits
+                                           
+                       100···000···0100···000···0100···0.
+                                               
+                                 mdigits      mdigits
+            Consider any subset S ⊆ W. Clearly, no element of X ∪Y ∪Z can occur
+         in more than n triples in S. Thus, when viewed in radix n +1,thesum
+         of the weights corresponding to the elements of S describes the number of
+         occurrences of each element of X ∪ Y ∪ Z in S. Speciﬁcally, if we number
+         the digits beginning with 0 for the least signiﬁcant digit, then
+         • digit 2m+i gives the number of occurrences of xi in S,for0≤ i<m;
+         • digit m+j gives the number of occurrences of yj in S,for0≤ j<m;and
+         • digit k gives the number of occurrences of z is S,for0≤ k<m.
+                                              k

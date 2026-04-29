@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 590</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-590.jpg" alt="Page 590" width="1282" height="1882"/>
+      <div class="ocr">                                    Approximation Algorithms                        571
+            Figure 17.5   Approximation algorithm for the metric traveling salesperson problem
+              Precondition: G is a Graph representing a complete undirected graph
+              with at least one vertex, whose edges contain positive Nat weights satisfying
+              the triangle inequality.
+              Postcondition:   Returns an array order[0..n − 1] in which each Nat
+              less than n occurs exactly once.  The sum of the weights of the edges
+              {order[0],order[1]},{order[1],order[2]},...,{order[n − 1],order[0]} is less
+              than twice the weight of an optimal Hamiltonian cycle.
+              MetricTsp(G)
+                n←G.Size; L←Prim(G)
+                G ←new ListMultigraph(n)
+                while not L.IsEmpty()
+                   e ←L.Head(); L ←L.Tail()
+                   i ← e.Source(); j ← e.Dest(); x ← e.Data()
+                   G.Put(i,j,x); G .Put(j,i,x)
+                G ←newListGraph(G);sel←new Selector(n)
+                s ←new MetricTspSearcher(n); Dfs(G ,0,sel,s)
+                                 ()
+                return s.Order
+               For constructing an MST, we can use either Kruskal’s algorithm
+           (Figure 11.1, page 376) or Prim’s algorithm (Figure 11.2, page 378). Our
+           graph is complete, so that the number of edges is in Θ(n2), where n is the
+           number of vertices. If we are using a ListGraph representation, Kruskal’s
+           algorithm is more eﬃcient, running in Θ(n2lgn) time. However, if we are
+           using a MatrixGraph representation, Prim’s algorithm is more eﬃcient,
+           running in Θ(n2) time. Because we can construct a MatrixGraph from
+           a ListGraph in Θ(n2) time, we will use Prim’s algorithm. The entire
+           algorithm is shown in Figure 17.5.
+               Assuming G is a MatrixGraph,thecalltoPrim runs in Θ(n2)
+           time. The ListMultigraph constructor then runs in Θ(n) time. Because
+           the ConsList returned by Prim contains exactly n − 1 edges, and the
+           ListMultigraph.Put operation runs in Θ(1) time, the loop runs in
+           Θ(n) time. As was shown in Section 9.5, the ListGraph constructor runs
+           in Θ(n)time.TheSelector constructor runs in Θ(n)time,andthe
+           MetricTspSearcher constructor clearly runs in Θ(1) time. Because the
+                                                                                  
+           MetricTspSearcher.PreProc operation runs in Θ(1) time and G is a
+           ListGraph,withn−1 edges, the call to Dfs runs in Θ(n) time. The total
+           running time is therefore in Θ(n2).
+</div>
+    </div>
+  </body>
+</html>

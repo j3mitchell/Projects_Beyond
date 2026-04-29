@@ -1,0 +1,11 @@
+      About the Author
+      Rodney R Howell is an Associate Professor in the Department of
+      Computer Science at Kansas State University. He received a Ph.D. in
+      Computer Science from the University of Texas at Austin in 1988. He
+      has been a faculty member at Kansas State since that time. He has done
+      research in Petri nets, self-stabilizing systems, and real-time scheduling
+      theory. His research has been published in various international journals and
+      peer-reviewed conference proceedings. He has taught courses in analysis of
+      algorithm, data structures, and formal language theory, among other topics.
+      He currently serves as his department’s Undergraduate Programs Director.
+                          ix

@@ -1,0 +1,17 @@
+                                    Basic Techniques for Data Structures                        133
+              Figure 4.12    Example of actual, potential, and amortized costs for gasoline
+             the sum of amortized costs is the sum of actual costs of gasoline purchases.
+             Thus, the sum of amortized costs is the sum of actual costs plus the ﬁnal
+             potential cost. Because the potential cost can never be negative (the tank
+             can’t be “overfull”), the sum of the amortized costs will be at least the sum
+             of the actual costs.
+                 Let us now consider how we might apply this technique to the amortized
+             analysis of a data structure such as an ExpandableArrayStack.The
+             potential gasoline cost is essentially a measure of how “bad” the state of
+             the gas tank is. In a similar way, we could measure how “bad” the state of
+             an ExpandableArrayStackis by considering how full the array is — the
+             closer the array is to being ﬁlled, the closer we are to an expensive operation.
+             Wecanformalizethismeasurebydeﬁningapotential function Φ,whichmaps
+             states of a data structure into the nonnegative real numbers, much like the
+             potential gasoline cost maps “states” of the gas tank into nonnegative real
+             numbers.

@@ -1,0 +1,43 @@
+           376                     Algorithms: A Top-Down Approach
+            Figure 11.1   Kruskal’s algorithm for ﬁnding an MST
+            Precondition: G refers to a Graph which is undirected and connected,
+            and whose edges contain their costs as data.
+            Postcondition: Returns a ConsList of Edges representing an MST of
+            G. Each edge will occur once in the list.
+            Kruskal(G)
+               n←G.Size(); comp ←new DisjointSets(n)
+               q ←new InvertedPriorityQueue(); T ←new ConsList()
+               for i ← 0 to n−1
+                  L←G.AllFrom(i)
+                  while not L.IsEmpty()
+                    e ←L.Head(); q.Put(e,e.Data()); L ← L.Tail()
+               // Invariant: T is a subset of the edges of an MST of G, the sets in
+               // comp are the connected components of T, and q contains a subset of
+               // the edges of G ordered by cost, including at least all {u,v} such that
+               // u and v are in diﬀerent sets in comp.
+               while not q.IsEmpty()
+                  e ←q.RemoveMin()
+                  c ←comp.Find(e.Source()); c ← comp.Find(e.Dest())
+                  1                           2
+                  if c = c
+                     1   2
+                    T ←new ConsList(e,T); comp.Merge(c ,c)
+                                                          1 2
+               return T
+           to determine whether u and v belong to the same component, we see if
+           Find(u)=Find(v).Ifnot,weinclude{u,v}andmergethetwocomponents.
+               The algorithm, known as Kruskal’s algorithm, is shown in Figure 11.1.
+           Note that in using an InvertedPriorityQueue, we process the edges in
+           nondecreasing order of cost. We could have achieved the same eﬀect by
+           sorting the edges by cost, but this presentation is somewhat simpler, and in
+           fact amounts to sorting the edges with heap sort.
+               For the purpose of analyzing Kruskal,letn be the number of vertices
+           in G,andleta be the number of edges. Let us ﬁrst assume that G is
+           implemented using ListGraph. In the initialization code preceding the ﬁrst
+           loop, Θ(n) time is required to construct a new DisjointSets structure,
+           whereas the other operations each run in Θ(1) time. The for loop with the
+           nested while simply traverses G in a manner similar to the loops found
+           in TopSort (Figure 9.6). If we ignore for the moment the cost of the Put
+           operations on q, we see that this nested structure runs in Θ(n+a)time.Each
+           edge is inserted into q; hence, because InvertedPriorityQueue.Putruns
+           in Θ(lgi) time when there are i elements in the queue, the total time for all

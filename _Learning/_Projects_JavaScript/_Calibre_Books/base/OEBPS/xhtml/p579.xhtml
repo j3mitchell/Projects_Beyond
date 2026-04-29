@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 579</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-579.jpg" alt="Page 579" width="1282" height="1882"/>
+      <div class="ocr">         560               Algorithms: A Top-Down Approach
+         an approximation ratio of at most 2. Because V(A) ≥ V(A ), the theorem
+                                                       i
+         will follow.
+            In computing an upper bound on V(S)−V(A ), we can ignore all items
+                                               i
+         that belong to S ∩ A . Suppose these common items have a total weight
+                         i
+         of C. Suppose further that V(A ) &lt;V(S). Then the greedy loop must reject
+                                 i
+         at least one element belonging to S. Let item k be the ﬁrst element from
+         S to be rejected by the greedy loop in the construction of A . Then the
+                                                         i
+         total weight of all items in A \S chosen prior to item k is greater than
+                                i
+         W−C−w[k].Because their value-to-weight ratios are all at least v[k]/w[k],
+         their total value is greater than
+                              v[k](W −C −w[k]).
+                                    w[k]
+            Theitems in S\A must have total weight at most W −C.Furthermore,
+                         i
+         all of their value-to-weight ratios are at most v[k]/w[k]; hence their total
+         value is at most
+                                v[k](W −C).
+                                    w[k]
+         We therefore have
+                 V(S)−V(A)&lt; v[k](W −C) − v[k](W −C −w[k])
+                           i      w[k]           w[k]
+                            =v[k].
+            Because items i and k both belong to S and v[i] ≥ v[k], v[k] ≤ V(S)/2.
+         We therefore have
+                            V(S)−V(A)&lt;V(S)/2
+                                      i
+                                   V(S) &lt; 2V(A )
+                                             i
+                             V(S)/V(A ) &lt; 2
+                                      i
+                              V(S)/V(A) &lt;2.                      
+            Thoughwehaveaboundedapproximation ratio, an approximation ratio
+         of 2 may seem unsatisfactory, as in the worst case we may only achieve
+         half the actual maximum value. It turns out that we can improve the
+         approximation ratio by examining all pairs of items, then using the greedy
+         algorithm to complete each of these packings. More generally, we can achieve
+         an upper bound of 1 + 1 by examining all sets of k items and completing
+                           k
+</div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,4 @@
+                                        Priority Queues                            167
+            Figure 5.10   The result of performing a RemoveMax on the skew heap shown in
+            Figure 5.6(a)
+            Figure 5.11  Construction of a bad skew heap

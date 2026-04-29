@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 247</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-247.jpg" alt="Page 247" width="1282" height="1882"/>
+      <div class="ocr">             228                           Algorithms: A Top-Down Approach
+             • There is a sequence of SkipListNodeswithlengthsize +2obtained
+                by starting with start and following the links[1] reference in each
+                SkipListNode until end is reached. We will refer to this sequence as
+                the level-1 sequence.
+             • For 1 &lt;i≤ M, there is a sequence obtained in the same way as above,
+                but using the links[i] variables instead of the links[1] variables. We will
+                refer to this sequence as the level-i sequence. The level-i sequence is the
+                subsequence of the level-(i−1) sequence containing those SkipListNodes
+                having level i or greater.
+             • The keys in each sequence are strictly increasing in value.
+             • maxLevel is the maximum level of any SkipListNode in the above
+                sequences, excluding start and end.Ifstart and end are the only
+                SkipListNodes in the sequences, maxLevel =1.
+                  In order to be able to approximate a binary search with this data
+             structure, the level-i sequence should include roughly every second node from
+             the level-(i − 1) sequence, for 1 &lt;i≤ maxLevel. However, as is suggested
+             by Figure 6.23, we will not explicitly maintain this property. Instead, we
+             will use randomization to produce a structure that we expect, on average,
+             to approximate this property.
+                  When we insert a new data item, we ﬁrst determine the level of its
+             SkipListNode via a series of ﬂips of a fair coin. As long as the outcome of
+             acoinﬂipisheads, we continue ﬂipping. We stop ﬂipping when the outcome
+             is tails. The level of the SkipListNode is the total number of ﬂips. Because
+             we ﬂip the coin at least once, every level will be at least 1. Because the coin
+             is fair, the probability of tails is 1/2; hence, we would expect about half of
+             the SkipListNodes to have level 1. The probability of ﬂipping heads then
+             tails is (1/2)2 =1/4, so we would expect about 1/4oftheSkipListNodes
+             to have level 2. In general, the probability of ﬂipping i−1 heads followed by
+                         −i
+             1 tails is 2   . We would therefore expect the fraction of nodes having level i
+                              −i
+             to be about 2 . Because the coin is fair, these levels should be randomly
+             distributed over the level-1 sequence.
+                  Suppose a given SkipListNode has level l. In order to insert it into the
+             skip list, we need to insert it into its proper location in the level-i sequence
+             for each i,1≤ i ≤ l. For the purpose of ﬁnding these insertion points, we
+             will design a function Find(k,l), which will return an array of references
+             such that at index i,1≤ i ≤ l, is the reference to the SkipListNode of
+             level at least i having the largest key strictly less than k. We will then be
+             able to use this function not only in the Put operation, but also in the Get
+             and Remove operations. The Put operation is shown in Figure 6.25.
+</div>
+    </div>
+  </body>
+</html>

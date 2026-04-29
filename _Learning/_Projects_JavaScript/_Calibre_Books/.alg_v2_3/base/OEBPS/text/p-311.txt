@@ -1,0 +1,8 @@
+           292                      Algorithms: A Top-Down Approach
+             Figure 8.2  Scheduling algorithm using DisjointSets
+             Figure 8.3  Atree-based implementation of DisjointSets.
+           • 0 ≤ parent[i] <n;and
+           • there is a ﬁnite sequence parent[i],parent[parent[i]],...,k such that
+              parent[k]=k.
+           Note that this invariant implies that the values in the universe are grouped
+           into trees, where the root k of a tree is denoted by parent[k]=k.

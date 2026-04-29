@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 306</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-306.jpg" alt="Page 306" width="1282" height="1882"/>
+      <div class="ocr">                                    Storage/Retrieval II: Unordered Keys                        287
+             * Exercise 7.14. Suppose we were to modify the deﬁnition of H3 (7.2) so
+                                                                                        p,l
+             that for each a ,1≤ a &lt;p. Show that for every l ≥ 2 and prime number
+                              i        i
+             p, the resulting family of hash functions is not universal. Speciﬁcally, show
+             that there are two distinct keys that collide with probability strictly greater
+             than 1/p.[Hint: First consider l = 2, then generalize.]
+             Exercise 7.15. Implement HashFunction to provide H4                        using the
+                                                                                  p,l,m
+             same assumptions as for Exercise 7.13.
+             Exercise 7.16. Let p be a prime number and l and m be positive integers
+             such that m&lt;p.
+                                                4
+             *a. Prove that for every h ∈H           and every positive integer a&lt;p,thereis
+                                                p,l,m
+                 exactly one choice of natural numbers b,a1,...,a less than p such that
+                                                                          l
+                                                  	 l              
+
+                               h(k ,...,k)= aa k +b modpmodm
+                                    1       l               i i
+                                                       i=1
+                 for every l-tuple k ,...,k of natural numbers less than p.
+                                       1       l
+              b. Consider the following two methods of randomly selecting a hash
+                 function h of the form given by equation (7.3):
+                  i. Select a with uniform probability from the positive integers less than
+                     p, and select b,a1,...,a independently with uniform probability from
+                                               l
+                     the natural numbers less than p.
+                 ii. Set a to 1, and select b,a1,...,a independently with uniform
+                                                               l
+                     probability from the natural numbers less than p.
+                                              4
+                 Prove that for any h ∈H           , h is chosen with the same probability by
+                                              p,l,m
+                 both methods.
+             * Exercise 7.17. In terms of c and n, ﬁnd the value of m ∈ R≥0 that
+             minimizes
+                                             cn(n−1) +n+m,
+                                                 m
+             assuming c ∈ R&gt;0, n ∈ N,andn&gt;1.
+             Exercise 7.18. Prove that the constructor for PerfectHashrunsin Θ(nl)
+             expected time if H1     is used as the universal hash family, where m is a power
+                                  l,m
+             of 2.
+</div>
+    </div>
+  </body>
+</html>

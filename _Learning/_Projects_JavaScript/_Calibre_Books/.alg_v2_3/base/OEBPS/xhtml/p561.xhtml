@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 561</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-561.jpg" alt="Page 561" width="1282" height="1882"/>
+      <div class="ocr">         542                Algorithms: A Top-Down Approach
+         the value of the program counter at each execution step. We specify this
+         constraint with the sub-formula,
+                               p(n)P−2 P−1
+                          F =    If(p ,¬p ).
+                           1                 ij  ij
+                               i=0 j=0 j=j+1
+         Because P is a constant depending only on the problem X, this sub-formula
+         can be constructed in O(p(n)) time.
+            Wenowneedtospecifysomeinitialization constraints. The ﬁrstis simply
+         that the program counter has an initial value of 0. We specify this constraint
+         with the sub-formula,
+                                   F =p .
+                                    2    0,0
+         Clearly, this sub-formula can be constructed in O(1) time.
+            We also need to specify that the variables x[1..n] encode the input
+         string x.Letthekth bit of x be denoted by x[k]for1≤ k ≤ n.Wethen
+         construct
+                                 F =Eq(x,x).
+                                  3
+         Becausexandxarearraysofnelements,thissub-formulacanbeconstructed
+         in O(n)time.
+            In addition, we need to specify that all bits in both input streams are
+         initially unread. Notice that for each i, we have deﬁned a variable x [0], but
+                                                               i
+         there is no x[0]. The purpose of these variables is so that whenever x[k]isthe
+         next bit to be read, x [k−1] is false and x [k]istrue. In order to enforce this
+                          i               i
+         constraint initially, we construct
+                                          n
+                              F =¬x [0]∧  x [k].
+                               4    0        0
+                                         k=1
+         Clearly, this sub-formula can be constructed in O(n)time.
+            Weneed a similar speciﬁcation for φ; however, we don’t know the exact
+                                                              
+         length of φ.Wewantφ [k]tobetrue iﬀ 1 ≤ k ≤|φ|. Thus, we need φ [0] to
+                           0                                    0
+                                 
+         be false.Thenask increases, φ [k]maybetrue for a while, but as soon as
+                                  0
+                         
+         we encounter a false φ [k], these variables must be false for all greater values
+                          0
+         of k. We can enforce this constraint with the following sub-formula:
+                                  p(n)−1
+                                             
+                      F =¬φ [0]∧      If(¬φ [k],¬φ [k +1]).
+                       5     0             0     0
+                                  k=1
+         Wecan clearly construct this sub-formula in O(p(n)) time.
+</div>
+    </div>
+  </body>
+</html>

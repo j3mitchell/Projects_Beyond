@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 577</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-577.jpg" alt="Page 577" width="1282" height="1882"/>
+      <div class="ocr">           558                     Algorithms: A Top-Down Approach
+           their objective functions positive. In addition, we will restrict our attention
+           to problems whose objective functions have integer values for all candidate
+           solutions.
+               We would like to show some ﬁxed upper bound on the approximation
+           ratio of our greedy algorithm. However, we can modify the above example
+           by replacing 10 with an arbitrarily large x in order to achieve an arbitrarily
+           large approximation ratio of x/2. Thus, this approximation algorithm can
+           perform arbitrarily poorly.
+               With a bit more work, however, we can modify this algorithm so that it
+           has a bounded approximation ratio. Speciﬁcally, we ﬁnd n diﬀerent packings
+           and take the one with the highest value. For the ith packing, we take the
+           ith item ﬁrst, then apply the greedy strategy to ﬁnish the packing. Thus,
+           we expend additional work in making sure that we get started correctly.
+           The algorithm is shown in Figure 17.1. For simplicity, we assume that the
+            Figure 17.1   Anapproximation algorithm for the 0-1 knapsack problem
+               Precondition: W is a positive Nat, n ≥ 1, and w[1..n]andv[1..n]are
+               arrays of positive Nats such that for 1 ≤ i ≤ j ≤ n, v[i]/w[i] ≥ v[j]/w[j]
+               and w[i] ≤ W.
+               Postcondition: Returns an array A[1..n]ofBools such that if
+                                   S ={i|1≤i≤n,A[i]=true},
+               then
+                                              w[i] ≤ W.
+                                           i∈S
+               KnapsackApprox(W,w[1..n],v[1..n])
+                  maxValue ←0
+                  for i ← 1 to n
+                     A←newArray[1..n]
+                     for j ← 1 to n
+                       A[j] ← false
+                     A[i] ← true; value ← v[i]; weight ← w[i]
+                     for j ← 1 to n
+                       if j = i and weight +w[j] ≤ W
+                          weight ← weight +w[j]; value ← value +v[j]; A[j] ← true
+                     if value &gt; maxValue
+                       M←A
+                  return M
+</div>
+    </div>
+  </body>
+</html>

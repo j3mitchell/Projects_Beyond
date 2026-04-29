@@ -1,0 +1,28 @@
+                                       Analyzing Algorithms                           83
+             Figure 3.4  An algorithm to add two matrices
+               We would like to extend the deﬁnitions to mul-       For sets A and B, A ×
+           tiple variables in as straightforward a manner as        B denotes the set of all
+           possible. For example, we would like for O(f(m,n))       ordered pairs (a,b) such
+           to include all functions g : N×N → R≥0 such that for     that a ∈ A and b ∈ B.
+           some c ∈ R>0 and n0 ∈ N, g(m,n) ≤ cf(m,n) whenever certain conditions
+           hold. The question is what exactly these “certain conditions” should be.
+           Should the inequality be required to hold whenever at least one of m or n is
+           at least n0? Or should it be required to hold only when both m and n are
+           at least n0?
+               Suppose ﬁrst that we were to require that the inequality hold whenever
+           at least one of m or n is at least n0. Unfortunately, a consequence of such a
+           deﬁnition would be that mn+1∈ O(mn). To see why, observe that whatever
+           values we choose for c and n0,whenm =0andn ≥ n0, mn+1>cmn.Asa
+           result, working with asymptotic notation would become much messier with
+           multiple variables than with a single variable.
+               On the other hand, only requiring the inequality to hold when both m
+           and n are at least n0 also presents problems. Consider, for example, how we
+           would analyze the rather silly algorithm shown in Figure 3.5. We can observe
+                                                    n
+           that the ﬁrst of the inner loops iterates 2 times, and that the second iterates
+           in times. However, the ﬁrst loop is only executed when i = 0; hence, when
+           both i and n are suﬃciently large, only the second loop is executed. We
+           could therefore legitimately conclude that the body of the outer loop runs
+           in O(in) time. Unfortunately, this would lead to an incorrect analysis of the
+           algorithm because the ﬁrst inner loop will always execute once, assuming m
+           is a Nat.

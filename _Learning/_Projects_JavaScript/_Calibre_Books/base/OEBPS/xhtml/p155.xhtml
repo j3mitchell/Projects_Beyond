@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 155</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-155.jpg" alt="Page 155" width="1282" height="1882"/>
+      <div class="ocr">           136                     Algorithms: A Top-Down Approach
+            Figure 4.13   Speciﬁcation of the BinaryCounter ADT
+               We wish to show that the amortized costs of the IterBinCounter
+           operations are in O(1). We ﬁrst need to identify the actual costs. Observe
+           that the Value operation runs in Θ(1) time and does not change the
+           structure; hence, we can ignore this operation (we will be ignoring only some
+           constant time for each operation). Because the two loops in Increment
+           iterate the same number of times, the running time of Increment is
+           proportional to the number of iterations of the while loop, plus some
+           constant. We can therefore use the number of iterations of the while loop
+           as the actual cost of this operation. Note that the actual cost varies from 0
+           to n, depending on the current value represented.
+               The next step is to deﬁne an appropriate potential function. This step is
+           usually the most challenging part of this technique. While ﬁnding a suitable
+           potential function requires some creativity, there are several guidelines we
+           can apply.
+               First, we can categorize operations of a data structure according to two
+           criteria relevant to amortized analysis:
+           • the actual cost of the operation; and
+           • how much it degrades or improves future performance of the data
+              structure.
+</div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 062</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-062.jpg" alt="Page 062" width="1282" height="1882"/>
+      <div class="ocr">                                       Proving Algorithm Correctness                           43
+            most of the invariant. However, we must also take into account that the
+            iterations do not actually change the size of the problem instance; hence,
+            the invariant must also include a characterization of what has been done
+            outside of A[r +1..n − b]. The portion to the left is where red items have
+            been placed, and the portion to the right is where blue items have been
+            placed. We need to include these constraints in our invariant.
+                 Note that in Figure 2.7, the last line of SelectByMedian contains a
+            recursive call in which the ﬁrst parameter is A[1 + r + w..n]. However, the
+            speciﬁcation given in Figure 1.1 (page 5) states that the ﬁrst parameter
+            must be of the form A[1..n]. To accommodate such a mismatch, we adopt
+            a convention that allows for automatic re-indexing of arrays when the
+            speciﬁcation requires a parameter to be an array whose beginning index
+            is a ﬁxed value. Speciﬁcally, we think of the sub-array A[1+r+w..n]asan
+            array B[1..n−(r+w)]. B is then renamed to A when it is used as the actual
+            parameter in the recursive call.
+                 Let us now prove the correctness of SelectByMedian. Because
+            SelectByMedian contains a loop, we must prove this loop’s correctness
+            using the techniques of Section 2.3. Speciﬁcally, we need the following lemma,
+            whose proof we leave as an exercise.
+            Lemma2.8. Ifthe precondition for SelectByMedian is satisﬁed, then its
+            while loop always terminates with A[1..n] being a permutation of its original
+            elements such that
+             • A[i] &lt;pfor 1 ≤ i ≤ r;
+             • A[i]=p for r&lt;i≤r+w; and
+             • A[i] &gt;pfor r+w&lt;i≤n.
+            Furthermore, when the loop terminates,r,w,and b are natural numbers such
+            that r + w +b = n.
+                 We can then prove the correctness of SelectByMedian using
+            induction.
+            Theorem 2.9. SelectByMedian meets the speciﬁcation of Select given
+            in Figure 1.1.
+            Proof.     By induction on n.
+            Induction Hypothesis: Assume that for some n ≥ 1, whenever 1 ≤
+            m&lt;n,SelectByMedian(A[1..m],k)meetsitsspeciﬁcation,whereA[1..m]
+            denotes (by re-indexing if necessary) any array with m elements.
+</div>
+    </div>
+  </body>
+</html>

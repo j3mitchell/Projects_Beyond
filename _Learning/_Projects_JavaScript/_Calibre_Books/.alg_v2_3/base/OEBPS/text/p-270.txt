@@ -1,0 +1,23 @@
+                                    Storage/Retrieval II: Unordered Keys                        251
+              Figure 7.4    The HashFunction ADT
+             hash table. In order to approach the use of hash functions in a general way,
+             we use the HashFunction ADT, shown in Figure 7.4. Note that because
+             there are no operations to change the hash function, the HashFunction
+             ADTspeciﬁesanimmutabledatatype.Inremainingsectionsofthischapter,
+             we will consider various ways of implementing a HashFunction.Aswe
+             will see in the next section, not all hash table sizes are appropriate for
+             every HashFunctionimplementation. For this reason, we allow the user to
+             select an approximate table size, but leave it up to the HashFunction to
+             determine the exact table size.
+                 Our HashTable representation of Dictionary then consists of three
+             variables:
+             • hash:aHashFunction whose associated table size is some positive
+               integer m;
+             • table[0..m −1]: an array of ConsLists; and
+             • size: a readable Nat.
+             Our structural invariant is that:
+             • for 0 ≤ i<hash.Size(), table[i]isaConsList containing only Keyed
+               items;
+             • for each Keyed item x in table[i], 0 ≤ i<m, hash.Index(x.Key()) = i;
+               and
+             • the total number of Keyed items in the ConsListsisgivenbysize.

@@ -1,0 +1,52 @@
+                                     * The Fast Fourier Transform                       495
+            Lemma 15.10. Let a be an integer, and let b and m be positive integers.
+            Then (a mod bm)modm=amodm.
+            Proof.    Let r = a mod bm, so that for some integer p, bmp+r = a.Let
+                           1                                                     1
+            r =amodm,sothat for some integer q,
+             2
+                                          mq+r =a
+                                                 2
+                                                   =r1+bmp,
+                                        m(q−bp)=r −r .
+                                                      1    2
+            Because r and r diﬀer by a multiple of m, and because 0 ≤ r <m,
+                      1        2                                                   2
+            r modm=r .Thus,(amodbm)modm=amodm.                                            
+             1            2
+            Proof of Theorem 15.9 Let f : Zm m → Zm ×Zm be deﬁned so that
+                                                    1 2        1      2
+            f(i)=(i modm1,imodm2). We will show that f is a one-to-one and onto
+            function.
+                In order to show that f is onto, let a      ∈ Z     and a ∈ Z .From
+                                                          1     m          2     m
+                                                                  1                2
+            Theorem 7.4,
+                                          m1xmodm2=1
+            has a natural number solution x = c.Let
+                           i =(m c((a −a )modm )+a )modm m .                         (15.4)
+                                  1    2     1         2     1         1  2
+            Clearly, 0 ≤ i<mm . Because m c((a −a )modm ) is a multiple of m ,
+                               1  2             1    2    1         2                     1
+            from Lemma 15.10, i mod m1 = a1. Also, from Lemma 15.10, we have
+                   i mod m =(m c((a −a )modm )+a )modm
+                            2      1    2     1         2     1         2
+                              =((m cmodm )((a −a )modm )+a )modm
+                                    1         2    2     1         2     1         2
+                              =a2modm2
+                              =a2.
+            Therefore, f(i)=(a ,a ). Because the choice of a and a was arbitrary, we
+                                 1  2                           1       2
+            conclude that f is onto.
+                Because Zm m and Zm ×Zm are ﬁnite sets with the same number of
+                            1  2         1      2
+            elements, and f is a mapping from Zm m onto Zm ×Zm , it follows that f
+                                                    1  2         1      2
+            is one-to-one.                                                                
+                                                                                 2l
+                Let us now consider how to implement EvalSS.Letm1 =2 +1and
+            m2 =2b. In order to apply (15.4), we need to have a value c such that
+                                                                      2l
+            m1cmodm2 = 1. Because b ≤ 2l is a power of 2, (2 +1)mod2b =1.
+            We can therefore use c = 1. Furthermore, because 0 ≤ a <m,0≤
+                                                                            1       1

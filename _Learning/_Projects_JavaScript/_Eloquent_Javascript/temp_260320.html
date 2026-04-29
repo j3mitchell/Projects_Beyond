@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>temp_260320 JS test</title>
+</head>
+<body>    
+    <p>something else</p>
+    <div id="div_test">
+        <pre id="p_test"></pre>
+    </div>
+    <script>
+      let num = 7;
+      let text1 = "";
+      let out1 = "";
+
+      const div_test = document.getElementById("div_test");
+      const p_test = document.getElementById("p_test");
+
+/* 
+      // [1] Output after loop, uses trimEnd to remove trailing space in a string. Use <pre> vs <p> element.
+      while (num > 0) {
+        text1 += "# ";
+        // Build the output first, then update the DOM once.
+        out1 += text1.trimEnd() + "\n";
+        num--;
+      } 
+      // Update the DOM once after the loop.
+      p_test.textContent = out1; 
+    
+
+      // [2] Output after loop => single DOM update, more efficient, best MVC separation.
+      while (num > 0) {
+        text1 += "# ";
+        // Doesn't work as expected because of the trailing space in text1.
+        out1 += text1 + "\n";
+        num--;
+      }
+      p_test.textContent = out1; 
+      
+      
+       // [3] Output inside loop => multiple DOM updates, less efficient, bad MVC separation.
+       while (num > 0) {
+        text1 += "# ";
+        p_test.textContent += text1 + "\n"; 
+        num--;
+      } */
+
+      while(num>0){
+        text1 += "#";
+        out1 += text1 + "\n";
+        num--;  
+      }
+        console.log(out1);      // => browser console output (not DOM)
+
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 321</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-321.jpg" alt="Page 321" width="1282" height="1882"/>
+      <div class="ocr">           302                     Algorithms: A Top-Down Approach
+           Proof.    First, from the deﬁnition of f,wehave
+                               ranks[parent [i]] ≥ A     (ranks[i])
+                                            s       f(s,i)
+                                                    (1)
+                                                =A       (ranks[i]).
+                                                    f(s,i)
+           Thus, from the deﬁnition of g, g(s,i) &gt; 0.
+               Now from the deﬁnitions of A and f,wehave
+                              (ranks[i]+1)
+                            A           (ranks[i]) = A       (ranks[i])
+                              f(s,i)                  f(s,i)+1
+                                                  &gt;ranks[parents[i]].
+           Thus, g(s,i) ≤ ranks[i].                                                  
+               Wearenowreadytoshowthattheamortized costs of Merge and Find
+           are in O(α(n)).
+           Theorem 8.3. With respect to Φ, the amortized cost of Merge on a
+           CompressedDisjointSets of size n is in O(α(n)).
+           Proof.    Suppose we do Merge(i,j) in state s, yielding state s. Without
+           loss of generality, assume j is made the parent of i.Theni is the only node
+           whoseparent changes, and j is the only node whose rank may change; hence,
+           the potentials for all other nodes remain unchanged. The change in potential
+           for node i is given by
+                 φ (i) − φ (i)=(α(n) −f(s,i))rank [i] −g(s,i) −α(n)rank [i]
+                  s       s                          s                        s
+                              &lt;α(n)(ranks[i]−ranks[i])
+                              =0.
+           The change in potential for node j is given by
+                          φ (j) − φ (j)=α(n)rank [j] −α(n)rank [j]
+                            s       s               s               s
+                                         ≤α(n),
+           because the rank of j can increase by at most 1. The change in Φ is therefore
+           less than α(n). Because the actual cost is 2, the amortized cost is less than
+           α(n)+2∈O(α(n)).                                                           
+           Theorem 8.4. With respect to Φ, the amortized cost of Find on a
+           CompressedDisjointSets of size n is in O(α(n)).
+           Proof.    Suppose we perform Find(j) on state s.Lets be the resulting
+           state. Suppose there are d nodes on the path from j to the root in s.Then
+           the actual cost of the operation is d. We will show that as a result of this
+</div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,40 @@
+          534                 Algorithms: A Top-Down Approach
+          16.8  Proof of Cook’s Theorem
+          In this section, we will present a proof of Cook’s Theorem, namely, that Sat
+          is NP-complete. As we have already observed in Section 16.1, Sat ∈NP.It
+          therefore remains to be shown that Sat is NP-hard. Furthermore, because
+          we have used Cook’s Theorem either directly or indirectly to show all of
+          our NP-hardness results, we cannot use any of these results to prove Cook’s
+          Theorem. Because we cannot show the NP-hardness of Sat by reducing any
+          known NP-hard problem to it, we must directly use the deﬁnition of NP-
+          hardness — that is, we must directly show that for every problem X ∈NP,
+          X≤p Sat.
+             m
+             Our proof will therefore involve a generic reduction. This kind of
+          reduction is more abstract in that we begin with an arbitrary X ∈NP.
+          Speciﬁcally, the same reduction should work for any problem X that we
+          might choose from NP. Thus, the only assumption we can make about X
+          is that it satisﬁes the deﬁnition of NP: there exist a polynomial p(n)anda
+          decision problem Y ⊆ I ×B,whereI is the set of instances of X, such that
+          • Y ∈P—thatis, there exist a polynomial p(n) and an algorithm A that
+            takes an element x ∈ I and an element φ ∈Bas its inputs and decides
+            within p(|x| + |φ|) steps whether (x,φ) ∈ Y ;
+          • for each x ∈ I, x ∈ X iﬀ there is a proof φ ∈Bsuch that (x,φ) ∈ Y;and
+          • for each x ∈ X, there is a proof φ ∈Bsuch that (x,φ) ∈ Y and |φ|≤p(|x|).
+             For our reduction, we need to construct, for a given instance x ∈ I,a
+          boolean formula F that is satisﬁable iﬀ x ∈ X.Equivalently,F must be
+          satisﬁable iﬀ there is a φ ∈Bsuch that |φ|≤p(|x|)and(x,φ) ∈ Y.Our
+          reduction therefore will construct from x aformulaF that in some sense
+                                                                |≤p(|x|).
+          simulates the algorithm A on x and some unknown φ,where|φ
+             The input for our reduction is the instance x. However, because our
+          reduction is generic, it must work for any algorithm A and any polynomials
+          p(n)andp(n) satisfying the above constraints. Therefore, A, p,andp are
+          in a sense additional inputs to our reduction. What makes constructing such
+          a reduction rather diﬃcult is the fact that one of these additional inputs
+          is an algorithm. In order to be able to handle an algorithm as input to an
+          algorithm, we need to deﬁne more precisely what we mean by an algorithm.
+             Rather than formalizing all of the constructs we have been using in our
+          algorithms, we will instead simplify matters by deﬁning a lower-level model
+          of computation, which we will call a random access machine,orRAM.Thus,
+          in constructing a boolean formula to simulate a RAM, we will in essence be

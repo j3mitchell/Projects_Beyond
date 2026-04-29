@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 203</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-203.jpg" alt="Page 203" width="1282" height="1882"/>
+      <div class="ocr">           184                     Algorithms: A Top-Down Approach
+            Figure 5.17   The MakeHeap algorithm
+           MakeHeap is tail recursive. We can therefore implement it using a loop.
+           In order to simplify the statement of the loop invariant, we make use of
+           the fact that the entire tree is initially a heap, so that the precondition of
+           MakeHeapcouldbestrengthened to specify that t is a heap. (Later we will
+           use MakeHeap in a context in which we need the weaker precondition.)
+           Figure 5.18 gives the entire RemoveMax operation without a separate
+           MakeHeapfunction.Notethatelements[size+1]inFigure5.18corresponds
+           to x in Figure 5.17, elements[i] corresponds to t,andj corresponds to
+           largerChild.
+               Notice that in RemoveMax, i is initialized to 1, the root of the heap,
+           and on each iteration that does not cause the while condition to be false,
+           i is set to j, the index of its larger child. Furthermore, on each iteration,
+           elements[i] is set to either elements[size +1]orelements[j]. In the latter
+           case, the larger child of elements[i]iscopiedtoelements[i], and in the former
+           case, the removed leaf is placed in its proper location. Thus, as in the Put
+</div>
+    </div>
+  </body>
+</html>

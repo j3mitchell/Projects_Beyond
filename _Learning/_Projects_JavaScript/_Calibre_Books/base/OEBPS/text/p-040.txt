@@ -1,0 +1,17 @@
+                                           Introduction                              21
+            Figure 1.16   An algorithm satisfying the speciﬁcation described in Exercise 1.1
+            Figure 1.17   Algorithm for Exercise 1.3
+           Exercise 1.4. Figure 1.18 gives a speciﬁcation for Copy.
+              (a) Show how to reduce Copy to a smaller instance of itself by giving
+                  a recursive algorithm. You may assume that A and B are distinct,
+                  non-overlapping arrays. Your algorithm should contain exactly one
+                  recursive call and no loops.
+              (b) Convert your algorithm from part (a) to an iterative algorithm
+                  by either removing tail recursion or implementing it bottom-up,
+                  whichever is more appropriate. Explain how you did your conversion.
+              (c) The speciﬁcation of Copy does not prohibit the two arrays from
+                  sharing elements, for example, Copy(A[1..n − 1],A[2..n]). Modify
+                  your algorithm from part (a) to handle any two arrays of the same
+                  size. Speciﬁcally, you cannot assume that the recursive call does not
+                  change A[1..n]. Your algorithm should contain exactly one recursive
+                  call and no loops.

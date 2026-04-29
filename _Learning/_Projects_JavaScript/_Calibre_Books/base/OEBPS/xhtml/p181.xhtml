@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 181</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-181.jpg" alt="Page 181" width="1282" height="1882"/>
+      <div class="ocr">      162          Algorithms: A Top-Down Approach
+      Because no changes can be made to the structure, we can treat all nodes
+      as distinct, even if they are represented by the same storage (in which case
+      they are the roots of identical trees).
+        In order to facilitate fast computation of null path lengths, we will record
+      the null path length of a leftist tree in one of its representation variables.
+      Thus, when forming a new leftist tree from a root and two existing leftist
+      trees, we can simply compare the null path lengths to decide which tree
+      should be used as the right child. Furthermore, we can compute the null
+      path length of the new leftist tree by adding 1 to the null path length of its
+      right child.
+        For our representation of LeftistTree, we will therefore use four
+      variables:
+      • root:aKeyed item;
+      • leftChild:aLeftistTree;
+      • rightChild:aLeftistTree;and
+      • nullPathLength:aNat.
+      We will allow read access to all variables. Our structural invariant will be
+      that this structure is a leftist tree such that
+      • nullPathLength gives its null path length; and
+      • root = nil iﬀ nullPathLength =0.
+      Speciﬁcally, we will allow the same node to occur more than once in the
+      structure — each occurrence will be viewed as a copy. Because the structure
+      is immutable, such sharing is safe. The implementation of LeftistTree is
+      shown in Figure 5.7. Clearly, each of these constructors runs in Θ(1) time.
+        We now represent our LeftistHeap implementation of Priori-
+      tyQueue using two variables:
+      • elements:aLeftistTree;and
+      • size: a natural number.
+      Our structural invariant is that elements is a leftist heap whose size is given
+      by size, and whose nodes are Keyed items. We interpret these Keyed
+      items as the represented set of elements with their associated priorities. The
+      implementation of LeftistHeap is shown in Figure 5.8.
+        Based on the discussion above, Merge runs in O(lgn) time, where n is
+      the number of nodes in the larger of the two leftist heaps. It follows that
+      Put and RemoveMax operate in O(lgn) time, where n is the number of
+</div>
+    </div>
+  </body>
+</html>

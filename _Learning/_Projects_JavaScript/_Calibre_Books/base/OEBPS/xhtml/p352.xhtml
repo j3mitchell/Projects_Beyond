@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 352</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-352.jpg" alt="Page 352" width="1282" height="1882"/>
+      <div class="ocr">                               Divide and Conquer                  333
+         If we set m = n/2, then each of the smaller polynomials has roughly n/2
+         terms.
+            The product polynomial is now
+          pq(x)=p (x)q (x)+xm(p (x)q (x)+p (x)q (x))+x2mp (x)q (x). (10.1)
+                 0    0        0   1     1    0         1   1
+         To obtain the coeﬃcients of pq, we can ﬁrst compute the four products
+         of the smaller polynomials. We can then obtain any given coeﬃcient of pq
+         by performing at most two additions. We can therefore obtain all 2n − 1
+         coeﬃcients in Θ(n)timeafterthefoursmallerproductsarecomputed.
+         Setting m = n/2, we can describe the running time of this divide-and-
+         conquer algorithm with the following recurrence:
+                              f(n) ∈ 4f(n/2)+Θ(n),              (10.2)
+         when n&gt;1 is a power of 2. Unfortunately, applying Theorem 3.35 yields
+         f(n) ∈ Θ(n2), which is the same running time as the brute-force calculation.
+            This exercise illustrates an important point about the divide-and-
+         conquer technique, namely, that the technique by itself does not guarantee
+         improved running times. In order for the technique to be eﬀective, it must
+         save some work. Sometimes, as with MaxSumDC,thesavings in workcomes
+         about naturally. In such cases, it may be rather hard to see how work was
+         saved. In other cases, we must be more clever in order to save work.
+            Aswesuggested earlier, Theorem 3.35 can give insight into how a divide-
+         and-conquer solution might be designed or improved. For example, consider
+         recurrence (10.2). Because the third case of Theorem 3.35 applies, we cannot
+         obtain a more eﬃcient solution by reducing the Θ(n) overhead outside of the
+         recursive calls. In order to improve the performance, we need either to reduce
+         the number of recursive calls or decrease the size of the smaller instances.
+         We will focus on reducing the number of recursive calls. In the exercises,
+         we explore alternative solutions involving decreasing the size of the smaller
+         instances.
+            Thefollowing observation gives us the insight we need in order to reduce
+         the number of recursive calls:
+                (p0(x)+p1(x))(q0(x)+q1(x))
+                    =p0(x)q0(x)+p0(x)q1(x)+p1(x)q0(x)+p1(x)q1(x).
+         Note that all four of the terms in the right-hand-side above appear in the
+         product pq (see (10.1)). In order to make this fact useful, however, we need
+         to be able to separate out the ﬁrst and last terms. We can do this by
+</div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 194</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-194.jpg" alt="Page 194" width="1282" height="1882"/>
+      <div class="ocr">                                Priority Queues                  175
+         In order to isolate lgxy, let us now subtract xy from the fraction in the
+         above equation. This yields
+                                     x2+2xy+y2
+                      2lg(x+y)−2=lg        4
+                                         x2 −2xy+y2
+                                 =lg xy+       4
+                                               2
+                                 =lg xy+(x−y)
+                                             4
+                                 ≥lgxy,
+                      2
+         because (x − y) /4 is always nonnegative and the lg function is non-
+         decreasing.                                              
+            We can now show that lg(n+1) is an upper bound for E[lenT]whenT
+         is a binary tree with n nodes.
+         Theorem 5.8. Let T be any binary tree with size n,wheren ∈ N.Then
+         E[lenT] ≤ lg(n+1).
+         Proof. By induction on n.
+         Base: n = 0. Then only one path to an empty tree exists, and its length
+         is 0. Hence, E[lenT]=0=lg1.
+         Induction Hypothesis: Assume that for some n&gt;0, if S is any binary
+         tree with size i&lt;n,thenE[lenS] ≤ lg(i+1).
+         Induction Step: Suppose T has size n. Because n&gt;0, T is nonempty. Let
+         Land R be the left and right children, respectively, of T.Wethenhave
+           E[lenT]=  lenT(e)P(e)
+                    e∈PathT
+                                  P(e)                 P(e)
+                  =      (lenL(e)+1) 2 +      (lenR(e)+1) 2 ,   (5.1)
+                    e∈PathL              e∈PathR
+         because the probability of any path from the root of a child of T to any
+         empty subtree is twice the probability of the path from the root of T to the
+         same empty subtree, and its length is one less.
+</div>
+    </div>
+  </body>
+</html>

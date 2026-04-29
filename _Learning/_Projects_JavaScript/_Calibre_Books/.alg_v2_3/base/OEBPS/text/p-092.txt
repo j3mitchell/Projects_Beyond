@@ -1,0 +1,36 @@
+                               Analyzing Algorithms                73
+         i − 1 times. Because each iteration runs in Θ(1) time, the while loop runs
+         in O(i)timeintheworstcase.
+            In order to be able to conclude that the loop runs in Θ(i)timeinthe
+         worst case, we must determine that for arbitrarily large i,theloopmay
+         iterate until j = 1. This is certainly the case if, prior to the beginning of the
+         loop, A[i] is strictly less than every element in A[1..i − 1]. Thus, the while
+         loop runs in Θ(i)timeintheworstcase.
+            It is now tempting to use Theorem 3.31 to conclude that the entire
+         algorithm’s running time is in
+                                 n
+                          Θ(1)+Θ(i)⊆Θ(1)+Θ(n2)
+                                i=1
+                                       =Θ(n2).
+         However, we must be careful, because we have not shown that the while
+         loop runs in Ω(i)timeforevery iteration of the for loop; hence the running
+         time of the for loop might not be in
+                                    n
+                                   Θ(i).
+                                   i=1
+            We must show that there are inputs of size n, for every suﬃciently
+         large n, such that the while loop iterates i − 1 times for each iteration
+         of the for loop. It is not hard to show that an array of distinct elements in
+         decreasing order will produce the desired behavior. Therefore, the algorithm
+         indeed operates in Θ(n2)time.
+         3.7  Analyzing Recursion
+         Before we consider how to analyze recursion, let us ﬁrst consider how to
+         analyze non-recursive function calls. For example, consider SimpleSelect
+         from Figure 1.2 on page 7. This algorithm is easy to analyze if we know the
+         running time of Sort. Suppose we use InsertionSort (Figure 1.7, page
+         12). We saw in the last section that InsertionSort runs in Θ(n2)time.
+         The running time of SimpleSelect is therefore in
+                             Θ(1)+Θ(n2)⊆Θ(n2).
+         Suppose now that we wish to analyze an algorithm that makes one or more
+         recursive calls. For example, consider MaxSuffixTD from Figure 1.13 on
+         page 18. We analyze such an algorithm in exactly the same way. Speciﬁcally,

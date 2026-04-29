@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 200</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-200.jpg" alt="Page 200" width="1282" height="1882"/>
+      <div class="ocr">                                       Priority Queues                          181
+           that levels 0 through i − 1, where i is strictly less than the total number of
+                                i
+           levels, have a total of 2 −1 nodes. Let x be the jth node on level i. x would
+                           i
+           then have index 2 −1+j. Suppose x has a left child, y. In order to compute
+           its index, we observe that level i has j − 1 nodes to the left of x.Eachof
+           these nodes has two children on level i + 1 to the left of node y. Therefore,
+           the index of y is
+                             i+1                     i+1
+                            2   −1+2(j−1)+1=2            +2j−2,
+           or exactly twice the index of its parent. Likewise, if x has a right child, its
+           index is 1 greater than that of y.
+              As a result of these relationships, we can use simple calculations to ﬁnd
+           either child or the parent of a node at a given location. Speciﬁcally, the left
+           and right children of the element at location i are the elements at locations
+           2i and 2i + 1, respectively, provided they exist. Furthermore, the parent of
+           the element at location i&gt;1isatlocationi/2.
+              Let us consider how we can implement a binary heap as a data structure.
+           We will use two representation variables:
+           • elements[0..m]: an array of Keyed items; and
+           • size:aNat.
+              We allow read access to size. For reasons that    A sentinel element is an
+           will become clear shortly, elements[0] will act as   extra element added to a
+           a sentinel element, and will have as its key the     data structure in order to
+                                                                indicate when a traversal of
+           maximum allowable value. For convenience, we will    that structure has reached
+                                                                the end.
+           use a constant sentinel torepresentsuchadataitem.
+           Note because 1/2 =0,wecantreatelements[0] as if it were the parent of
+           elements[1].
+              The structural invariant will be:
+           • size ≤ SizeOf(elements);
+           • elements[0] = sentinel;and
+           • for 1 ≤ i ≤ size, elements[i].Key() ≤ elements[i/2].Key().
+           We interpret elements[1..size] as the elements of the set being represented,
+           together with their associated priorities.
+              Unfortunately, the algorithms for merging heaps don’t work for binary
+           heaps because they don’t maintain the balanced shape. Therefore, let us
+           consider how to insert an element x into a binary heap. If size is 0, then we
+           can simply make x the root. Otherwise, we need to compare x.Key() with
+           the key of the root. The larger of the two will be the new root, and we can
+</div>
+    </div>
+  </body>
+</html>

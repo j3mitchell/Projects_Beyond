@@ -1,0 +1,40 @@
+                                      Storage/Retrieval I: Ordered Keys                          211
+             height of each subtree. If the heights of both children are known, computing
+             the height of the tree is straightforward.
+                 Wetherefore deﬁne the data type AVLNode, which is just like Binary-
+             TreeNode,except that it has an additional representation variable, height.
+             This variable is used to record the height of the tree as an integer. As for the
+             other three variables, we allow read/write access to height. The constructor
+             for AVLNode is just like the constructor for BinaryTreeNode, except
+             that it also initializes height to −1.
+                 To represent an OrderedDictionary using an AVL tree, we again
+             use two variables, elements and size,aswedidforBSTDictionary.In
+             this representation, however, elements will refer to an AVLNode.Our
+             structural invariant is that elements represents an AVL tree. We interpret
+             this statement as implying that each height variable gives the height of the
+             subtree at which it is rooted, or −1 if that subtree is empty.
+                 We can deﬁne a Find function for this implementation as we did for
+             BSTDictionary; in fact, because an AVL tree is a binary search tree, the
+             same function will work. As we have already shown the running time of
+             BSTDictionary.Find to be in Θ(h), where h is the height of the tree,
+             we can conclude that this function has a running time in Θ(lgn). However,
+             this function is not useful in implementing the Put or Remove operations
+             because we might need to change the shape of the tree at some other location
+             in order to maintain the balance criterion.
+                 Let us therefore consider how Put might be implemented. More
+             generally, let us consider how a data item x might be inserted into an
+             arbitrary AVL tree t, which may be a subtree of a larger AVL tree. If t is
+             empty, wecanreplaceitwithasingle-nodeAVLtreecontainingx.Otherwise,
+             we’ll need to compare keys and insert into the appropriate child. However, we
+             are not yet ﬁnished, because the insertion into the child will have changed its
+             shape; hence, we need to compare the heights of the two children and restore
+             balance if necessary. Note that this reduction is not a transformation, due
+             to the additional work required following the insertion into the child.
+                 In order to complete the insertion function, we need to be able to restore
+             the balance criterion after an insertion into one of the children. Clearly,
+             if we insert into one particular child, the other child will be unchanged.
+             Furthermore, if we specify the insertion function to cause the result to be
+             an AVL tree, we know that both children will be AVL trees; hence, we only
+             need to worry about restoring balance at the root. Before we can talk about
+             how to restore balance at the root, we should consider how much diﬀerence
+             there might be in the heights of the children. It stands to reason that an

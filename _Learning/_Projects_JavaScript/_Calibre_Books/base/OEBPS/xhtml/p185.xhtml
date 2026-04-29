@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 185</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-185.jpg" alt="Page 185" width="1282" height="1882"/>
+      <div class="ocr">           166                      Algorithms: A Top-Down Approach
+             Figure 5.9  The SkewHeap.Merge internal function
+           by modifying Merge to swap the children after the recursive call. We call
+           this modiﬁed structure a skew heap.TheMerge function for SkewHeap is
+           shown in Figure 5.9; the remainder of the implementation of SkewHeap is
+           thesameasforSimpleHeap.
+           Example5.3. Consideragain theheap shown inFigure 5.6(a), and suppose
+           it is a skew heap. Performing a RemoveMaxon this heap proceeds as shown
+           in Figure 5.6 through part (c). At this point, however, for each node at which
+           a recursive Merge was performed, the children of this node are swapped.
+           These nodes are 13 and 15. The resulting heap is shown in Figure 5.10.
+               In order to understand why such a simple modiﬁcation might be advan-
+           tageous, observe that in Merge,whenS is merged with L.RightChild(),
+           we might expect the resulting heap to have a tendency to be larger than
+           L.LeftChild(). As we noted at the end of the previous section, good worst-
+           case behavior can be obtained by ensuring that the left child of each node
+           has at least as many nodes as the right child. Intuitively, we might be able
+           to approximate this behavior by swapping the children after every recursive
+           call. However, this swapping does not always avoid expensive operations.
+               Suppose,forexample,thatwestartwithanemptyskewheap,theninsert
+           the sequence of keys 2,1,4,3,...,2i,2i − 1,0, for some i ≥ 1. Figure 5.11
+</div>
+    </div>
+  </body>
+</html>

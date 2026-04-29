@@ -1,0 +1,36 @@
+                                       Depth-First Search                          417
+            Figure 13.3   Algorithm for testing ancestry for multiple pairs of nodes in a rooted
+            tree
+              Precondition: T refers to a Graph representing a tree rooted at i with
+              edges directed from parents to children, and x[1..m] and y[1..m] are arrays
+              of Nats less than T.Size().
+              Postcondition:   Returns an array ancestor[1..m]ofBools such that
+              ancestor[i]istrue iﬀ x[i] is a proper ancestor of y[i].
+              Ancestors(T,i,x[1..m],y[1..m])
+                n←T.Size(); ancestor ← new Array[1..m]
+                pre ← new VisitCounter(n); post ← new VisitCounter(n)
+                PrePostTraverse(T,i,pre,post)
+                for j ← 1 to m           j]) < pre.Num(y[j])
+                   condPre ← pre.Num(x[
+                   condPost ← post.Num(x[j]) > post.Num(y[j])
+                   ancestor[j] ← condPre and condPost
+                return ancestor
+               The algorithm for testing ancestry for multiple pairs of nodes is given
+           in Figure 13.3. The initialization prior to the call to PrePostTraverse
+           clearly runs in Θ(n) time, as does the call to PrePostTraverse.The
+           body of the loop runs in Θ(1) time. Because the loop iterates m times, the
+           entire algorithm runs in Θ(n +m)time.
+           13.2   Reachability in a Graph
+           Wewill now show how the technique used in the last section can be applied
+           to graph problems. Consider the problem of determining whether there is
+           a path from a given vertex i to a given vertex j in an undirected graph.
+           Viewing the problem top-down, we ﬁrst note that there is a path if i = j.
+           Otherwise, we can retrieve all of the vertices adjacent to i and remove i from
+           the graph. For each vertex k that was adjacent to i, we can then determine
+           whether there is a path from k to j in the resulting graph. We must be
+           careful, however, because each of these tests is destructive — it removes all
+           of the vertices it reaches. As a result, we must be sure a node k is still in the
+           graph before we solve that subproblem. Note that if it has been removed,
+           then it must have been reachable from one of the other vertices adjacent
+           to i; hence all nodes reachable from k have been removed. Thus, if j were
+           reachable from k, we would have already found that it was reachable from i.

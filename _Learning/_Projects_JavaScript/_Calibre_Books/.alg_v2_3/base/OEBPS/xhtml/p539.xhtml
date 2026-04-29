@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 539</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-539.jpg" alt="Page 539" width="1282" height="1882"/>
+      <div class="ocr">           520                      Algorithms: A Top-Down Approach
+             Figure 16.7  Thegraphconstructed from (x1∨¬x2∨x3)∧(¬x1∨x3)in the reduction
+             from 3-Sat to VC
+                      c11              c13               c21              c23
+                               c12                               c22
+                      x                          x                        x
+                        1                          2                        3
+                                                ¬x
+                      ¬x                           2                     ¬x
+                        1                                                   3
+           the vertex cover. Thus, we can represent an assignment of true to a literal
+           by including it in the vertex cover. We can now show the following lemma.
+           Lemma16.10. Let F be a 3-CNF formula with m variables and n clauses,
+           and let G and k be the graph and positive integer resulting from the above
+           construction. Then G has a vertex cover of size k iﬀ F is satisﬁable.
+           Proof.    Wemust show the implication in both directions.
+           ⇒:SupposeGhasavertex cover S of size k = m+2n.ThenS must contain
+           at least one of the two vertices xi and ¬xi for 1 ≤ i ≤ m,plusatleast
+           two of the three vertices c , c ,andc      for 1 ≤ i ≤ n. Because this gives
+                                      i1  i2       i3
+           a total of at least k vertices, we conclude that S must contain exactly one
+           of x and ¬x and exactly two of c , c ,andc .Letussetx to true iﬀ
+               i         i                     i1   i2       i3             i
+           x ∈S.Consider any clause C .Letj besuch that c ∈ S. Because the edge
+             i                           i                     ij
+           {c ,α } must be covered, α      must be in S. Therefore, at least one literal
+             ij  ij                      ij
+           in Ci is true. We conclude that F is satisﬁable.
+</div>
+    </div>
+  </body>
+</html>

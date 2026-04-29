@@ -1,0 +1,29 @@
+           156                      Algorithms: A Top-Down Approach
+             Figure 5.4  Constructor for BinaryTreeNode
+           enforcing as a structural invariant the fact that no two children have nodes
+           in common. In order for an operation to maintain this invariant when adding
+           a new node, it would apparently need to examine the entire structure to see if
+           the new node is already in the tree. As we will see, maintaining this invariant
+           becomes much easier for speciﬁc applications of trees. It therefore seems best
+           to think of a rooted tree as a mathematical object, and to mimic its structure
+           in deﬁning a heap implementation of PriorityQueue.
+               In order to build a heap, we need to be able to implement a single
+           node. For this purpose, we will deﬁne a data type BinaryTreeNode.Its
+           representation will contain three variables:
+           • root:theKeyed data item stored in the node;
+           • leftChild:theBinaryTreeNode representing the root of the left child;
+              and
+           • rightChild:theBinaryTreeNoderepresentingtherootoftherightchild.
+           We will provide read/write access to all three of these variables, and
+           our structural invariant is simply true. The only constructor is shown in
+           Figure 5.4, and no additional operations are included. Clearly, Binary-
+           TreeNode meets its speciﬁcation (there is very little speciﬁed), and each
+           operation and constructor runs in Θ(1) time.
+               We can now formally deﬁne a heap as a binary tree containing Keyed
+           elements such that if the tree is non-empty, then
+           • the item stored at the root has the maximum key in the tree and
+           • both children are heaps.
+           Based on the above deﬁnition, we can deﬁne a representation for Priori-
+           tyQueue using two variables:
+           • elements:aBinaryTreeNode;and
+           • size: a natural number.

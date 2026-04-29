@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 060</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-060.jpg" alt="Page 060" width="1282" height="1882"/>
+      <div class="ocr">                                       Proving Algorithm Correctness                           41
+              Figure 2.6    Tail recursive solution to a generalization of the Dutch national ﬂag
+              problem
+            obtained by ignoring the ﬁrst item. If it is white,wesolvetheproblemthat
+            results from incrementing the initial number of white items. If it is blue,we
+            swap it with the last element, and solve the smaller problem obtained by
+            ignoring the last item. A recursive implementation of this strategy is shown
+            in Figure 2.6.
+                 The way we handle the case in which an item is white is suspicious in
+            that the reduced instance is an array with the same number of elements.
+            However, note that in each case, the number of elements of unknown color is
+            decreased by the reduction. Thus, if we choose our deﬁnition of “size” to be
+            the number of elements of unknown color, then our reduction does decrease
+            the size of the problem in each case. Recall that our notion of size is any
+            natural number which decreases in all “smaller” instances. Our reduction is
+            therefore valid.
+</div>
+    </div>
+  </body>
+</html>

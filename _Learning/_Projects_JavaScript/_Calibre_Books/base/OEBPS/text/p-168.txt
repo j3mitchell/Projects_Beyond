@@ -1,0 +1,33 @@
+                                                                 Chapter 5
+                                                    Priority Queues
+                 In many applications, we need data structures which support the eﬃcient
+                 storage of data items and their retrieval in order of a pre-determined priority.
+                 Consider priority-based scheduling, for example. Jobs become available for
+                 execution at various times, and as jobs complete, we wish to schedule the
+                 available job having highest priority. These priorities may be assigned, for
+                 example, according to the relative importance of each job’s being executed
+                 in a timely manner. In order to support this form of storage and retrieval, we
+                 deﬁneaPriorityQueueasasetofitems,eachhavinganassociatednumber
+                 giving its priority, together with the operations speciﬁed in Figure 5.1.
+                       We sometimes wish to have operations MinPri-                                   Strictly speaking, we should
+                 ority() and RemoveMin() instead of MaxPri-                                           use a multiset, because we
+                 ority() and RemoveMax(). The speciﬁcations of                                        do not prohibit multiple
+                                                                                                      occurrences of the same
+                 these operations are the same as those of MaxPri-                                    item. However, because we
+                                                                                                      ordinarily would not insert
+                 ority and RemoveMax, respectively, except that                                       multiple   occurrences,  we
+                                                                                                      will call it a set.
+                 minimum priorities are used instead of maximum
+                 priorities. We call the resulting ADT an InvertedPriorityQueue.Itisa
+                 straightforward matter to convert any implementation of PriorityQueue
+                 into an implementation of InvertedPriorityQueue.
+                       In order to facilitate implementations of PriorityQueue,wewillusea
+                 data structure Keyed for pairing data items with their respective priorities.
+                 This structure will consist of two readable representation variables, key and
+                 data. We will use a rather general interpretation, namely, that key and data
+                 are associated with each other. This generality will allow us to reuse the
+                 structure in later chapters with somewhat diﬀerent contexts. Its structural
+                 invariant will simply be true. It will contain a constructor that takes two
+                 inputs, x and k, and produces an association with k as the key and x as the
+                 data. It will contain no additional operations.
+                                                                        149

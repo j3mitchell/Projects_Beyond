@@ -1,0 +1,43 @@
+          512                   Algorithms: A Top-Down Approach
+          us a proof technique for showing NP-hardness, provided we already have at
+          least one NP-hard problem.
+          Theorem 16.7. If X ≤p Y and Y ≤p Z,thenX ≤p Z.
+                                m            m             m
+          Corollary 16.8. If X is NP-hard and X ≤p Y,thenY is NP-hard.
+                                                   m
+              Thus, to show a decision problem Y to be NP-hard, we need only to
+          show that X ≤p Y for some NP-hard problem X. This is the technique
+                         m
+          that we will use for all subsequent NP-hardness proofs. Note also that
+          the more problems we have shown to be NP-complete, the more tools we
+          have for showing additional problems to be NP-complete. For this reason,
+          we will devote the next few sections to identifying a variety of NP-complete
+          problems.
+          16.4   Restricted Satisﬁability Problems
+          In order to illustrate the technique of proving NP-hardness using a polyno-
+          mial many-one reduction from a known NP-hard problem, we consider in
+          this section two special cases of boolean satisﬁability. In the ﬁrst special case,
+          the expression is in conjunctive normal form (CNF); i.e., the expression is
+          of the form
+                                         n ki
+                                        α ,
+                                               ij
+                                        i=1j=1
+          where each α  is a literal — either a variable or the negation of a variable.
+                      ij
+          Let us refer to this problem as CSat. We will now show that CSat is NP-
+          complete. The proof of NP-hardness will consist of showing that Sat ≤p
+                                                                             m
+          CSat.
+              It makes sense to represent the input for CSat using a data structure
+          that follows the form of a CNF formula more closely than does an expression
+          tree. Speciﬁcally, we represent a CNF formula as a ConsList of clauses,each
+          of which is a disjunction of literals. We then represent a clause as a ConsList
+          of literals. Finally, we represent each literal as an integer as follows. For a non-
+          negated variable, we simply use a positive integer, as in an expression tree.
+          For a negated variable ¬x,weuse−i,wherei is the integer representing the
+          variable x. We will again assume that for an input formula F,ifj represents
+          avariableinF,thenfor1≤ i≤ j, i represents a variable in F. Again, this
+          assumption will not apply to arbitrary sub-formulas.
+              One obvious way of reducing Sat to CSat is to convert a given
+          boolean expression to an equivalent expression in CNF. However, there

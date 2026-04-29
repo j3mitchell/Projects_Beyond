@@ -1,0 +1,27 @@
+      Preface
+      This bookgives an introduction to the design and analysis of algorithms. It is
+      intended to introduce the reader to the theories of algorithm correctness and
+      performance analysis, as well as to give a broad overview of algorithm design
+      techniques. As the proper organization of data is essential to the eﬃciency
+      of many algorithms, a signiﬁcant portion of the text is devoted to design and
+      analysis of data structures.
+        This book is motivated in part by the author’s belief that people do not
+      fully understand an algorithm until they are able to prove its correctness.
+      For this reason, all of Chapter 2 and much of Chapter 4 are devoted to
+      techniques for proving correctness. Outside of these two chapters, however,
+      very few correctness proofs are given, as they would needlessly clutter the
+      presentation with tedious details. Instead, all algorithms are presented in
+      such a way as to facilitate a correctness proof. The particular approach
+      used is top-down. This approach ﬁts well with mathematical techniques of
+      induction, proving loop invariants, and applying previously-shown theorems.
+      Byhavinganunderstandingofthemechanics of proving correctness, readers
+      are equipped to gain a thorough understanding of an algorithm presented in
+      a top-down way.
+        Correct use of notation, particularly asymptotic notation, is emphasized
+      throughout. Although asymptotic notation is routinely abused in the
+      literature, the author’s experience is that students ﬁnd such abuse confusing
+      and misleading. As others have argued, nothing is gained by this abuse, so
+      it is avoided in this book.
+        Algorithms are presented in a pseudo language deﬁned with enough rigor
+      to facilitate both performance analyses and correctness proofs. The essence
+                          v

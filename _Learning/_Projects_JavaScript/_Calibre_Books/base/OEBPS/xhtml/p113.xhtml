@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 113</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-113.jpg" alt="Page 113" width="1282" height="1882"/>
+      <div class="ocr">            94                       Algorithms: A Top-Down Approach
+            Theorem3.61 (L’Hˆopital’s rule). Let f : R≥0 →             We are implicitly assuming
+            R and g : R≥0 → R be functions such that                   that for suﬃciently large x,
+                                                                       the derivatives are deﬁned
+            limx→∞1/f(x)=0and limx→∞1/g(x)=0.                          and f(x) =0.
+            Let f and g denote the derivatives of f and g,
+            respectively. If limx→∞g(x)/f(x)=u ∈ R, then
+            limx→∞g(x)/f(x)=u.
+                With this theorem, we can now prove Theorem 3.58.
+            Proof of Theorem 3.58
+            1. We will use L’Hˆopital’s rule to show that limx→∞lgx/xq/p = 0. It will
+                                                 p    q
+               therefore follow that limx→∞lg x/x = 0. From Theorem 3.60, it will
+               then follow that lgp n ∈ o(nq). We leave it as an exercise to show that if
+               g(n) ∈ o(f(n)), then O(g(n)) ⊆ o(f(n)).         q/p
+               We ﬁrst note that because both lgx and x            are non-decreasing and
+               unbounded (because q and p are both positive), limx→∞1/lgx =0and
+               limx→∞1/xq/p = 0. In order to compute the derivative of lgx,weﬁrst
+               observe that lgxln2 = lnx, where ln denotes the natural logarithm
+               or base-e logarithm, where e ≈ 2.718. Thus, the derivative of lgx is
+               1/(xln2). The derivative of xq/p is
+                                                    q−1
+                                                 qxp   /p.
+               Using L’Hˆopital’s rule,
+                                      lim lgx = lim           1
+                                     x→∞xq/p      x→∞      q−1
+                                                        qxp   xln2/p
+                                                = lim      p
+                                                  x→∞      q
+                                                        qxp ln2
+                                                =0.
+                                  p    q                      p         q            p
+               Hence, limx→∞lg x/x = 0. Therefore, lg n ∈ o(n )andO(lg n) ⊆
+               o(nq).
+                                   p     q            x
+            2. Because limx→∞lg x/x =0and2 is non-decreasing and unbounded,
+               it follows that
+                                           p  qx           p  x     x q
+                                     lim x /2    = lim lg (2 )/(2 )
+                                    x→∞             x→∞
+                                                 =0.
+                            p      qn            p       qn
+               Therefore, n ∈ o(2 )andO(n ) ⊆ o(2 ).                                      
+</div>
+    </div>
+  </body>
+</html>

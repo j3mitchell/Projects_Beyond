@@ -1,0 +1,13 @@
+                                       Proving Algorithm Correctness                           51
+              Figure 2.11    Aminor modiﬁcation of MaxSumIter with invariants
+              Figure 2.12    Aslightly optimized version of InsertionSort
+            Exercise 2.12. Prove that DutchFlagTailRec, shown in Figure 2.6 on
+            page 41, meets its speciﬁcation.
+            Exercise 2.13. Prove Lemma 2.8 (page 43).
+            * Exercise 2.14. Prove that Permutations, shown in Figure 2.13,
+            meets it speciﬁcation. Use the speciﬁcations of Copy, AppendToAll,and
+            Factorial from Figures 1.18, 1.20, and 2.9, respectively.
+            Exercise 2.15. Prove that SwapColors, shown in Figure 2.14, meets
+            its speciﬁcation. Note that the second conjunct in the while condition is
+            comparing two boolean values; thus, it is true whenever exactly one of A[i]
+            and A[j]equalsp.

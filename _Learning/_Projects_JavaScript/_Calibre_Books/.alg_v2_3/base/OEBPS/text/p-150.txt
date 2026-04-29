@@ -1,0 +1,22 @@
+                                    Basic Techniques for Data Structures                        131
+              Figure 4.11    Example of stacks implemented with ConsLists
+                 TheideabehindaConsListcanbemodiﬁedtoformamutablestructure
+             if we allow the value of tail to be modiﬁed. It is diﬃcult to deﬁne a general-
+             purposeADTbasedonthisideaotherthantoallow writeaccess totail.Ifwe
+             do this, then there is little security; i.e., the user can construct complicated
+             linked structures that share data or perhaps form loops. Nevertheless, if we
+             are careful, we can use this idea as a building block for several more advanced
+             data structures. We will therefore refer to this idea as the linked list design
+             pattern.
+             4.5    Amortized Analysis Using Potential Functions
+             In Section 4.3, we introduced the technique of amortized analysis. The
+             actual analysis was rather straightforward, mainly because the worst case
+             is easily identiﬁable. For many data structures, amortized analysis is not
+             so straightforward. Furthermore, we would like to be able to amortize in a
+             more general way than simply averaging over all operations in a sequence.
+             Speciﬁcally, we would like to be able to amortize in such a way that
+             operations on small structures receive smaller amortized cost than operations
+             on large structures. For example, if n represents the size of a structure, we
+             would like to be able to speak about an amortized running time in O(lgn).
+             In this section, we introduce a more general notion of amortized cost and
+             present a corresponding technique for performing amortized analysis.

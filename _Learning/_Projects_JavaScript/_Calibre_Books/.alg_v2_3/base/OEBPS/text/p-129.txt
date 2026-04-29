@@ -1,0 +1,23 @@
+           110                      Algorithms: A Top-Down Approach
+               We may apply the top-down approach to designing an implementation
+           of the undo operation speciﬁed above. We ﬁrst observe that we need to
+           store a history of the edits applied to the edited object. These edits must be
+           represented in such a way that we can undo or invert them. Furthermore, we
+           only need last-in-ﬁrst-out (LIFO) access to the history of edits. This suggests
+           that the history of edits should be stored in a stack. We can then implement
+           undo by popping the top edit from the stack, and applying its inverse to the
+           edited object. If the stack is empty, then no undo is possible. Likewise, when
+           edits are performed, each edit must be pushed onto the stack.
+               Let us now make these ideas a bit more formal. In order to be able
+           to reason about this solution, we must have a formal deﬁnition of a stack
+           and its operations. We therefore deﬁne a stack as a ﬁnite sequence of
+           elements a ,...,a , together with the operations speciﬁed in Figure 4.1. A
+                       1      n
+           mathematical structure, together with a speciﬁcation of operations on that
+           structure, is known as an abstract data type (ADT). The operations speciﬁed
+           are the interface of the ADT. If we have a stack S, we refer to its Pop
+           operation by S.Pop(). We refer to the Pop operation of the Stack ADT
+           by Stack.Pop(). The Stack() operation is a speciﬁcation of a constructor,
+           meaning that it is possible to construct an instance of any implementation
+           without supplying any arguments.
+             Figure 4.1  The Stack ADT

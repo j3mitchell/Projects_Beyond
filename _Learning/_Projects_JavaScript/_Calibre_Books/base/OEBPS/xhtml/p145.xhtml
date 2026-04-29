@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 145</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-145.jpg" alt="Page 145" width="1282" height="1882"/>
+      <div class="ocr">           126                     Algorithms: A Top-Down Approach
+           data item will be reﬂected in both stacks. However, changes to one of the
+           stacks will not aﬀect the other. In order to perform a shallow clone of an
+           ExpandableArrayStack, the array must clearly be copied, so that the
+           two stacks can be manipulated independently. Copying one array to another
+           requires Θ(n) time, where n is the number of elements copied.
+               We might be able to improve on this running time if we can use a data
+           structure that facilitates non-destructive updates. An update is said to be
+           non-destructive if it does not change any of the existing structure, but instead
+           builds a new structure, perhaps using some or all of the existing structure.
+           If all updates are non-destructive (i.e., the structure is immutable), it is
+           possible for diﬀerent structures to share substructures that are common to
+           both. This sharing can sometimes lead to improved eﬃciency; for example, to
+           clone an immutable structure all that we need to copy is the reference to it.
+               In order to apply this idea to stacks, it is helpful to think of a ﬁnite
+           sequence as nested ordered pairs. In particular, a sequence of length n&gt;0
+           is an ordered pair consisting of a sequence of length n − 1 followed by an
+           element. As a special case, the sequence of length 0 is denoted (). Thus, the
+           sequence a ,a ,a  can be thought of as the pair ((((),a ),a ),a ). If we
+                       1  2  3                                       1   2    3
+           think of this sequence as a Stack S,thenwecanthinkofS.Push(a4)as
+           a function returning a new sequence (((((),a ),a ),a ),a ). Note that this
+                                                        1   2   3   4
+           new sequence can be constructed simply by pairing S with a4,leavingS
+           unchanged.
+               Nested pairs form the basic data structure in the programming language
+           Lisp and its derivatives. The Lisp function to build an ordered pair is called
+           cons. Based on this background is the ADT known as a ConsList.Itis
+           useful to think of a nonempty ConsList as a pair (head,tail), where head
+           is an element and tail is a ConsList. (Note that the two components of the
+           pair are in the reverse order of that described in the above paragraph.)
+               More formally, we deﬁne a ConsList to be a          Weuse Booltodenotethe
+           ﬁnite sequence a ,...,a , together with the opera-    type whose only values are
+                            1       n                              true and false.
+           tions speciﬁed in Figure 4.7. Note that none of these
+           operations changes the ConsList. We therefore say that a ConsList is an
+           immutable structure, meaning that though the elements in the sequence may
+           change their state, the sequence itself will not change.
+               In what follows, we will show how to implement Stack using a Cons-
+           List. We will have thus applied top-down design to the task of implementing
+           Stack,aswewillhavereducedthisproblemtotheproblemofimplementing
+           ConsList. The resulting Stack implementation will support constant-time
+           Push, Pop, and shallow cloning, which we will support via an additional
+</div>
+    </div>
+  </body>
+</html>

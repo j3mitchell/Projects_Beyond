@@ -1,0 +1,31 @@
+           84                     Algorithms: A Top-Down Approach
+            Figure 3.5  An algorithm illustrating diﬃculties with asymptotic notation with
+            multiple variables
+              Thus, we can see that if we want to retain the properties of asymptotic
+           notation on a single variable, we must extend it to multiple variables in a way
+           that is not straightforward. Unfortunately, the situation is worse than this
+           —it can be shown that it is impossible to extend the notation to multiple
+           variables in a way that retains the properties of asymptotic notation on
+           a single variable. What we can do, however, is to extend it so that these
+           properties are retained whenever the function inside the asymptotic notation
+           is strictly non-decreasing. Note that restricting the functions in this way
+           does not avoid the problems discussed above, as the functions inside the
+           asymptotic notation in this discussion are all strictly non-decreasing. We
+           therefore must use some less straightforward extension.
+              The deﬁnition we propose for O(f(m,n)) con-       We say that a function f :
+           siders all values of a function g(m,n), rather than  N × N → R≥0 is strictly
+           ignoring values when m and/or n are small. However,  non-decreasing if, for every
+                                                                m ∈ N and n ∈ N,
+           it allows even inﬁnitely many values of g(m,n)tobe   f(m,n) ≤ f(m +1,n)
+                                                                and f(m,n) ≤ f(m,n +
+           large in comparison to f(m,n), provided that they    1).
+           are not too large in comparison to the overall growth
+           rate of f. In order to accomplish these goals, we ﬁrst give the following
+           deﬁnition.
+                                                       ≥0                       ≥0
+           Deﬁnition3.38. Forafunctionf : N×N → R ,wedeﬁnef : N×N→R
+           so that
+                         
+                         f(m,n)=max{f(i,j) | 0 ≤ i ≤ m,0 ≤ j ≤ n}.
+              Using the above deﬁnition, we can now deﬁne big-O for 2-variable
+           functions.

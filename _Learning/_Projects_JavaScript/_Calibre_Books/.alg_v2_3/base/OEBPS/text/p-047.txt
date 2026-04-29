@@ -1,0 +1,38 @@
+      28           Algorithms: A Top-Down Approach
+      1. The induction hypothesis. We assume that for some arbitrary n ∈ N, P(i)
+        is true for every natural number i<n.
+      2. The induction step. Using the induction hypothesis, we prove that P(n)
+        is true.
+        Some readers may be familiar with another version of induction consist-
+      ing of three steps:
+      1. The base case. P(0) is shown to be true.
+      2. The induction hypothesis. P(n) is assumed to be true for some arbitrary
+        natural number n.
+      3. The induction step. Using the induction hypothesis, P(n +1)isproved.
+      Thoughthistechnique is also valid, the version given by Theorem 2.3 is more
+      appropriate for the study of algorithms. To see why, consider how we are
+      usingthetop-downapproach.Weassociatewitheachinputanaturalnumber
+      that in some way describes the size of the input. We then recursively apply
+      the algorithm to one or more inputs of strictly smaller size. Theorem 2.3
+      tells us that in order to prove that this algorithm is correct for inputs of all
+      sizes, we may assume that for arbitrary n, the algorithm is correct for all
+      inputs of size less than n. Thus, we may reason about a recursive algorithm
+      in the same way we reason about an algorithm that calls other algorithms,
+      provided the size of the parameters is smaller for the recursive calls.
+        Now let us turn to the proof of Theorem 2.3.
+      Proof of Theorem 2.3. Suppose every natural number n satisﬁes the
+      Induction Property given in the statement of the theorem. In order to derive
+      a contradiction, assume that for some n ∈ N, P(n)=false. Speciﬁcally,
+      let n be the smallest such value. Then for every i<n, P(i)=true.Bythe
+      Induction Property, P(n)=true — a contradiction. We conclude that our
+      assumption was invalid, so that P(n)=true for every natural number n.
+        Before we illustrate the use of this principle by proving the correctness
+      of InsertSort,let us brieﬂy discuss an element of style regarding induction
+      proofs. One of the distinguishing features of this particular induction
+      principle is the absence of a base case. However, in most proofs, there
+      are special cases in which the induction hypothesis is not used. These are
+      typically the smallest cases, where the induction hypothesis gives us little or
+      no information. It would be a bit of a misnomer to use the term, “induction
+      step”, for such cases. It is stylistically better to separate these cases into
+      one or more base cases. Hence, even though a base case is not required, we
+      usually include one (or more).

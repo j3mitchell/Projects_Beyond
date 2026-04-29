@@ -1,0 +1,37 @@
+                                      Storage/Retrieval I: Ordered Keys                          239
+                 Earlier, we suggested that for all practical purposes, ﬁxed-sized arrays
+             could be used for both start.elements and end.elements. We can now justify
+             that claim by observing that
+                                      P(numi > 0) = E[I(numi > 0)]
+                                                      ≤E[numi]
+                                                            1−i
+                                                      =n2 .
+             Thus, the probability that some element has a level strictly greater than 100
+                            −100              −20       −6                               80      24
+             is at most n2       . Because 2      <10 ,thismeansthat for n ≤ 2              ≈10 ,
+             the probability that a level higher than 100 is reached is less than one in a
+             million. Such a small probability of error can safely be considered negligible.
+             6.5    Summary
+             A summary of the running times of the operations for the various imple-
+             mentations of OrderedDictionary is given in Figure 6.26. Θ(lgn)-
+             time implementations of the Get, Put,andRemove operations for the
+             OrderedDictionary interface can be achieved in three ways:
+             • A balanced binary search tree, such as an AVL tree, guarantees Θ(lgn)
+               performance in the worst case.
+             • A splay tree is a binary search tree that guarantees O(lgn) amortized
+               performance by rotating the items accessed to the root. This has an
+               additional beneﬁt of leaving frequently accessed items near the root, so
+               that they are accessed more quickly.
+             • A skip list uses randomization to achieve Θ(lgn) expected performance
+               for worst-case inputs.
+                 The worst-case stack space usage for each of the AVL tree operations
+             is in Θ(lgn). Because the skip list implementation uses no recursion, its
+             worst-case stack space usage is in Θ(1). However, unless the splay tree
+             implementation is revised to remove the recursion (see Exercise 6.14), its
+             worst-case stack space usage is in Θ(n).
+                 Section 6.4 introduced the useof indicator randomvariables for analyzing
+             randomizedalgorithms. Theapplication of this technique involves converting
+             the expected value of a random variable to the expected values of indicator
+             random variables and ultimately to probabilities. Theorems 5.5, 5.9, and 6.9
+             are useful in performing this conversion. The probabilities are then computed
+             using the probabilities of the elementary events and the laws of probability

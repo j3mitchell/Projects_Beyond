@@ -1,0 +1,40 @@
+                                     Divide and Conquer                         345
+           Theorem 10.2. Let n ≥ 1 and m ≥ 1 be integers, and let c ,...,c       be
+                                 0                                     1      m
+           positive real numbers such that
+                                           m
+                                          c <1.
+                                              i
+                                          i=1
+           Let f : N → R≥0 be an eventually non-decreasing function satisfying
+                                         m
+                                  f(n) ∈ f(c n)+X(n)
+                                                i
+                                         i=1
+           whenever n ≥ n0,whereX is either O, Ω,orΘ.Thenf(n)∈ X(n).
+           Proof.   If X is Ω, clearly we have f(n) ∈ Ω(n). In what follows, we will
+           show that if X is O,thenf(n) ∈ O(n). It will then follow that if X is Θ,
+           then f(n) ∈ Θ(n).
+              Suppose X is O. Then for some natural number n1 and some positive
+           real number a,wehave
+                                           m
+                                   f(n) ≤ f(c n)+an
+                                                 i
+                                          i=1
+           whenever n ≥ n0 and n ≥ n1. By Exercise 3.11, it is suﬃcient to show that
+           for some positive real number b, f(n) ≤ bn whenever n>0.
+              The technique we will use to prove this fact is called   constructive
+           induction. With this technique, we use the constant b as if it had already been
+           ﬁxed. As the proof progresses, we will need to assume certain constraints
+           on b. Once the proof is ﬁnished, if the assumed constraints are consistent,
+           we can then ﬁx a value for b that satisﬁed all of the constraints.
+           Induction Hypothesis: Assume that for some n,if0<k<n,then
+           f(k) ≤ bk.
+           Induction Step: First, we will assume that n is large enough to apply
+           the recurrence, then to apply the induction hypothesis to each term in the
+           resulting summation. If n ≥ max(n ,n ),
+                                            0  1
+                                          m
+                                  f(n) ≤ f(c n)+an.
+                                                 i
+                                          i=1

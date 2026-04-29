@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 077</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-077.jpg" alt="Page 077" width="1282" height="1882"/>
+      <div class="ocr">                       58                                               Algorithms: A Top-Down Approach
+                       Example 3.4. n3 ∈ O(n2) because n3 = n(n2), so that whatever values we
+                                                                                                                                           2              2
+                       pick for n0 and c, we can ﬁnd an n ≥ n0 such that n(n ) &gt;cn.Notethat
+                       in this example, we are using n3 and n2 to denote functions.
+                       Example 3.5. 1000 ∈ O(1). Here, 1000 and 1 denote constant functions
+                       —functions whose values are the same for all n.Thus,foreveryn ≥ 0,
+                       1000 ≤ 1000(1).
+                       Example 3.6. O(n) ⊆ O(n2); i.e., every function in O(n)isalsoinO(n2).
+                       Toseethis, note that for any function f(n) ∈ O(n), there exist a positive real
+                       number c and a natural number n0 such that f(n) ≤ cn whenever n ≥ n0.
+                       Furthermore, n ≤ n2 for all n ∈ N. Therefore, f(n) ≤ cn2 whenever n ≥ n0.
+                       Example 3.7. O(n2)=O(4n2+7n); i.e., the sets O(n2)andO(4n2 +7n)
+                       contain exactly the same functions. It is easily seen that O(n2) ⊆ O(4n2+7n)
+                       using an argument similar to that of Example 3.6. Consider any function
+                       f(n) ∈ O(4n2 +7n). There exist a positive real number c and a natural
+                       number n0 such that f(n) ≤ c(4n2 +7n) whenever n ≥ n0.Furthermore,
+                            2                        2                                                                                                                          2
+                       4n +7n≤11n foralln∈N.Lettingc =11c,wethereforehavef(n)≤cn
+                       whenever n ≥ n0. Therefore, f(n) ∈ O(n2). Note that although O(n2)and
+                       O(4n2+7n)denotethesamesetoffunctions,the preferred notation is O(n2)
+                       because it is simpler.
+                              We have chosen to use functions that map natural numbers to non-
+                       negative real numbers because these functions make our deﬁnitions clean.
+                       Furthermore, they ﬁt what we would expect a function describing the
+                       running time of an algorithm to look like — the size of the problem is
+                       a natural number, and the running time is a non-negative real number.
+                       However, we sometimes want to express a running time as being in a set
+                                               n                                                                                                                        0
+                       such as O(2 /n). Strictly speaking, this doesn’t make sense because 2 /0is
+                       undeﬁned. However, because asymptotic notation focuses on the behavior
+                       of the function for suﬃciently large n, this single undeﬁned function value
+                       doesn’t aﬀect anything. To accommodate such exceptions to our deﬁnition,
+                       we will assume that such functions are “patched” so that undeﬁned or
+                                                                                                                                             0
+                       negative values are replaced by 0 (e.g., we assume that 2 /0=0).Wemust
+                       be careful, however, that the functions have only a ﬁnite number of negative
+                       or undeﬁned values.
+                              Let us now illustrate the use of big-O notation by analyzing the running
+                       time of MaxSumBU from Figure 1.14 on page 18. The initialization
+</div>
+    </div>
+  </body>
+</html>

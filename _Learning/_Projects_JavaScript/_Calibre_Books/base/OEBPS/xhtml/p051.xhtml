@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 051</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-051.jpg" alt="Page 051" width="1282" height="1882"/>
+      <div class="ocr">           32                      Algorithms: A Top-Down Approach
+               Therefore, the invariant holds at the end of the    In this textbook, a for loop
+           iteration.                                              always contains a single
+                                                                   index variable, which either
+                                                                   is incremented by a ﬁxed
+           Termination: Because the loop is a for loop, it         positive amount each itera-
+                                                                   tion until it exceeds a ﬁxed
+           clearly terminates.                                     value or is decremented by a
+                                                                   ﬁxed positive amount each
+                                                                   iteration until it is less than
+           Correctness:Theloopexitswheni = n.Thus,from             a ﬁxed value. The index
+                                                                   cannot be changed other-
+           the invariant, m is the maximum subsequence sum of      wise. Such loops will always
+                                                                   terminate.
+           A[0..n −1] when the loop terminates.                                     
+               As can be seen from the above proof, initialization and maintenance
+           can be shown using techniques we have already developed. Furthermore,
+           the correctness step is simply logical inference. In the case of Theorem 2.5,
+           termination is trivial, because for loops always terminate. Note, however,
+           that in order for such a proof to be completed, it is essential that a proper
+           loop invariant be chosen. Speciﬁcally, the invariant must be chosen so that:
+           • it is true every time the loop condition is tested;
+           • it is possible to prove that if it is true at the beginning of an arbitrary
+              iteration, it must also be true at the end of that iteration; and
+           • when coupled with the loop exit condition, it is strong enough to prove
+              the desired correctness property.
+           Thus, if we choose an invariant that is too strong, it may not be true each
+           timetheloopconditionistested.Ontheotherhand,ifwechooseaninvariant
+           that is too weak, we may not be able to prove the correctness property.
+           Furthermore, even if the invariant is true on each iteration and is strong
+           enough to prove the correctness property, it may still be impossible to prove
+           the maintenance step. We will discuss this issue in more detail shortly.
+               For while loops, the proof of termination is usually nontrivial and
+           in some cases quite diﬃcult. An example that is not too diﬃcult is
+           IterativeInsert in Figure 1.6 (page 11). To prove termination of this
+           loop, we need to show that each iteration makes progress toward satisfying
+           the loop exit condition. The exit condition for this loop is that j ≤ 1or
+           A[j] ≥ A[j −1]. Usually, the way in which a loop will make progress toward
+           meeting such a condition is that each iteration will decrease the diﬀerence
+           between the two sides of an inequality. In this case, j is decreased by each
+           iteration, and therefore becomes closer to 1. (The other inequality in the
+           exit condition is not needed to prove termination — if it becomes true, the
+</div>
+    </div>
+  </body>
+</html>

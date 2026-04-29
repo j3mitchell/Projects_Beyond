@@ -1,0 +1,30 @@
+           442                     Algorithms: A Top-Down Approach
+            Figure 14.1   Aﬂownetwork
+                                     sink     1    5     1
+                                          34
+                                                    1
+                                        1                     1
+                                          12
+                                              11
+                                  source           0
+           • for each vertex x ∈ V \{u,v},
+                                       F(e)=F(e).
+                                       e∈x←        e∈x→
+           Thus, the ﬂow on each edge is no more than that edge’s capacity, and the
+           total ﬂow into a vertex other than the source or the sink is the same as the
+           total ﬂow out of that vertex. An example of a ﬂow on the network shown
+           in Figure 14.1 would have a ﬂow of 1 on every edge except (4,1); this edge
+           would have a ﬂow of 0.
+               Weleave it as an exercise to show that for any ﬂow F of a ﬂow network
+           (G,u,v,C),
+                          F(e)−  F(e)= F(e)−  F(e).                          (14.1)
+                         e∈u→         e∈u←        e∈v←         e∈v→
+           We therefore deﬁne the value of a ﬂow to be the above diﬀerence — the
+           net ﬂow out of the source, or equivalently, the net ﬂow into the sink. Thus,
+           the ﬂow described above for the network in Figure 14.1 has a value of 2.
+           Given a ﬂow network, the network ﬂow problem is to ﬁnd a network ﬂow
+           with maximum value. Clearly, 2 is the maximum value of any ﬂow for the
+           network in Figure 14.1.
+               In the next two sections, we will examine algorithms for the network
+           ﬂow problem. In the remainder of the chapter, we will consider the bipartite
+           matching problem, and show how to reduce it to network ﬂow.

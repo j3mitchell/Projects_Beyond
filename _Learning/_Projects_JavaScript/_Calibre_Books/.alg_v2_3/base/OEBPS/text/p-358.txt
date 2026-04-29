@@ -1,0 +1,11 @@
+                                       Divide and Conquer                           339
+            Figure 10.3   The randomized QuickSort algorithm
+           quick sort, we need a way to choose the pivot element quickly in such a way
+           that it tends to be near the median.
+               One way to accomplish this is to choose the pivot element randomly.
+           This algorithm is shown in Figure 10.3. In order to make the presentation
+           easier to follow, we have speciﬁed the algorithm so that the array is indexed
+           with arbitrary endpoints.
+               Let us now analyze the expected running time of QuickSort on an
+           array of size n. We ﬁrst observe that for any call in which lo < hi,theloop
+           will execute at least once. Furthermore, by an easy induction on n,wecan

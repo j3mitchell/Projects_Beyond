@@ -1,0 +1,27 @@
+                                      Analyzing Algorithms                         97
+           or over 1.7 billion years! Even if we could speed up the processor by a factor
+           of one million, this implementation would still require over 1700 years.
+               Thoughthisexampleclearly illustrates the utility of asymptotic analysis,
+           a word of caution is in order. Asymptotic notation allows us to focus on
+           growth rates while ignoring constant factors. However, constant factors
+           can be relevant. For example, two linear-time algorithms will not yield
+           comparable performance if the hidden constants are very diﬀerent.
+               For a more subtle example, consider the functions lg16 n and √n,shown
+                                                 16        √
+           in Figure 3.9. From Theorem 3.58, O(lg  n) ⊆ o( n), so that as n increases,
+             16                                     √                            32
+           lg  n grows much more slowly than does     n. However, consider n =2 =
+                                        √       16
+           4,294,967,296. For this value, n=2 =65,536, whereas
+                         16       16
+                       lg  n=32 =1,208,925,819,614,629,174,706,176.
+             16                       √               256
+           lg  n remains larger than    n until n =2     —a78-digit number. After
+           that, √n does grow much more rapidly than does lg16n, but it is hard to
+           see any practical value in studying the behaviors of these functions at such
+           large values.
+               Finally, the running time analyses we have seen in this chapter have all
+           been worst-case analyses. For some algorithms, the worst case is much worse
+           than typical cases, so that in practice, the algorithm performs much better
+           than a worst-case analysis would suggest. Later, we will see other kinds of
+            Figure 3.9  Functions illustrating the practical limitations of asymptotic notation

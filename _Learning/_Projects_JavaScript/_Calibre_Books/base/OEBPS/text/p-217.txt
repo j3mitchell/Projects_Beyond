@@ -1,0 +1,8 @@
+           198                      Algorithms: A Top-Down Approach
+             Figure 6.1  The Visitor interface
+             Figure 6.2  The Dictionary ADT
+           Suchanimplementation, Printer,isshowninFigure6.4.Notethatwehave
+           strengthened the postcondition over what is speciﬁed in Figure 6.1. This is
+           allowable because an implementation with a stronger postcondition and/or a
+           weaker precondition is still consistent with the speciﬁcation. Having deﬁned
+           Printer, we can print the contents of the OrderedDictionary d with

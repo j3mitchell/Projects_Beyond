@@ -1,0 +1,50 @@
+           546                       Algorithms: A Top-Down Approach
+               Wecan now deﬁne P (i) as follows:
+                                     q
+                               ⎛4p(n)4p(n)
+               P (i)=IfElse⎝   Eq(a ,l)∧Eq(a ,l)∧Sum(v ,d,v ),
+                q                                j 1         j   2          ij  i  ij
+                                  j=1 j=1 ⎞
+                                 p ,p      ⎠.
+                                  iq   i,q+1
+               E (i) can be constructed in O(p2(n)) time, and both U (i)andP (i)can
+                 q                                                     q          q
+           be constructed in O(p3(n)) time. Furthermore, Iq(i) as given in (16.3) can
+           be constructed in O(p(n)) time. The total time needed to construct F is
+                                                                                      q
+           therefore in O(p4(n)).
+               Finally, let us consider a Halt instruction. For a Halt instruction, we
+           have already deﬁned Iq(i) (16.3), Uq(i) (16.5), and Eq(i) (16.6). To deﬁne
+                                                               
+           P (i), we need to specify that for all i >i,eachp      is false:
+             q                                                 i j
+                                                p(n) P−1
+                                      P (i)=   ¬p .
+                                        q                   i j
+                                               i=i+1 j=0
+               Because P is a constant depending only on X, P (i) can be constructed
+                                                                  q
+           in O(p(n)) time. Furthermore, Iq(i) can be constructed in O(p(n)) time,
+           Uq(i) can be constructed in O(p2(n)) time, and Eq(i) can be constructed in
+           O(1) time. The sub-formula F can therefore be constructed in O(p3(n))
+                                            q
+           time.
+               We leave it as exercises to show that the sub-formula F can be
+                                                                                q
+           constructed for each of the other cases in a time in O(p5(n)). We now deﬁne
+           the formula F as the conjunction of all of the sub-formulas:
+                                              7       P−1
+                                        F = F ∧  F.
+                                                  q         q
+                                             q=1      q=0
+           Because P is a constant depending only on X, F can be constructed in
+           O(p5(n)) time.
+               WemustnowshowthatF is satisﬁable iﬀ there is some φ ∈Bsuch that
+           Mexecutes a Halt(1) instruction on input (x,φ). Suppose F is satisﬁable.
+           Let us ﬁx some satisfying assignment to the variables of F. Because F must
+                                                                                   5
+           be true by this assignment, there must be some k,1≤ k ≤ p(n), such that
+                                                           
+           φ[k ]istrue for 1 ≤ k ≤ k and φ[k ]isfalse for k<k ≤ p(n). Let φ = φ[1..k].
+           By the above construction, for 1 ≤ i ≤ p(n)and0≤ j<P, pij is true iﬀ the
+           ith instruction executed by M on input (x,φ) is the instruction at program

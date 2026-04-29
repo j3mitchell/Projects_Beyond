@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 341</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-341.jpg" alt="Page 341" width="1282" height="1882"/>
+      <div class="ocr">           322                      Algorithms: A Top-Down Approach
+           Adense graph giving this behavior is a complete graph — a graph in which
+           every possible edge is present. Note that in terms of the number of vertices,
+           the running time for building a complete graph is in Θ(n3).
+               Building a ListGraph is expensive because the Put operation must
+           check each edge to see if it is already in the graph. We could speed this
+           activity considerably if we could avoid this check. However, the check
+           is necessary not only to satisfy the operation’s speciﬁcation, but also to
+           maintain the structural invariant. If we can modify the speciﬁcation of Put
+           and weaken the structural invariant so that parallel edges (i.e., multiple
+           edges from a vertex i to a vertex j) are not prohibited, then we can build
+           the graph more quickly.
+               We therefore extend the deﬁnitions of undirected and directed graphs
+           to allow parallel edges from one vertex to another. We call such a structure
+           a multigraph. We can then deﬁne the Multigraph ADT by modifying the
+           following postconditions in the speciﬁcation of Graph:
+           • Put(i,j,x): Adds the edge (i,j) and associates x with it.
+           • Get(i,j): Returns the data item associated with an edge (i,j), or nil if
+              (i,j) is not in the graph.
+           We could also specify additional operations for retrieving all edges (i,j)or
+           modifyingthedataassociated with an edge, but this speciﬁcation is suﬃcient
+           for our purposes.
+               WewillrepresentaMultigraphusingadjacencylistsinthesamewayas
+           in the ListGraphimplementation. Thestructuralinvariant will bemodiﬁed
+           to allow parallel edges (i,j) for the same i and j. The implementation of
+           the operations remains the same except for Put, whose implementation is
+           shownin Figure 9.9. It is easily seen that a ListMultigraph can be built in
+           Θ(n+a)time,wherenisthenumberofvertices andaisthenumberofedges.
+               Because it is more eﬃcient to build a ListMultigraph than to build
+           a ListGraph, it may be advantageous to represent a graph using a
+             Figure 9.9  The Put operation in the ListMultigraph implementation of Multi-
+             graph
+</div>
+    </div>
+  </body>
+</html>

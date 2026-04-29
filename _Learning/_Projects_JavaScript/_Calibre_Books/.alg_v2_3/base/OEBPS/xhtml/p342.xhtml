@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 342</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-342.jpg" alt="Page 342" width="1282" height="1882"/>
+      <div class="ocr">                        Graphs               323
+      ListMultigraph. If we are careful never to add parallel edges, we can
+      maintain an invariant that the ListMultigraph represents a graph. This
+      transfers the burden of maintaining a valid graph structure from the Put
+      operation to the code that invokes the Put operation.
+        Although we can use a ListMultigraph to represent a graph, an
+      interesting problem is how to construct a ListGraph from a given
+      ListMultigraph. Speciﬁcally, suppose we wish to deﬁne a ListGraph
+      constructor that takes a ListMultigraph as input and produces a List-
+      Graph with the same vertices and edges, assuming the ListMultigraph
+      has no parallel edges. We may be able to do this more eﬃciently than simply
+      calling ListGraph.Put repeatedly.
+        One approach would be to convert the ListMultigraph to a Matrix-
+      Graph,thenconverttheMatrixGraph to a ListGraph.Infact,wedo
+      not really need to build a MatrixGraph — we could simply use a two-
+      dimensional array as a temporary representation of the graph. As we examine
+      each edge of the ListMultigraph, we can check to see if it has been added
+      to the array, and if not, add it to the appropriate adjacency list. If we ever ﬁnd
+      parallel edges, we can immediately terminate with an error. Each edge can
+      therefore be processed in Θ(1) time, for a total of Θ(a) time to process the
+      edges. Unfortunately, Θ(n2) time is required to initialize the array, and the
+      space usage of Θ(n2) is rather high, especially for sparse graphs. However,
+      the resulting time of Θ(n2) is still an improvement (in most cases) over the
+      Θ(amin(n,a)) worst-case time for repeatedly calling ListGraph.Put.
+        In the above solution, the most natural way of processing the edges of
+      the ListMultigraph is to consider each vertex i in turn, and for each i,
+      to process all edges proceeding from i. As we are processing the edges from
+      vertex i, we only need row i of the array. We could therefore save a signiﬁcant
+      amount of space by replacing the 2D array with a singly-dimensioned array
+      A[0..n − 1]. Before we consider any vertex i, we initialize A. For each edge
+      (i,j), we check to see if it has been recorded in A[j]. If so, we have found a
+      parallel edge; otherwise, we record this edge in A[j]. Thus, we have reduced
+      our space usage to Θ(n). However, because A must be initialized each time
+      we consider a new vertex, the overall running time is still in Θ(n2).
+        Note that if we ignore the time for initializing A, this last solution
+      runs in Θ(n + a) time in the worst case. We can therefore use the virtual
+      initialization technique of Section 7.1 to reduce the overall running time to
+      Θ(n+a). However, the technique of virtual initialization was inspired by
+      the need to avoid initializing large arrays, not to avoid initializing small
+      arrays many times. If we are careful about the way we use the array, a
+</div>
+    </div>
+  </body>
+</html>

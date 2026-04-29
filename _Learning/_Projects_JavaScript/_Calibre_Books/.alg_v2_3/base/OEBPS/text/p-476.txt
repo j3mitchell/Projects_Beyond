@@ -1,0 +1,34 @@
+                                     Network Flow and Matching                          457
+             Figure 14.9   PathSearcher implementation of Searcher
+             PathSearcher(n)
+                incoming ← new Array[0..n−1]
+             PathSearcher.TreePreProc(e)
+                incoming[e.Dest()] ← e
+            change these items except via operations in MatchingGraph, we can avoid
+            this extra copying.
+                In order to complete the matching algorithm, we need to be able to
+            ﬁnd a path from i to j in a directed graph. Because the maximum ﬂow on
+            the constructed ﬂow network is no more than n/2, where n is the number
+            of vertices in the bipartite graph, the Ford–Fulkerson algorithm will not
+            perform badly. Therefore, we will use depth-ﬁrst search to ﬁnd paths. (We
+            leave it as an exercise to implement the algorithm using breadth-ﬁrst search.)
+            We therefore need a Searcher with the following representation variable:
+            • incoming[0..n − 1]: a readable array of Edges giving the incoming edge
+              in the depth-ﬁrst spanning tree for each vertex reached.
+            The implementation of PathSearcher is shown in Figure 14.9.
+                ByTheorem14.6,adepth-ﬁrstsearchofaMatchingGraphcanbeused
+            to determine whether a given vertex can be safely matched. Note that this
+            theorem doesn’t specify which partition the vertex comes from. In particular,
+            wereally don’t need to know the partition to which any vertex belongs — we
+            can simplytest them in any order, and add the ones that can be safely added.
+            Wetherefore no longer need to require that the ﬁrst k vertices form the ﬁrst
+            partition. The algorithm is shown in Figure 14.10. Note that in and M
+            maintain references to the incoming variable in s and the matching variable
+            of matchGraph, respectively (this would not be possible if PathSearcher
+            andMatchingGraphweresecure).Notealsothataslongasanaugmenting
+            path is not found, we do not need to select any unselected nodes because no
+            unselected node leads to n.
+                Let n be the number of vertices and a be the number of edges in G.To
+            simplify the analysis of the running time, suppose each vertex has at least
+            one incident edge, so that n ∈ O(a). Let us ﬁrst focus on a single iteration
+            of the for loop. Clearly, the running time of the call to Dfs is in O(a).

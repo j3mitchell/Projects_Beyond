@@ -1,0 +1,11 @@
+           120                    Algorithms: A Top-Down Approach
+           whichwecanproveinitialization, maintenance, termination, andcorrectness,
+           wesaythatthisstructure is insecure, but otherwise satisﬁes its speciﬁcation.
+              Together, initialization, maintenance, and security are almost suﬃcient
+           to prove that the structural invariant holds between execution of any opera-
+           tions on the structure. The only caveat is similar to the diﬃculty associated
+           with mutual recursion, as was discussed in Section 2.5. Suppose that during
+           execution of some operation x.Op1, a function call is made while the
+           structural invariant is false. Suppose that through some sequence of nested
+            Figure 4.5  Illustration of a callback — when x.Op2() is called, the structural
+            invariant of x is false

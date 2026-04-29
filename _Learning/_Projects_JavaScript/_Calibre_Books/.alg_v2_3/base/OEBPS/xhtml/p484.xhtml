@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 484</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-484.jpg" alt="Page 484" width="1282" height="1882"/>
+      <div class="ocr">                                        Chapter 15
+                     * The Fast Fourier Transform
+          In this chapter, we examine an algorithm whose discovery has had a profound
+          impactonseveralareasofscienceandengineering.Althoughwewillnotdelve
+          into these application areas, we will show how it has been used to design an
+          arbitrary-precision natural number multiplication algorithm which runs in
+          O(nlgnlglgn)time,wherenisthenumberofbitsintheproduct.Alongthe
+          way, we will examine some properties of the complex numbers as well as the
+          natural numbers. We begin by examining the computation of a convolution,
+          the fundamental problem that is solved by the fast Fourier transform.
+          15.1   Convolutions
+          Let a = a ,...,a     and b = b ,...,b   be two vectors. We deﬁne the
+                    0      m−1            0      n−1
+          convolution of a and b as the vector c = c ,...,c   ,where
+                                                   0     m+n−2
+                                         min(j,m−1)
+                                  c =        ab .
+                                   j                 i j−i
+                                       i=max(0,j−n+1)
+          Many applications require the computation of a convolution. For example,
+          if a and b represent the coeﬃcients of two polynomials, where a and b are
+                                                                       i     i
+          the respective coeﬃcients for xi, then the convolution of a and b gives the
+          coeﬃcients of their product.
+              We desire an eﬃcient algorithm for computing a convolution. We can
+          gain some insight into how this might be done by examining the polynomial
+          multiplication problem. Clearly, the Θ(nlg3) algorithm of Section 10.1 can
+          be used to compute a convolution. Furthermore, the solution to Exercise
+          10.4 shows that this can be done in O(n1+) time for any  ∈ R&gt;0 (though
+                                             465
+</div>
+    </div>
+  </body>
+</html>

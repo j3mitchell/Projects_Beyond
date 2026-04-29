@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 121</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-121.jpg" alt="Page 121" width="1282" height="1882"/>
+      <div class="ocr">         102                 Algorithms: A Top-Down Approach
+         c. FindMin(A[1..n])
+              if n =0
+                error
+              else if n =1
+                return A[1]
+              else
+                B←newArray[1..n/2]
+                for i ← 1 to n/2
+                   B[i] ← Min(A[2i−1],A[2i])
+                if n mod 2 = 1
+                   B[n/2] ← A[n]
+                return FindMin(B[1..n/2])
+         Exercise 3.20. Analyze the worst-case space usage of each of the functions
+         given in Exercise 3.19. Express your result as simply as possible using Θ-
+         notation.
+         * Exercise 3.21. Prove that if f : N → R≥0 is smooth and g(n) ∈ Θ(n),
+         then f(g(n)) ∈ Θ(f(n)).
+         * Exercise 3.22. Prove that for any smooth function g : N → R≥0,there
+         is a natural number k such that g(n) ∈ O(nk).
+         * Exercise 3.23. The goal of this exercise is to prove Theorem 3.34. Let
+                                               n
+                           f(n) ∈ af(n−1)+X(b g(n))
+         for n&gt;n,wheren ∈N,a≥1andb≥1arerealnumbers,g(n)isasmooth
+                0        0
+         function, and X is either O,Ω,orΘ.Inwhatfollows,letn1 be any natural
+         number such that n1 ≥ n0 and whenever n ≥ n1,0&lt;g(n) ≤ g(n+1).
+         a. Prove by induction on n that if X is O, then there is a positive real
+            number c such that for n ≥ n1,
+                                                n
+                                n−n1        n         i
+                         f(n) ≤ a   f(n1)+ca       (b/a) g(i).
+                                              i=n1+1
+         b. Prove by induction on n that if X is Ω, then there is a positive real
+            number d such that
+                                                n
+                                n−n1        n         i
+                         f(n) ≥ a   f(n1)+da       (b/a) g(i).
+                                              i=n1+1
+</div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 534</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-534.jpg" alt="Page 534" width="1282" height="1882"/>
+      <div class="ocr">                                      NP-Completeness                            515
+            Figure 16.4  Algorithm to ﬁnd the largest integer representing a variable in a
+            normalized expression tree
+             Precondition: F is a BinaryTreeNode representing a normalized ex-
+             pression tree.
+             Postcondition: Returns the largest absolute value of any integer in F.
+             MaxVar(F)
+                if F.Root() = and or F.Root() = or
+                   l ← MaxVar(F.LeftChild())
+                   r ←MaxVar(F.RightChild())
+                   return Max(l,r)
+                else
+                   return |F.Root()|
+              The algorithm for constructing F is shown in Figure 16.5. It uses a
+           data type MutableNat, which contains a single readable and writable
+           representation variable data,whichisaNat. It also uses the function
+           Append speciﬁedinFigure4.15.
+              ItisnothardtoseethatAddToClausesoperates in O(n) time, where
+           n is the number of clauses in F.Furthermore,NormalizedToCnf only
+           constructs a new clause when processing a literal; hence, the number of
+           clauses in the CNF formula is no more than |F|. As suggested in Exercise
+           4.3, AppendcanbeimplementedtoruninO(n)time,wherenisthenumber
+           of elements in its ﬁrst argument. It follows that the time for a single call to
+           NormalizedToCnf,excludingrecursivecalls,runsinO(|F|)time.Because
+           NormalizedToCnfis called once for every node in the expression tree F,
+                                            2
+           its overall running time is in O(|F| ).                                2
+              The reduction is implemented in Figure 16.6. It clearly runs in O(|F| )
+           time, so that Sat ≤p CSat. We can therefore show the following theorem.
+                              m
+           Theorem 16.9. CSat is NP-complete.
+           Proof.   Bytheabovediscussion,CSatisNP-hard.InordertoshowCSat
+           to be in NP, we use essentially the same reasoning as we did in showing Sat
+           to be in NP. The only diﬀerence is that we need an algorithm to evaluate
+           a CNF expression, rather than an expression tree. It is a straightforward
+           matter to adapt BoolEval(Figure 16.2) to evaluate a CNF expression F in
+           O(|F|) time —the details are left as an exercise. It follows that CSat ∈NP.
+           CSat is therefore NP-complete.                                         
+</div>
+    </div>
+  </body>
+</html>

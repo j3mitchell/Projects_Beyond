@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 234</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-234.jpg" alt="Page 234" width="1282" height="1882"/>
+      <div class="ocr">                                      Storage/Retrieval I: Ordered Keys                          215
+             Example6.5. Supposeweweretoinsertthekey39intotheAVLtreeshown
+             in Figure 6.14(a). Using the ordinary BST insertion algorithm, 39 should be
+             made the right child of 35, as shown in Figure 6.14(b). To complete the
+             insertion, we must check the balance along the path to 39, starting at the
+             bottom. Both 35 and 23 satisfy the the balance criterion; however, the left
+             child of 42 has height 2, whereas the right child has height 0. We therefore
+             need to perform a rotation at 42. To determine which rotation is appropriate,
+             we compare the height of the left child of the left child of 42 (i.e., the subtree
+             rooted at 11) with the right child of 42. Because both of these subtrees have
+             height 0, a double rotate right is required at 42. To accomplish this rotation,
+             we promote 35 to the root of the subtree (i.e., where 42 currently is), and
+             place the nodes 23 and 42, along with the subtrees rooted at 11, 39, and 50,
+             at the only locations that preserve the order of the BST. The result of this
+             rotation is shown in Figure 6.14(c). Because the balance criterion is satisﬁed
+             at 54, this tree is the ﬁnal result.
+                 It is not hard to see that each of the rotations can be implemented to
+             runinΘ(1)time,andthatBalance therefore runs in Θ(1) time. Let us
+              Figure 6.14     Example of inserting 39 into an AVL tree
+</div>
+    </div>
+  </body>
+</html>

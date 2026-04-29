@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 587</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-587.jpg" alt="Page 587" width="1282" height="1882"/>
+      <div class="ocr">          568                 Algorithms: A Top-Down Approach
+          Proof.  Let &gt;0, and let HC be the problem of deciding whether a given
+          undirected graph G contains a Hamiltonian cycle. By Exercise 16.9, HC
+          is NP-complete. Since there are no integers in the problem instance, it is
+          strongly NP-complete. We will show that HC ≤pp -ApproxTSP,where
+           pp                                       T
+          ≤T denotes a pseudopolynomial Turing reduction. It will then follow that
+          -ApproxTSP is NP-hard in the strong sense.
+             Let G =(V,E) be an undirected graph. We ﬁrst construct a complete
+                                 
+          undirected graph G =(V,E ). Let k = 	+2. We deﬁne the weight of an
+          edge e ∈ E as follows:
+          • If e ∈ E, then the weight of e is 1.
+          • If e 
+∈ E, then the weight of e is nk,wheren is the size of V.
+          Note that because k is a ﬁxed constant, the weights are bounded by a
+          polynomial in the size of G.
+             We now show how we can use an approximation of a minimum-
+                                    
+          weight Hamiltonian cycle in G to decide whether G has a Hamilton cycle.
+          Suppose we can obtain an approximation with an approximation ratio of
+          no more than 1 + . If the weight of this approximation is n, then the
+          corresponding Hamiltonian cycle must contain only edges with weight 1;
+          hence, it is a Hamiltonian cycle in G, so we can answer “yes”. Otherwise,
+          the approximation contains at least one edge with weight nk,andn&gt;0.
+          Theweight of the approximation is therefore at least nk+n−1. Because the
+          approximation ratio is no more than 1+, the minimum-weight Hamiltonian
+          path has a weight of at least
+                            nk+n−1=n(	+2)+n−1
+                              1+             1+
+                                      &gt;n(1+)
+                                         1+
+                                      =n.
+          Hence, there is no Hamiltonian cycle whose edge weights are all 1. Because
+          this implies that G contains no Hamiltonian cycle, we can answer “no”.
+             The running time for this algorithm, excluding any time needed to
+          compute the approximation, is linear in the size of G.Furthermore,all
+          integers constructed have values polynomial in the size of G. We therefore
+          conclude that -ApproxTSP is NP-hard in the strong sense.     
+             As a result of Theorem 17.7, we have little hope of ﬁnding a polynomial-
+          time approximation algorithm yielding a bounded approximation ratio for
+          the traveling salesperson problem. However, if we make a certain restriction
+</div>
+    </div>
+  </body>
+</html>

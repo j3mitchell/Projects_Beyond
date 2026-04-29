@@ -1,0 +1,45 @@
+                                        NP-Completeness                             517
+            Figure 16.6   The reduction from Sat to CSat
+              Precondition: F is BinaryTreeNode referring to a boolean expression
+              tree.
+              Postcondition: Returns a ConsList representing a CNF formula that is
+              satisﬁable iﬀ F is satisﬁable.
+              SatToCSat(F)
+                F ←Normalize(F,false)
+                m←newMutableInt();m.SetData(MaxVar(F )+1)
+                return NormalizedToCnf(F ,m)
+               The fact that 3-Sat ∈NPfollows immediately from the fact that
+           CSat ∈NP,as3-Sat is the same problem as CSat,onlywithmore
+           restrictions placed on the input. Thus, the proof that CSat ∈NPalso
+           proves that 3-Sat ∈NP.
+               In order to show that 3-Sat is NP-hard, we have two choices: we can
+           reduceeither Sator CSatto3-Sat.ReducingCSatto3-Satwouldappear
+           to be less work, as instances of CSat are already in CNF. All that remains
+           is to ensure that the number of literals in each clause is no more than 3. We
+           will therefore show that CSat ≤p 3-Sat.
+                                            m
+               As in the previous reduction, we will not produce an equivalent formula.
+           Instead, we will again introduce new variables. In addition, we will break up
+           clauses that are too long into clauses containing only 3 literals.
+               Suppose our formula contains a clause C = α ∨···∨α ,wherem>3.
+                                                            1         m
+           Weﬁrstintroduce m−3newvariables,u ,...,u            .Wethenconstructthe
+           following clauses to replace C:          1      m−3
+           • α ∨α ∨u ;
+               1    2    1
+           •¬u ∨α        ∨u     for 1 ≤ i ≤ m−4; and
+                i    i+2    i+1
+           •¬u       ∨α      ∨α .
+                m−3     m−1     m
+               Weﬁrstclaim that any assignment of boolean values that satisﬁes C can
+           be extended to an assignment that satisﬁes each of the new clauses. To see
+           why, ﬁrst observe that if C is satisﬁed, then α must be true for some i.We
+                                                         i
+           can then set u ,...,u     to true and u    ,...,u     to false.Theneachof
+                          1      i−2               i−1      m−3
+           the ﬁrst i − 2 clauses is satisﬁed because u ,...,u   are true.The(i−1)st
+                                                      1      i−2
+           clause, ¬u    ∨α ∨u      is satisﬁed because α is true. Finally, the remaining
+                     i−2    i   i−1                     i
+           clauses are satisﬁed because ¬u    ,...,¬u      are true.
+                                           i−1        m−3

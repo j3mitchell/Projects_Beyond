@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 196</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-196.jpg" alt="Page 196" width="1282" height="1882"/>
+      <div class="ocr">                                          Priority Queues                              177
+               Supposewe were to deﬁne a new discrete probability space Se2 including
+           only those elementary events in the event e . The sum of the probabilities of
+                                                        2
+           these elementary events is P(e ). If we were to scale all of these probabilities
+                                           2
+           by dividing by P(e ), we would achieve a total probability of 1 while
+                                 2
+           preserving the ratio of any two probabilities. The probability of event e
+                                                                                         1
+           within Se2 would be given by
+                                                   P(e ∩e )
+                                      P(e | e )=       1    2 ,                      (5.2)
+                                          1   2       P(e )
+                                                          2
+           where the probabilities on the right-hand side are with respect to S.Wecall
+           P(e | e )theconditional probability of e given e .NotethatifP(e ) =
+               1    2                                  1         2                   2
+           0, independence of e and e is equivalent to P(e )=P(e | e ). Thus,
+                                 1        2                      1         1    2
+           two events are independent if knowledge of one event does not aﬀect the
+           probability of the other.
+               The deﬁnition of independence tells us how to assign the probabilities
+           in Paths     .Lete be the event such that the path in S is s,and
+                     S,T        1
+           let e   be the event such that the path in T is t.Thene ∩ e is the
+                 2                                                          1    2
+           elementary event consisting of paths s and t. We need P(e ∩ e )=
+                                                                              1     2
+           P(e )P(e ) in order to achieve independence. However, P(e ) should be
+               1     2                                                      1
+           the probability of s in Path ,andP(e ) should be the probability of
+                                           S           2
+           t in PathT. Thus the probability of an elementary event in PathsS,T
+           must be the product of the probabilities of the constituent elementary
+           events from Path      and Path . It is then not hard to verify that P(e )
+                              S            T                                            1
+           and P(e ) are the probabilities of s in Path            and of t in Path ,
+                     2                                          S                      T
+           respectively.
+               Wenowextendthediscrete random variables lenS and lenT to the space
+           PathsS,T so that lenS gives the length of the path in S and lenT gives
+           the length of the path in T. Because neither the lengths of the paths nor
+           their probabilities change when we make this extension, it is clear that their
+           expected values do not change either.
+               The running time of RandomizedHeap.Merge is clearly proportional
+           to the lengths of the paths followed in the two heaps S and T. These paths
+           mayormaynotgoallthewaytoanemptysubtree,butifnot,wecanextend
+           them to obtain elementary events s and t in PathS and PathT, respectively.
+           The running time is then bounded above by c(lenS(s)+lenT(t)), where
+           c is some ﬁxed positive constant. The expected running time of Merge
+           is therefore bounded above by E[c(lenS + lenT)]. In order to bound this
+           expression, we need the following theorem.
+</div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,26 @@
+                       Chapter 13
+                 Depth-First Search
+      As we have seen in earlier chapters, many problems can be characterized as
+      graph problems. Graph problems often require the searching of the graph
+      for certain structural characteristics. For example, one problem which we
+      will examine in this chapter is searching a connected undirected graph for
+      vertices whose removal would disconnect the graph. Such vertices are called
+      articulation points.
+        In order to ﬁnd articulation points, an algorithm must extract a great
+      deal of information involving the paths connecting the various vertices in
+      the graph. One way of organizing this information is by constructing a
+      certain kind of rooted spanning tree, called a depth-ﬁrst spanning tree. One
+      advantage to processing a rooted spanning tree as opposed to a graph is that
+      a rooted tree ﬁts more naturally with the top-down approach. Furthermore,
+      as we will see later in this chapter, a depth-ﬁrst spanning tree has properties
+      that are helpful for extracting connectivity information. We therefore ﬁnd
+      that many problems can be reduced to ﬁnding one or more depth-ﬁrst
+      spanning trees. These spanning trees are found using a technique called
+      depth-ﬁrst search.
+        Because algorithms using depth-ﬁrst search operate on rooted trees, we
+      begin by studying the problem of determining ancestry in rooted trees. The
+      technique we use to solve this problem will motivate the depth-ﬁrst search
+      technique. We will then show how depth-ﬁrst search can be used to ﬁnd
+      articulation points in a connected undirected graph. Finally, we will show
+      how the technique can be extended to problems for directed graphs.
+                          411

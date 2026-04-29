@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 136</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-136.jpg" alt="Page 136" width="1282" height="1882"/>
+      <div class="ocr">                                    Basic Techniques for Data Structures                        117
+             else regarding the reference, but often a reference will be implemented as
+             the address in memory at which the data item resides. However, we will
+             assume that a constant like the integer 3 also has a reference. In this case
+             the reference may simply be the binary encoding of 3.
+                 Such a distinction between a data constant and its reference may seem
+             artiﬁcial, but it allows for a uniform treatment of variables and data. Thus,
+             whenvariable assignments are made, the reference to the assigned data item
+             is stored in the modiﬁed variable. Likewise, when formal parameters take
+             their values from actual parameters, the references are copied from the actual
+             parameters to the formal parameters.
+                 Given the distinction between a data item and its reference, we can now
+             deﬁne more precisely the state of a SimpleStack. It must ﬁrst include the
+             values of the reference variables, namely size (a reference to an integer) and
+             elements (a reference to an array). Because the interpretation uses the values
+             of elements[1..size], these values, which are references to arbitrary data items,
+             are also part of the state. However, the values of the data items to which
+             the references in elements[1..size] refer are not included in the state. Thus,
+             if elements[size] contains a reference to an array A, that reference is a part
+             of the state of the stack, but the contents of A are not. In particular, if the
+             value stored in elements[size] changes, then the stack contents change, but
+             if the contents of A change, the stack contents do not change — A is still
+             the item at the top of the stack.
+                 Our model uses a simple hierarchical type system. Each implementation
+             has a unique type. This type may be a subtype of one or more interfaces (i.e.,
+             ADTs) that it implements. Thus, if an implementation A implements ADTs
+             BandC,thenanyinstance of type A also belongs to types B and C.Wedo
+             not allow implementations to be subtypes of other implementations, so our
+             model includes no inheritance. Our algorithms will not always specify the
+             type of a data item if its type is irrelevant to the essence of the algorithm.
+             For example, we have not speciﬁed the type of the parameter a for the
+             Stack.Push operation in Figure 4.4 because we do not care what kind of
+             data is stored in the stack.
+                 Whenthedatatypeof a parameter is important, we can specify it in the
+             precondition, as we have done for the constructor in Figure 4.4. Unless we
+             explicitly state otherwise, when we state in a precondition that a variable
+             refers to an item of some particular type, we mean that this variable must
+             be non-nil. Note, however, that a precondition does not aﬀect the execution
+             of the code. When it is important that the type actually be checked (e.g., for
+             maintaining a structural invariant), we will attach a type declaration in the
+</div>
+    </div>
+  </body>
+</html>

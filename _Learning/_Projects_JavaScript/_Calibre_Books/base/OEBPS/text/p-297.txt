@@ -1,0 +1,42 @@
+            278                      Algorithms: A Top-Down Approach
+            greater than 1/2. If c =9/8, as for H4   , then the probability is greater than
+                                                 p,l,m
+            7/16. Suppose we repeatedly select hash functions and try storing the keys
+            in the table. Because the probability that there are no collisions is positive
+            whenever c<2, we will eventually ﬁnd a hash function that produces no
+            collisions.
+                Let us now determine how many hash functions we would expect to
+            try before ﬁnding one that results in no collisions. Let reps be the discrete
+            random variable giving this number. For a given positive integer i, P(reps ≥
+            i) is the probability that i − 1 successive hash functions fail; i.e.,
+                                       P(reps ≥ i) < (c/2)i−1
+                                                           1−i
+                                                    =(2/c)     .
+            From Theorem 5.5,
+                                                 ∞
+                                      E[reps]=P(reps ≥i)
+                                                 i=1
+                                                 ∞
+                                                 1−i
+                                              <     (2/c)   .
+                                                 i=1
+            Suppose c<2. Then we can re-index the sum to begin at 0 and apply
+            Theorem 6.7, yielding
+                                                    ∞
+                                                    −i
+                                        E[reps] <     (2/c)
+                                                   i=0
+                                                =     2/c
+                                                   (2/c) −1
+                                                = 2 .
+                                                   2−c
+                Note that the above value is a ﬁxed constant for ﬁxed c<2. Thus,
+            the expected number of attempts at ﬁnding an appropriate secondary hash
+            function is bounded by a ﬁxed constant. For example, with c =1,thevalue
+            of this constant is less than 2, or with c =9/8, the value is less than 16/7.
+            As a result, we would expect that the number of times a secondary hash
+            function is applied to any key during the process placing keys in secondary
+            hash tables is bounded by a constant.
+                We must now ensure that the total space used by the primary and
+            secondary hash tables (and hence the time needed to initialize them) is
+            linear in n, the total number of keys. Suppose the primary hash table has

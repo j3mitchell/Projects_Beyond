@@ -1,0 +1,42 @@
+                                NP-Completeness                    549
+         graph G and natural number k,ifG has a subgraph that is a clique with k
+         vertices. Show that Clique is NP-complete.
+                                         
+         Exercise 16.8. Two graphs G and G are said to be isomorphic if the
+                                                           
+         vertices of G can be renamed so that the resulting graph is G .Giventwo
+                      
+         graphs G and G and a natural number k, we wish to decide whether G and
+          
+         G contain isomorphic subgraphs with k vertices. Show that this problem is
+         NP-complete. You may use the result of Exercise 16.7.
+         **Exercise16.9. AHamiltonian cycle inagraphGisacyclethatcontains
+         each vertex in G exactly once. Prove that the problem of deciding whether a
+         given undirected graph contains a Hamiltonian cycle is NP-complete. [Hint:
+         Reduce VC to this problem.]
+         Exercise 16.10. Repeat Exercise 16.9 for directed graphs. You may use the
+         result of Exercise 16.9.
+         Exercise 16.11. As was deﬁned in Exercise 10.35, a Hamiltonian path in
+         agraphG is a simple path that contains each vertex in G exactly once.
+         Prove that the problem of deciding whether a given undirected graph has
+         a Hamiltonian path is NP-complete. You may use the results of Exercises
+         16.9 and 16.10.
+         Exercise 16.12. Repeat Exercise 16.11 for directed graphs. You may use
+         the results of Exercises 16.9–16.11.
+         Exercise 16.13. GivenadirectedgraphG =(V,E)andapositiveintegerk,
+         we wish to determine whether there is a subset V ⊆ V of size k such that
+         every cycle in G contains at least one vertex in V . Show that this problem
+         is NP-complete.
+         * Exercise 16.14. Given an undirected graph G =(V,E) and a positive
+         integer k, we wish to decide whether V can be partitioned into two disjoint
+         sets, V and V , such that V contains exactly k vertices and for every vertex
+              1     2          1
+         u∈V ,thereisavertexv ∈ V such that {u,v}∈E. Showthat this problem
+             2                  1
+         is NP-complete.
+         Exercise 16.15. Give an algorithm that takes an instance (X,Y,Z,W)
+         of 3DM andabitstringφ and determines whether φ is a proof that
+         (X,Y,Z,W)hasamatching,asdeﬁnedinSection16.6.Youmayassumethat
+         (X,Y,Z,W) is represented by a natural number m andanarrayW[1..n]of
+         triples of the form (i,j,k) such that m ≤ n and each i, j,andk is a positive
+         integer no greater than m. Your algorithm should run in O(m2lgn)time.

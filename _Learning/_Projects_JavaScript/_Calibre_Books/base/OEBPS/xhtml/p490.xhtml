@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 490</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-490.jpg" alt="Page 490" width="1282" height="1882"/>
+      <div class="ocr">                                     * The Fast Fourier Transform                       471
+            because ω2 is a principal (n/2)nd root of unity. Re-indexing the above
+            equality, we have
+                                  n−1         n−1
+                                    ij        2ij/2
+                                      ω =         (ω )
+                                   i=0       i=n/2
+                                             n−1
+                                             2
+                                              2(i+n/2)j/2
+                                          =      (ω )
+                                             i=0
+                                             n−1
+                                             2
+                                              2(n/2)j/2 2 ij/2
+                                          =      (ω )        (ω )
+                                             i=0
+                                             n−1
+                                             2
+                                              2ij/2
+                                          =      (ω )
+                                             i=0
+                                          =0.
+                Weconclude that ω is a principal nth root of unity.                       
+                Using the fact that ωn/2 = −1, we can now rewrite (15.2) for 0 ≤ j&lt;
+            n/2as
+                                                        j 
+                                         d       =d −ω d .                           (15.3)
+                                          j+n/2     j       j
+            We therefore have the divide-and-conquer algorithm, known as the Fast
+            Fourier Transform, shown in Figure 15.1. Note that we use the type
+            Complex to represent a complex number.
+                Because Fft should only be called with a vector whose size n is a power
+            of 2, n is not a good measure of the size of the problem instance for the
+            purpose of analyzing the algorithm. Instead, we will use k =lgn. Assuming
+            each arithmetic operation on complex numbers can be performed in Θ(1)
+            time, it is easily seen that the running time excluding the recursive calls is
+                   k
+            in Θ(2 ). The worst-case running time is therefore given by the recurrence
+                                                              k
+                                      f(k) ∈ 2f(k −1)+Θ(2 ).
+                                               k
+            From Theorem 3.34, f(k) ∈ Θ(k2 ).
+                In order to use Fft to compute a convolution, we need to be able to
+            compute the inverse transform. Let A be the n×n matrix deﬁning a DFT.
+                                                                                  −1
+            In order to compute the inverse transform, we need to know that A        exists,
+            and we need an eﬃcient way to multiply a given 1 × n vector on the right
+                 −1                                  −1
+            by A . The following theorem gives A        .
+</div>
+    </div>
+  </body>
+</html>

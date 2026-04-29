@@ -1,0 +1,41 @@
+                                 Approximation Algorithms                   577
+          This k-cut is therefore a k-coloring of G. In this case, we can answer “yes”.
+          Suppose the cluster weight is at least n21+. Because the approximation
+          ratio is no more than 1+, the minimum sum of cluster weights is at least
+          n2. It is therefore impossible to k-color G,forak-coloring of G would be
+                      
+          a k-cut of G in which each cluster contains only edges with weight 1, and
+          which would therefore have total weight less than n2. In this case, we can
+          answer “no”. We conclude that k-Col ≤pp -Approx-k-Cluster,sothat
+                                                T
+          -Approx-k-Cluster is NP-hard in the strong sense.                 
+          17.6   Summary
+          Using Turing reducibility, we can extend the deﬁnition of NP-hardness from
+          Chapter 16 to apply to problems other than decision problems in a natural
+          way. We can then identify certain optimization problems as being NP-hard,
+          either in the strong sense or the ordinary sense. One way of coping with
+          NP-hard optimization problems is by using approximation algorithms.
+              For some NP-hard optimization problems we can ﬁnd polynomial
+          approximation schemes, which take as input an instance x of the problem
+          and a positive real number  and return, in time polynomial in |x|,an
+          approximate solution with approximation ratio no more than 1 + .If
+          this algorithm runs in time polynomial in |x| and 1/, it is called a fully
+          polynomial approximation scheme.
+              However, Theorem 17.4 tells us that for most optimization problems, if
+          the problem admits a fully polynomial approximation scheme, then there
+          is a pseudopolynomial algorithm to solve the problem exactly. As a result,
+          we can use strong NP-hardness to show for a number of problems that
+          unless P = NP,that problemcannot have a fully polynomial approximation
+          scheme. Furthermore, by showing NP-hardness of certain approximation
+          problems, we can show that unless P = NP, the corresponding optimiza-
+          tion problem has no approximation algorithm with approximation ratio
+          bounded by some — or in some cases any — given value.
+              Finally, there are some pairs of optimization problems, such as the maxi-
+          mumcutproblemandtheminimumclusterproblem,thatareessentially the
+          same problem, but which yield vastly diﬀerent results concerning approxi-
+          mation algorithm. For example, the maximum k-cut, can be approximated
+          in Θ(n2) time with an approximation ratio of no more than 1+ 1 ; however,
+                                                                   k−1
+          unless P = NP, there is no polynomial-time algorithm with any bounded
+          approximation ratio for ﬁnding the minimum weight of clusters formed by a
+          k-cut if k ≥ 3.

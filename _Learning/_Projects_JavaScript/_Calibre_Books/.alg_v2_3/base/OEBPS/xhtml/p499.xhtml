@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 499</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-499.jpg" alt="Page 499" width="1282" height="1882"/>
+      <div class="ocr">         480                 Algorithms: A Top-Down Approach
+            Weﬁrst observe that for x ∈ S and n ∈ N, we can deﬁne xn as follows:
+                                  ⎧
+                                  ⎨
+                               n    1ifn=0
+                              x =
+                                  ⎩ n−1
+                                    xx     otherwise.
+         Hence, the deﬁnition of a principal nth root of unity makes sense for R.
+         Furthermore, the deﬁnition of a discrete Fourier transform also makes sense
+         over this ring. The following theorem states that some familiar properties of
+         exponentiation must hold for any ring with unit element; its proof is left as
+         an exercise.
+         Theorem 15.6. Let R be any ring with unit element. Then the following
+         properties hold for any x in R and any m,n ∈ N :
+         a. xmxn = xm+n.
+             m n    (mn)
+         b. (x ) = x    .
+            Theorem 15.1 can be shown using only the properties given in the
+         deﬁnition of a ring, together with Theorem 15.6. It therefore applies to
+         R. The derivations of Equations (15.1) and (15.2) use the properties of a
+         ring, together with commutativity, so that they also hold for R. The proof
+         of Theorem 15.2 applies for arbitrary rings with unit elements, so equation
+         (15.3) holds for R. The algorithm Fft therefore can be used to compute a
+         DFT over R,providedω is a principal nth root of unity for that ring, and
+         that addition and multiplication on elements of the ring are the + and ·
+         operations from R.
+            In order to extend Theorem 15.3 to R, we must consider what it would
+         mean to divide by n in that ring. First of all the ring might not contain n as
+         an element. However, we can always embed the integers into a ring with unit
+         element as follows. First, if the ring has a unit element 1, it also contains
+         −1 (the additive inverse of 1) and 0 (the additive identity). For n&gt;1, if
+         n−1isinthering,wecangivetheelement(n−1)+1 the name n,andwe
+         can give the element −(n−1)−1 the name −n. Thus, each integer refers to
+         some element of the ring. Note that a particular element of the ring might
+         not correspond to any integer, or it might correspond to more than one. If
+         it does correspond to more than one integer, it is not hard to show that it
+         corresponds to inﬁnitely many integers.
+            Now that we have identiﬁed n with some element in the ring, we can
+         deﬁnedivision by n as multiplication by n−1,providedn has a multiplicative
+         inverse. We note that if ω is a principal nth root of unity, then ωωn−1 =1,
+         so that ω−1 = ωn−1. Then the proof of Theorem 15.3 can easily be seen to
+</div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,48 @@
+                                      Storage/Retrieval I: Ordered Keys                          231
+             Theorem 6.7. For any real numbers a and c such that c>1,
+                                                ∞            a+1
+                                               a−i c
+                                                   c    = c−1.
+                                               i=0
+             Proof.
+                          ∞                  n
+                         a−i              a−i
+                             c     = lim        c
+                         i=0          n→∞i=0
+                                                n
+                                       a       i
+                                   =c lim         (1/c)
+                                        n→∞i=0
+                                                    n+1
+                                       a       (1/c)     −1
+                                   =c lim          1            from (2.2)
+                                        n→∞        c −1
+                                                         n
+                                       a       c −(1/c)
+                                   =c lim
+                                        n→∞      c −1
+                                       a+1
+                                   = c
+                                      c −1
+             because 1/c < 1.                                                                     
+                 Wenowdeﬁnethediscreterandomvariable len over Seq such that len(e)
+             is the length of the sequence of ﬂips. Note that E[len] gives us the expected
+             number of times the while loop condition is tested, as well as the expected
+             ﬁnal value of l. As a result, it also gives us the expected number of iterations
+             of the for loop, provided k is not already in the set.
+                 Because len(e) is always a natural number, we can apply Theorem 5.5
+             (page 172) to obtain E[len]. The probability that a sequence has length at
+                                                                                      1−i
+             least i is the probability that i − 1 ﬂips all result in heads,or2          .Thus,
+                                                          ∞
+                                                         1−i
+                                               E[len]=        2
+                                                          i=1
+                                                      =2
+             from Theorem 6.7. We can therefore expect the while loop in Put to iterate
+             once, yielding an expected value of 2 for l, on average. Hence, the for loop,
+             if it executes, iterates twice on average. The expected running times of both
+             loops are therefore in Θ(1) for a worst-case input.
+                 In order to determine the expected running time of the SkipListNode
+             constructor, we need to analyze it again, but this time doing an expected-
+             case analysis using len as its third parameter. Using the same analysis as

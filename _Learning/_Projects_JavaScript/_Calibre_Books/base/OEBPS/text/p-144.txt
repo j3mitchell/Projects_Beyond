@@ -1,0 +1,41 @@
+                                    Basic Techniques for Data Structures                        125
+             The total number of iterations is therefore at most
+                      lg(n−1)−lgk          lg(n−1)−lgk
+                            i                     i
+                                    2 k = k                2
+                           i=0                    i=0
+                                               lg(n−1)−lgk+1
+                                        =k(2                    −1)              by (2.2)
+                                              lg(n−1)−lgk+1
+                                        ≤k2
+                                              lg(n−1)+1
+                                        = k2
+                                                 lgk
+                                                2
+                                        =2(n−1).
+             Because each loop iteration requires Θ(1) time, the time required for all
+             loop iterations is in O(n). Combining this result with the earlier analysis
+             that ignored the loop iterations, we see that the entire sequence runs in
+             Θ(n)time.
+                 Now to complete the amortized analysis, we must average the total
+             running time over the n operations in the sequence. By Exercise 3.9 on page
+             98, if f(n) ∈ Θ(n), then f(n)/n ∈ Θ(1). Therefore, the worst-case amortized
+             time for the stack operations is in Θ(1). We conclude that, although an
+             individual Push operation may be expensive, the expandable array yields
+             a stack that performs well on any sequence of operations starting from an
+             initially empty stack.
+             4.4    The CONSLIST ADT
+             Onthis textbook’s web site is a search tree viewer that allows users to insert
+             and remove strings from various kinds of search trees (see Chapter 6) and
+             to view the results. Included are “Back” and “Forward” buttons that allow
+             the user to step through the history of the trees created. Two stacks are
+             used, one to store the history, and one to store the “future” after the user
+             has stepped back into the history. Also included is a “Clone” button, which
+             causes an identical window to be created, with identical history and future.
+             This new window can be manipulated independently from the ﬁrst. In order
+             to accomplish this independence, the two stacks must be cloned.
+                 Let us consider how we might clone an ExpandableArrayStack.In
+             order to simplify the discussion, we will restrict our attention to shallow
+             cloning. Shallow cloning consists of cloning only the state of the structure,
+             and not the items contained in the structure. Thus, if a data item is
+             stored in a stack which is then cloned, any subsequent changes to that

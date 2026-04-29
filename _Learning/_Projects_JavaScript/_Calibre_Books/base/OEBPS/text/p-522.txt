@@ -1,0 +1,25 @@
+                                    Chapter 16
+                           NP-Completeness
+          Up to now, we have focused on developing eﬃcient algorithms for solving
+          problems. The word “eﬃcient” is somewhat subjective, and the degree of
+          eﬃciency has varied depending on the problem. Still, in each case, we have
+          shown a running time that was no worse than a low-order polynomial in
+          some natural description of the problem size.
+             It is possible to prove, however, that some problems cannot be solved
+          by any algorithm with polynomial running time. In fact, it is possible to
+          prove that some problems cannot be solved by any algorithm at all. We
+          will not be examining any of these problems, but in this chapter and the
+          next, we will take a look at a very interesting class of problems for which no
+          eﬃcient algorithms are known. Part of the reason that this class of problems
+          is interesting is that if a polynomial-time algorithm were to be found for
+          any one of these problems, then we could derive polynomial-time algorithms
+          for all of the problems in this class. Furthermore, no one to date has given
+          a convincing proof that there are no such algorithms. At the heart of these
+          issues is the most famous open question in computational complexity theory.
+          16.1  Boolean Satisﬁability
+          Suppose we are given an expression F containing boolean variables and the
+          following operators:
+          •¬: logical negation;
+          •∨: logical or;and
+          •∧: logical and.
+                                         503

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 184</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-184.jpg" alt="Page 184" width="1282" height="1882"/>
+      <div class="ocr">                                     Priority Queues                       165
+          Therefore, Merge, and hence Put and RemoveMax,usesΘ(lgn)stack
+          space in the worst case. The remaining space usage is in Θ(1).
+          Example 5.2. Consider the leftist heap shown in Figure 5.6(a). Suppose
+          we were to perform a RemoveMax on this heap. To obtain the resulting
+          heap, we must merge the two children of the root. The larger of the two keys
+          is 15; hence, it becomes the new root. We must then merge its right child
+          with the original right child of 20 (see Figure 5.6(b)). The larger of the two
+          roots is 13, so it becomes the root of this subtree. The subtree rooted at 7 is
+          then merged with the empty right child of 13. Figure 5.6(c) shows the result
+          without considering the null path lengths. We must therefore make sure that
+          in each subtree that we’ve formed, the null path length of the right child is
+          no greater than the null path length of the left child. This is the case for the
+          subtree rooted at 13, but not for the subtree rooted at 15. We therefore must
+          swap the children of 15, yielding the ﬁnal result shown in Figure 5.6(d).
+             APutoperation is performed by creating a single-node heap from the
+          element to be inserted, then merging the two heaps as in the above example.
+          Thewebsite that accompanies this textbook contains a program for viewing
+          and manipulating various kinds of heaps, including leftist heaps and the
+          heaps discussed in the remainder of this chapter. This heap viewer can be
+          useful for generating other examples in order to understand the behavior of
+          heaps.
+             It turns out that in order to obtain O(lgn) worst-case performance, it
+          is not always necessary to follow the shortest path to a nonempty subtree.
+          For example, if we maintain a tree such that for each of its n nodes, the
+          left child has at least as many nodes as the right child, then the distance
+          from the root to the rightmost subtree is still no more than lg(n +1).Asa
+          result, we can use this strategy for obtaining O(lgn) worst-case performance
+          for the PriorityQueue operations (see Exercise 5.7 for details). However,
+          we really don’t gain anything from this strategy, as it is now necessary to
+          maintain the size of each subtree instead of each null path length. In the
+          next two sections, we will see that it is possible to achieve good performance
+          without maintaining any such auxiliary information.
+          5.4  Skew Heaps
+          In this section, we consider a simple modiﬁcation to SimpleHeap that yields
+          goodperformancewithouttheneedtomaintainauxiliaryinformationsuchas
+          null path lengths. The idea is to avoid the bad performance of SimpleHeap
+</div>
+    </div>
+  </body>
+</html>

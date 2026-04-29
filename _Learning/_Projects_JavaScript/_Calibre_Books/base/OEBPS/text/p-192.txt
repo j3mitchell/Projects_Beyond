@@ -1,0 +1,38 @@
+                               Priority Queues                 173
+           The idea behind the proof is that P(f = i)=P(f ≥ i)−P(f ≥ i+1).
+         The deﬁnition of E[f] then yields
+                      E[f]=f(e)P(e)
+                            e∈S
+                             ∞
+                          =iP(f =i)
+                            i=0
+                             ∞
+                          =i(P(f ≥i)−P(f ≥i+1))
+                            i=0
+                             ∞
+                            
+                          =   (iP(f ≥ i)−iP(f ≥ i+1)).
+                            i=0
+         In the above sum, the negative portion iP(f ≥ i+1)oftheith term cancels
+         mostofthepositive portion(i+1)P(f ≥ i+1)ofthe(i+1)st term.Theresult
+         of this cancellation is the desired sum. However, in order for this reasoning
+         to be valid, it must be the case that the “leftover” term, −iP(f ≥ i +1),
+         converges to 0 as i approaches inﬁnity if E[f]isﬁnite.Weleavethedetails
+         as an exercise.
+         Example 5.6. Let T be a binary tree in which each of the n nodes has
+         an empty left child; i.e., the nodes form a single path going to the right.
+         Again, the size of PathT is n + 1, but now the probabilities are not all the
+         same. The length of the path to the rightmost empty subtree is n; hence, its
+         probability is 2−n.For1≤ i ≤ n, there is exactly one path that goes right
+         i −1 times and left once. The probabilities for these paths are given by 2−i.
+         We therefore have
+                          E[lenT]=  lenT(e)P(e)
+                                  e∈PathT
+                                         n
+                                    −n   −i
+                                =n2 +     i2  .
+                                        i=1
+           Because we have no formula to evaluate the above summation, let us
+         instead apply Theorem 5.5. The probability that a given path has length at
+         least i,for1≤ i ≤ n, is the probability that i−1 coin ﬂips all yield tails.This
+         probability is 21−i. The probability that a given path has length at least i

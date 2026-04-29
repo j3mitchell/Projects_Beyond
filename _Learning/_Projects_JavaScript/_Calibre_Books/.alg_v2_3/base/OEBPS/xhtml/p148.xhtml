@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 148</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-148.jpg" alt="Page 148" width="1282" height="1882"/>
+      <div class="ocr">                                    Basic Techniques for Data Structures                        129
+              Figure 4.9    An illustration of the representation of a ConsList
+              Figure 4.10    Implementation of ConsList
+                 Because our representation ﬁts so closely with the deﬁnition of a
+             ConsList, the implementation is trivial — the operations are simply the
+             accessors for the three representation variables. Note that our speciﬁcation
+             says nothing about the contents of head and tail when isEmpty is true;
+             hence, if these accessors are called for an empty list, arbitrary values may
+             be returned. The implementation is shown in Figure 4.10. Because we will
+             only present a single implementation of ConsList,weusethesamename
+             for the implementation as for the interface.
+                 It is easily seen that each constructor and operation runs in Θ(1) time.
+             We will now prove that the implementation meets its speciﬁcation.
+             Theorem 4.3. The ConsList implementation meets its speciﬁcation.
+             Proof.
+             Initialization: We consider the two constructors as separate cases.
+             Case 1: ConsList(). Because isEmpty is set to true, we interpret the
+             constructed ConsList as representing an empty sequence. The structural
+             invariant and postcondition therefore hold.
+</div>
+    </div>
+  </body>
+</html>

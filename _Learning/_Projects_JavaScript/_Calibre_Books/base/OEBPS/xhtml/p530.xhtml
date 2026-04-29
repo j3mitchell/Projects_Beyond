@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 530</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-530.jpg" alt="Page 530" width="1282" height="1882"/>
+      <div class="ocr">                               NP-Completeness                   511
+            Suppose we have some problem Y ∈NPsuch that for every X ∈NP,
+         X≤p Y.IfP =NP,thenthereissomeX ∈NP\P.BecauseX ≤p Y and
+            m                                                m
+         X∈P,Corollary 16.3 tells us that Y ∈P. This fact motivates the following
+         deﬁnitions.
+         Deﬁnition 16.3.1. If Y is a decision problem such that for every X ∈NP,
+         X≤p Y,thenwesaythatY is NP-hard.
+            m
+         Deﬁnition 16.3.2. If Y ∈NPis NP-hard, then we say that Y is NP-
+         complete.
+            Suppose we have some NP-hard problem Y, and also suppose that P =
+         NP. Then there is some X ∈NP\P. Because X ∈NPand Y is NP-
+         hard, X ≤p Y. Hence, from Corollary 16.3, Y ∈P. We therefore have the
+                 m
+         following theorem and its corollary.
+         Theorem 16.4. If Y is NP-hard and P = NP,thenY ∈P.
+         Corollary 16.5. If Y is NP-complete and P = NP,thenY ∈NP\P.
+            It turns out that thousands of NP-complete problems in a wide variety
+         of problem domains have been identiﬁed. If we could ﬁnd a polynomial-time
+         algorithm for any one of these problems, Corollary 16.5 would then imply
+         that P = NP. The fact that this has not been accomplished is one reason
+         to suspect that P = NP. Let us now identify an NP-complete problem.
+         Theorem 16.6 (Cook’s Theorem). Sat is NP-complete.
+         TheideaoftheproofofCook’sTheoremistogiveamethodforconstructing,
+         from an arbitrary X ∈NP, a polynomial-time algorithm that takes as input
+         an instance x of X and produces as output a boolean expression F such
+         that F is satisﬁable iﬀ x ∈ X. In constructing this algorithm, we can use the
+         polynomialp(n)boundingthesizeofaproofφandthealgorithmfordeciding
+         whether φproves that x ∈ X. In order to complete the construction, we must
+         carefully deﬁne the computational model so that the boolean formula can
+         encode the algorithm. Due to the large amount of work involved, we will
+         delay the proof of Cook’s Theorem until Section 16.8.
+            Fortunately, once we have one NP-complete problem, the task of
+         showing other problems to be NP-complete becomes much easier. The
+         reason for this is that polynomial many-one reducibility is transitive, as
+         we show in the following theorem. Its proof is similar to the proof of
+         Theorem 16.2, and is therefore left as an exercise. Its corollary then gives
+</div>
+    </div>
+  </body>
+</html>

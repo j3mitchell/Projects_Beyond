@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 236</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-236.jpg" alt="Page 236" width="1282" height="1882"/>
+      <div class="ocr">                                      Storage/Retrieval I: Ordered Keys                          217
+             the root of the tree by a series of double rotations, each promoting b by two
+             levels. Now referring to Figure 6.12, note that the distance between the root
+             and any descendant of d decreases by 1 for each rotation. The number of
+             rotations is half the distance from the root to d, so each descendant of d ends
+             up closer to the root by half the original distance between the root and d.
+                 Unfortunately, single rotations are not as eﬀective in improving the
+             structure. Notice that in Figure 6.11, nodes in subtree c do not get any
+             closer to the root as a result of the rotation. As a result, we need a new kind
+             of double rotation that can be applied when the node to be promoted is
+             not a “zig-zag” from its grandparent. So that we might distinguish between
+             the various double rotations, we will refer to the rotation of Figure 6.12 as
+             a zig-zag right, and to its mirror image as a zig-zag left.Azig-zig right is
+             shown in Figure 6.15. Note that by this rotation, the distance between the
+             root and any descendant of a is decreased by at least 1.
+                 Our representation, interpretation, and structural invariant will be the
+             same as for BSTDictionary. The only diﬀerences will occur in the actual
+             implementations of the operations. In fact, the implementation of VisitIn-
+             Orderwill also be the same as for BSTDictionary.
+                 Let us consider how we can implement a Find function. First, we observe
+             that no value needs to be returned, because if the key we are looking for
+             exists, we will bring it to the root of the tree. Hence, after invoking the
+             Find function, the Get operation only needs to look in the root to see if the
+             desired key is there. Second, we don’t want to bring a node representing an
+             empty subtree to the root. For this reason, we will need to verify that a node
+             is nonempty at some point before rotating it to the root. It therefore seems
+             reasonable to include as part of the precondition that the tree is nonempty.
+              Figure 6.15     Azig-zig right rotation
+</div>
+    </div>
+  </body>
+</html>

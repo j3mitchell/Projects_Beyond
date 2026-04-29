@@ -1,0 +1,19 @@
+           90                     Algorithms: A Top-Down Approach
+            Figure 3.6  Venn diagram depicting the relationships between the sets O(f(n)),
+            Ω(f(n)), Θ(f(n)), o(f(n)), and ω(f(n))
+              Thus, if f(n)=3n2 +7n+2,thenf(n)∈3n2+o(n2).
+              These deﬁnitions are similar to the deﬁnitions of O and Ω, respectively,
+           except that the inequalities hold for every positive real numberc, rather than
+           for some positive real number c.Thus,g(n) ∈ o(f(n)) is a strictly stronger
+           statement than g(n) ∈ O(f(n)), and g(n) ∈ ω(f(n)) is a strictly stronger
+           statement than g(n) ∈ Ω(f(n)) (see Figure 3.6). This idea is formalized by
+           the following theorem.
+           Theorem 3.54. Let f : N → R≥0 be an eventually positive function. Then
+           1.o(f(n)) ⊆ O(f(n))\Θ(f(n)); and
+           2.ω(f(n)) ⊆ Ω(f(n))\Θ(f(n)),
+           where A\B denotes the set of elements in A but not in B.
+           Proof.   We will only prove part 1; the proof of part 2 is symmetric. Let
+           g(n) ∈ o(f(n)), and let c be any positive real number. Then there is a
+           natural number n0 such that g(n) <cf(n) whenever n ≥ n0. Hence, g(n) ∈
+           O(f(n)). Furthermore, because the choice of c is arbitrary, we can conclude
+           that g(n) ∈ Ω(f(n)); hence, g(n) ∈ Θ(f(n)).                           

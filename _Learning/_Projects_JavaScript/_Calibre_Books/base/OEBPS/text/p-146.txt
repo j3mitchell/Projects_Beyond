@@ -1,0 +1,15 @@
+                                    Basic Techniques for Data Structures                        127
+              Figure 4.7    The ConsList ADT
+             constructor. We will then complete the design by showing how to implement
+             ConsList.
+                 Our Stack representation will be a ConsList elements. We interpret
+             elements as storing the stack in reverse order; i.e., the head of elements is
+             the top element on the stack. The structural invariant will be that elements
+             refers to a ConsList. The implementation is shown in Figure 4.8. The one-
+             argument constructor is used to construct a shallow clone.
+                 Again, all constructors and operations can easily be seen to run in Θ(1)
+             time, and proving initialization, maintenance, termination, and correctness
+             is straightforward. Regarding security, we note that elements is shared when
+             the one-argument constructor is used; however, because a ConsList is
+             immutable, this sharing cannot violate security. The full correctness proof is
+             left as an exercise.

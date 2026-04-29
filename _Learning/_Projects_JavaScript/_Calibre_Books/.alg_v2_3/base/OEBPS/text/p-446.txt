@@ -1,0 +1,32 @@
+                                        Depth-First Search                          427
+           the corresponding vertices are processed, we can initialize these elements in
+           PreProc. We want the processing of a vertex i to compute highest[i]. In
+           order to use recurrence (13.2), we need pre.Num(k) for each back edge {i,k}
+           and highest[j] for each child j of i. We therefore include the code to compute
+           highest[i]inOtherEdgeProcandTreePostProc.Thedeterminationof
+           whether a vertex i other than the root is an articulation point needs to occur
+           once we have computed highest[j] for each child j of i; hence, we include this
+           code in TreePostProc. To be able to determine whether the root is an
+           articulation point, we count its children in TreePostProc.Wecanthen
+           make the determination once all of the processing is complete, i.e., in the
+           call to PostProc for the root.
+               Theimplementation of ArtSearcheris shown in Figure 13.9. We have
+           not given an implementation of the TreePreProc operation — it does
+            Figure 13.9   ArtSearcher implementation of Searcher
+              ArtSearcher(n)
+                artPoints ← new Array[0..n−1]; highest ← new Array[0..n−1]
+                pre ← new VisitCounter(n); rootChildren ← 0
+              ArtSearcher.PreProc(i)
+                pre.Visit(i); artPoints[i] ← false; highest[i] ←∞
+              ArtSearcher.TreePostProc(e)
+                i ← e.Source(); j ← e.Dest(); highest[i] ← Min(highest[i],highest[j])
+                if i =0
+                   rootChildren ← rootChildren+1
+                else if highest[j]=pre.Num(i)
+                   artPoints[i] ← true
+              ArtSearcher.OtherEdgeProc(e)
+                i ← e.Source(); k ← e.Dest()
+                highest[i] ← Min(highest[i],pre.Num(k))
+              ArtSearcher.PostProc(i)
+                if i =0and rootChildren > 1
+                   artPoints[i] ← true

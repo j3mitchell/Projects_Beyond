@@ -1,0 +1,51 @@
+            300                       Algorithms: A Top-Down Approach
+            wemustattain a value of at least A          (ranks[i]). Then if we deﬁne f(s,i)
+                                                 f(s,i)+1
+            to be the maximum k such that ranks[parent [i]] ≥ A (ranks[i]), we can
+                                                              s         k
+            never have ranks[parent [i]] ≥ A          (ranks[i]).
+                                     s        f(s,i)+1
+                We still need to deﬁne the functions A . In order to facilitate this
+                                                             k
+            deﬁnition, we ﬁrst deﬁne the iteration operator for functions. Let F : N → N.
+            Wethen deﬁne
+                                 F(0)(n)=n
+                                 F(k)(n)=F(F(k−1)(n)) for k>0.
+            For example, if F(n)=2n,thenF(2)(n)=4n and F(3)(n)=8n;more
+                         (k)       k
+            generally, F   (n)=2n.
+                Wenowdeﬁne:
+                                             n+1           ifk =0
+                                   A (n)=
+                                     k           (n+1)
+                                               A      (n)ifk≥1.
+                                                 k−1
+            Wecan then deﬁne, for each node i that is neither a leaf nor a root,
+                         f(s,i)=max{k | ranks[parent [i]] ≥ A (ranks[i])}
+                                                          s       k
+            and
+                                                                (k)
+                       g(s,i)=max{k | ranks[parents[i]] ≥ A          (ranks[i])}.
+                                                                f(s,i)
+                Finally, we need f(s,i) <α(n) whenever i is neither a leaf nor a root.
+            Thus, we need to ensure that whenever i is neither a leaf nor a root, we have
+                                 A     (ranks[i]) > ranks[parent [i]].
+                                   α(n)                           s
+            We have shown that without path compression, the height of a tree never
+            exceeds lgn; hence, with path compression, the rank of a node never exceeds
+            lgn. It therefore suﬃces to deﬁne
+                                    α(n)=min{k | A (1) > lgn}.
+                                                       k
+                As the subscript k increases, A (1) increases very rapidly. We leave it as
+                                                 k
+            an exercise to show that
+                                                         ·2
+                                                        ··
+                                                       2
+                                             A (1) ≥ 2     ,
+                                              4
+            where there are 2051 2s on the right-hand side. It is hard to comprehend
+            just how large this value is, for if the right-hand side contained only six 2s,
+                                                                 65536
+            the number of bits required to store it would be 2        +1. By contrast, the
+            number of elementary particles in the universe is currently estimated to be

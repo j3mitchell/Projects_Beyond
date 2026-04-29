@@ -1,0 +1,39 @@
+      218          Algorithms: A Top-Down Approach
+        Wetherefore begin by comparing the given key k to the key at the root
+      of the given tree t. If the keys don’t match, we will need to look in the
+      appropriate child, after verifying that it is nonempty. However, we want to
+      do a double rotation whenever possible, so rather than using a recursive call
+      at this point, we should go ahead and make another comparison. If we ﬁnd
+      the key k, or if the appropriate grandchild is empty, we do a single rotation.
+      Otherwise, we recursively look for k in the appropriate grandchild and do a
+      double rotation. The algorithm is shown in Figure 6.16.
+      Example 6.6. Suppose we were to do a Find on 60 in the splay tree shown
+      in Figure 6.17(a). Because the length of the path to 60 is odd, we must begin
+      with a single rotation. Figure 6.17(b) shows the result of doing a single rotate
+      left at 53. We then proceed with double rotations to bring 60 to the root.
+      In this case, only one rotation — a zig-zag left — is required. The result is
+      showninFigure6.17(c).
+        The insertion algorithm cannot use Find because it must insert a new
+      data item when an empty subtree is found. However, it can be patterned
+      after the Find algorithm. The main diﬀerence is that because a data item
+      is inserted into an empty tree, we will always rotate that node to the root.
+      We therefore do not need to restrict its use to nonempty trees. The details
+      are left as an exercise.
+        The deletion algorithm can, however, use Find. Suppose we want to
+      delete key k.WecanuseFind(k,elements)tomovek to the root if
+      it is present. If the right child is empty, we can simply make the left
+      child the new root. Otherwise, we can use another internal function,
+      FindMin(elements.RightChild()), to move the minimum key m in the
+      right child to the root of the right child. At this point, the right child has
+      an empty left child, because there are no keys with values between k and its
+      right child. The result is shown in Figure 6.18. We can therefore complete
+      the deletion by making A the left child of m and making m the root (see
+      Figure 6.18). The algorithm is given in Figure 6.19.
+        Let us now analyze the amortized running times of Get, Put,and
+      Remove for SplayDictionary. It is not hard to see that all of the
+      recursive algorithms have constant running time, excluding recursive calls.
+      Furthermore, each time a recursive call is made, a rotation is done. It is
+      therefore suﬃcient to analyze the total number of rotations. Each rotation,
+      therefore, will have an actual cost of 1.
+        In order to amortize the number of rotations, we need to ﬁnd an
+      appropriate potential function. Intuitively, an operation involving many

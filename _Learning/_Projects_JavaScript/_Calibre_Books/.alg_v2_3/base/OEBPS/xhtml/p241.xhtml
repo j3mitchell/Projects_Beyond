@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 241</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-241.jpg" alt="Page 241" width="1282" height="1882"/>
+      <div class="ocr">           222                     Algorithms: A Top-Down Approach
+           have a comparatively large number of nodes, whereas in a balanced tree,
+           most of the subtrees have only a few nodes. It would therefore make sense
+           to deﬁne the potential function to depend on the number of nodes in each
+           subtree.
+               An example of such a potential function is the sum of the sizes of all of
+           the subtrees. However, this potential function will not work. Consider what
+           happens when 0 is inserted into the tree in Figure 6.9. It is inserted to the
+           left of 1, then rotated to the root via a single rotate right. The original
+           tree therefore ends up as the right child of the result. The potential function
+           therefore increases by the numberof nodes in the result. With an increase this
+           large, we cannot achieve a logarithmic amortized cost.
+               In order to scale back the growth of the potential function, let us try
+           applying the lg function to the size of each nonempty subtree. Speciﬁcally,
+           let |t| denote the number of nodes in a subtree t. We then deﬁne our potential
+           function Φ(T) to be the sum of all lg|t| such that t is a nonempty subtree
+           of the entire tree T. In what follows, we will show that for each of the three
+           operations, the amortized cost with respect to Φ is in O(lgn).
+               Because most of the rotations will be double rotations, let us begin by
+           analyzing a zig-zag rotation. We will be focusing on the three subtrees that
+           are changed by the zig-zag rotation, as shown in Figure 6.20; thus T , T ,and
+                                                                              a  b
+           T denotethesubtreesrootedata,b,andc,respectively,priortotherotation,
+            c
+           and T, T,andT denote the subtrees rooted at these nodes following the
+                 a   b       c
+           rotation. The amortized cost of the rotation will be the actual cost (i.e., 1)
+            Figure 6.20   The subtrees that are modiﬁed by a zig-zag rotation
+                      Tc
+                                c                       T
+                    T                                    b
+                     a                                              b
+                                                      Ta                        Tc
+                           a        D
+                                                            a              c
+              Tb
+                       Ab
+                                                        A       B      CD
+                           BC
+</div>
+    </div>
+  </body>
+</html>

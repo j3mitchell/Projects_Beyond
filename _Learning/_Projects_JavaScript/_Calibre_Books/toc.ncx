@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ncx version="2005-1" xml:lang="en" xmlns="http://www.daisy.org/z3986/2005/ncx/">
+  <head>
+    <meta name="dtb:uid" content="calculusi-with-precalculus"/>
+    <meta name="dtb:depth" content="2"/>
+    <meta name="dtb:generator" content="Codex (GPT-5)"/>
+    <meta name="dtb:totalPageCount" content="0"/>
+    <meta name="dtb:maxPageNumber" content="0"/>
+  </head>
+
+  <docTitle>
+    <text>Calculus I with Precalculus</text>
+  </docTitle>
+
+  <navMap>
+    <navPoint id="num_1" playOrder="1">
+      <navLabel><text>Chapter P Prerequisites (p. 1)</text></navLabel>
+      <content src="book.xhtml#page0001"/>
+      <navPoint id="num_1_1" playOrder="2"><navLabel><text>P.1 Solving Equations (p. 2)</text></navLabel><content src="book.xhtml#page0002"/></navPoint>
+      <navPoint id="num_1_2" playOrder="3"><navLabel><text>P.2 Solving Inequalities (p. 15)</text></navLabel><content src="book.xhtml#page0015"/></navPoint>
+      <navPoint id="num_1_3" playOrder="4"><navLabel><text>P.3 Graphical Representation of Data (p. 27)</text></navLabel><content src="book.xhtml#page0027"/></navPoint>
+      <navPoint id="num_1_4" playOrder="5"><navLabel><text>P.4 Graphs of Equations (p. 38)</text></navLabel><content src="book.xhtml#page0038"/></navPoint>
+      <navPoint id="num_1_5" playOrder="6"><navLabel><text>P.5 Linear Equations in Two Variables (p. 49)</text></navLabel><content src="book.xhtml#page0049"/></navPoint>
+    </navPoint>
+
+    <navPoint id="num_2" playOrder="7">
+      <navLabel><text>Chapter 1 Functions and Their Graphs (p. 71)</text></navLabel>
+      <content src="book.xhtml#page0071"/>
+      <navPoint id="num_2_1" playOrder="8"><navLabel><text>1.1 Functions (p. 72)</text></navLabel><content src="book.xhtml#page0072"/></navPoint>
+      <navPoint id="num_2_2" playOrder="9"><navLabel><text>1.2 Analyzing Graphs of Functions (p. 85)</text></navLabel><content src="book.xhtml#page0085"/></navPoint>
+      <navPoint id="num_2_3" playOrder="10"><navLabel><text>1.3 Transformations of Functions (p. 98)</text></navLabel><content src="book.xhtml#page0098"/></navPoint>
+      <navPoint id="num_2_4" playOrder="11"><navLabel><text>1.4 Combinations of Functions (p. 107)</text></navLabel><content src="book.xhtml#page0107"/></navPoint>
+      <navPoint id="num_2_5" playOrder="12"><navLabel><text>1.5 Inverse Functions (p. 115)</text></navLabel><content src="book.xhtml#page0115"/></navPoint>
+      <navPoint id="num_2_6" playOrder="13"><navLabel><text>1.6 Mathematical Modeling and Variation (p. 124)</text></navLabel><content src="book.xhtml#page0124"/></navPoint>
+    </navPoint>
+
+    <navPoint id="num_3" playOrder="14">
+      <navLabel><text>Chapter 2 Polynomial and Rational Functions (p. 143)</text></navLabel>
+      <content src="book.xhtml#page0143"/>
+      <navPoint id="num_3_1" playOrder="15"><navLabel><text>2.1 Quadratic Functions and Models (p. 144)</text></navLabel><content src="book.xhtml#page0144"/></navPoint>
+      <navPoint id="num_3_2" playOrder="16"><navLabel><text>2.2 Polynomial Functions of Higher Degree (p. 154)</text></navLabel><content src="book.xhtml#page0154"/></navPoint>
+      <navPoint id="num_3_3" playOrder="17"><navLabel><text>2.3 Polynomial and Synthetic Division (p. 164)</text></navLabel><content src="book.xhtml#page0164"/></navPoint>
+      <navPoint id="num_3_4" playOrder="18"><navLabel><text>2.4 Complex Numbers (p. 174)</text></navLabel><content src="book.xhtml#page0174"/></navPoint>
+      <navPoint id="num_3_5" playOrder="19"><navLabel><text>2.5 The Fundamental Theorem of Algebra (p. 181)</text></navLabel><content src="book.xhtml#page0181"/></navPoint>
+      <navPoint id="num_3_6" playOrder="20"><navLabel><text>2.6 Rational Functions (p. 193)</text></navLabel><content src="book.xhtml#page0193"/></navPoint>
+    </navPoint>
+
+    <navPoint id="num_4" playOrder="21">
+      <navLabel><text>Chapter 3 Limits and Their Properties (p. 213)</text></navLabel>
+      <content src="book.xhtml#page0213"/>
+      <navPoint id="num_4_1" playOrder="22"><navLabel><text>3.1 A Preview of Calculus (p. 214)</text></navLabel><content src="book.xhtml#page0214"/></navPoint>
+      <navPoint id="num_4_2" playOrder="23"><navLabel><text>3.2 Finding Limits Graphically and Numerically (p. 220)</text></navLabel><content src="book.xhtml#page0220"/></navPoint>
+      <navPoint id="num_4_3" playOrder="24"><navLabel><text>3.3 Evaluating Limits Analytically (p. 228)</text></navLabel><content src="book.xhtml#page0228"/></navPoint>
+      <navPoint id="num_4_4" playOrder="25"><navLabel><text>3.4 Continuity and One-Sided Limits (p. 236)</text></navLabel><content src="book.xhtml#page0236"/></navPoint>
+      <navPoint id="num_4_5" playOrder="26"><navLabel><text>3.5 Infinite Limits (p. 247)</text></navLabel><content src="book.xhtml#page0247"/></navPoint>
+    </navPoint>
+
+    <navPoint id="num_5" playOrder="27">
+      <navLabel><text>Chapter 4 Differentiation (p. 261)</text></navLabel>
+      <content src="book.xhtml#page0261"/>
+      <navPoint id="num_5_1" playOrder="28"><navLabel><text>4.1 The Derivative and the Tangent Line Problem (p. 262)</text></navLabel><content src="book.xhtml#page0262"/></navPoint>
+      <navPoint id="num_5_2" playOrder="29"><navLabel><text>4.2 Basic Differentiation Rules and Rates of Change (p. 273)</text></navLabel><content src="book.xhtml#page0273"/></navPoint>
+      <navPoint id="num_5_3" playOrder="30"><navLabel><text>4.3 Product and Quotient Rules and Higher-Order Derivatives (p. 284)</text></navLabel><content src="book.xhtml#page0284"/></navPoint>
+      <navPoint id="num_5_4" playOrder="31"><navLabel><text>4.4 The Chain Rule (p. 293)</text></navLabel><content src="book.xhtml#page0293"/></navPoint>
+      <navPoint id="num_5_5" playOrder="32"><navLabel><text>4.5 Implicit Differentiation (p. 301)</text></navLabel><content src="book.xhtml#page0301"/></navPoint>
+      <navPoint id="num_5_6" playOrder="33"><navLabel><text>4.6 Related Rates (p. 309)</text></navLabel><content src="book.xhtml#page0309"/></navPoint>
+    </navPoint>
+
+    <navPoint id="num_6" playOrder="34">
+      <navLabel><text>Chapter 5 Applications of Differentiation (p. 323)</text></navLabel>
+      <content src="book.xhtml#page0323"/>
+      <navPoint id="num_6_1" playOrder="35"><navLabel><text>5.1 Extrema on an Interval (p. 324)</text></navLabel><content src="book.xhtml#page0324"/></navPoint>
+      <navPoint id="num_6_2" playOrder="36"><navLabel><text>5.2 Rolle's Theorem and the Mean Value Theorem (p. 332)</text></navLabel><content src="book.xhtml#page0332"/></navPoint>
+      <navPoint id="num_6_3" playOrder="37"><navLabel><text>5.3 Increasing and Decreasing Functions and the First Derivative Test (p. 339)</text></navLabel><content src="book.xhtml#page0339"/></navPoint>
+      <navPoint id="num_6_4" playOrder="38"><navLabel><text>5.4 Concavity and the Second Derivative Test (p. 348)</text></navLabel><content src="book.xhtml#page0348"/></navPoint>
+      <navPoint id="num_6_5" playOrder="39"><navLabel><text>5.5 Limits at Infinity (p. 356)</text></navLabel><content src="book.xhtml#page0356"/></navPoint>
+      <navPoint id="num_6_6" playOrder="40"><navLabel><text>5.6 A Summary of Curve Sketching (p. 366)</text></navLabel><content src="book.xhtml#page0366"/></navPoint>
+      <navPoint id="num_6_7" playOrder="41"><navLabel><text>5.7 Optimization Problems (p. 374)</text></navLabel><content src="book.xhtml#page0374"/></navPoint>
+      <navPoint id="num_6_8" playOrder="42"><navLabel><text>5.8 Differentials (p. 384)</text></navLabel><content src="book.xhtml#page0384"/></navPoint>
+    </navPoint>
+
+    <navPoint id="num_7" playOrder="43">
+      <navLabel><text>Chapter 6 Integration (p. 397)</text></navLabel>
+      <content src="book.xhtml#page0397"/>
+      <navPoint id="num_7_1" playOrder="44"><navLabel><text>6.1 Antiderivatives and Indefinite Integration (p. 398)</text></navLabel><content src="book.xhtml#page0398"/></navPoint>
+      <navPoint id="num_7_2" playOrder="45"><navLabel><text>6.2 Area (p. 408)</text></navLabel><content src="book.xhtml#page0408"/></navPoint>
+      <navPoint id="num_7_3" playOrder="46"><navLabel><text>6.3 Riemann Sums and Definite Integrals (p. 420)</text></navLabel><content src="book.xhtml#page0420"/></navPoint>
+      <navPoint id="num_7_4" playOrder="47"><navLabel><text>6.4 The Fundamental Theorem of Calculus (p. 430)</text></navLabel><content src="book.xhtml#page0430"/></navPoint>
+      <navPoint id="num_7_5" playOrder="48"><navLabel><text>6.5 Integration by Substitution (p. 445)</text></navLabel><content src="book.xhtml#page0445"/></navPoint>
+      <navPoint id="num_7_6" playOrder="49"><navLabel><text>6.6 Numerical Integration (p. 457)</text></navLabel><content src="book.xhtml#page0457"/></navPoint>
+    </navPoint>
+
+    <navPoint id="num_8" playOrder="50">
+      <navLabel><text>Chapter 7 Exponential and Logarithmic Functions (p. 471)</text></navLabel>
+      <content src="book.xhtml#page0471"/>
+      <navPoint id="num_8_1" playOrder="51"><navLabel><text>7.1 Exponential Functions and Their Graphs (p. 472)</text></navLabel><content src="book.xhtml#page0472"/></navPoint>
+      <navPoint id="num_8_2" playOrder="52"><navLabel><text>7.2 Logarithmic Functions and Their Graphs (p. 481)</text></navLabel><content src="book.xhtml#page0481"/></navPoint>
+      <navPoint id="num_8_3" playOrder="53"><navLabel><text>7.3 Using Properties of Logarithms (p. 491)</text></navLabel><content src="book.xhtml#page0491"/></navPoint>
+      <navPoint id="num_8_4" playOrder="54"><navLabel><text>7.4 Exponential and Logarithmic Equations (p. 498)</text></navLabel><content src="book.xhtml#page0498"/></navPoint>
+      <navPoint id="num_8_5" playOrder="55"><navLabel><text>7.5 Exponential and Logarithmic Models (p. 509)</text></navLabel><content src="book.xhtml#page0509"/></navPoint>
+    </navPoint>
+
+    <navPoint id="num_9" playOrder="56">
+      <navLabel><text>Chapter 8 Exponential and Logarithmic Functions and Calculus (p. 527)</text></navLabel>
+      <content src="book.xhtml#page0527"/>
+      <navPoint id="num_9_1" playOrder="57"><navLabel><text>8.1 Exponential Functions: Differentiation and Integration (p. 528)</text></navLabel><content src="book.xhtml#page0528"/></navPoint>
+      <navPoint id="num_9_2" playOrder="58"><navLabel><text>8.2 Logarithmic Functions and Differentiation (p. 535)</text></navLabel><content src="book.xhtml#page0535"/></navPoint>
+      <navPoint id="num_9_3" playOrder="59"><navLabel><text>8.3 Logarithmic Functions and Integration (p. 544)</text></navLabel><content src="book.xhtml#page0544"/></navPoint>
+      <navPoint id="num_9_4" playOrder="60"><navLabel><text>8.4 Differential Equations: Growth and Decay (p. 552)</text></navLabel><content src="book.xhtml#page0552"/></navPoint>
+    </navPoint>
+
+    <navPoint id="num_10" playOrder="61">
+      <navLabel><text>Chapter 9 Trigonometric Functions (p. 565)</text></navLabel>
+      <content src="book.xhtml#page0565"/>
+      <navPoint id="num_10_1" playOrder="62"><navLabel><text>9.1 Radian and Degree Measure (p. 566)</text></navLabel><content src="book.xhtml#page0566"/></navPoint>
+      <navPoint id="num_10_2" playOrder="63"><navLabel><text>9.2 Trigonometric Functions: The Unit Circle (p. 575)</text></navLabel><content src="book.xhtml#page0575"/></navPoint>
+      <navPoint id="num_10_3" playOrder="64"><navLabel><text>9.3 Right Triangle Trigonometry (p. 582)</text></navLabel><content src="book.xhtml#page0582"/></navPoint>
+      <navPoint id="num_10_4" playOrder="65"><navLabel><text>9.4 Trigonometric Functions of Any Angle (p. 591)</text></navLabel><content src="book.xhtml#page0591"/></navPoint>
+      <navPoint id="num_10_5" playOrder="66"><navLabel><text>9.5 Graphs of Sine and Cosine Functions (p. 599)</text></navLabel><content src="book.xhtml#page0599"/></navPoint>
+      <navPoint id="num_10_6" playOrder="67"><navLabel><text>9.6 Graphs of Other Trigonometric Functions (p. 610)</text></navLabel><content src="book.xhtml#page0610"/></navPoint>
+      <navPoint id="num_10_7" playOrder="68"><navLabel><text>9.7 Inverse Trigonometric Functions (p. 620)</text></navLabel><content src="book.xhtml#page0620"/></navPoint>
+      <navPoint id="num_10_8" playOrder="69"><navLabel><text>9.8 Applications and Models (p. 629)</text></navLabel><content src="book.xhtml#page0629"/></navPoint>
+    </navPoint>
+
+    <navPoint id="num_11" playOrder="70">
+      <navLabel><text>Chapter 10 Analytic Trigonometry (p. 645)</text></navLabel>
+      <content src="book.xhtml#page0645"/>
+      <navPoint id="num_11_1" playOrder="71"><navLabel><text>10.1 Using Fundamental Trigonometric Identities (p. 646)</text></navLabel><content src="book.xhtml#page0646"/></navPoint>
+      <navPoint id="num_11_2" playOrder="72"><navLabel><text>10.2 Verifying Trigonometric Identities (p. 653)</text></navLabel><content src="book.xhtml#page0653"/></navPoint>
+      <navPoint id="num_11_3" playOrder="73"><navLabel><text>10.3 Solving Trigonometric Equations (p. 659)</text></navLabel><content src="book.xhtml#page0659"/></navPoint>
+      <navPoint id="num_11_4" playOrder="74"><navLabel><text>10.4 Sum and Difference Formulas (p. 669)</text></navLabel><content src="book.xhtml#page0669"/></navPoint>
+      <navPoint id="num_11_5" playOrder="75"><navLabel><text>10.5 Multiple-Angle and Product-to-Sum Formulas (p. 675)</text></navLabel><content src="book.xhtml#page0675"/></navPoint>
+    </navPoint>
+
+    <navPoint id="num_12" playOrder="76">
+      <navLabel><text>Chapter 11 Trigonometric Functions and Calculus (p. 691)</text></navLabel>
+      <content src="book.xhtml#page0691"/>
+      <navPoint id="num_12_1" playOrder="77"><navLabel><text>11.1 Limits of Trigonometric Functions (p. 692)</text></navLabel><content src="book.xhtml#page0692"/></navPoint>
+      <navPoint id="num_12_2" playOrder="78"><navLabel><text>11.2 Trigonometric Functions: Differentiation (p. 699)</text></navLabel><content src="book.xhtml#page0699"/></navPoint>
+      <navPoint id="num_12_3" playOrder="79"><navLabel><text>11.3 Trigonometric Functions: Integration (p. 709)</text></navLabel><content src="book.xhtml#page0709"/></navPoint>
+      <navPoint id="num_12_4" playOrder="80"><navLabel><text>11.4 Inverse Trigonometric Functions: Differentiation (p. 717)</text></navLabel><content src="book.xhtml#page0717"/></navPoint>
+      <navPoint id="num_12_5" playOrder="81"><navLabel><text>11.5 Inverse Trigonometric Functions: Integration (p. 722)</text></navLabel><content src="book.xhtml#page0722"/></navPoint>
+      <navPoint id="num_12_6" playOrder="82"><navLabel><text>11.6 Hyperbolic Functions (p. 729)</text></navLabel><content src="book.xhtml#page0729"/></navPoint>
+    </navPoint>
+
+    <navPoint id="num_13" playOrder="83">
+      <navLabel><text>Chapter 12 Topics in Analytic Geometry (p. 745)</text></navLabel>
+      <content src="book.xhtml#page0745"/>
+      <navPoint id="num_13_1" playOrder="84"><navLabel><text>12.1 Introduction to Conics: Parabolas (p. 746)</text></navLabel><content src="book.xhtml#page0746"/></navPoint>
+      <navPoint id="num_13_2" playOrder="85"><navLabel><text>12.2 Ellipses and Implicit Differentiation (p. 754)</text></navLabel><content src="book.xhtml#page0754"/></navPoint>
+      <navPoint id="num_13_3" playOrder="86"><navLabel><text>12.3 Hyperbolas and Implicit Differentiation (p. 762)</text></navLabel><content src="book.xhtml#page0762"/></navPoint>
+      <navPoint id="num_13_4" playOrder="87"><navLabel><text>12.4 Parametric Equations and Calculus (p. 771)</text></navLabel><content src="book.xhtml#page0771"/></navPoint>
+      <navPoint id="num_13_5" playOrder="88"><navLabel><text>12.5 Polar Coordinates and Calculus (p. 781)</text></navLabel><content src="book.xhtml#page0781"/></navPoint>
+      <navPoint id="num_13_6" playOrder="89"><navLabel><text>12.6 Graphs of Polar Coordinates (p. 787)</text></navLabel><content src="book.xhtml#page0787"/></navPoint>
+      <navPoint id="num_13_7" playOrder="90"><navLabel><text>12.7 Polar Equations of Conics (p. 793)</text></navLabel><content src="book.xhtml#page0793"/></navPoint>
+    </navPoint>
+
+    <navPoint id="num_14" playOrder="91">
+      <navLabel><text>Chapter 13 Additional Topics in Trigonometry (p. 807)</text></navLabel>
+      <content src="book.xhtml#page0807"/>
+      <navPoint id="num_14_1" playOrder="92"><navLabel><text>13.1 Law of Sines (p. 808)</text></navLabel><content src="book.xhtml#page0808"/></navPoint>
+      <navPoint id="num_14_2" playOrder="93"><navLabel><text>13.2 Law of Cosines (p. 817)</text></navLabel><content src="book.xhtml#page0817"/></navPoint>
+      <navPoint id="num_14_3" playOrder="94"><navLabel><text>13.3 Vectors in the Plane (p. 824)</text></navLabel><content src="book.xhtml#page0824"/></navPoint>
+      <navPoint id="num_14_4" playOrder="95"><navLabel><text>13.4 Vectors and Dot Products (p. 836)</text></navLabel><content src="book.xhtml#page0836"/></navPoint>
+      <navPoint id="num_14_5" playOrder="96"><navLabel><text>13.5 Trigonometric Form of a Complex Number (p. 844)</text></navLabel><content src="book.xhtml#page0844"/></navPoint>
+    </navPoint>
+
+    <navPoint id="num_15" playOrder="97">
+      <navLabel><text>Chapter 14 Systems of Equations and Matrices (Web)</text></navLabel>
+      <content src="book.xhtml#page0860"/>
+      <navPoint id="num_15_1" playOrder="98"><navLabel><text>14.1 Systems of Linear Equations in Two Variables (p. 860)</text></navLabel><content src="book.xhtml#page0860"/></navPoint>
+      <navPoint id="num_15_2" playOrder="99"><navLabel><text>14.2 Multivariable Linear Systems (p. 875)</text></navLabel><content src="book.xhtml#page0875"/></navPoint>
+      <navPoint id="num_15_3" playOrder="100"><navLabel><text>14.3 Systems Inequalities (p. 890)</text></navLabel><content src="book.xhtml#page0890"/></navPoint>
+      <navPoint id="num_15_4" playOrder="101"><navLabel><text>14.4 Matrices and Systems of Equations (p. 910)</text></navLabel><content src="book.xhtml#page0910"/></navPoint>
+      <navPoint id="num_15_5" playOrder="102"><navLabel><text>14.5 Operations with Matrices (p. 930)</text></navLabel><content src="book.xhtml#page0930"/></navPoint>
+      <navPoint id="num_15_6" playOrder="103"><navLabel><text>14.6 The Inverse of a Square Matrix (p. 950)</text></navLabel><content src="book.xhtml#page0950"/></navPoint>
+      <navPoint id="num_15_7" playOrder="104"><navLabel><text>14.7 The Determinant of a Square Matrix (p. 970)</text></navLabel><content src="book.xhtml#page0970"/></navPoint>
+    </navPoint>
+  </navMap>
+</ncx>

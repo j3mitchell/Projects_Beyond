@@ -1,0 +1,17 @@
+           252                      Algorithms: A Top-Down Approach
+             Figure 7.5  The HashTable implementation of Dictionary (partial)
+           Weinterpret the Keyed items in the ConsLists to contain the elements of
+           the data set together with their associated keys.
+               Accessing a data item given a key k is now straightforward — we simply
+           compute hash.Index(k)andsearchtheConsList at this location in table;
+           see Figure 7.5. The worst-case time for any such operation is easily seen to
+           be proportional to the time to compute the index plus the length of the
+           ConsList.
+               Let us now consider the worst-case length of a ConsList in table.
+           Unfortunately, it can be quite bad. The following theorem shows that under
+           reasonable assumptions, all keys can map to the same index; hence, in the
+           worst case, the running time of a hash table access is in Ω(n).
+           Theorem 7.1. Let T be a hash table with m locations, and suppose the
+           universe U of possible keys contains more than m(n−1) elements. Then for
+           any function h mapping U to natural numbers less than m,thereissome
+           natural number i<msuch that h maps at least n keys in U to i.

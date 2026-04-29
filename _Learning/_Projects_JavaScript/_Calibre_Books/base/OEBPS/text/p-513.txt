@@ -1,0 +1,44 @@
+           494                    Algorithms: A Top-Down Approach
+            Figure 15.10  Implementation of ModMult, speciﬁed in Figure 15.3, using two
+            negative wrapped convolutions
+                ModMultSS(u,v,k)
+                  if k<8
+                     return ToRing(MultiplyAdHoc(u,v),k)
+                  else
+                     if (lgk)mod2=0
+                       b ←√k; l ←√k
+                     else  √
+                       b ← 2k; l ←   k/2
+                     uarray ← new Array[0..b−1]; varray ← new Array[0..b−1]
+                     uarray ←new Array[0..b−1]; varray ← new Array[0..b−1]
+                     for j ← 0 to b−1
+                       uarray[j] ← new BigNum(u.GetBits(jl,l))
+                       varray[j] ← new BigNum(v.GetBits(jl,l))
+                       uarray [j] ← new BigNum(u.GetBits(jl,lgb+1))
+                       varray [j] ← new BigNum(v.GetBits(jl,lgb+1))
+                     conv ←NegConv(uarray,varray,2l)
+                     conv ←NegConvSS(uarray ,varray ,lgb+1)
+                     return EvalSS(conv,conv ,k,l)
+                Precondition: p[0..n−1]andq[0..n−1]arearraysof BigNumseachhaving
+                at most k bits, and k and n are Nats such that n is a power of 2.
+                Postcondition: Returns a BigNum representing the negative wrapped
+                convolution of p and q over the ring              k
+                                                m,+, , where m =2.
+                NegConvSS(p[0..n−1],q[0..n−1],k)
+                                                                            2l
+                Precondition: u[0..n − 1] is an array of BigNums no larger than 2 ,
+                v[0..n − 1] is an array of BigNums less than 2n, and n, k, and l are Nats
+                containing powers of 2.
+                Postcondition: Returns a BigNum representing
+                                    ⎛n−1    jl⎞      k
+                                    ⎝j=0wj2 ⎠mod(2 +1),
+                              2l                                  2l
+                where wj mod (2 +1)=u[j], wj mod 2n = v[j], and −n(2 +1)≤ wj <
+                   2l
+                n(2 +1).
+                EvalSS(u[0..n−1],v[0..n−1],k,l)
+           we can determine whether the value guaranteed by Theorem 15.9 is wj or
+                    2l
+           w +2b(2 +1).
+            j
+              In order to prove Theorem 15.9, we need the following lemma.

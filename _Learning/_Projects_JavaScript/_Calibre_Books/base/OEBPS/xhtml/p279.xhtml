@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 279</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-279.jpg" alt="Page 279" width="1282" height="1882"/>
+      <div class="ocr">           260                     Algorithms: A Top-Down Approach
+               One reason this technique is popular is that it can be computed quickly.
+           Note that
+                                  l               l−1
+                                 krl−i=k +krl−i
+                                      i       l       i
+                                 i=1              i=1
+                                                   l−1
+                                           =k +rkrl−1−i.
+                                              l         i
+                                                   i=1
+           This gives us a top-down solution that can be applied bottom-up in the same
+           way as we applied the division method directly to large keys. Speciﬁcally,
+           we start with k and repeatedly multiply by r and add the next k .This
+                           1                                                  i
+           procedure requires one multiplication and one addition for each component
+           of the key. Furthermore, all computation can be done with single-word
+           arithmetic.
+               In order for this method to work well, r must be chosen properly. We ﬁrst
+                                                      i        w
+           note that 256 is a poor choice, because 256   mod 2 =0foralli ≥ w/8;
+           thus only the ﬁrst w/8 components of the key are used in computing the hash
+                                                                      j i      w
+           value. More generally, r should never be even, because (c2 ) mod 2    =0
+           for j&gt;0andi ≥ w/j. Furthermore, not all odd values work well. For
+           example, r =1yieldsri =1foralli, so that the result is simply the
+                                          w
+           sum of the components, mod 2 . This has the disadvantage of causing all
+           permutations of a key to collide.
+                                            i      w
+               More generally, if r is odd, r mod 2  will repeat its values in a cyclic
+           fashion. In other words, for every odd r there is a natural number n such
+                 n+i       w    i
+           that r    mod2 =r forall i ∈ N. Fortunately, there are only a few values
+           of r (like 1) that have short cycles. In order to avoid these short cycles, we
+           would like to choose r so that this cycle length is as large as possible. It is
+           beyond the scope of this book to explain why, but it turns out that this cycle
+           length is maximized whenever r mod 8 is either 3 or 5.
+               We can run into other problems if r is small and the component size
+           is smaller than w. Suppose, for example that r =3,w = 32, and each
+           component is one byte. For any key containing fewer than 15 components,
+                                                        31
+           the polynomial-hash value will be less than 2 . We have therefore reduced
+           the range of possible results by more than half — much more for shorter
+           keys. As a result, more collisions than necessary are introduced. A similar
+                                                   w
+           phenomenon occurs if r is very close to 2 .
+               If we avoid these problems, polynomial hashing usually works well as
+           a compression map. To summarize, we should choose r so that r mod 8 is
+                                                           w
+           either 3 or 5, and not too close to either 0 or 2 . This last condition can
+</div>
+    </div>
+  </body>
+</html>

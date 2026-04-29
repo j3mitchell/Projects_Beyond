@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 303</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-303.jpg" alt="Page 303" width="1282" height="1882"/>
+      <div class="ocr">           284                     Algorithms: A Top-Down Approach
+            Figure 7.13   The PerfectHash.Get operation
+               Deterministic hashing yields data accesses that, in practice, run in
+           amortized time proportional to the length of the key, independent of
+           the number of data items in the set. This compares very well to the
+           structures presented in Chapter 6, which give Θ(lgn) access times, where
+           n is the number of data items in the set. In our analyses in Chapter 6,
+           we did not consider the key length. Our analyses thus implicitly assumed
+           that keys could be compared in constant time. Each of the structures in
+           Chapter 6 require Θ(lgn) comparisons in either the worst, amortized, or
+           expected case, depending on the structure. In the worst case, each of these
+           comparisons requires a time proportional to the length of the key. As a result,
+           the performance of deterministic hashing is usually signiﬁcantly better in
+           practice than those structures given in Chapter 6. The trade-oﬀ is that hash
+           tables do not permit fast access to all of the keys in a predetermined order.
+               Thedivisionmethod,whichcomputesthevalueofthekey mod thetable
+           size, is the most common type of hash function. In order for this method to
+           work well, the table size should be a prime number that is not too close to a
+           power of 2. The division method is often combined with polynomial hashing
+           in order to produce a single-word index, which can then be converted to
+           locations in tables of diﬀerent sizes. Polynomial hashing involves multiplying
+           each component of the key by a radix raised to successively higher powers,
+           retaining only those bits that will ﬁt in a single machine word. The radix r
+           should use 5 to 9 bits, and should be such that r mod 8 is either 3 or 5.
+               Though it works very well in practice, in the worst case, deterministic
+           hashing results in accesses having a running time in Θ(n). We can achieve
+           better theoretical results using universal hashing, in which a hash function is
+           selected at random from a universal family of hash functions. When universal
+           hashing is used, data accesses have an expected amortized running time
+           proportional to the key length.
+               Perfect hashing is an application of universal hashing which produces
+           an ImmutableDictionary. Using the inherent randomization in universal
+</div>
+    </div>
+  </body>
+</html>

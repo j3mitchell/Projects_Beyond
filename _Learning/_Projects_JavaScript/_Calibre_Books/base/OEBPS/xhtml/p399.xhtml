@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 399</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-399.jpg" alt="Page 399" width="1282" height="1882"/>
+      <div class="ocr">           380                      Algorithms: A Top-Down Approach
+           andanedge(w,x), where w is a vertex in T, so that the path from u to x
+           in the resulting tree is a shortest path in G from u to x.
+               For each vertex w in T,letd      give the length of the path from u to
+                                              w
+           w in T. For each edge (x,y)inG,letlen(x,y) give the length of (x,y). Let
+           (w,x)beanedgeinG such that
+           • w is in T;
+           • x is not in T;and
+           • d +len(w,x) is minimized.
+               w
+           Clearly, the path from u to w in T, followed by the edge (w,x) is a shortest
+           path from u to x in G, as there can be no shorter paths from u to any vertex
+           not in T.
+               Building a shortest path tree in this way is very similar to the way
+           Prim’s algorithm builds an MST. While Prim’s algorithm is for undirected
+           graphs, this algorithm — Dijkstra’s algorithm — is for directed graphs. The
+           computation for updating the bestCost array must use d +len(w,x), rather
+                                                                    w
+           than the cost of (w,x) (we assume that len(w,x) will be stored in the data
+           variable for edge (w,x)). Hence, the value d   must be computed and stored
+                                                       w
+           as vertices are added to the tree. The resulting algorithm runs in Θ(n2)time,
+           the same as for Prim’s algorithm; we leave the details as an exercise.
+           11.4    Huﬀman Codes
+           Compression algorithms are often used for data archival or for improving
+           data transmission rates. In this section, we examine one of the key
+           components of data compression. In order to simplify the discussion, we
+           will assume we are dealing with character data, though the techniques apply
+           more generally.
+               In a typical English-language text, some characters like “e” occur much
+           more frequently than other characters like “X” or “π”. It makes sense, then,
+           to use a variable-width encoding when storing text in ﬁles, so that the more
+           frequently occurring characters have shorter codes.
+               For example, consider the popular UTF-8 encoding scheme. In this
+           scheme, each possible character is encoded using a number of bytes deter-
+           mined by expected character frequencies. For example, each of the English
+           characters, the Arabic numerals, and common punctuation and special
+           characters are encoded using one byte. Characters from other languages,
+           such as Greek or Cyrillic characters, require two bytes, whereas most Chinese
+</div>
+    </div>
+  </body>
+</html>

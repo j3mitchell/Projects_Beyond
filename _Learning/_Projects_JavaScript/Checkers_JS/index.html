@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkers_JS</title>
+</head>
+<body>
+    <div id="body">
+        something, anythang
+
+    </div>
+</body>
+
+    <script>
+        let board = [];
+        // assign DOM element to a js variable.
+        let body = document.getElementById('body')
+        // preserves whitespace and line breaks in the text correctly in the DOM
+        body.style.whiteSpace = 'pre'   
+
+        // [Section] =================== [ Functions ] ===================
+        function makePiece (color, number){
+            return {
+                color: color,
+                isKing: false,
+                number: number,
+                id: `${color}${number.toString().padStart(2, "0")}`
+            };
+        }
+
+        // [Section] =================== [ Main Code ] ===================
+        // --------------- new board with objects in each cell
+        for (let r = 0; r <8; r++){
+            // make sure the row exists before adding cols
+            board[r] = [];
+            for (let c = 0; c < 8; c++){
+                let square = {
+                    row: r,
+                    col: c,
+                    // [concept] ternary operator: condition ? valueIfTrue : valueIfFalse
+                    color: (r+c) % 2 ===0 ? 'light' : 'dark',
+                    piece: null,
+                    // [concept] template literals: use backticks and ${} for embedding expressions/ variables
+                    // [concept] String.fromCharCode: converts Unicode values to characters, 97 is 'a', 98 is 'b', etc.  So 97 + (the value of variable c) = the corresponding letter.
+                    id: `${String.fromCharCode(97 + c)}${r + 1}`
+                    //id: `${c + 1}-${r + 1}`
+                }
+                board[r][c] = square;
+            }
+        }
+        // --------------- end
+
+        // [Section] display board in console, then DOM
+        let display = '';
+        
+        // --------------- end
+
+        // [Section] Place pieces on the board (starting positions)
+        /* pseudo code:
+        for each row in the board
+            for each square in the row
+                if square is dark and in top 3 rows = red piece
+                if square is dark and in bot 3 rows = blk piece
+        */
+
+        let n = 0;
+        for (let r = 0; r < board.length; r++){
+            for (let c = 0; c < board[r].length; c++){
+                n++;
+
+                if (board[r][c].color === 'dark' && r < 3){
+                    board[r][c].piece = makePiece('R', n);
+                } 
+                else if (board[r][c].color === 'dark' && r > board.length - 4){
+                    board[r][c].piece = makePiece('B', n);
+                }
+            }
+        }
+        // --------------- end
+
+        // [Section] display board with pieces in console, then DOM
+        for (let r = 0; r < board.length; r++){
+            // => 8 rows as arrays Ex: board[r]
+            let line = '';
+
+            for (let c = 0; c < board[r].length; c++){                // => 8 columns of each board[r2] row array
+                // => access the id property of each column
+                if (board[r][c].piece === null){
+                    line += '[ ----- ]';
+                } 
+                else {
+                line += `[ ${board[r][c].piece.id} ]`;
+                }
+            }
+            // creates the final board display as a str.
+            display += line + '\n';
+        }        
+        // --------------- end
+
+        // [Section] selecting a piece to move
+        let selectedSq = { row: null, col: null };
+        
+
+        // --------------- end
+
+        // [Section] Final Output
+
+        console.log(display);
+        body.textContent = display;
+
+        // --------------- end
+
+    </script>
+
+

@@ -1,0 +1,32 @@
+                                       Proving Algorithm Correctness                           27
+            complicates matters only slightly — we must simply apply case analysis.
+            However, the addition of recursion and/or loops requires some additional
+            machinery, which we will develop over the remainder of this chapter.
+            2.2    Handling Recursion
+            Let us now consider InsertSort from Figure 1.3 on page 7. To handle the
+            if statement, we can consider two cases, depending on whether n>1. In
+            case n>1, however, there is a recursive call to InsertSort.Asissuggested
+            in Section 1.2, we might simply use the speciﬁcation of Sort just like we
+            would for a call to any other algorithm. However, this type of reasoning is
+            logically suspect — we are assuming the correctness of InsertSort in order
+            to prove the correctness of InsertSort.
+                 In order to break this circularity, we use the principle of mathematical
+            induction. We will be using this principle throughout this text, so we will now
+            take the time to present and prove it. The version we present is a technique
+            for proving properties of the natural numbers. The property that we wish
+            to prove in this case is that InsertSort(A[1..n]) satisﬁes its speciﬁcation
+            for every natural number n. Let us now formally deﬁne what we mean by
+            a property of the natural numbers, so that our statement of the induction
+            principle will be clear.
+            Deﬁnition 2.2. A property of the natural numbers is a mapping
+                                           P : N →{true,false};
+            i.e., for a natural number n, P(n)iseithertrue or false.
+            Theorem 2.3 (Mathematical Induction Principle). Let P(n) be a
+            property of the natural numbers. Suppose that every natural number n
+            satisﬁes the following Induction Property:
+             • whenever P(i) is true for every natural number i<n,P(n) is also true.
+            Then P(n) is true for every natural number n.
+                 Before we prove this theorem, let us consider how we can use it. Suppose
+            we wish to prove a property P(n) for every natural number n. Theorem 2.3
+            tells us that it is suﬃcient to prove the Induction Property. We can break
+            this proof into two parts:

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 592</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-592.jpg" alt="Page 592" width="1282" height="1882"/>
+      <div class="ocr">                                    Approximation Algorithms                        573
+            Figure 17.6   Approximation algorithm for maximum cut
+               Precondition: G is a Graph representing a complete undirected graph
+               with positive Nat edge weights, and k is a Nat such that 2 ≤ k&lt;n, where
+               n is the number of vertices in G.
+               Postcondition: Returns an array cut[0..n − 1] such that for 0 ≤ i&lt;n,
+               1 ≤ cut[i] ≤ k.IfW is the sum of the weights of the edges in G, then the
+               weight of the cut described by cut[0..n − 1] is at least W(k − 1)/k.
+               MaxCut(G,k)
+                  n←G.Size(); cut ← new Array[0..n−1]
+                  clusterInc ← new Array[1..k]
+                  for i ← 0 to n−1
+                     for j ← 1 to k
+                       clusterInc[j] ← 0
+                     for j ← 0 to i−1
+                       clusterInc[cut[j]] ← clusterInc[cut[j]] + G.Get(i,j)
+                     m←1
+                     for j ← 2 to k
+                       if clusterInc[j] &lt; clusterInc[m]
+                          m←j
+                     cut[i] ← m
+                  return cut[0..n−1]
+           Proof.    For a given vertex i,letWi denote the sum of the weights of all
+           edges {i,j} such that 0 ≤ j&lt;i. At the end of iteration i, the value of the
+           cut increases by Wi − clusterInc[m], where clusterInc[m] is the sum of the
+           weights of the edges from i to other vertices in partition m. m is chosen so
+           that clusterInc[m] is minimized; hence, for each partition other than m,the
+           sumoftheweightsoftheedgesfromi to vertices in that partition is at least
+           clusterInc[m]. We therefore have
+                                      clusterInc[m] ≤ Wi/k.
+               The value of the cut therefore increases by at least Wi(k − 1)/k on
+           iteration i. Because the value of the cut is initially 0, the ﬁnal value of the
+           cutisatleast
+                                  n−1                    n−1
+                                  Wi(k−1) = k−1Wi
+                                  i=0     k           k   i=0
+                                                 = k−1W,
+                                                      k
+</div>
+    </div>
+  </body>
+</html>

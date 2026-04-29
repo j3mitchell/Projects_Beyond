@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 419</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-419.jpg" alt="Page 419" width="1282" height="1882"/>
+      <div class="ocr">          400                 Algorithms: A Top-Down Approach
+          12.5  Summary
+          Dynamic programming algorithms provide more power for solving optimiza-
+          tion problems than do greedy algorithms. Eﬃcient dynamic programming
+          algorithms can be found when the following conditions apply:
+          • The principle of optimality can be applied to decompose the problem into
+            subinstances of the same problem.
+          • There is signiﬁcant overlap between the subinstances.
+          • Thetotal numberof subinstances, including those obtained by recursively
+            decomposing subinstances, is relatively small.
+             Although dynamicprogrammingalgorithms proceed bottom-up,the ﬁrst
+          step in formulating a dynamic programming algorithm is to formulate a top-
+          downsolution. This top-down solution usually takes the form of a recurrence
+          for computing the optimal value of the objective function. The top-down
+          solution is then implemented bottom-up, storing all of the solutions to the
+          subproblems. In some cases, we optimize the space usage by discarding some
+          of these solutions.
+             Because dynamic programming algorithms typically solve subinstances
+          that are not used in the optimal solution, they tend to be less eﬃcient than
+          greedy algorithms. Hence, greedy algorithms are preferred when they exist.
+          However, for many problems, there are no greedy algorithms that guarantee
+          optimal solutions. In such cases, dynamic programming algorithms may be
+          the most eﬃcient.
+             Although the examples in this chapter have all been optimization
+          problems, it is not hard to see that dynamic programming can be applied
+          to other problems as well. Any computation that can be expressed as a
+          recurrence can be computed bottom-up, yielding a dynamic programming
+          solution. We explore some examples in the exercises.
+          12.6  Exercises
+          Exercise 12.1. Prove by induction on n + k that C(n,k), as deﬁned in
+          recurrence (12.1), gives the minimum number of coins needed to give a value
+          of exactly n if the denominations are d &lt;d &lt; ···&lt;d and d =1.
+                                           1    2        k     1
+          Exercise 12.2. Prove that Change, shown in Figure 12.1, meets its
+          speciﬁcation. You do not need to focus on the ﬁrst half of the algorithm;
+          i.e., you can assume that C(i,j), as deﬁned in recurrence (12.1), is assigned
+          to C[i,j]. Furthermore, you may use the result of Exercise 12.1 in your proof.
+</div>
+    </div>
+  </body>
+</html>

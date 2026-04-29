@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 368</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-368.jpg" alt="Page 368" width="1282" height="1882"/>
+      <div class="ocr">                                       Divide and Conquer                          349
+            Figure 10.6   Multiplication and division functions for use with the BigNum ADT
+            deﬁned in Figure 4.18 on page 146
+           functions for operating on BigNums. We leave it as an exercise to show that
+           the polynomial multiplication algorithm of Section 10.1 can be adapted to
+           form a BigNum multiplication algorithm that runs in Θ(nlg3) time, where
+           n is the number of bits in the product. In this section and the next, we
+           consider implementations of Divide.
+               Let us ﬁrst consider the familiar long division     Digits (or bits) are signiﬁ-
+           algorithm from elementary school. Suppose the divi-     cant if they are not to the
+           denduhasmdigitsandthedivisorv hasndigits.We             left of the leftmost nonzero
+                                                                   digit (or bit, respectively).
+           begin by ﬁnding the smallest preﬁx of the signiﬁcant    The most signiﬁcant digit
+                                                                   (or bit) is the leftmost of
+           digits of u that gives us a number no smaller than v.   the signiﬁcant digits (or
+                                                                   bits, respectively).
+           If there is no such preﬁx, the quotient is 0. Otherwise,
+           the next step is to obtain an approximation for the most signiﬁcant digit of
+           the result. Let k be the number of digits in the preﬁx formed above. We
+           obtain the approximation by dividing the k − n + 1 most signiﬁcant digits
+           of u by the most signiﬁcant digit of v. (Note that because k will always
+           be either n or n +1,k − n + 1 will be either 1 or 2.) This quotient is our
+           approximation of the ﬁrst signiﬁcant digit of the result.
+               Because we only used one digit of v in approximating the ﬁrst signiﬁcant
+           digit of the result, this approximation may be too large. We determine
+           whether this is the case by multiplying this approximation by v,then
+           comparing the product with the preﬁx of u. If the product is larger, we
+           repeatedly subtract 1 from the approximation and recompute the product
+           until the product is no larger than the preﬁx of u. The resulting digit is the
+           ﬁrst signiﬁcant digit of the result.
+               Having obtained the ﬁrst signiﬁcant digit of the result, we need to
+           obtain the rest of the result. We begin by subtracting the last product
+</div>
+    </div>
+  </body>
+</html>

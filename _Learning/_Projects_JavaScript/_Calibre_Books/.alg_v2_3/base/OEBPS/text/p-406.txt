@@ -1,0 +1,40 @@
+                                     Optimization I: Greedy Algorithms                         387
+             the proposed route. We wish to plan the trip so as to make as few stops for
+             gasoline as possible. Design a greedy algorithm that gives an optimal set of
+             stops when given d andanarraydist[1..n] such that dist[i] gives the distance
+             from the starting point to the ith gas station. Your algorithm should operate
+             in O(n)time.
+             * Exercise 11.14. The fractional knapsack problem is as follows. We are
+             given a set of n items, each having a positive weight wi ∈ N and a positive
+             value vi ∈ N. We are also given a weight bound W ∈ N. We wish to carry
+             some of these items in a knapsack without exceeding the weight bound. Our
+             goal is to maximize the total value of the items we carry. Furthermore, the
+             items are such that we can take a fraction of the item if we wish. Thus, we
+             wish to maximize
+                                                    n
+                                                   aivi,
+                                                   i=1
+             for rational a ,...,a such that for 1 ≤ i ≤ n,0≤ a ≤ 1, and subject to
+                            1       n                                     i
+             the constraint that
+                                                 n
+                                                aw ≤W.
+                                                     i  i
+                                                i=1
+            a. Give a greedy algorithm to ﬁnd an optimal packing, and prove that your
+                algorithm is correct. Your algorithm should run in O(nlgn)time.
+            b. Show using a speciﬁc example that this greedy algorithm does not always
+                give an optimal solution if we require that each ai be either 0 or 1.
+             c. Using techniques from Chapter 10, improve the running time of your
+                algorithm to O(n).
+             11.7    Notes
+             Greedy algorithms were ﬁrst identiﬁed in 1971 by Edmonds [36], though
+             they actually existed long before then. The theory that underlies greedy
+             algorithms — matroid theory — was developed by Whitney [120] in the
+             1930s. See, e.g., Lawler [89] or Papadimitriou and Steiglitz [96] for more
+             information on greedy algorithms and matroid theory.
+                 The ﬁrst MST algorithm was given by Boru˙vka [15] in 1926. What is
+             now known as Prim’s algorithm was ﬁrst discovered by Jarn´ık [70], and
+             over 25 years later rediscovered independently by Prim [99] and Dijkstra
+             [27]; the latter paper also includes the single-source shortest paths algorithm
+             outlined in Section 11.3. Kruskal’s algorithm was given by Kruskal [88].

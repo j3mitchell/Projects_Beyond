@@ -1,0 +1,41 @@
+       438           Algorithms: A Top-Down Approach
+       * b. Give an algorithm to identify the biconnected components of a given
+          connected undirected graph G. Speciﬁcally, your algorithm should set
+          the data ﬁeld of each Edge in G to a natural number so that e.data =
+          f.data iﬀ e and f belong to the same biconnected component. Your
+          algorithm should run in O(a) time in the worst case, where a is the
+          number of edges in the graph, assuming the graph is implemented as
+          a ListGraph.
+       * Exercise 13.8. A directed graph is semiconnected if for each pair of
+       vertices i and j, there is either a path from i to j or a path from j to i.Give
+       an algorithm to decide whether a given directed graph G is semiconnected.
+       Your algorithm should return a boolean that is true iﬀ G is semiconnected.
+       Youralgorithm shouldrunin O(n+a)time, wherenisthenumberofvertices
+       and a is the number of edges in G.
+       * Exercise 13.9. An arborescence of a directed graph G =(V,E)isa
+                         
+       subset E ⊆ E such that (V,E ) is a rooted tree with edges directed from
+       parents to children. Give an algorithm to determine whether a given directed
+       graph G contains an arborescence, and if so, returns one. If G contains an
+       arborescence, your algorithm should return an array parent[0..n − 1] such
+       that parent[i] gives the parent of vertex i for all vertices other than the root,
+       and such that parent[i]=−1ifi is the root of the arborescence. If G does
+       not contain an arborescence, your algorithm should return nil. You algorithm
+       should operate in O(n+a) time, where n is the number of vertices and a is
+       the number of edges in G.
+       * Exercise 13.10. Give an algorithm that takes a connected undirected
+       graph G =(V,E) as input and produces as output a strongly connected
+                     
+       directed graph G =(V,E ) such that
+       • if {i,j}∈E,thenexactlyoneof(i,j)and(j,i)isinE;and
+       • if {i,j} ∈ E, then neither (i,j)nor(j,i)isinE.
+            
+       Thus, G is obtained from G by assigning a direction to each edge of G.If
+             
+       no such G exists, your algorithm should return nil. Your algorithm should
+       run in O(a) time, where a is the number of edges in the graph, assuming G
+       is implemented as a ListGraph.
+       * Exercise 13.11. A directed graph is singly connected if for each pair
+       of vertices i and j, there is at most one simple path from i to j.Givean
+       eﬃcient algorithm to determine whether a given directed graph G is singly
+       connected. Your algorithm should return a boolean that is true iﬀ G is singly

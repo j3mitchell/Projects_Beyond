@@ -1,0 +1,33 @@
+           224                     Algorithms: A Top-Down Approach
+           Let us therefore both add and subtract lg|T | to (6.6). Adding in the actual
+                                                       a
+           cost, applying Theorem 5.7, and simplifying, we obtain the following bound
+           on the amortized cost of a zig-zig rotation:
+                          lg|T| +lg|T|+lg|T |−2lg|T |−lg|T |+1
+                              b       c        a         a        b
+                            ≤lg|T|+2lg|T |−2−2lg|T |−lg|T |+1
+                                   b         c             a       b
+                            ≤3lg|T |−3lg|T |−1
+                                    c         a
+                            =3(lg|T |−lg|T |)−1.                                  (6.7)
+                                     c       a
+               Finally, let us analyze the amortized cost of a single rotate. We refer to
+           Figure 6.22 for this analysis. Clearly, the amortized cost is bounded by
+                             lg|T|−lg|T |+1≤lg|T |−lg|T |+1.                     (6.8)
+                                 b        a           b        a
+           Because each operation will do at most two single rotations (recall that a
+           deletion can do a single rotation in both the Find and the FindMin), the
+           “+1” in this bound will not cause problems.
+               We can now analyze the amortized cost of a Find. We ﬁrst combine
+           bounds (6.5), (6.7), and (6.8) into a single recurrence deﬁning a function
+           f(k,t) bounding the amortized cost of Find(k,t). Suppose Find(k,t)makes
+           arecursivecallonasubtrees and performs a double rotation. We can then
+           combine (6.5) and (6.7) to deﬁne:
+                                f(k,t)=3(lg|t|−lg|s|)+f(k,s).
+            Figure 6.22   The subtrees that are modiﬁed by a single rotation
+                          Tb                                          T
+                                                                        a
+                                  b                            a
+                     Ta                                                    Tb
+                             aC A b
+                        AB                                     BC

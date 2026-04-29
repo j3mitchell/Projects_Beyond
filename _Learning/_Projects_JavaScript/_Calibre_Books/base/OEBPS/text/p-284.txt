@@ -1,0 +1,18 @@
+                                    Storage/Retrieval II: Unordered Keys                        265
+              Figure 7.8    UniversalHash1 implementation of HashFunction
+             i +1throughj at that time. Note that neither of these strategies add any
+             signiﬁcant overhead — they simply delay the generation of the bit strings.
+             We leave the implementation details as an exercise.
+             7.5    Number Theoretic Universal Hash Families
+             In this section, we will use some elementary number theory to obtain
+             universal families whose hash functions resemble those of Section 7.3. The
+             resulting functions may require less overhead than do the functions in H1 .
+                                                                                                l,m
+             We ﬁrst need the following fact from number theory:
+             Theorem 7.3. Let a, b,andm be natural numbers such that 0 <a<m
+             and b<m. Then the equation
+                                                ai mod m = b
+             has a unique solution in the range 0 ≤ i<miﬀ a and m are relatively prime
+             (i.e., 1 is the greatest common divisor of a and m).
+             Proof.     Because we will only need to use this theorem in one direction, we
+             will only prove one implication and leave the other as an exercise.

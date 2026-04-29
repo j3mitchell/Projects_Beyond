@@ -1,0 +1,37 @@
+         174               Algorithms: A Top-Down Approach
+         for i>nis 0. By Theorem 5.5, we therefore have
+                                ∞
+                               
+                       E[lenT]=   P(lenT ≥ i)
+                               i=1
+                                n
+                               1−i
+                             =    2
+                               i=1
+                               n−1
+                             =(1/2)i
+                               i=0
+                               (1/2)n −1
+                             = (1/2)−1       (by (2.2))
+                                   1−n
+                             =2−2 .
+         Thus, E[lenT] < 2.
+            In order to be able to analyze the expected running time of Random-
+         izedHeap.Merge, we need to know E[lenT] for a worst-case binary tree T
+         with n nodes. Examples 5.4 and 5.6 give two extreme cases — a completely
+         balanced tree and a completely unbalanced tree. We might guess that the
+                                                                1−n
+         worst case would be one of these extremes. Because lg(n +1)≥ 2 − 2
+         for all n ∈ N, a good guess would be that lg(n + 1) is an upper bound for
+         the worst case. We can show that this is indeed the case, but we need to
+         use the following theorem relating the sum of logarithms to the logarithm
+         of a sum.
+         Theorem 5.7. If x and y are positive real numbers, then
+                           lgx+lgy ≤2lg(x+y)−2.
+         Proof. We ﬁrst note that lgx+lgy =lgxy. We will therefore show that
+         the right-hand side of the inequality is at least lgxy. Using the fact that
+         lg4 = 2, we have
+                                            2
+                       2lg(x+y)−2=lg((x+y) )−lg4
+                                      x2+2xy+y2
+                                  =lg       4       .

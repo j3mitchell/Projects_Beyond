@@ -1,0 +1,36 @@
+                                      Storage/Retrieval I: Ordered Keys                          225
+             For the base of the recurrence, suppose that either no rotation or a single
+             rotate is done. Using (6.8), we can deﬁne
+                                        f(k,t)=3(lg|t|−lg|s|)+1,
+             where s is the child rotated upward or t if no rotation is done.
+                 It is easily seen that the above recurrence telescopes; i.e., when the value
+             for f(k,s) is substituted into the value for f(k,t), the lg|s| terms cancel.
+             The entire recurrence therefore simpliﬁes to
+                                        f(k,t)=3(lg|t|−lg|s|)+1
+             wheresisthesubtreewhoserootisrotated to the root of t. Clearly, f(k,t) ∈
+             O(lgn), where n is the number of nodes in t. The amortized cost of Find,
+             and hence of Get, is therefore in O(lgn).
+                 The analysis of Put is identical to the analysis of Find,exceptthatwe
+             must also account for the change in Φ when the new node is added to the
+             tree. When the new node is added, prior to any subsequent rotations, it is a
+             leaf. Let s denote the empty subtree into which the new leaf is inserted. The
+             insertion causes each of the ancestors of s, including s itself, to increase in
+             size by 1. Let t be one of these ancestors other than the root, and let t be the
+             same subtree after the new node is inserted. Note that t has no more nodes
+             than does the parent of t. If we think of the insertion as replacing the parent
+             of t by t, then this replacement causes no increase in Φ. The only node for
+             which this argument does not apply is the root. Therefore, the increase in Φ
+             is no more than lg(n +1),wheren is the number of nodes in the tree prior
+             to the insertion. The entire amortized cost of Put is therefore in O(lgn).
+                 Finally, let us consider the Remove operation. The Find has an
+             amortized cost in O(lgn). Furthermore, the amortized analysis of Find also
+             applies to FindMin,sothatitisalsoinO(lgn). Finally, it is easily seen
+             that the actual removal of the node does not increase Φ. The amortized cost
+             of Remove is therefore in O(lgn) as well.
+                 As we observed for skew heaps (see Section 5.4), amortized analysis is
+             inappropriate for analyzing stack space usage. We leave it as an exercise to
+             show that the worst-case stack space usage for Put is in Θ(n). To avoid this
+             large stack space usage, the algorithms can be reformulated to use iteration
+             with an explicit stack, rather than using the runtime stack for recursive calls.
+             As a result, the total space usage is still in Θ(n), but the stack space usage
+             is in Θ(1). We leave the details as an exercise.

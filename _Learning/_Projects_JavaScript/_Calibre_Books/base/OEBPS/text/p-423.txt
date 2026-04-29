@@ -1,0 +1,38 @@
+           404                     Algorithms: A Top-Down Approach
+            Figure 12.5   An example illustrating Exercise 12.15
+                         4
+                          3
+                               Processor 1: Weight = 8
+                         2
+                          2
+                         3                              B=20
+                                                        Communication cost = 2
+                          5
+                         8     Processor 2: Weight = 17
+                          6
+                         4
+           * Exercise 12.15. A chain is a rooted tree with exactly one leaf. We are
+           given a chain representing a sequence of n pipelined processes. Each node i
+           in the chain represents a process and has a positive execution time e ∈ N.
+                                                                                 i
+           Each edge (i,j) has a positive communication cost c     ∈ N. For edge (i,j),
+                                                                ij
+           if processes i and j are executed on separate processors, the time needed to
+           send data from process i to process j is c ; if the processes are executed on
+                                                    ij
+           the same processor, this time is 0. We wish to assign processes to processors
+           such that each processor has total weight no more than a given value B ∈ N.
+           The weight of a processor is given by the sum of the execution times of the
+           processes assigned to that processor, plus the sum of the communication
+           costs of edges between tasks on that processor and tasks on other processors
+           (see Figure 12.5). The communication cost of an assignment is the sum of
+           the communication costs of edges that connect nodes assigned to diﬀerent
+           processors.
+               Give a dynamic programming algorithm that ﬁnds the minimum com-
+           munication cost of any assignment of processes to processors such that each
+           processor has weight no more than B.Notethatweplacenorestrictionon
+           the number of processors used. Your algorithm should run in O(n2)time.
+           Prove that your algorithm is correct.
+           Exercise 12.16. Given two strings x and y, we deﬁne the edit distance from
+           x to y as the minimum number of operations required to transform x into y,
+           where the operations are chosen from the following:

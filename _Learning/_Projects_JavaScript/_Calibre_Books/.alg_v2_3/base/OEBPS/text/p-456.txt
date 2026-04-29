@@ -1,0 +1,38 @@
+                                  Depth-First Search                    437
+             The implementation of a reduction to depth-ﬁrst search consists mainly
+          of deﬁning an implementation of the Searcher ADT. This data structure
+          deﬁnes what processing will occur at the various stages of the traversal of
+          the depth-ﬁrst spanning tree. Proofs of correctness can then focus on the
+          traversal, utilizing induction as necessary.
+          13.8  Exercises
+          Exercise 13.1. Analyze the worst-case running time of the algorithm Pre-
+          PostTraverse,shown in Figure 13.2, assuming the tree T is implemented
+          as a MatrixGraph.
+          Exercise 13.2. ProvethatDfsTopSort,showninFigures13.12and13.13,
+          meets its speciﬁcation.
+          Exercise 13.3. Show that StronglyConnComp,shown in Figures 13.14–
+          13.16, runs in Θ(n+a) time, where n is the number of vertices and a is the
+          number of edges in the given graph, assuming the graph is implemented as
+          a ListGraph.
+          Exercise 13.4. Prove that StronglyConnComp,showninFigures13.14–
+          13.16, meets its speciﬁcation.
+          Exercise 13.5. Give an algorithm that decides whether a given directed
+          graph G contains a cycle. Your algorithm should return a boolean value
+          that is true iﬀ G has a cycle. Assuming G is implemented as a ListGraph,
+          your algorithm should run in O(n+a) time, where n is the number of vertices
+          and a is the number of edges in G.
+          Exercise 13.6. A bridge in a connected undirected graph is an edge whose
+          removal disconnects the graph. Give an algorithm that returns a ConsList
+          containing all bridges of a given connected undirected graph. Your algorithm
+          should run in O(a)timeintheworstcase,wherea is the number of edges
+          in the graph, assuming the graph is implemented as a ListGraph.
+          Exercise 13.7. A connected undirected graph is said to be biconnected if
+          it is impossible to disconnect the graph by removing a single vertex; i.e., it
+          is biconnected iﬀ it has no articulation points. A biconnected component of
+                                                                        
+          a connected undirected graph G is a maximal biconnected subgraph G of
+          G(by“maximal”, we mean that there is no biconnected subgraph of G that
+                        
+          contains all of G plus other vertices and/or edges).
+            a. Prove that each edge in a connected undirected graph G belongs to
+               exactly one biconnected component of G.

@@ -1,0 +1,16 @@
+           334                     Algorithms: A Top-Down Approach
+           computing the products p0(x)q0(x)andp1(x)q1(x), then subtracting. Thus,
+           we can compute the product pq using the following three products:
+                             P (x)=p (x)q (x),
+                               1       0    0
+                             P (x)=(p (x)+p (x))(q (x)+q (x)),
+                               2        0       1      0       1
+                             P (x)=p (x)q (x)
+                               3       1    1
+           We can then compute any given coeﬃcient of pq with at most two
+           subtractions and one addition.
+               The algorithm is shown in Figure 10.1. This implementation uses the
+           CopyfunctionspeciﬁedinFigure1.18 on page 22. Note that when we divide
+           the polynomials, the low-order parts will be of degree m − 1, and the high-
+           order parts will be of degree n−m−1. We cannot select m so that these two
+            Figure 10.1   Divide-and-conquer polynomial multiplication algorithm

@@ -1,0 +1,17 @@
+           24                      Algorithms: A Top-Down Approach
+            Figure 1.21   Speciﬁcation for AllSubsets
+                  is appropriate. You do not need to provide algorithms for Copy,
+                  AppendToAll,orSizeOf.
+           1.9   Notes
+           The elements of top-down software design were introduced by Dijkstra [28]
+           and Wirth [122] in the late 1960s and early 1970s. As software systems
+           grew, however, these notions were found to be insuﬃcient to cope with the
+           sheer size of large projects. As a result, they were eventually superseded by
+           object-oriented design and programming. The study of algorithms, however,
+           does not focus on large software systems, but on small components. Conse-
+           quently, a top-down approach provides an ideal framework for designing and
+           understanding algorithms.
+               The maximum subsequence sum problem, as well as the algorithms
+           MaxSumIter,MaxSumOpt,andMaxSumBU,wasintroducedbyBentley
+           [12]. The sorting algorithm suggested by Exercise 1.6 is selection sort.
+               Java is a registered trademark of Oracle and/or its aﬃliates.

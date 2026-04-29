@@ -1,0 +1,33 @@
+                                     * The Fast Fourier Transform                       475
+            Wenowapply the following trigonometric identities:
+                                       cos2x−sin2x =cos2x
+            and
+                                        2(cosxsinx)=sin2x.
+            We therefore have
+                         cos 2π +isin 2πn/2 = cos 4π +isin 4πn/4
+                               n         n                n          n
+                                                                        n/2
+                                                          2π          2π    2
+                                                 = cosn/2 +isinn/2
+                                                 =−1
+            by the Induction Hypothesis.                                                  
+                Before we give the algorithm for computing a convolution, let us consider
+            a slight generalization of the problem. We have deﬁned a convolution to be
+            a vector whose size is the sum of the sizes of two given vectors. In order to
+            apply Fft, we must pad the two input vectors with enough zeros so that
+            each has a size n,wheren is a power of 2 and is at least as large as the size
+            of the convolution. It would be somewhat easier to do this if we required the
+            input vectors to be padded with enough zeros so that they were both the
+            size of the convolution.
+                                                                                  −1
+                Let us therefore consider the value of the vector (pA · qA)A          when
+            p and q are arbitrary 1 × n vectors over C and A is the DFT matrix with
+            respect to ω.Thejth component of the vector pA is given by
+                                        n−1          n−1
+                                        pA =pωij.
+                                              i ij        i
+                                         i=0         i=0
+            The jth component of the component-wise product (pA·qA) is therefore
+                              n−1       n−1          n−1n−1
+                              piωijqkωkj =piqkω(i+k)j.
+                               i=0      k=0          i=0 k=0

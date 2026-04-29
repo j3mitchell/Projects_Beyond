@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 293</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-293.jpg" alt="Page 293" width="1282" height="1882"/>
+      <div class="ocr">                  274                                     Algorithms: A Top-Down Approach
+                  Thus, −f(m) — and hence the numerator of the second term in the right-
+                  hand side of (7.5) — is never more than p2/8. Furthermore, this value is
+                  achieved (assuming for the moment that m varies over the real numbers)
+                  when
+                                                                                    3p
+                                                                                    √
+                                                                                   2 2
+                                                                         m= √2
+                                                                              = 3p.
+                                                                                   4
+                        Weconclude that the right-hand side of (7.5) is bounded above by
+                                                                           p2/8
+                                                                    1+ p2 =9/8.
+                  We therefore have the following theorem.
+                  Theorem 7.8. For any prime number p and positive integers l and m such
+                  that 1 &lt;m&lt;p, H4                        is 9/8-universal.
+                                                 p,l,m
+                        The upper bound of 9/8 can be reached when m =3p/4; however, in
+                  order for this equality to be satisﬁed, p must be a multiple of 4, and hence
+                  cannot be prime. We can, however, come arbitrarily close to this bound by
+                  using a suﬃciently large prime number p and setting m to either 3p/4 or
+                  3p/4. Practically speaking, though, such values for m are much too large.
+                  In practice, m would be much smaller than p, and as a result, the actual
+                  probability of a collision would be much closer to 1/m.
+                        By choosing p to be of an appropriate size, we can choose a single h of
+                  the form
+                                                                   	 l                      
+
+                                                       h(k)= aak +b modp,
+                                                                                 i  i
+                                                                         i=1
+                  and change m as we need to rehash. For example, if the maximum array
+                                                                   31
+                  size on a given platform is 2                        −1, which by happy coincidence is prime,
+                  we can set p to this value. We can then break the keys into 2- or 3-byte
+                  components and randomly select a,b,anda ,...,a. We can select any value
+                                                                                          1           l
+                                  31
+                  of m&lt;2 −1 as our table size, but a power of 2 works particularly well,
+                  because h(k)modm is just the low-order lgm bits of h(k). As we compute
+                  the hash value h(k)modm for each key k,wesavethevalueh(k). Note that
+                  this value can be computed using 64-bit arithmetic and stored as a 32-bit
+                  (signed or unsigned) integer. If we need to rehash, we double the size of the
+</div>
+    </div>
+  </body>
+</html>

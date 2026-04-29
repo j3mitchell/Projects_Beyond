@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 455</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-455.jpg" alt="Page 455" width="1282" height="1882"/>
+      <div class="ocr">           436                     Algorithms: A Top-Down Approach
+            Figure 13.15   SccSearcher implementation of Searcher
+            SccSearcher(n)
+               components ← new Array[0..n−1]; count ← 0
+            SccSearcher.PreProc(i)
+               components[i] ← count
+            SccSearcher.NextComp()
+               count ← count+1
+            Figure 13.16  Analgorithm for ﬁnding strongly connected components in a directed
+            graph
+              Precondition: G refers to a directed Graph.
+              Postcondition: Returns an array C[0..n − 1], where n is the number of
+              vertices in G, such that C[i]=C[j]iﬀi and j belong to the same strongly
+              connected component.
+              StronglyConnComp(G)
+                n←G.Size(); rs ← new RevSearcher(n)
+                DfsAll(G,rs)
+                order ← rs.Order(); G ← new ListGraph(rs.Reverse())
+                ss ← new SccSearcher(n); sel ← new Selector(n)
+                for i ← 0 to n−1
+                   if sel.IsSelected(order[i])
+                      Dfs(G,order[i],sel,ss); ss.NextComp()
+                return ss.Components()
+           in Θ(n+a) time, where n is the number of vertices and a is the number of
+           edges.
+           13.7   Summary
+           Manygraphproblemscanbereducedtodepth-ﬁrstsearch.Inperformingthe
+           reduction, we focus on a depth-ﬁrst spanning tree or a depth-ﬁrst spanning
+           forest. Because a rooted tree is more amenable to the top-down approach
+           than is a graph, algorithmic design is made easier. Furthermore, depth-ﬁrst
+           spanning trees have structural properties that are often useful in designing
+           graph algorithms.
+</div>
+    </div>
+  </body>
+</html>

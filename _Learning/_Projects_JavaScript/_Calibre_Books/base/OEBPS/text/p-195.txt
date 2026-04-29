@@ -1,0 +1,39 @@
+          176                  Algorithms: A Top-Down Approach
+             Because the two sums in (5.1) are similar, we will simplify just the ﬁrst
+          one. Thus,
+                             P(e)    1 ⎛                           ⎞
+                                       ⎝                              ⎠
+                   (lenL(e)+1) 2   = 2         lenL(e)P(e)+       P(e)
+             e∈PathL                     e∈PathL            e∈PathL
+                                      1 ⎛                   ⎞
+                                       ⎝                     ⎠
+                                   = 2         lenL(e)P(e)+1 ,
+                                         e∈PathL
+          because in PathL, the sum of the probabilities is 1. We now observe that
+                                lenL(e)P(e)=E[lenL].
+                             e∈PathL
+          Applying a similar simpliﬁcation to the second sum in 5.1, we have
+                           E[lenT]=1+(E[lenL]+E[lenR])/2.
+             Suppose L has size i.ThenR has size n−i−1. Because 0 ≤ i<n,the
+          Induction Hypothesis applies to both L and R.Thus,
+                 E[lenT] ≤ 1+(lg(i+1)+lg(n−i))/2
+                        ≤1+(2lg(n+1)−2)/2(byTheorem5.7)
+                        =lg(n+1).                                         
+             Thefact that the expected length of a randomly chosen path in a binary
+          tree of size n is never more than lg(n+1) gives us reason to believe that the
+          expected runningtime of RandomizedHeap.MergeisinO(lgn).However,
+          Merge operates on two binary trees. We therefore need a bound on the
+          expected sum of the lengths of two randomly chosen paths, one from each of
+          two binary trees. Hence, we will combine two probability spaces PathS and
+          PathT to form a new discrete probability space PathsS,T. The elementary
+          events of this space will be pairs consisting of an elementary event from
+          PathS and an elementary event from PathT.
+             Weneed to assign probabilities to the elementary events in PathsS,T.In
+          so doing, we need to reﬂect the fact that the lengths of any two paths from
+          S and T are independent of each other; i.e., knowing the length of one path
+          tells us nothing about the length of the other path. Let e and e be events
+                                                           1      2
+          over a discrete probability space S.Wesaythate and e are independent
+                                                      1     2
+          if P(e ∩e )=P(e )P(e ).
+               1   2      1    2

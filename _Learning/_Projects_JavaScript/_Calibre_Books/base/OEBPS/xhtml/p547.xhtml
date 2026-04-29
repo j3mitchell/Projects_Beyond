@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 547</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-547.jpg" alt="Page 547" width="1282" height="1882"/>
+      <div class="ocr">        528              Algorithms: A Top-Down Approach
+        It follows that S is a matching iﬀ the sum of its corresponding weights is
+                                3m−1
+                                        i
+                            M=      (n+1),
+                                 i=0
+        whichinradixn+1 is simply 3m 1s.
+           In order to complete the construction, we need two more weights. Let
+        C denote the sum of the n weights constructed so far. We construct the
+        following two weights:
+                              A=2C−M
+        and
+                               B=C+M.
+           Thus, the sum of all n +2weightsis4C. Because A + B =3C&gt;2C,
+        Aand B cannot belong to the same subset in a partition. Furthermore, the
+        subset containing A must also contain items corresponding to elements of W
+        having total weight M. Because these elements must form a matching, the
+        weights we have constructed contain a partition iﬀ W contains a matching.
+           To see that the time needed to construct the instance of Part is
+        polynomial in the size of the instance of 3DM,weﬁrstobservethat
+                                 3m−1
+                                         i
+                           2C ≤2    n(n+1)
+                                 i=0
+                                     3m
+                              &lt;2(n+1) .
+        Therefore, each weight constructed has a binary encoding with no more than
+        1+3mlg(n+1) bits. Because addition, subtraction, multiplication, and
+        exponentiation can all be performed in a time polynomial in the number
+        of bits in their operands (see Exercise 4.14, Section 10.1, Exercise 10.25,
+        and Sections 15.3–15.4), the construction can clearly be performed in time
+        polynomial in the size of the instance of 3DM. We therefore have the
+        following theorem.
+        Theorem 16.15. Part is NP-hard.
+        Note that in the above construction, the weights can become extremely large,
+        though their lengths are all polynomial in the size of the instance of 3DM.
+        It is not too hard to imagine that we might want to solve the partition
+        problemfor a large number of weights — thousands or perhapseven millions.
+        However, when numbers represent physical quantities — including time —
+</div>
+    </div>
+  </body>
+</html>

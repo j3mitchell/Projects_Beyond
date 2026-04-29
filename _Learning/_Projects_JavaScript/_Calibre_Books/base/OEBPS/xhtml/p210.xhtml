@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 210</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-210.jpg" alt="Page 210" width="1282" height="1882"/>
+      <div class="ocr">                                         Priority Queues                            191
+            Figure 5.22   The HasPriority interface
+           Exercise 5.8. Repeat Exercise 5.3 using a skew heap instead of a leftist
+           heap.
+           Exercise 5.9. Prove that SkewHeap, obtained by replacing the Merge
+           function in SimpleHeap (Figure 5.5) with the function shown in Figure 5.9,
+           meets its speciﬁcation.
+           * Exercise 5.10. Another way of specifying a priority queue is to deﬁne
+           an interface HasPriority, as shown in Figure 5.22. Rather than supplying
+           two arguments to the Put operation, we could instead specify that it takes
+           asingleargumentoftypeHasPriority, where the priority of the item is
+           given by its Priority operation. Discuss the potential security problems for
+           this approach. How could these problems be avoided if such a speciﬁcation
+           were adopted?
+           Exercise 5.11. The goal of this exercise is to complete the analysis of the
+           amortized running times of the SkewHeap operations.
+            a. Prove by induction on n that in any binary tree T with n nodes, the
+               number of good nodes on its rightmost path is no more than lg(n +1),
+               where the deﬁnition of a good node is as in Section 5.4.
+            b. Prove that in the SkewHeap.Merge operation (shown in Figure 5.9
+               on page 166) if L is initially a bad node, then it is a good node in the
+               resulting heap.
+            c. Given two skew heaps to be merged, let us deﬁne the potential of each
+               nodeto be 0 if the node is good, or 1 if the node is bad. Using the results
+               from parts (a) and (b) above, prove that the actual cost of the Merge
+               operation, plus the sum of the potentials of the nodes in the resulting
+               heap, minus the sum of potentials of the nodes in the two original heaps,
+               is in O(lgn)wheren is the number of keys in the two heaps together.
+            d. Using the result of part (c), prove that the amortized running times
+               of the SkewHeap operations are in O(lgn), where n is the number of
+               nodes in the heap.
+</div>
+    </div>
+  </body>
+</html>

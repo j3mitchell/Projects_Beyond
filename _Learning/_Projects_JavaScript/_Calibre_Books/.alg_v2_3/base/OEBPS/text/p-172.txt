@@ -1,0 +1,37 @@
+                                     Priority Queues                       153
+          whenever the key examined is greater than or equal to p.Theworstcase
+          therefore occurs whenever we are looking for a key smaller than any key in
+          the set. In the worst case, the number of iterations is therefore given by the
+          following recurrence:
+                                   f(n)=f(n/2)+1
+          for n>1. From Theorem 3.35, f(n) ∈ Θ(lgn). Therefore, Find runs in
+          Θ(lgn)time.
+             Let us now analyze the running time of Put.Letn be the value of
+          size. The ﬁrst statement requires Θ(lgn) time, and based on our analysis
+          in Section 4.3, the Expand function should take O(n)timeintheworst
+          case. Because we can amortize the time for Expand, let us ignore it for now.
+          Clearly, everything else outside the for loop and a single iteration of the
+          loop run in Θ(1) time. Furthermore, in the worst case (which occurs when
+          the new key has a value less than all other keys in the set), the loop iterates
+          n times. Thus, the entire algorithm runs in Θ(n)timeintheworstcase,
+          regardless of whether we count the time for Expand.
+          5.2  Heaps
+          The SortedArrayPriorityQueue has very eﬃcient MaxPriority and
+          RemoveMaxoperations, but a rather slow Put operation. We could speed
+          up the Put operation considerably by dropping our requirement that the
+          array be sorted. In this case, we could simply add an element at the
+          end of the array, expanding it if necessary. This operation is essentially
+          the same as the ExpandableArrayStack.Push operation, which has an
+          amortized running time in Θ(1). However, we would no longer be able to
+          take advantage of the ordering of the array in ﬁnding the maximum priority.
+          As a result, we would need to search the entire array. The running times
+          for the MaxPriority and RemoveMax operations would therefore be in
+          Θ(n) time, where n is the number of elements in the priority queue.
+             In order to facilitate eﬃcient implementations of all three operations,
+          let us try applying the top-down approach to designing an appropriate data
+          structure. Suppose we have a non-empty set of elements. Because we need
+          to be able to ﬁnd and remove the maximum priority quickly, we should
+          keep track of it. When we remove it, we need to be able to locate the new
+          maximumquickly.Wecanthereforeorganizetheremainingelementsintotwo
+          (possibly empty) priority queues. (As we will see, using two priority queues
+          for these remaining elements can yield signiﬁcant performance advantages

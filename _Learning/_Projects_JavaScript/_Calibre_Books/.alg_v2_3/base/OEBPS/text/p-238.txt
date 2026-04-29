@@ -1,0 +1,6 @@
+                                      Storage/Retrieval I: Ordered Keys                          219
+              Figure 6.16     The Find internal function for the SplayDictionary implementation
+              of OrderedDictionary.
+             rotations should improve the overall balance of the tree. The potential
+             function should in some way measure this balance, decreasing as the balance
+             increases. If the tree is very unbalanced, as in Figure 6.9, many of the subtrees

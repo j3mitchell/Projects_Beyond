@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 264</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-264.jpg" alt="Page 264" width="1282" height="1882"/>
+      <div class="ocr">                                      Chapter 7
+             Storage/Retrieval II: Unordered Keys
+          In the last chapter, we considered the problem of storage and retrieval,
+          assuming that we also need to be able to access keys in a predeﬁned
+          order. In this chapter, we drop this assumption; i.e., we will be considering
+          implementations of Dictionary (see Figure 6.2, p. 204) rather than
+          OrderedDictionary. The structures we deﬁned in the last chapter all
+          utilized the ordering on the keys to guide the searches. Hence, it might seem
+          that there is nothing to be gained by neglecting to keep the keys in order.
+          However, we will see that disorder can actually be more beneﬁcial when it
+          comestolocatingkeysquickly.
+          7.1  Arrays with Virtual Initialization
+          A simple implementation of Dictionary is to store all of the elements in
+          an array indexed by keys. Though this approach is simple, it has several
+          diﬃculties. The ﬁrst diﬃculty is in using a key as an array index. For
+          example, if our keys are strings, we must somehow be able to interpret them
+          as natural numbers. Another diﬃculty is that we may have no ﬁxed bound
+          on the size of our keys. In this case, we would not know how large an array
+          to construct. An expandable array would not yield a satisfactory solution
+          because however we determine the size of the array, the next key can be so
+          large that a new array must be constructed. Thus, we would have to expand
+          the array each time a new key is inserted. Such an approach is clearly too
+          expensive.
+             In spite of these diﬃculties, there is still a theoretically interesting
+          approach using keys as array indices, provided we are willing to make
+          some assumptions. First, we assume that each key is a natural number
+                                           245
+</div>
+    </div>
+  </body>
+</html>

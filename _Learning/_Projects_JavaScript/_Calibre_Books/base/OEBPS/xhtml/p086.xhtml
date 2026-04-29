@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 086</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-086.jpg" alt="Page 086" width="1282" height="1882"/>
+      <div class="ocr">                              Analyzing Algorithms                67
+         Deﬁnition 3.20. Let ◦ be a binary operation on functions of the form
+         f : N → R≥0 (for example, ◦ might represent addition or multiplication).
+         Let f be such a function, and let A and B be sets of such functions. We then
+         deﬁne:
+         • f ◦A ={f ◦g | g ∈ A};
+         • A◦f ={g◦f |g ∈A};and
+         • A◦B={g◦h|g∈A,h∈B}.
+         Example 3.21. n2 +Θ(n3) is the set of all functions that can be written
+         n2 +g(n)forsomeg(n) ∈ Θ(n3). This set includes such functions as
+         • n2 +3n3;
+         • (n3+1)/2, which can be written n2+(n3+1−n2) (note that n3+1−n2 ≥ 0
+                                          2               2
+           for all natural numbers n); and
+         • n3 +2n, which can be written n2 +(n3 +2n−n2).
+         Because all functions in this set belong to Θ(n3), n2 +Θ(n3) ⊆ Θ(n3).
+         Example 3.22. O(n2)+O(n3) is the set of functions that can be written
+         f(n)+g(n), where f(n) ∈ O(n2)andg(n) ∈ O(n3). Functions in this set
+         include:
+         • 2n2 +3n3;
+         • 2n,whichcanbewrittenasn+n;and
+         • 2n3,whichcanbewrittenas0+2n3.
+         Because all functions in this set belong to O(n3), O(n2)+O(n3) ⊆ O(n3).
+         Deﬁnition 3.23. Let A be a set of functions of the form f : N → R≥0.We
+         deﬁne
+                                    n
+                                   A(i)
+                                   i=k
+         to be the set of all functions g : N → R≥0 such that
+                                       n
+                                      
+                                g(n)=    f(i)
+                                      i=k
+         for some f ∈ A. We deﬁne products analogously.
+</div>
+    </div>
+  </body>
+</html>

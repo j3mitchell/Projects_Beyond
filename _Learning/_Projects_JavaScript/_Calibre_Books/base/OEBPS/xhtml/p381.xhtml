@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 381</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-381.jpg" alt="Page 381" width="1282" height="1882"/>
+      <div class="ocr">           362                       Algorithms: A Top-Down Approach
+           of bits in the product. For now, we will assume that M(n)isasmooth
+           function in Ω(n), but we will strengthen this assumption as the analysis
+           proceeds. It is easily seen that for k ≥ 3, the number of bits returned by
+           RecipNewtonis k+3. Therefore, for k ≥ 4, the worst-case number of bits
+           in the ﬁrst product is 2k + 6. Because we use k +3bitsofy, the worst-case
+           number of bits in the second product is 3k +9. Because M is smooth, from
+           Exercise 3.21, the time required for the two multiplications is in O(M(k)).
+               Because the remainder of the operations, excluding the recursive call,
+           run in linear time, the total time excluding the recursive call is in O(M(k)).
+           The total running time is therefore given by the recurrence
+                                                  
+                                 f(k) ∈ f     k+1 +O(M(k)),
+                                                2
+           for k ≥ 4. We can simplify this recurrence by deﬁning f1(k)=f(k +1).
+           Thus, for k ≥ 4,
+                               f1(k)=f(k+1)
+                                                
+                                     ∈f      k+2 +O(M(k+1))
+                                               2
+                                         k       
+                                     =f      2 +1 +O(M(k+1))
+                                     =f1(k/2)+O(M(k+1))
+                                     =f1(k/2)+O(M(k)),
+           because M is smooth.
+               In order to be able to apply Theorem 3.35 to f1, we need additional
+           assumptions on M. We therefore assume that M(k)=kqg(k), where q ≥ 1
+                            k+2                                       lg3
+           andg (k)=g(2        ) is smooth. (Note that the functions k    andklgklglgk
+                 1
+           both satisfy these assumptions on M.) Then from Theorem 3.35, f1(k) ∈
+           O(M(k)). Because M is smooth, f(k)=f1(k −1) ∈ O(M(k)).
+               We can now analyze the running time of DivideRecip.Ifm&lt;n,the
+           runningtimeisclearly inΘ(1). Supposem ≥ n.Thenthevaluer returnedby
+           Reciprocal(v,m−n)hasm−n+3bitsintheworstcase.Hence, theresult
+           of the ﬁrst multiplication has 2m −n+3 bits in the worst case. The worst-
+           case running time of this multiplication is therefore in O(M(m)). q then has
+           m−n+1bits in the worst case. The result of the second multiplication
+           therefore has m + 1 bits in the worst case, and hence runs in O(M(m))
+           time. Because Reciprocal runs in O(M(m−n)) time, and the remaining
+           operations run in O(m) time, the overall running time is in O(M(m)). The
+</div>
+    </div>
+  </body>
+</html>

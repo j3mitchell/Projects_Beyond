@@ -1,0 +1,27 @@
+                                      Chapter 3
+                          Analyzing Algorithms
+          In Chapter 1, we saw that diﬀerent algorithms for the same problem can
+          have dramatically diﬀerent performance. In this chapter, we will introduce
+          techniques for mathematically analyzing the performance of algorithms.
+          These analyses will enable us to predict, to a certain extent, the performance
+          of programs using these algorithms.
+          3.1  Motivation
+          Perhaps the most common performance measure of a program is its running
+          time. The running time of a program depends not only on the algorithms it
+          uses, but also on such factors as the speed of the processor(s), the amount
+          of main memory available, the speeds of devices accessed, and the impact of
+          other software utilizing the same resources. Furthermore, the same algorithm
+          can perform diﬀerently when coded in diﬀerent languages, even when all
+          other factors remain unchanged. When analyzing the performance of an
+          algorithm, we would like to learn something about the running time of any
+          of its implementations, regardless of the impact of these other factors.
+             Suppose we divide an execution of an algorithm into a sequence of steps,
+          each of which does some ﬁxed amount of work. For example, a step could be
+          comparing two values or performing a single arithmetic operation. Assuming
+          the values used are small enough to ﬁt into a single machine word, we could
+          reasonably expect that any processor could execute each step in a bounded
+          amount of time. Some of these steps might be faster than others, but for
+          any given processor, we should be able to identify both a lower bound l>0
+          and an upper bound u ≥ l on the amount of time required for any single
+          execution step, assuming no other programs are being executed by that
+                                           55

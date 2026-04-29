@@ -1,0 +1,37 @@
+                            Priority Queues              159
+        recursive call is no more than n − 1. The total running time is therefore
+        bounded above by
+                          f(n) ∈ f(n−1)+O(1)
+                             ⊆O(n)
+        by Theorem 3.34.
+          At ﬁrst it might seem that the bound of n−1 on the number of nodes in
+        the two heaps in the recursive call is overly pessimistic. However, upon close
+        examination of the algorithm, we see that not only does this describe the
+        worst case, it actually describes every case. To see this, notice that nowhere
+        in the algorithm is the left child of a node changed after that node is created.
+        Because each left child is initially empty, no node ever has a nonempty left
+        child. Thus, each heap is single path of nodes going to the right.
+          The SimpleHeap implementation therefore amounts to a linked list in
+        which the keys are kept in non-increasing order. The Put operation will
+        therefore require Θ(n) time in the worst case, which occurs when we add a
+        node whose key is smaller than any in the heap. In the remainder of this
+        chapter, we will examine various ways of taking advantage of the branching
+        potential of a heap in order to improve the performance.
+        5.3 Leftist Heaps
+        In order to improve the performance of merging two heaps, it would make
+        sense to try to reach one of the base cases as quickly as possible. In
+        SimpleHeap.Merge, the base cases occur when one of the two heaps is
+        empty. In order to simplify the discussion, let us somewhat arbitrarily decide
+        that one of the two heaps to be merged in the recursive call will always be
+        S. We therefore need to decide which child of L to merge with S.Inorder
+        to reach a base case as quickly as possible, it would make sense to use the
+        child having an empty subtree nearest to its root.
+          Let us deﬁne, for a given binary tree T,thenull path length to be the
+        length of the shortest path from the root to an empty subtree. Speciﬁcally, if
+        T is empty, then its null path length is 0; otherwise, it is 1 plus the minimum
+        of the null path lengths of its children. Now if, in the recursive call, we were
+        to merge S with the child of L having smaller null path length, then the
+        sum of the null path lengths of the two heaps would always be smaller for
+        the recursive call than for the original call. The running time is therefore
+        proportional to the sum of the null path lengths. This is advantageous due
+        to the following theorem.

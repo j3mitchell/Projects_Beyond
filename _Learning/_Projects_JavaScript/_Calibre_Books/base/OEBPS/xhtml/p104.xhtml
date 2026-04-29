@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 104</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-104.jpg" alt="Page 104" width="1282" height="1882"/>
+      <div class="ocr">                     Analyzing Algorithms     85
+      Deﬁnition 3.39. For a function f : N×N → R≥0, we deﬁne O(f(m,n)) to
+      be the set of all functions g : N × N → R≥0 such that there exist c ∈ R&gt;0
+      and n0 ∈ N so that
+                     g(m,n) ≤ cf(m,n)
+      and
+                            
+
+                     g
+(m,n) ≤ cf(m,n),
+      whenever m ≥ n0 and n ≥ n0.
+        Likewise, we can deﬁne big-Ω and big-Θ for 2-variable functions.
+      Deﬁnition 3.40. For a function f : N×N → R≥0, we deﬁne Ω(f(m,n)) to
+      be the set of all functions g : N × N → R≥0 such that there exist c ∈ R&gt;0
+      and n0 ∈ N so that
+                     g(m,n) ≥ cf(m,n)
+      and
+                            
+
+                     g
+(m,n) ≥ cf(m,n),
+      whenever m ≥ n0 and n ≥ n0.
+      Deﬁnition 3.41. For a function f : N×N → R≥0,
+                Θ(f(m,n)) = O(f(m,n))∩Ω(f(m,n)).
+        We extend these deﬁnitions to more than two variables in the obvious
+      way. Using the above deﬁnitions, it is an easy matter to show that Theorem
+      3.11 extends to more than one variable. The proof is left as an exercise.
+      Theorem3.42. Let f : N×N→R≥0 and g :N×N→R≥0.Theng(m,n)∈
+      O(f(m,n)) iﬀ f(m,n) ∈ Ω(g(m,n)).
+        Wewouldnowliketoshowthatthetheoremswehavepresentedforsingle
+      variables extend to multiple variables, provided the functions within the
+      asymptotic notation are strictly non-decreasing. Before we do this, however,
+      we will ﬁrst prove a theorem that will allow us to simplify the proofs of the
+      individual properties.
+      Theorem 3.43. Let f : N×N → R≥0 be a strictly non-decreasing function.
+      Then
+</div>
+    </div>
+  </body>
+</html>

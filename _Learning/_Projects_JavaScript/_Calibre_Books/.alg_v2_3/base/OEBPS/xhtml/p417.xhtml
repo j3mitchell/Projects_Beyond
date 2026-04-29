@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 417</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-417.jpg" alt="Page 417" width="1282" height="1882"/>
+      <div class="ocr">           398                     Algorithms: A Top-Down Approach
+            Figure 12.3   Floyd’s algorithm for all-pairs shortest paths
+              Precondition: Grefers to a Graph in which the data associated with each
+              edge is a Nat giving its length.
+              Postcondition: Returns an array L[0..n − 1,0..n − 1] such that L[i,j]is
+              the length of the shortest path from i to j in G.
+              Floyd(G)
+                 n←G.Size(); L←new Array[0..n−1,0..n−1]
+                 for i ← 0 to n−1
+                   for j ← 0 to n−1
+                      if i = j
+                         L[i,j] ← 0
+                      else
+                         d ←G.Get(i,j)
+                         if d = nil
+                            L[i,j] ←∞
+                         else
+                            L[i,j] ← d
+                 for k ← 1 to n
+                   for i ← 0 to n−1
+                      for j ← 0 to n−1
+                         L[i,j] ← Min(L[i,j],L[i,k −1]+L[k −1,j])
+                 return L[0..n−1,0..n−1]
+           ﬁnd a subset S ⊆{1,...,n} that maximizes
+                                              v,
+                                                   i
+                                              i∈S
+           subject to the constraint that
+                                           wi≤W.
+                                           i∈S
+               To solve this problem, ﬁrst note that either item n is in an optimal
+           solution, or it isn’t. If it is, then we can obtain an optimal solution by solving
+           the problem in which item n has been removed and the weight bound has
+           been decreased by wn. Otherwise, we can obtain an optimal solution by
+           solving the problem in which item n has been removed. We therefore have
+           the following recurrence giving the optimal value Vi(j) that can be obtained
+           from the ﬁrst i items with a weight bound of j,where0≤ i ≤ n and
+</div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,8 @@
+           114                       Algorithms: A Top-Down Approach
+             Figure 4.4  ThedatatypeSimpleStack,whichdoes not quiteimplement theStack
+             ADT
+           1. Initialization: If the precondition holds at the beginning of a constructor
+               invocation, then the postcondition holds upon completion of the construc-
+               tor. If the constructor terminates normally, then the structural invariant
+               holds after the data structure has been constructed, regardless of the
+               truth of the precondition. (If the constructor terminates abnormally,

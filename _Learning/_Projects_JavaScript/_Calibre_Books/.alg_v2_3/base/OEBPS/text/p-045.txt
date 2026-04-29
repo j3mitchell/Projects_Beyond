@@ -1,0 +1,48 @@
+                        26                                                    Algorithms: A Top-Down Approach
+                                                                                                                                                                  
+                        Sort permutes A (we know this from its postcondition), A contains the
+                        same collection of values as does A.
+                                                                          
+                                 Suppose A[i] <A[k]forsomei,1≤ i ≤ n.Theni<k,forifk<i,
+                                             
+                        A[k] >A[i] violates the postcondition of Sort. Hence, there are fewer than
+                                                                                                                                                      
+                        k elements of A , and hence of A, with value less than A [k].
+                                                                                                                                                                                        
+                                 Now suppose 1 ≤ i ≤ k. From the postcondition of Sort, A [i] ≤ A [k].
+                                                                                                                                                                                         
+                        Hence, thereare at least k elements of A with value less than or equal to A [k].
+                                                                         
+                        The returned value A [k] therefore satisﬁes the postcondition of Select. 
+                                 Because of what it means for an algorithm to                                                                         If    the      precondition           is
+                        meet its speciﬁcation, any proof of correctness will                                                                          deﬁned to be true,wedon’t
+                        begin by assuming the precondition. The goal of                                                                               need to assume it, because
+                                                                                                                                                      we know that true is true.
+                        the proof is then to prove that the postcondition is
+                        satisﬁed when the algorithm ﬁnishes. In order to reach this goal, we reason
+                        about the eﬀect of each statement in turn. If a statement is a call to another
+                        algorithm, we use that algorithm’s speciﬁcation. Speciﬁcally, we must ﬁrst
+                        make sure its precondition is satisﬁed (for otherwise, we cannot know what
+                        the algorithm does), then we conclude that its postcondition is satisﬁed when
+                        it ﬁnishes. We can then use this postcondition to continue our reasoning.
+                                 TheproofofTheorem2.1illustratesacommondiﬃcultywithcorrectness
+                        proofs. In algorithms, variables typically change their values as the algorithm
+                        progresses. However, in proofs, a variable must maintain a single value in
+                        order to maintain consistent reasoning. In order to avoid confusion, we
+                        introduce diﬀerent names for the value of the same variable at diﬀerent
+                        points in the algorithm. It is customary to use the variable name from the
+                                                                                                                                                                 
+                        algorithm to denote the initial value, and to add a “prime” ( )todenoteits
+                                                                                                                                                                                            
+                        ﬁnal value. If intermediate value must be considered, “double-primes” ( ),
+                        superscripts, or subscripts can be used.
+                                 Althoughavariableshouldnotchangeitsvalueoverthecourseofaproof,
+                        we do sometimes use the same variable with diﬀerent values when proving
+                        diﬀerent facts. For example, the variable i in the proof of Theorem 2.1 can
+                        have diﬀerent values in the second and third paragraphs, respectively. It
+                        might be helpful to think of such usage as multiple local variables, each
+                        having the same name. Within each scope, the value of the variable does
+                        not change.
+                                 The proof of Theorem 2.1 is straightforward because the algorithm
+                        is straight-line — the ﬂow of control proceeds sequentially from the ﬁrst
+                        statement in the algorithm to the last. The addition of if statements

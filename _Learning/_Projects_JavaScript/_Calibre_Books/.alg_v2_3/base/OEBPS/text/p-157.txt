@@ -1,0 +1,39 @@
+      138          Algorithms: A Top-Down Approach
+        iterations. In fact, a number of Increment operations will be required
+        before we encounter another expensive one.
+      4. Operations that cost much and degrade future performance. Our
+        IterBinCounterincludesnooperations of this type. In fact, operations
+        of this type usually make amortized analysis futile.
+        Thekeytoﬁndinganappropriatepotential function is in striking a good
+      balance between operations of types 2 and 3 above. Consider an operation
+      of type 3. The potential function needs to decrease enough to cancel out the
+      high cost of the operation. On the other hand, it cannot increase too much on
+      anoperation of type 2, or this operation’s amortized cost will be too high. We
+      are trying to show that the Increment operation has a constant amortized
+      cost. Therefore, an operation of type 2 must increase the potential function
+      by at most a constant value. Furthermore, an operation of type 3 requires
+      k iterations, so our potential function must have a decrease of roughly k for
+      such an operation. In addition, any potential function must be 0 initially
+      and always nonnegative.
+        Based upon the above discussion, it would appear that the number of
+      leading 1s in value would be a good measure of the structure’s degradation.
+      Let us therefore consider using as our potential function the number of
+      leading 1s. Unfortunately, we immediately encounter a problem with this
+      function — it is not initially 0, because an IterBinCounter initially has
+      one leading 1. This function is therefore not a valid potential function. We
+      could make a small adjustment by subtracting 1 from the number of leading
+      1s; however, the resulting function will then go negative whenever there are
+      no leading 1s.
+        Before we look for an alternative potential function, we should make one
+      more observation regarding the number of leading 1s. Suppose value begins
+      with a 0, which is followed by a large number of 1s. When an Increment
+      is performed on this state, the leading 0 is replaced by a 1, thus causing
+      the number of leading 1s to increase by a large amount. Hence, even if the
+      number of leading 1s qualiﬁed as a valid potential function, it wouldn’t be
+      an appropriate one — the amortized cost of this operation would be high
+      due to the large increase in potential caused by a single operation.
+        This observation suggests that it is not just the leading 1s that degrade
+      the structure, but that all of the 1s in value contribute to the degradation.
+      We might therefore consider using the total number of 1s in value as our
+      potential function. Again, this number is initially 1, not 0; however, from
+      the structural invariant, value will always contain at least one 1. Therefore,

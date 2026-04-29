@@ -1,0 +1,34 @@
+         344                 Algorithms: A Top-Down Approach
+            Unfortunately, Theorem 3.35 does not apply to this recurrence, as we
+         would need b =4/3, which is not a natural number. However, given Theorem
+         3.35, we might suspect that f(n) ∈ Θ(n), as this is the solution yielded by
+         the theorem if we could use b =4/3. We will soon show that this is, in fact,
+         the case.
+            Let us now consider the time needed to ﬁnd p.SortingM elements using
+         either heap sort or merge sort uses Θ(M lgM) time. Because M is a ﬁxed
+         constant, however, M lgM is also a ﬁxed constant, so that the time is in
+         Θ(1). This must be done for each of the n/M columns, so that the time
+         tosortallofthecolumnsisinO(n). However, the time to sort the n/M
+         elements in the middle row is in Θ(nlgn). On the other hand, we really don’t
+         need to sort the middle row in order to ﬁnd p — we only need to ﬁnd the
+         median of this row. If M>1, this row has strictly fewer than n elements,
+         so that ﬁnding its median is a smaller instance of the selection problem.
+            If we use this technique for ﬁnding the median, we need two recursive
+         calls — one to ﬁnd the median of n/M elements, and one to solve the
+         smaller selection problem after the Dutch national ﬂag algorithm has been
+         applied. This latter recursive call has no more than about 3n/4elements.
+         The recurrence describing the running time is therefore of the form
+                        f(n) ∈ f(3n/4)+f(n/M)+Θ(n),          (10.4)
+         for some odd number M.
+            We don’t have a theorem that applies to the above recurrence. We can
+         gain some intuition by comparing this recurrence with recurrences of the
+         form
+                             g(n) ∈ ag(n/b)+Θ(n),
+         where b is an integer greater than 1. From Theorem 3.35, g(n) ∈ Θ(n)iﬀ
+         a<b, or equivalently, iﬀ a/b < 1. If a is a positive integer, this condition is
+         equivalent to
+                                    a
+                                   1<1.
+                                    i=1 b
+         Thefollowing theorem generalizes this condition to a sum of several diﬀerent
+         positive real numbers.

@@ -1,0 +1,22 @@
+                                           Introduction                              23
+                  transformation, and remove the resulting tail recursion, so that your
+                  algorithm is iterative.
+           * Exercise 1.7. AppendToAll and SizeOf are speciﬁed in Figure 1.20.
+              (a) Show how to reduce AppendToAll to Copy (speciﬁed in
+                  Figure 1.18), SizeOf, and a smaller instance of itself, by giving a
+                  recursive algorithm. Your algorithm should contain no loops and a
+                  single recursive call.
+              (b) Convert your algorithm from part (a) to an iterative algorithm
+                  by either removing tail recursion or implementing it bottom-up,
+                  whichever is more appropriate. You do not need to provide algorithms
+                  for either Copy or SizeOf.
+           * Exercise 1.8. AllSubsets is speciﬁed in Figure 1.21.
+              (a) Show how to reduce to AllSubsets to Copy (speciﬁed in
+                  Figure 1.18), AppendToAll (speciﬁedinFigure1.20),SizeOf
+                  (speciﬁed in Figure 1.20), and a smaller instance of itself. Note that
+                  according to the speciﬁcation, your algorithm may not change A[1..n].
+                  Youralgorithmshouldcontain exactly one recursive call and no loops.
+                  (When calling Copy, your ﬁrst array index does not need to be 1.)
+              (b) Give an iterative version of your algorithm from part (a) by either
+                  implementing it bottom-up or eliminating tail recursion, whichever
+            Figure 1.20   Speciﬁcations of AppendToAll and SizeOf

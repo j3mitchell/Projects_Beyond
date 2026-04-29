@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 400</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-400.jpg" alt="Page 400" width="1282" height="1882"/>
+      <div class="ocr">                                     Optimization I: Greedy Algorithms                         381
+              Figure 11.3    AHuﬀmantree for the string, “Mississippi”
+                                                 i
+                                                              s
+                                                  M     p
+             characters require three bytes. Various symbols and emoticons even require
+             four bytes.
+                 Twoimprovements to this approach can be made to reduce the length of
+             a speciﬁc document. First, we can choose the encoding based on the actual
+             character frequencies within that document. Second, we can use a variable
+             numberof bits, rather than a variable number of bytes. If we can make these
+             improvements, the characters occurring most frequently in the document are
+             likely to be encoded using fewer than eight bits.
+                 The diﬃculty with variable-width encodings is choosing the encoding so
+             that it is clear where one character ends and the next begins. For example,
+             if we encode “n” with 11 and “o” with 111, then the encoding 11111 would
+             be ambiguous — it could encode either “no” or “on”. To overcome this
+             diﬃculty, we arrange the characters as the leaves of a binary tree in which
+             each non-leaf has two non-empty children (see Figure 11.3). The encoding
+             of a character is determined by the path from the root to the leaf containing
+             that character: each left child on the path denotes a 0 in the encoding, and
+             each right child on the path denotes a 1 in the encoding. Thus, in Figure 11.3,
+             “M” is encoded as 100. Because no path from the root to a leaf is a proper
+             preﬁx of any other path from the root to a leaf, no ambiguity results.
+             Example 11.1. For example, we can use the tree in Figure 11.3 to
+             encode “Mississippi” as 100011110111101011010. We parse this encoding by
+             traversing the tree according to the paths speciﬁed by the encoding. Starting
+             at the root, we go right-left-left, arriving at the leaf “M”. Starting at the
+             root again, we go left, arriving at the leaf “i”. Continuing in this manner, we
+             see that the bit-string decodes into “Mississippi”. Note that because there
+             are four distinct characters, a ﬁxed-width encoding would require at least
+</div>
+    </div>
+  </body>
+</html>

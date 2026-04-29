@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 286</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-286.jpg" alt="Page 286" width="1282" height="1882"/>
+      <div class="ocr">                                    Storage/Retrieval II: Unordered Keys                        267
+             independent of the value of b. Because h               (k) − h      (k)=0,each
+                                                                p,0,b        p,0,b
+             positive a&lt;pyields a distinct positive value of (h           (k)−h       (k)) mod p.
+                                                                      p,a,b      p,a,b
+             Furthermore, for a given positive a,eachchoiceofb clearly results in a
+             distinct value for h      (k).
+                                   p,a,b
+                 Each choice of a and b,where0&lt;a&lt;pand 0 ≤ b&lt;p, therefore
+             results in a unique pair of distinct values h       (k)andh        (k). Because the
+                                                             p,a,b          p,a,b
+             number of choices of a and b is exactly the same as the number of pairs of
+             distinct values h      (k)andh         (k), each of these pairs can be produced
+                                p,a,b          p,a,b
+             by exactly one choice of a and b. We therefore have the following lemma.
+             Lemma 7.4. Let p be a prime number, and let k and k be distinct natural
+             numbers strictly less than p.Ifa and b are chosen independently and
+             uniformly such that 1 ≤ a&lt;pand 0 ≤ b&lt;p,thenh                       (k) and h      (k)
+                                                                           p,a,b           p,a,b
+             are any pair of distinct natural numbers less than p with uniform probability.
+                 To apply the second step of the hash function, let
+                                              fm(i)=imodm,
+             where m is a positive integer and i is a natural number. We then deﬁne
+                               H2 ={f ◦h              | 0 &lt;a&lt;p,0≤b&lt;p},
+                                 p,m       m     p,a,b
+             where ◦ denotes function composition (i.e., fm ◦ h             (k)=fm(h         (k))).
+                                                                       p,a,b             p,a,b
+             We deﬁne the probability of each element of H2                by selecting a and b
+                                                                      p,m
+             independently with uniform probability. We can then show the following
+             theorem.
+             Theorem 7.5. For any prime number p and positive integer m, H2                    is a
+                                                                                           p,m
+             universal family of hash functions.
+             Proof.     Let k and k be two distinct keys. As we argued above, h                (k)
+                                                                                            p,a,b
+             and h      (k) are distinct natural numbers less than p, and each possible
+                    p,a,b
+             pair of distinct values can be obtained by exactly one pair of values for a
+             and b. fm(h       (k)) = fm(h       (k)) iﬀ h     (k)modm = h           (k)modm
+                           p,a,b             p,a,b          p,a,b                 p,a,b
+             iﬀ h    (k)−h       (k) is divisible by m. For any natural number i&lt;p,there
+                 p,a,b       p,a,b
+             are strictly fewer than p/m natural numbers j&lt;p(other than i) such that
+             i−j is divisible by m. Because the number of these values of j is an integer,
+             it is at most (p − 1)/m. Because there are p possible values of h             (k)and
+                                                                                       p,a,b
+             p(p −1) possible pairs of values for h         (k)andh        (k), each of which is
+                                                        p,a,b          p,a,b
+</div>
+    </div>
+  </body>
+</html>

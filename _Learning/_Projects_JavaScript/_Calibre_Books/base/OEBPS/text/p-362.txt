@@ -1,0 +1,27 @@
+                                       Divide and Conquer                           343
+               Our goal is to construct a deterministic algorithm with worst-case
+           runningtime in O(n). As we saw in Section 10.3, quick sort achieves a better
+           asymptotic running time if the median is chosen as the pivot. It stands to
+           reason that such a choice might be best for the selection algorithm. We men-
+           tioned in Section 10.3 that it is possible to ﬁnd the median in O(n)time.The
+           waytodothisistouseourlinear-timeselection algorithm toﬁndthen/2nd
+           smallest element. However, this doesn’t help us in designing the linear-time
+           selection algorithm because the reduction is not to a smaller instance.
+               Instead, we need a way to approximate the median well enough so that
+           the resulting algorithm runs in O(n) time. Consider the following strategy
+           for approximating the median. First, we arrange the n elements into an
+           M×n/M array, where M is some ﬁxed odd number. If n is not evenly
+           divisible by M, we will have up to M − 1 elements that will not ﬁt in
+           the array — we will ignore these elements for now. Suppose we sort each
+           column in nondecreasing order. Further suppose that we order the columns
+           (keeping each column intact) so that the middle row is in nondecreasing
+           order. We then select an element in the center of the array as the pivot p
+           (see Figure 10.4).
+               By choosing p in this fashion, we ensure that all elements above and to
+           the left of p are no greater than p, and that all elements below and to the
+           right of p are no less than p. In other words, no more than about 3/4ofthe
+           elements can be greater than p, and no more than about 3/4 of the elements
+           can be less than p. Thus, if we can ﬁnd this p in O(n)time,wehavethe
+           following recurrence giving the running time of the algorithm:
+                                    f(n) ∈ f(3n/4)+Θ(n).
+            Figure 10.4   Finding an approximate median

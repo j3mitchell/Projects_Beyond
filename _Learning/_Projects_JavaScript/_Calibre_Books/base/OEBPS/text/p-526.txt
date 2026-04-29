@@ -1,0 +1,40 @@
+                      NP-Completeness        507
+      of the input. This delineation, however, is not entirely satisfactory. On the
+      one hand, one could make a persuasive argument that an algorithm with
+      a running time in Θ(n1000) is not “eﬃcient”. On the other hand, suppose
+      some algorithm has a running time in Θ(nα(n)/4), where α is as deﬁned
+      in Section 8.4. Because nα(n)/4 ≤ n for every positive n that can be
+      coded in binary within our universe, such an algorithm might reasonably
+      be considered to be “eﬃcient”. However, nα(n)/4 is not bounded above by
+      any polynomial.
+        The main reason we equate polynomial running time with eﬃciency
+      is that polynomials have several useful closure properties. Speciﬁcally, if
+      p1(n)andp2(n) are polynomials, then so are p1(n)+p2(n), p1(n)p2(n), and
+      p1(p2(n)). As we will see, these closure properties make the theory much
+      cleaner. Furthermore, if we can say that a particular decision problem cannot
+      be solved by any polynomial-time algorithm, then we can be fairly safe in
+      concluding that there is no algorithm that will terminate in a reasonable
+      amount of time on large inputs in the worst case.
+        Before we formalize this idea, we need to be careful about one aspect of
+      our running-time measures. Speciﬁcally, we have assumed in this text that
+      arithmetic operations can be performed in a single step. This assumption
+      is valid if we can reasonably expect the numbers to ﬁt in a single machine
+      word. For larger values, we should use the BigNum type in order to get
+      an appropriate measure of the running time. Also note that all of the
+      algorithms in this text except those using real or complex numbers can be
+      expressed using only booleans and natural numbers as primitive types (i.e.,
+      those not deﬁned in terms of other types). Furthermore, only the algorithms
+      of Section 15.1 require real or complex numbers — all other algorithms
+      can be restricted to rational numbers, which can be expressed as a pair of
+      natural numbers and a sign bit. Thus, it will make sense to stipulate that
+      an “eﬃcient” algorithm contains only boolean or natural number variables,
+      along with other types built from these, and that each natural number
+      variable will contain only a polynomial number of bits.
+        Wecannowformalizeournotion of “eﬃcient”. We say that an algorithm
+      Ais a polynomial-time algorithm if there is a polynomial p(n) such that
+      • A always completes within p(n) steps, where n is the number of bits in
+       the input string; and
+      • all primitive variables used by A are either booleans or natural numbers
+       whose values remain strictly less than 2p(n).
+      We then deﬁne P to be the set of all decision problems X such that there
+      exists a deterministic (i.e., not randomized) polynomial-time algorithm A

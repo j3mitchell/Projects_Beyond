@@ -1,0 +1,37 @@
+          216                   Algorithms: A Top-Down Approach
+          now analyze Insert. Excluding the recursion, this function clearly runs in
+          Θ(1) time. At most one recursive call is made, and its second parameter has
+          height strictly less than the height of t; in the worst case, it is 1 less. If h is
+          the height of t, then the worst-case running time of Insert is given by
+                                 f(h) ∈ f(h−1)+Θ(1),
+          for h>0. By Theorem 3.34, f(h) ∈ Θ(h). By Theorem 6.4, Insert therefore
+          runs in Θ(lgn) time, where n is the size of the data set. Clearly, Put can
+          be written to operate in Θ(lgn)time.
+             Thesameanalysis shows that the stack space usage of Put is in Θ(lgn).
+          Weleave as an exercise the design and analysis of an algorithm for Remove.
+          6.3  Splay Trees
+          While a worst-case bound of Θ(lgn)forOrderedDictionary accesses
+          is good, bounding the worst case does not always result in the best
+          performance. For example, in many applications, the so-called “80-20” rule
+          holds; i.e., 80% of the accesses involve roughly 20% of the data items. This
+          rule then applies recursively, so that 64% of the accesses involve roughly 4%
+          of the data items. In order to get good performance in such an environment,
+          we would like to structure the data so that the most commonly-accessed
+          data items can be accessed more quickly.
+             One variation of a binary search tree that attempts to achieve this kind
+          of performance is a splay tree. Structurally, a splay tree is simply a binary
+          search tree. Operationally, however, it is self-adjusting — when it accesses
+          an item, it brings that item to the root of the tree via a series of rotations.
+          (The VisitInOrder operation is an exception to this rule, as it accesses all
+          of the data items.) As a result, the more frequently accessed items tend to
+          remain closer to the root.
+             No attempt is made to ensure any sort of balance in a splay tree. As a
+          result, the operations run in Θ(n) time in the worst case. However, when
+          a long path is traversed, the rotations have the eﬀect of shortening it by
+          roughly half. Thus, an expensive operation improves future performance. As
+          a result, the amortized running times of Get, Put,andRemove are all in
+          O(lgn).
+             Toget a rough idea of how rotations improve the data structure, suppose
+          we have a long zig-zag path from the root to some node b; i.e., by starting
+          from the root, then taking ﬁrst the left child, then the right child, and
+          continuing to alternate, we eventually reach b. We could then bring b to

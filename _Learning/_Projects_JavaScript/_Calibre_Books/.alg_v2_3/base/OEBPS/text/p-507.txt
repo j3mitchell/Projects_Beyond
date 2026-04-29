@@ -1,0 +1,43 @@
+             488                          Algorithms: A Top-Down Approach
+               Figure 15.6    Implementation of PosConv, speciﬁed in Figure 15.5
+                  PosConv(p[0..n−1],q[0..n−1],k)
+                     lgInv ← 2k −lgn
+                     ptrans ← ModFft(p,k,false)
+                     qtrans ← ModFft(q,k,false)
+                     rtrans ← new Array[0..m−1]
+                     for i ← 0 to n−1
+                        if ptrans[i].NumBits() >k
+                           rtrans[i] ← ToRing(qtrans[i].Shift(k),k)
+                        else if qtrans[i].NumBits() >k
+                           rtrans[i] ← ToRing[i](ptrans[i].Shift(k),k)
+                        else
+                           rtrans[i] ← ModMult(ptrans[i],qtrans[i],k)
+                     r ←ModFft(rtrans,k,true)
+                     for i ← 0 to n−1
+                        r[i] ← ToRing(r[i].Shift(lgInv),k)
+                     return r
+                                                                                               k
+                  Precondition: p[0..n−1] is an array of BigNums, each no larger than 2 ,
+                  n and k are Nats containing powers of 2 such that n ≤ 2k, and inv is a
+                  Bool.
+                                                                                           −2k/n
+                  Postcondition: ReturnstheDFTofpover              m,+, withrespectto2
+                                                     2k/n
+                  if inv = true, or with respect to 2     otherwise.
+                  ModFft(p[0..n−1],k,inv)
+                 Wecantherefore compute x mod m using only addition and subtraction
+             of BigNums, as shown in Figure 15.8. We assume the existence of a constant
+             one referring to a BigNum representing 1.
+                 Finally, we need to implement Eval, speciﬁed in Figure 15.4. A straight-
+             forward implementation by adding and shifting would be too ineﬃcient,
+             because numbers with up to k bits would need to be copied each iteration.
+             Instead, we should try to generate the result one l-bit block at a time. We
+             can store the resulting bits in an array, then convert the result to a BigNum.
+             Adiﬃculty with this approach is that some elements of the input array may
+             represent negative values. It therefore makes sense to accumulate the positive
+             terms in one array and the negative terms in another. We can then combine
+             the two arrays into a single BigNum. The algorithm is shown in Figure 15.9.
+                 Toanalyze the runningtime of our multiplication algorithm, we begin by
+             analyzing ToRing. From the loop invariant, the value of rem never exceeds
+              k                                                  k+1
+             2 ; hence, the value of next never exceeds 2            .Thus,thebodyoftheloop

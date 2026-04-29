@@ -1,0 +1,43 @@
+                                        NP-Completeness                             523
+               In order to show that 3DM is NP-hard, we need to reduce some
+           NP-complete problem to it. So far, we have identiﬁed ﬁve NP-complete
+           problems: three satisﬁability problems and two graph problems. However,
+           none of these bears much resemblance to 3DM. We therefore make use of a
+           principle that has proven to be quite eﬀective over the years: when in doubt,
+           try 3-Sat.
+               As we did in showing 3-Sat ≤p VC, we will begin by focusing on the
+                                              m
+           proofs of membership in NP for the two problems. Speciﬁcally, we want to
+           relate the choice of a subset of W to the choice of truth values for boolean
+           variables. Let’s start by considering two triples, x,a ,b  and ¬x,a ,b ,
+                                                                 x  x            x  x
+           where x is some boolean variable. If these are the only two triples containing
+           a or b , any matching must include exactly one of these triples. This choice
+            x     x
+           couldbeusedtosetthevalueofx.
+               If we were to construct two such triples for each variable, we would then
+           need to construct triples to represent the clauses. Using a similar idea, we
+           could introduce, for a given clause α   ∨α ∨α , the triples α ,c,d,
+                                                 i1    i2    i3               i1  i  i
+           α ,c,d,andα ,c,d—onetriple for each literal in the clause. Again,
+              i2 i  i         i3 i  i
+           any matching must contain exactly one of these triples. If we let x be false
+           when x,a ,b  is chosen, then the triple chosen for the clause must contain
+                      x  x
+           a true literal.
+               This construction has a couple of shortcomings, however. First, because
+           each literal must occur exactly once in a matching, we can use a given
+           variable to satisfy only one clause. Furthermore, if more than one literal is
+           true in a given clause, there may remain literals that are unmatched. These
+           shortcomings should not be too surprising, as we could do essentially the
+           sameconstruction producingpairs instead of triples — the third components
+           are redundant. Thus, if this construction had worked, we could have used
+           thesametechniquetoreduce3-Sat to 2DM, which belongs to P.Wewould
+           have therefore proved that P = NP.
+               In order to overcome the ﬁrst shortcoming, we need to enrich our
+           construction so that we have several copies of each literal. To keep it
+           simple, we will make one copy for each clause, regardless of whether the
+           literal appears in the clause. We must be careful, however, so that when we
+           choose the triples to set the boolean value, we must either take all triples
+           containing x or all triples containing ¬x. Because we are constructing triples
+           rather than pairs, we can indeed accomplish these goals.

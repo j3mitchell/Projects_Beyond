@@ -1,0 +1,43 @@
+          340                    Algorithms: A Top-Down Approach
+          show that at most n + 1 calls have lo ≥ hi. Because each of these calls
+          requires Θ(1) time, a total of at most O(n) time is used in processing the
+          base cases. Otherwise, the running time is proportional to the number of
+          times the loop executes over the course of the algorithm.
+              Each iteration of the loop involves comparing one pair of elements. For a
+          given call to QuickSort, the pivot is compared to all elements currently in
+          the array, then is excluded from the subsequent recursive calls. Thus, once a
+          pair of elements is compared, they are never compared again on subsequent
+          loop iterations (though they may be compared twice in the same iteration —
+          once in each if statement). The total running time is therefore proportional
+          to the number of pairs of elements that are compared. We will only concern
+          ourselves with pairs of distinct elements, as this will only exclude O(n)pairs.
+              Let F[1..n] be the ﬁnal sorted array, and let comp be a discrete random
+          variable giving the number of pairs (i,j) such that 1 ≤ i<j≤ N and F[i]is
+          compared with F[j]. We wish to compute E[comp]. Let c   denote the event
+                                                                ij
+          that F[i]iscomparedwithF[j]. Then
+                                            ⎡ n    n       ⎤
+                                              
+                                            ⎣              ⎦
+                               E[comp]=E              I(c )
+                                                         ij
+                                              i=1 j=i+1
+                                           n   n
+                                        =E[I(c )]
+                                                        ij
+                                          i=1 j=i+1
+                                           n   n
+                                        =P(c ).
+                                                      ij
+                                          i=1 j=i+1
+              We observe that F[i]iscomparedwithF[j] iﬀ one of them is in the
+          subarray being sorted when the other is chosen as the pivot. Furthermore,
+          two elements F[i]andF[j] are in the same subarray as long as no element k
+          such that
+                           F[i].Key() ≤ F[k].Key() ≤ F[j].Key()
+          is chosen as the pivot. Thus, the probability that F[i]andF[j] are compared
+          is the probability that one of them is chosen as pivot before any other F[k]
+          satisfying the above inequality. Because there are at least j −i+1 elements
+          F[k] satisfying the above inequality when j>i,
+                                     P(c ) ≤     2    .
+                                         ij   j −i+1

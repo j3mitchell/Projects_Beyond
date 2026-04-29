@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 477</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-477.jpg" alt="Page 477" width="1282" height="1882"/>
+      <div class="ocr">           458                     Algorithms: A Top-Down Approach
+            Figure 14.10   Bipartite matching algorithm
+               Precondition: G is a bipartite graph.
+               Postcondition: Returns an array M[0..n−1] describing a maximum-sized
+               matching of G, so that M[i]=j if j and i are matched, and M[i]=−1ifi
+               is unmatched.
+               Matching(G)
+                 n←G.Size(); sel ← new Selector(n)
+                 s ←new PathSearcher(n+1)
+                 matchGraph←new MatchingGraph(G)
+                 in ← s.Incoming(); M ← matchGraph.Matching()
+                 // Invariant: M represents a matching, and there is no matching
+                 //containing the matched vertices in M and any unmatched vertexj&lt;i.
+                 for i ← 0 to n−1
+                    if M[i]=−1
+                       Dfs(matchGraph,i,sel,s)
+                       if not sel.IsSelected(n)
+                         j ←n
+                         while j = i
+                            e ←in[j]; k ← e.Source()
+                            matchGraph.Match(k,e.Data()); j ← k
+                         sel.SelectAll()
+                 return M
+           The number of iterations of the inner loop is at most the current size of the
+           matching, so its running time is in O(n) ⊆ O(a). The call to SelectAll
+           also runs in O(n) ⊆ O(a) time. We therefore conclude that a single iteration
+           of the for loop runs in O(a) time, so that the entire algorithm runs in O(na)
+           time.
+               To show that the running time of the algorithm is in Ω(na), we will ﬁrst
+           construct a graph with 4k vertices and 4k − 1edgesfork ∈ N. We will
+           show that the algorithm runs in Ω(k2) time for these graphs. We will then
+           generalize the construction to an arbitrary number n of vertices and a edges
+           such that n − 1 ≤ a&lt;n(n+20)/32. We will show that the algorithm runs
+           in Ω(na)timeforthesegraphs.
+               We begin by setting V = {i | 0 ≤ i&lt;4k} (refer to Figure 14.11 for the
+           case in which k = 4). We then add the following edges:
+           • for 0 ≤ i&lt;k,theedges{2i,2k +i} and {2i+1,2k +i};
+           • for 0 &lt;i&lt;k,theedge{2i,2k +i−1};and
+           • for 0 ≤ i&lt;k,theedge{2k−1,3k+i}.
+</div>
+    </div>
+  </body>
+</html>

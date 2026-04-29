@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 411</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-411.jpg" alt="Page 411" width="1282" height="1882"/>
+      <div class="ocr">           392                    Algorithms: A Top-Down Approach
+            Figure 12.1  Algorithm for computing the minimum number of coins needed to
+            achieve a given value
+             Precondition: d[1..k]isanarrayofInts such that 1 = d[1] &lt;d[2] &lt; ···&lt;
+             d[k], and n is a Nat.
+             Postcondition: Returns an array A[1..k] such that A[i] gives the number
+             of coins of denomination d[i] in a minimum-sized collection of coins with
+             value n.
+             Change(d[1..k],n)
+                C←newArray[0..n,1..k]; A←new Array[1..k]
+                for i ← 0 to n
+                   C[i,1] ← i
+                for i ← 0 to n
+                   for j ← 2 to k
+                      if i&lt;d[j]
+                        C[i,j] ← C[i,j −1]
+                      else
+                        C[i,j] ← Min(C[i,j −1],C[i−d[j],j]+1)
+                for j ← 1 to k
+                   A[j] ← 0
+                i ← n; j ← k    k
+                // Invariant:   l=1 A[l]d[l]=n−i, and there is an optimal solution
+                // that includes all of the coins in A[1..k], but no additional coins from
+                // d[j +1..k].
+                while j&gt;1
+                   if i&lt;d[j] or C[i,j −1] &lt;C[i−d[j],j]+1
+                      j ←j−1
+                   else
+                      A[j] ← A[j]+1;i ← i−d[j]
+                A[1] ← i
+                return A[1..k]
+              Acharacteristic of this problem that is essential in order for the dynamic
+           programming approach to work is that it is possible to decompose a large
+           problem instance into smaller problem instances in a way that optimal
+           solutions to the smaller instances can be used to produce an optimal solution
+           to the larger instance. This is, of course, one of the main principles of the
+           top-down approach. However, this characteristic may be stated succinctly
+           for optimization problems: For any optimal solution, any portion of that
+           solution is itself an optimal solution to a smaller instance. This principle
+           is known as the principle of optimality. It applies to the change-making
+</div>
+    </div>
+  </body>
+</html>

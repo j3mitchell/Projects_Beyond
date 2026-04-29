@@ -1,0 +1,35 @@
+                                    Network Flow and Matching                       451
+           in the worst case. Furthermore, the analysis of the last section still applies,
+           so that the running time is in O(min(M,na)(n + a)), where M is the value
+           of the maximum ﬂow. If we assume that every vertex is reachable from the
+                                                         2
+           source, we can simplify this to O(min(Ma,na )).
+           14.3    Bipartite Matching
+           A matching in an undirected graph is a subset of the edges such that no
+           two edges are incident on the same vertex. In this section, we consider the
+           problem of ﬁnding a matching of maximum size in a given bipartite graph,
+           as deﬁned in Exercise 13.13 on page 439. Speciﬁcally, we will show that this
+           problem can be reduced to the network ﬂow problem.
+               As an example, consider the bipartite graph shown in Figure 14.5.
+           We claim that the heavier edges, namely, {0,4},{2,5},and{3,7},forma
+           matching of maximum size. Clearly, these edges form a matching because
+           no two of them share a common vertex. To see that it is of maximum size,
+           we ﬁrst note that any larger matching must contain all of the vertices in
+           {0,1,2,3} as endpoints. However, the only edges incident on 1 and 3 are
+           {1,7} and {3,7}, respectively, and they share a common vertex. Hence, any
+           matching must exclude either 1 or 3. Therefore, there is no matching of size
+           larger than 3.
+               We will now show how to reduce bipartite matching to network ﬂow.
+           Given a bipartite graph G, we construct an instance of network ﬂow as
+           follows. For simplicity, we will assume that the vertices of the bipartite graph
+           have already been partitioned into the sets V and V (see Exercise 13.13).
+                                                         1       2
+           We ﬁrst direct all of the edges from V to V . We then add a new source
+                                                   1     2
+           vertex u and edges from u to each vertex in V1. Next, we add a new sink
+           vertex v and edges from each vertex in V2 to v. Finally, we assign a capacity
+           of 1 to each edge. See Figure 14.6 for the result of applying this reduction
+           to the graph in Figure 14.5.
+            Figure 14.5   Amaximum-sized matching in a bipartite graph
+                          45678
+                               0123

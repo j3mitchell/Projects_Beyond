@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 480</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-480.jpg" alt="Page 480" width="1282" height="1882"/>
+      <div class="ocr">                            Network Flow and Matching             461
+         Exercise 14.4. Implement AddFlow, speciﬁed in Figure 14.3, to run in
+         O(n+a) time, where n is the number of vertices in F and a is the number
+         of edges in F and R together. For the purposes of your analysis, you may
+         assume that F and R are implemented as ListGraphs, and that the Edges
+         in P form a simple path in R.
+         * Exercise 14.5. Suppose we generalize the network ﬂow problem to allow
+         positive rational edge capacities. Prove that the Ford–Fulkerson algorithm
+         always ﬁnds a maximum ﬂow for such a network.
+         ** Exercise 14.6. Supposewegeneralize thenetwork ﬂowproblemto allow
+         positive real edge capacities. Give such a ﬂow network for which the Ford–
+         Fulkerson algorithm does not terminate and does not converge to a maximum
+         ﬂow.
+         Exercise 14.7. Implement the matching algorithm using breadth-ﬁrst
+         search (see Exercise 11.6) to ﬁnd augmenting paths.
+         ** Exercise 14.8. Let G be a bipartite graph whose partitions are {i | 0 ≤
+         i&lt;k}and {i|k ≤i&lt;n},andletM beamatchingonG smaller than the
+         maximum size. Suppose the minimum length of any augmenting path in G
+         is l.LetS = {P ,...,P } be a maximal set of vertex-disjoint augmenting
+                      1     m
+         paths of length l; i.e., any augmenting path of length l shares at least one
+         vertex with some path in S. We deﬁne the symmetric diﬀerence of two sets
+         Aand B as
+                            A⊕B=(A∪B)\(A∩B);
+         thus, the symmetric diﬀerence is the set of elements in exactly one of the
+         two sets.
+         a. Prove that M = M ⊕(P ∪···∪P ) is a matching with m more edges
+                               1       m
+           than M.
+         b. Prove that any augmenting path in M,whereM is as deﬁned above, has
+           more than l edges. [Hint: For the case in which P shares a vertex with
+           some P , deﬁne T =(M ⊕M)⊕P.ProvethatT =(P ∪···∪P )⊕P
+                 i                                     1       m
+           and that T has at least (m +1)l edges.]
+         c. Prove that the size of every matching exceeds the size of M by no more
+           than n/l.
+         d. Give an algorithm to ﬁnd a maximal set of minimum-length augmenting
+           paths. Your algorithm should run in O(a) time, where a is the number
+           of edges in G, assuming G is represented as a ListGraph and n ∈ O(a).
+           [Hint: Use both breadth-ﬁrst search and a modiﬁed depth-ﬁrst search.]
+</div>
+    </div>
+  </body>
+</html>

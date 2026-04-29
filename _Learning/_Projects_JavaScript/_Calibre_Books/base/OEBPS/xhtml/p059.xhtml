@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 059</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-059.jpg" alt="Page 059" width="1282" height="1882"/>
+      <div class="ocr">           40                      Algorithms: A Top-Down Approach
+           the appropriate element of N is that the recursive call is responsible for
+           constructing and initializing N. If instead, we could provide initial values
+           for N[1..3] to the recursive calls, we could then incorporate the color of the
+           last element into these initial values. We therefore generalize the problem by
+           requiring as input initial values for the number of items of each color. The
+           returned array will then contain values representing the number of items of
+           the corresponding color, plus the corresponding initial value from the input.
+           By using 0 for all three initial values, we obtain the number of each color in
+           the entire array; hence, we have deﬁned a more general problem.
+               We can use this generalization to make two of the calls tail recursion.
+           In order to be able to handle a white item, though, we need to modify our
+           generalization slightly. Speciﬁcally, we need to know in advance where to put
+           a white item. In order to be able to do this, let us specify that if w is given
+           as the initial value for the number of white items, then the last w items in
+           the array are white. Note that this variation is still a generalization of the
+           original problem, because if w = 0, no additional constraints are placed on
+           the input array.
+               Suppose we have an instance of this more general problem. If the initial
+           value for the number of white itemsisequaltothenumberofelementsinthe
+           array, then we can copy the initial values into N[1..3] and return. Otherwise,
+           we examine the item preceding the ﬁrst known white item (see Figure 2.5).
+           If it is red, we swap it with the ﬁrst item and solve the smaller problem
+             Figure 2.5  The transformation for Dutch national ﬂag.
+                   ? ? ···? r ww···ww                   r ? ···? ? ww···ww
+                      swap
+                                 ww···                                 ···
+                   ? ? ···? w w        ww              ? ? ···? ww         ww
+                                 w···                              ww···
+                   ??? ···? b w        ww                ?       w         w b
+                                                           ···?
+                                 swap
+</div>
+    </div>
+  </body>
+</html>

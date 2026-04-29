@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 416</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-416.jpg" alt="Page 416" width="1282" height="1882"/>
+      <div class="ocr">                                Optimization II: Dynamic Programming                     397
+                Let Lk(i,j) denote the length of the shortest path from i to j with
+            intermediate vertices strictly less than k,where0≤ i&lt;n,0≤ j&lt;n,and
+            0 ≤ k ≤ n. Using the above reasoning, we have the following recurrence for
+            Lk(i,j):
+                          
+               L (i,j)= len(i,j)ifk=0
+                 k          min(L     (i,j),L    (i,k −1)+L        (k −1,j))    if k&gt;0.
+                                   k−1        k−1              k−1                    (12.3)
+                We can then implement a dynamic programming algorithm to compute
+            all Lk(i,j) using a 3D array. However, we can save a great deal of space by
+            making some observations. Note that in order to compute an entry Lk(i,j),
+            for k&gt;0,weonlyuseentries Lk−1(i,j), Lk−1(i,k−1), and Lk−1(k−1,j). We
+            claim that Lk−1(i,k−1) = Lk(i,k−1) and that Lk−1(k−1,j)=Lk(k−1,j).
+            To see this, note that
+               L (i,k −1) = min(L        (i,k −1),L     (i,k −1)+L        (k −1,k−1))
+                 k                   k−1             k−1              k−1
+                            =Lk−1(i,k −1),
+            and
+               L (k −1,j)=min(L          (k −1,j),L      (k −1,k−1)+L          (k −1,j))
+                k                    k−1             k−1                   k−1
+                            =Lk−1(k−1,j).
+                Asaresult,wecanusea2DarrayL[0..n − 1,0..n − 1] to represent
+            Lk−1. We can then transform this array into Lk by updating each value in
+            turn. The algorithm, known as Floyd’s algorithm, is shown in Figure 12.3.
+            We assume that the length of each edge is given by its key. It is easily
+            seen that, regardless of whether G is implemented as a MatrixGraph or
+            a ListGraph, the algorithm runs in Θ(n3) time and uses only a constant
+            amount of space other than what is required for input and output.
+            12.4    The Knapsack Problem
+            In Exercise 11.14 (page 387), we introduced the fractional knapsack problem.
+            One part of this exercise was to show that the greedy algorithm for the
+            fractional knapsack problem does not extend to the so-called 0-1 knapsack
+            problem — the variation in which the items cannot be broken. Speciﬁcally,
+            in this variation we are given a set of n items, each having a positive weight
+            w ∈Nandapositive value v ∈ N, and a weight bound W ∈ N.Wewishto
+              i                            i
+</div>
+    </div>
+  </body>
+</html>

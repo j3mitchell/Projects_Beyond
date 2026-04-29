@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 382</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-382.jpg" alt="Page 382" width="1282" height="1882"/>
+      <div class="ocr">                                  Divide and Conquer                    363
+          running time for DivideRecip is therefore the same as for multiplication,
+          even if our multiplication algorithm runs in O(nlgnlglgn)time.
+          10.7  Summary
+          The divide-and-conquer technique involves reducing large instances of a
+          problem to one or more smaller instances, each of which is a fraction of
+          the size of the original problem. The running time of the resulting algorithm
+          can typically be analyzed by deriving a recurrence to which Theorem 3.35
+          applies. Theorem 3.35 can also suggest how to improve a divide-and-conquer
+          algorithm.
+             Somevariations of the divide-and-conquer technique don’t completely ﬁt
+          the above description. For example, quick sort does not necessarily produce
+          subproblems whose sizes are a fraction of the size of the original array. As
+          a result, Theorem 3.35 does not apply. However, we still consider quick
+          sort to be a divide-and-conquer algorithm because its goal is to partition
+          an array into two arrays of approximately half the size of the input array,
+          and to sort these arrays recursively. Likewise, in LinearSelect, the sizes
+          of the two recursive calls are very diﬀerent, but because they are both
+          fractions of the original size, the analysis ends up being related to that of a
+          more standard divide-and-conquer algorithm. Finally, DivideDC does not
+          divide the problem into a bounded number of subproblems; however, all of
+          the recursive calls in turn yield at most two recursive calls, so we can analyze
+          these calls using standard divide-and-conquer techniques.
+          10.8  Exercises
+          Exercise 10.1. Prove that PolyMult, shown in Figure 10.1, meets its
+          speciﬁcation.
+          Exercise 10.2. PolyMult is not particularly eﬃcient when one polyno-
+          mial has a degree much larger than that of the other. For example, if p
+          has degree n and q has degree 1, a straightforward implementation of the
+          deﬁnition of the product yields Θ(n) running time. Devise an algorithm that
+          runsinΘ(mnlg3−1)timeonpolynomialsofdegreemandnwithm≥n.Your
+          algorithm may use PolyMult.Analyze the runningtime of your algorithm.
+          [Hint: If m&gt;n, divide the larger polynomial into polynomials of degree at
+          most n.]
+          * Exercise 10.3. Construct a divide-and-conquer polynomial multiplica-
+          tion algorithm that performs 5 recursive calls on polynomials of 1/3thesize
+</div>
+    </div>
+  </body>
+</html>

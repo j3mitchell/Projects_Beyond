@@ -1,0 +1,47 @@
+           232                     Algorithms: A Top-Down Approach
+           we did for the for loop in Put, we see that its expected running time is in
+           Θ(1).
+               In order to complete the expected-case analysis of Put, we need to
+           analyze Find. We will begin by deﬁning an appropriate discrete probability
+           space. Let Seqn be the set of all n-tuples of elementary events from Seq; i.e.,
+           each elementary event in Seqn is an n-tuple e ,...,e  such that each e is
+                                                         1      n                  i
+           a sequence of coin ﬂips containing zero or more heads, followed by exactly
+           one tails. Such an n-tuple describes the “shape” of a skip list by recording,
+           for each of the n data elements, the sequence of coin ﬂips which generated
+           the level of the SkipListNode containing it.
+               In order to show that Seqn is countable, we can label each n-tuple
+           e ,...,e ∈Seqn with the natural number
+             1      n
+                                     plen(e1)plen(e2) ···plen(en),
+                                      1     2         n
+           where pi is the ith prime. Because each elementary event in Seq is uniquely
+           identiﬁed by its length, and because each positive integer has a unique prime
+           factorization, each tuple has a unique label; hence, Seqn is countable.
+               We need to deﬁne the probabilities of elements in Seqn.Inordertodo
+           this properly, we need to extend the deﬁnition of independence given in
+           Section 5.5 to more than two events. We say that a          
+           set S of events is pairwise independent if for every    This -notation denotes
+                                                                   the product of the proba-
+           pair of events e ,e ∈ S, e and e are independent.       bilities P(e) for all events
+                          1  2       1       2                     e in T.
+           If for every subset T ⊆ S containing at least two
+           events,
+                                          
+                                     P       e  =     P(e),
+                                         e∈T       e∈T
+           then we say the events in S are mutually independent. We leave as an
+           exercise to show that pairwise independence does not necessarily imply
+           mutual independence, even for 3-element sets of events.
+               Returning to Seqn,letlen   denote the event that
+                                        ij                         In other words, the proba-
+           component i has length j,for1≤ i ≤ n, j>1. In           bility that all of the events
+           any set {len    ,...,len    } with 2 ≤ m ≤ n and        in T occur is the product of
+                       i1j1       imjm                             the probabilities for each of
+           all the i s diﬀerent, the events should be mutually     these events.
+                   k
+           independent. Furthermore, in order to be consistent with Seq,wewant
+                       −j
+           P(lenij)=2 for 1 ≤ i ≤ n and j>1. We can satisfy these constraints by
+           setting the probability of elementary event e ,...,e  to the product of the
+                                                        1      n

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 282</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-282.jpg" alt="Page 282" width="1282" height="1882"/>
+      <div class="ocr">                                    Storage/Retrieval II: Unordered Keys                        263
+             Thus, the probability distribution of the exclusive-or of two independent
+             random bits is uniform if at least one of the two has uniform probability
+             distribution. We can easily conclude that the method outlined above for
+             selecting a hash function results in each key mapping to any given table
+             location with probability 1/m.
+                 However, knowing that each key maps to any given table location with
+             probability 1/m is not suﬃcient to conclude that any two keys collide with
+             probability at most 1/m. Suppose, for example, that we were to select a
+             hash function by randomly generating a natural number i&lt;mwith uniform
+             probability. The hash function then maps all keys to i. For any given key k,
+             this strategy maps k to any given location with probability 1/m. However,
+             because all keys map to the same location, the probability that two given
+             keys collide is 1 for each pair of keys.
+                 Before we try to prove that this family of hash functions is universal, we
+             will deﬁne it more formally. In order to accommodate a formal deﬁnition,
+             we must ﬁrst deﬁne a discrete probability space that will represent the set of
+             hash functions. Let Sl,m be the set of all l-tuples of bit strings of length lgm,
+             where l is a positive integer and m is a power of 2. Each of these l-tuples
+             will represent a hash function. Note that Sl,m has ml elements. We therefore
+             assign each element of Sl,m a probability of m−l; hence, Sl,m is a discrete
+             probability space in which each elementary event has the same probability.
+                 We can now formally deﬁne a hash function corresponding to each
+             element in Sl,m.Letselect be the function that takes a sequence s =
+             t ,...,t  of bit strings all having the same length, together with a bit
+               1       n
+             string k ···k , and returns the subsequence of s such that t is included
+                      1     n                                                        i
+             iﬀ k = 1. Furthermore, let X be the function that takes a sequence of bit
+                 i
+             strings each having the same length and returns their bitwise exclusive-or.
+             Given s = t ,...,t∈S          ,leth : U → M such that
+                           1       l      l,m       s
+                                           h (k)=X(select(s,k)).
+                                            s
+                 Wenowdeﬁne
+                                           H1 ={h |s∈S }.
+                                             l,m       s        l,m
+                                    1
+             Each element h ∈H          corresponds to the event consisting of all sequences
+                                    l,m
+             s ∈ S    such that h = h . We leave it as an exercise to show that for each h ∈
+                   l,m                  s
+             H1 ,thereisexactly one such s; hence, there is a one-to-one correspondence
+               l,m
+             between elementary events in Sl,m and hash functions in H1 . We will now
+                                                                                 l,m
+                                                                                              1
+             show that for every distinct k,k ∈ U, P(h(k)=h(k )) = 1/m,sothatHl,m
+</div>
+    </div>
+  </body>
+</html>

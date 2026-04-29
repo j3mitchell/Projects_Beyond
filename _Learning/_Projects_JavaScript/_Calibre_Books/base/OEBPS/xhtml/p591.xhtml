@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 591</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-591.jpg" alt="Page 591" width="1282" height="1882"/>
+      <div class="ocr">          572                 Algorithms: A Top-Down Approach
+          17.5  The Maximum Cut and Minimum Cluster Problems
+          Weconclude this chapter by examining two optimization problems that are
+          essentially the same, but which yield entirely diﬀerent results with respect to
+          approximation algorithms. Let G =(V,E) be a complete undirected graph
+          with positive integer edge weights. For a natural number k ≥ 2, a k-cut for
+          Gis a partition of V into k disjoint sets, S ,S ,...,S .Theweight of this
+                                               1  2     k
+          cut is the sum of the weights of all edges {u,v}∈E such that u and v are in
+          diﬀerent partitions. The maximum cut problem is to ﬁnd, for a given natural
+          number k ≥ 2 and complete undirected graph G =(V,E)withedgeweights
+          and more than k vertices, a k-cut with maximum weight. The minimum
+          cluster problem is to ﬁnd a k-cut that minimizes the sum of the weights of
+          all edges {u,v}∈E such that u and v are in the same partition. Clearly, a
+          k-cut has maximum weight iﬀ it minimizes this latter sum.
+             Let Cut be the problem of deciding, for given natural numbers k ≥ 2
+          and B, and complete undirected graph G =(V,E) with positive integer edge
+          weights and more than k vertices, whether there is a k-cut with weight at
+          least B.Foreachk ≥ 2, we also deﬁne the k-Cut problem to be the Cut
+          problem restricted to cuts of exactly k sets (i.e, k is not given as input,
+          but is ﬁxed). We further deﬁne the Cluster and k-Cluster problems
+          analogously. We leave as exercises to show that k-Cluster is strongly NP-
+          complete for every k ≥ 2, and that Cluster is strongly NP-complete. It
+          then follows that Cut and k-Cut for k ≥ 2 are all strongly NP-complete.
+             Given the above results, the problems of ﬁnding either a maximum cut
+          or a minimum cluster are NP-hard in the strong sense. Thus, from Theorem
+          17.4, there is no fully polynomial approximation scheme for either of these
+          problems unless P = NP. However, there is a simple greedy strategy that
+          yields good approximation ratios for maximum cut. We begin with k empty
+          sets, and add vertices one by one to the set that gives us the largest cut. The
+          algorithm is shown in Figure 17.6. Note that this algorithm actually uses
+          the amount by which the total weight of the clusters would increase when
+          choosing the set in which to place a given vertex — these values are easier
+          to compute than the weights of the resulting cuts. It is easily seen that this
+          algorithm runs in Θ(n2) time, if G is represented by a MatrixGraph.The
+          following theorem gives bounds for its approximation ratio.
+          Theorem 17.8. For each k ≥ 2, MaxCut yields an approximation ratio
+          of no more than
+                                      1+ 1 ;
+                                         k−1
+          thus, the approximation ratio is never more than 2.
+</div>
+    </div>
+  </body>
+</html>

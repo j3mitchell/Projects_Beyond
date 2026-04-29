@@ -1,0 +1,35 @@
+                                        Graphs                             327
+          algorithm to determine whether a given directed graph is transitively closed.
+          You may assume the graph is implemented as a MatrixGraph.
+          Exercise 9.6. An undirected graph is said to be connected if for every pair
+          of vertices u and v, there is a path of edges leading from u to v.Atree
+          is a connected undirected acyclic graph. Prove each of the following for an
+          undirected graph G with n vertices:
+          a. If G is a tree, then G has exactly n− 1edges.
+          b. If G is connected and has exactly n −1 edges, then G is a tree.
+          c. If G is acyclic and has exactly n − 1 edges, then G is a tree.
+          Exercise 9.7. Prove that MatrixGraph, shown in Figure 9.7, meets its
+          speciﬁcation.
+          Exercise 9.8. Prove that the ListGraph constructor shown in Figure 9.10
+          meets its speciﬁcation.
+          Exercise 9.9. Give an algorithm that takes as input a graph G and returns
+          true iﬀ G is undirected; i.e., if for every edge (u,v), (v,u)isalsoanedge.
+          Give the best upper bound you can on the running time, expressed as
+          simply as possible using big-O notation in terms of the number of vertices
+          n and the number of edges a, assuming the graph is implemented using
+          MatrixGraph.
+          * Exercise 9.10. An Euler path in a connected undirected graph G is a
+          path that contains every edge in G exactly once. Give an eﬃcient algorithm
+          to ﬁnd an Euler path in a connected undirected graph, provided one exists.
+          Your algorithm should return some representation of the Euler path, or nil if
+          no Euler path exists. Your algorithm should run in O(a) time, where a is the
+          number of edges in G, assuming that G is implemented as a ListGraph.
+          9.8  Notes
+          The study of graph theory began in 1736 with Leonhard Euler’s famous
+          study of the K¨onigsberg Bridge Problem [38], which is simply the problem
+          of ﬁnding an Euler path in a connected undirected graph (see Exercise 9.10).
+          Good references on graph theory and graph algorithms include Even [39],
+          Kocay and Kreher [85], and Tarjan [112]. In the early days of electronic
+          computing, graphs were typically implemented using adjacency matrices.
+          Hopcroft and Tarjan [65] ﬁrst proposed using adjacency lists for sparse
+          graphs. The topological sort algorithm of Section 9.2 is due to Knuth [82].

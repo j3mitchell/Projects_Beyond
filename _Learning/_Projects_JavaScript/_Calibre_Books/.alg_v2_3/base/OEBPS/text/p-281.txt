@@ -1,0 +1,41 @@
+            262                       Algorithms: A Top-Down Approach
+                          l
+                         2     l
+            at least lgm   =2lgmbits.If,for example, each key is 32 bits and our hash
+            table size is 256, four gigabytes of storage would be needed just to identify
+            the hash function.
+                Instead, we will randomly generate a table location for each of the l bit
+            positions. Let these locations be t1,...,t. We will assume that m is a power
+                                                       l
+            of 2 so that each of these locations is encoded using lgm bits.Agivenkey
+            k will select the subsequence of t1,...,t such that ti is included iﬀ the
+                                                         l
+            ith bit of k is a 1. Thus, each key selects a unique subsequence of locations.
+            The hash table location of k is then given by the bitwise exclusive-or of the
+            locations in the subsequence; in other words, the binary encoding of the hash
+            location has a 1 in position j iﬀ the number of selected locations having a 1
+            in position j is odd.
+            Example 7.1. Suppose our keys contain 4 bits, and we want to use a hash
+            table with 8 locations. We then randomly generate 4 table locations, one for
+            each of the 4 bit positions in the keys:
+            • t1 = 3, or 011 in binary;
+            • t2 = 6, or 110 in binary;
+            • t3 = 0, or 000 in binary;
+            • t4 = 3, or 011 in binary.
+            Note that these locations don’t need to be distinct.
+                Now let us compute the hash value for the keys 5 and 11, whose binary
+            encodings are 0101 and 1011. The key 5 selects the locations t2 and t4,whose
+            binary encodings are 110 and 011, respectively. The bitwise exclusive-or of
+            these two values is 101 because the ﬁrst and third bit positions each have an
+            odd number of 1, but the second has an even number. The key 5 therefore
+            is placed in location 5. Likewise, the key 11 selects the locations t1, t3,and
+            t4, whose binary encodings are 011, 000, and 011, respectively. The bitwise
+            exclusive-or of these three values is 000 because each of the three bit positions
+            contains an even number of 1s. The hash value for 11 is therefore 0.
+                To see why we use the exclusive-or operation, suppose we have a bit
+            value x that is 1 with probability p,0≤ p ≤ 1. Suppose we then assign a
+            value to bit y by ﬂipping a fair coin; i.e., y has a value of 1 with probability
+            1/2, independent of the value of x. The exclusive-or of x and y is 1 iﬀ the
+            values of x and y are diﬀerent. The probability of this event is therefore
+                                            p + 1−p = 1.
+                                            2      2      2

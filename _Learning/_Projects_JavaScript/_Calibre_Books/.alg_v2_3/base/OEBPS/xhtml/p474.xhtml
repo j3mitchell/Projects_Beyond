@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 474</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-474.jpg" alt="Page 474" width="1282" height="1882"/>
+      <div class="ocr">                                    Network Flow and Matching                       455
+                                                            
+           the ﬂow network, we need to ﬁnd a path to n in G from an unmatched vertex
+           in G. For example, consider the MatchingGraph shown in Figure 14.7.
+                                                                                      
+           We can add vertex 2 to the matching by ﬁnding a path from 2 to 9 in G .
+           Taking the path 2,0,9 could yield the augmenting path 2,5,0,4,which
+           produces the matching shown in Figure 14.5. This path could also yield the
+           augmenting path 2,5,0,6 because 0 is adjacent to two unmatched vertices,
+           4 and 6. Alternatively, taking the path 2,9 would yield the augmenting
+           path 2,8.     
+               Note that G actually represents two ﬂow networks. If (i,j)isanedgein
+             
+           G and j = n,theni and j must both be in the same partition. Therefore,
+           the subgraph induced by V1∪{n} represents the ﬂow network in which edges
+           in the matching lead from V to V . Symmetrically, the subgraph induced
+                                        2      1
+           by V ∪{n} represents the ﬂow network in which edges in the matching
+                2
+           lead from V to V — i.e., the ﬂow network that would be constructed by
+                       1     2
+           swapping V with V . Thus, 4 could be added to the matching by ﬁnding a
+                       1       2
+                                  
+           pathfrom4to9inG. The only such path, 4,5,9, would also yield the
+           matching shown in Figure 14.5.
+               To implement a MatchingGraph, we need two representation vari-
+           ables:
+           • a Graph bipartite representing the bipartite graph; and
+           • a readable array matching[0..n − 1] representing the matching, so that
+             matching[i] gives the vertex to which i is matched, or −1ifi is unmatched.
+           Its structural invariant will be that for 0 ≤ i&lt;n,ifmatching[i] = −1, then
+           matching[matching[i]] = i.
+               A partial implementation is shown in Figure 14.8 — we only include
+           implementations of those operations we will actually be using. These oper-
+           ations include an additional operation for adding an edge to the matching,
+           while removing any edges that might be incident on either endpoint. We
+           also include a constructor that constructs a MatchingGraph from a given
+           bipartite graph with an empty matching. We use the data variable of an
+           Edgetostoretheintermediate vertex between the two edges of the bipartite
+           graph represented by that Edge.
+               Note that this implementation is not secure, because its constructor
+           allows an outside reference to bipartite, and because matching is readable.
+           We could easily modify the implementation so that the constructor stores
+           a copy of its input graph and the Matching operation returns a copy of
+           matching; however, if we write our matching algorithm so that it doesn’t
+</div>
+    </div>
+  </body>
+</html>

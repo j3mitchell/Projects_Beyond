@@ -1,0 +1,16 @@
+                                            Introduction                               7
+             Figure 1.2  Analgorithm implementing the speciﬁcation of Figure 1.1
+             Figure 1.3  Analgorithm implementing the speciﬁcation of Sort, given in Figure 1.2
+           of sorting to smaller instances. In this application of the top-down approach,
+           the simpler problem is actually a smaller instance of the same problem.
+               Thealgorithm is given in Figure 1.3. Though this application of the top-
+           down approach may at ﬁrst seem harder to understand, we can think about
+           it in the same way as we did for SimpleSelect.Ifn ≤ 1, the postcondition
+           for Sort(A[1..n]) (given in Figure 1.2) is clearly met. For n>1, we use the
+           speciﬁcation of Sort to understand that InsertSort(A[1..n − 1]) sorts
+           A[1..n − 1]. Thus, the precondition for Insert(A[1..n]) is satisﬁed. We
+           then use the speciﬁcation of Insert(A[1..n]) to understand that when the
+           algorithm completes, A[1..n]issorted.
+               The thought process outlined above might seem mysterious because
+           it doesn’t follow the sequence of steps in an execution of the algorithm.
+           However, it is a much more powerful way to think about algorithms.

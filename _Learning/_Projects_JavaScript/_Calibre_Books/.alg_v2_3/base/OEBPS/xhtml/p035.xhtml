@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 035</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-035.jpg" alt="Page 035" width="1282" height="1882"/>
+      <div class="ocr">           16                      Algorithms: A Top-Down Approach
+            Figure 1.11   Analgorithm for maximum subsequence sum (speciﬁed in Figure 1.9),
+            optimized by removing an unnecessary loop from MaxSumIter (Figure 1.10)
+                                                                          2       2
+           of MaxSumOpt was only 18 seconds. However, because c(2n) =4cn ,we
+           would expect the running time to increase by a factor of 4 each time the
+           array size is doubled. This prediction proved to be true, as a data set of
+                 19
+           size 2  =524,288 required about 70 seconds. Extrapolating this behavior,
+                                                   24
+           we would expect a data set of size 2       =16,777,216 to require nearly
+           20 hours. (MaxSumIter would require over 6,000 years to process a data
+           set of this size.)
+               While MaxSumOpt gives a dramatic speedup over MaxSumIter,we
+           would like further improvement if we wish to solve very large problem
+           instances. Note that neither MaxSumIter nor MaxSumOpt was designed
+           using the top-down approach. Let us therefore consider how we might solve
+           the problem in a top-down way. For ease of presentation let us refer to the
+           maximumsubsequencesumofA[0..n−1] as sn. Supposewe can obtain sn−1
+           (i.e., the maximum subsequence sum of A[0..n−2]) for n&gt;0. Then in order
+           to compute the overall maximum subsequence sum we need the maximum
+           of sn−1 and all of the sums of subsequences A[i..n − 1] for 0 ≤ i ≤ n.Thus,
+           we need to solve another problem, that of ﬁnding the maximum suﬃx sum
+           (see Figure 1.12), which we deﬁne to be
+                                                            
+                                         n−1
+                                   max A[k]|0≤i≤n .
+                                         k=i
+               In other words, the maximum suﬃx sum is the maximum sum that we
+           can obtain by starting at any index i,where0≤ i ≤ n, and adding together
+           all elements from index i up to index n − 1. (Note that by taking i = n,we
+           include the empty sequence in this maximum.) We then have a top-down
+           solution for computing the maximum subsequence sum:
+</div>
+    </div>
+  </body>
+</html>

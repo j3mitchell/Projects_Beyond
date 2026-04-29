@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 357</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-357.jpg" alt="Page 357" width="1282" height="1882"/>
+      <div class="ocr">      338          Algorithms: A Top-Down Approach
+      of the two subproblems is at most half the size of the original problem, we
+      can bound the running time of this sorting algorithm with the recurrence
+                    f(n) ∈ 2f(n/2)+Θ(n).
+      From Theorem 3.35, f(n) ∈ Θ(nlgn).
+        However, it turns out that the overhead of choosing the median as the
+      pivot is too expensive in practice, so that heap sort, for example, outperforms
+      this algorithm. On the other hand,choosing an arbitrary element, such as the
+      ﬁrst, degrades the worst case performance. For example, suppose that the
+      input array is already sorted and that all keys are distinct. If we always
+      choose the ﬁrst element as the pivot, then we always choose the smallest
+      element. As a result, one of the two subproblems is empty, and the other
+      contains all but one of the original elements. Because the empty subproblem
+      can be sorted in Θ(1) time, we can describe the running time for such a case
+      with the following recurrence:
+                    f(n) ∈ f(n−1)+Θ(n).
+      From Theorem 3.34, f(n) ∈ Θ(n2), so that the running time for this
+      algorithm is in Ω(n2) in the worst case. Observing that each element is chosen
+      as a pivot at most once, we can easily see that O(n2) is an upper bound on
+      the running time, so that the algorithm runs in Θ(n2)timeintheworst
+      case. Because of this bad worst case, the most common implementations of
+      this algorithm combine it with a Θ(nlgn) algorithm, usually heap sort, in
+      order to achieve Θ(nlgn) performance in the worst case (see Exercise 10.10).
+      For the remainder of this section, we will focus on improving the quick sort
+      algorithm without combining it with another sorting algorithm.
+        Choosing the ﬁrst element (or the last element) as the pivot is a bad
+      idea, because an already-sorted array yields the worst-case performance.
+      Furthermore, the performance is nearly as bad on a nearly-sorted array.
+      To make matters worse, it is not hard to see that when the running time
+      is in Θ(n2), the stack usage is in Θ(n). Because we often need to sort a
+      nearly-sorted array, we don’t want an algorithm that performs badly in such
+      cases.
+        Theabove analyses illustrate that it is better for the pivot element to be
+      chosen to be near the median than to be near the smallest (or equivalently,
+      the largest) element. More generally, it illustrates why divide-and-conquer is
+      often an eﬀective algorithm design strategy: when a problem is reduced to
+      multiple subproblems, it is best if these subproblems are the same size. For
+</div>
+    </div>
+  </body>
+</html>

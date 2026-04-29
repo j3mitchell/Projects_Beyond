@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 048</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-048.jpg" alt="Page 048" width="1282" height="1882"/>
+      <div class="ocr">                                       Proving Algorithm Correctness                           29
+                 Now we will illustrate the principle of induction by proving the correct-
+            ness of InsertSort.
+            Theorem 2.4. InsertSort, given in Figure 1.3, satisﬁes the speciﬁcation
+            of Sort, given in Figure 1.2.
+            Proof.     By induction on n.
+            Base: n ≤ 1. In this case the algorithm does nothing, but its postcondition
+            is vacuously satisﬁed (i.e., there are no i,j such that 1 ≤ i&lt;j≤ n).
+            Induction Hypothesis: Assume that for some n&gt;1, for every k&lt;n,
+            InsertSort(A[1..k]) satisﬁes its speciﬁcation.
+            Induction Step: Weﬁrstassumethatinitially, thepreconditionforInsert-
+            Sort(A[1..n])issatisﬁed.ThenthepreconditionforInsertSort(A[1..n−1])
+            is also initially satisﬁed. By the Induction Hypothesis, we conclude that
+            InsertSort(A[1..n−1]) satisﬁes its speciﬁcation; hence, its postcondition
+                                                 
+            holds when it ﬁnishes. Let A            denote the value of A after Insert-
+                                                   
+            Sort(A[1..n−1]) ﬁnishes. Then A [1..n−1] is a permutation of A[1..n−1] in
+                                                                
+            nondecreasingorder,andA [n]=A[n].Thus,A satisﬁes theprecondition of
+                             
+            Insert.LetA denote the value of A after Insert(A[1..n]) is called. By the
+                                           
+            postcondition of Insert,A [1..n]isapermutationofA[1..n] in nondecreasing
+            order. InsertSort therefore satisﬁes its speciﬁcation.                              
+                 Because the algorithm contains an if statement, the proof requires a
+            case analysis. The two cases are handled in the Base and the Induction
+            Step, respectively. Note that the way we prove the Induction Step is very
+            similar to how we proved Theorem2.1. Theonlydiﬀerenceisthatwehavethe
+            Induction Hypothesis available to allow us to reason about the recursive call.
+            2.3    Handling Iteration
+            Let us now consider MaxSumBU, shown in Figure 1.14 on page 18. This
+            algorithm contains a for loop. As we did with recursion, we would like to
+            be able to apply straight-line reasoning techniques. In Chapter 1, we used
+            invariants in order to focus on a single loop iteration. Because we already
+            know how to handle code without loops, focusing on a single iteration allows
+            us to apply techniques we have already developed. Loop invariants therefore
+            give us the power to reason formally about loops.
+</div>
+    </div>
+  </body>
+</html>

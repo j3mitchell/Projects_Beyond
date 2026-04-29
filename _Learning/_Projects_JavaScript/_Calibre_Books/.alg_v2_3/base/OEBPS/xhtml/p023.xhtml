@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 023</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-023.jpg" alt="Page 023" width="1282" height="1882"/>
+      <div class="ocr">           4                     Algorithms: A Top-Down Approach
+           is larger than n? Do we allow the algorithm to change the array? Do all of
+           the elements in the array need to be diﬀerent? If not, what exactly do we
+           mean by the kth smallest?
+              Speciﬁcally, we need to state the following:
+           • aprecondition, which is a statement of the assumptions we make about the
+             input to the algorithm and the environment in which it will be executed;
+             and
+           • a postcondition, which is a statement of the required result of executing
+             the algorithm, assuming the precondition is satisﬁed.
+           The precondition and postcondition, together with a function header giving
+           a name and parameter list, constitute the speciﬁcation of the algorithm. We
+           say that the algorithm meets its speciﬁcation if the postcondition is satisﬁed
+           whenever the precondition is satisﬁed. Note that we guarantee nothing about
+           the algorithm if its precondition is not satisﬁed.
+              The selection problem will have two parameters,    We adopt the convention
+           an array A and a positive integer k. The precondition that if the last index is
+           should specify what we are assuming about these       smaller than the ﬁrst (e.g.,
+                                                                 A[1..0]), then the array has
+           parameters. For this problem, we will assume that     no elements.
+           the ﬁrst element of A is indexed by 1 and the last element is indexed by some
+           natural number (i.e., nonnegative integer) n; hence, we describe the array
+           more precisely using the notation A[1..n]. We will assume that each element
+           of A[1..n] is a number; hence, our precondition must include this requirement.
+           Furthermore, we will not require the algorithm to verify that k is within a
+           proper range; hence, the precondition must require that 1 ≤ k ≤ n,where
+           k ∈ N (N is the mathematical notation for the set of natural numbers).
+              Now let us consider how we might specify a postcondition. We need to
+           come up with a precise deﬁnition of the kth smallest element of A[1..n].
+           Consider ﬁrst the simpler case in which all elements of A[1..n]aredistinct.
+           In this case, we would need to return the element A[i] such that exactly k
+           elements of A[1..n] are less than or equal to A[i]. However, this deﬁnition
+           of the kth smallest element might be meaningless when A[1..n]contains
+           duplicate entries. Suppose, for example, that A[1..2] contains two 0s and
+           that k = 1. There is then no element A[i] such that exactly 1 element of
+           A[1..2] is less than or equal to A[i].
+               To better understand the case in which elements of A might be dupli-
+           cated, let us consider a speciﬁc example. Let A[1..8] = 1,5,6,9,9,9,9,10,
+           and let k = 5. An argument could be made that 10 is the kth smallest
+</div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,37 @@
+                                     Network Flow and Matching                          447
+             Figure 14.3   The Ford–Fulkerson algorithm for network ﬂow
+               Precondition: G is directed Graph in which each edge contains a Nat
+               giving its capacity, and source and sink are distinct Natslessthanthe
+               number of vertices in G.
+               Postcondition: Returns a directed graph F in which the contents of the
+               edges give a maximum ﬂow for G from source to sink.
+               NetworkFlow(G,source,sink)
+                  F ←CopyGraph(G,true); R←CopyGraph(G,false)
+                  P ←FindPath(R,source,sink)
+                  // Invariant: F combined with a maximum ﬂow for R gives a maximum
+                  // ﬂow for G. P is a ConsList containing the Edges of a path from
+                  // source to sink in R if there is such a path; otherwise, P = nil.
+                  while P = nil
+                     m←MinVal(P);AddFlow(F,P,R,m)
+                     P ←FindPath(R,source,sink)
+                  return F
+               Precondition: G is a Graph, and zeroEdges is a boolean.
+               Postcondition: Returns a copy of G.IfzeroEdges is true, the contents of
+               all edges are set to 0; otherwise, they are unchanged.
+               CopyGraph(G,zeroEdges)
+               Precondition: G is a Graph whose edges contain natural numbers, and i
+               and j are distinct natural numbers strictly less than the number of vertices
+               in G.
+               Postcondition: Returns a ConsList P containing the Edges in a simple
+               path of non-zero Edgesfromi to j in G. If no such path exists, returns nil.
+               FindPath(G,i,j)
+               Precondition: L is a ConsList of Edges containing positive integers.
+               Postcondition: Returns the minimum integer stored on any Edge in L.
+               MinVal(L)
+               Precondition: F and R are directed Graphs having the same number
+               of vertices and whose edges contain natural numbers, P is a ConsList of
+               Edges forming a simple path in R, and m is a positive integer.
+               Postcondition: Adds a ﬂow of m to each edge in F that appears in P and
+               sets R to the resulting residual graph. Edges are added to each Graph if
+               necessary.
+               AddFlow(F,P,R,m)

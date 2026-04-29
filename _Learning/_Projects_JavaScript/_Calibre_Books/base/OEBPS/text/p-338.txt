@@ -1,0 +1,2 @@
+                                             Graphs                                  319
+             Figure 9.8  ListGraph implementation (partial) of Graph

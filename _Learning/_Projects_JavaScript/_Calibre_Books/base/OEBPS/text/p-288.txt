@@ -1,0 +1,48 @@
+                                    Storage/Retrieval II: Unordered Keys                        269
+             Because 0 ≤ c<p, the above value is 0 iﬀ
+                                            a (k −k)modp=c.
+                                             i  i     i
+                 Because k = k and p is prime, k − k and p are relatively prime.
+                             i      i                      i     i
+             From Theorem 7.3, the above equation has a unique solution for ai such
+             that 0 ≤ a <p.Thus,foreachchoiceofa ,...,a                       ,a    ,...,a,there
+                          i                                       1       i−1   i+1        l
+             is exactly one choice of a such that (h          (k) − h    (k)modp)=0.Note
+                                           i               p,s         p,s
+             that from the range of h      ,theonlyway(h (k)−h (k))modp=0 is if
+                                         p,s                   p,s        p,s
+             h (k)=h (k). We therefore have the following lemma.
+              p,s        p,s
+             Lemma7.6. Let p be a prime number and l a positive integer. In addition,
+             let s = a ,...,a,whereeacha is chosen independently and uniformly
+                         1       l                  j
+             such that 0 ≤ a <p. Then the probability that h           (k)=h (k) for distinct
+                              j                                     p,s        p,s
+             keys k and k is 1/p.
+                 Wenowdeﬁne
+                        H3 ={h |s=a ,...,a, 0≤a <pfor 1≤i≤l}.                               (7.2)
+                          p,l      p,s         1       l         i
+             We deﬁne the probability of each element of H3                by selecting each ai
+                                                                       p,l
+             independently with uniform probability. Note that the range of each hash
+             function in H3 is the set of natural numbers strictly less than p. Therefore,
+                            p,l
+             based on the above discussion, we have the following theorem.
+             Theorem 7.7. For any prime number p and positive integer l, H3 is a
+                                                                                           p,l
+             universal family of hash functions.
+                 If we know in advance the approximate size of our data set and the
+             maximum key length, we can select an appropriate prime value for p and
+             randomly select the appropriate hash function from H3 . Because we can
+                                                                             p,l
+             apply the mod operation after each addition, we are always working with
+             values having no more than roughly twice the number of bits as p; hence, we
+             cancomputethishashfunctionreasonablyquicklyforeach key.Furthermore,
+             even if we don’t know the maximum key length, we can generate the
+             multipliers a as we need them.
+                           i
+                 However, if we don’t know in advance the approximate size of the data
+             set, we may need to use rehashing. For the sake of eﬃciency, we would like to
+             avoid the need to apply a new hash function to the entire key. Furthermore,
+             as we will see in the next section, it would be useful to have a universal family
+             that is appropriate for large keys and for which the table size is unrestricted.

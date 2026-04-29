@@ -1,0 +1,46 @@
+                            NP-Completeness                 541
+           Finally, we will need some abbreviations for specifying the behavior of
+        arithmetic andcomparisoninstructions.Wecanexpressallofthesebehaviors
+        using the speciﬁcation of a sum. Thus, we need to express that the sum of
+        y[1..p(n)] and z[1..p(n)] is s[1..p(n)]. In order to express this constraint,
+        we will need to represent the “carry” bits used to compute the sum. For
+        this purpose, we will use the variables c [0..p(n)] for some i.Speciﬁcally,for
+                                    i
+        1 ≤ k ≤ p(n), c [k] will be the carry from the sum of y[k], z[k], and c [k−1],
+                   i                                     i
+        and the value of c [0] will be false,denoting0.
+                     i
+           We ﬁrst observe that the low-order bit of the sum of y[k], z[k], and
+        c [k − 1] is the exclusive-or of the three bits. We therefore ﬁrst deﬁne an
+         i
+        abbreviation for specifying exclusive-or:
+                        Xor(y,z)=(y∨z)∧¬(y∧z).
+        We then observe that the carry bit of this sum is 1 iﬀ at least two of the
+        three bits are 1. Stated another way, the carry bit is 1 iﬀ either
+        • both y[k]andz[k] are 1; or
+        • c [k − 1] is 1 and either y[k]orz[k]is1.
+          i
+           Wetherefore deﬁne the following abbreviation:
+          Sum(y,z,s,i)=¬c [0]∧¬c [p(n)]∧
+                       i     i
+                      p(n)
+                      (Eq(s[k],Xor(Xor(y[k],z[k]),c[k−1]))∧
+                                               i
+                      k=1
+                        Eq(c [k],(y[k] ∧ z[k]) ∨ (c [k − 1] ∧ (y[k] ∨ z[k])))).
+                            i             i
+        This expression states that y[1..p(n)] + z[1..p(n)] = s[1..p(n)] and that
+        c [0..p(n)] give the carry bits of this sum. This expression can be constructed
+         i
+        in O(p(n)) time.
+           Let us now begin to construct our formula F. This formula will be the
+        conjunction of a number of sub-formulas, each of which will specify some
+        constraint on the values of the boolean variables. These constraints together
+        will encode the requirement that M gives a “yes” answer on input (x,φ),
+        where x is the given input for problem X. Because we will not specify the
+        value of φ, the formula will be satisﬁable iﬀ there is some φ with length at
+        most p(n) such that M yields an output of 1 on (x,φ). Furthermore, we
+        will show that we can construct this formula within a polynomial amount of
+        time.
+           For the ﬁrst constraint, we will specify that for 0 ≤ i ≤ p(n), there is
+        at most one j such that pij is true. Thus, there will be no ambiguity as to

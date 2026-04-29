@@ -1,0 +1,45 @@
+         560               Algorithms: A Top-Down Approach
+         an approximation ratio of at most 2. Because V(A) ≥ V(A ), the theorem
+                                                       i
+         will follow.
+            In computing an upper bound on V(S)−V(A ), we can ignore all items
+                                               i
+         that belong to S ∩ A . Suppose these common items have a total weight
+                         i
+         of C. Suppose further that V(A ) <V(S). Then the greedy loop must reject
+                                 i
+         at least one element belonging to S. Let item k be the ﬁrst element from
+         S to be rejected by the greedy loop in the construction of A . Then the
+                                                         i
+         total weight of all items in A \S chosen prior to item k is greater than
+                                i
+         W−C−w[k].Because their value-to-weight ratios are all at least v[k]/w[k],
+         their total value is greater than
+                              v[k](W −C −w[k]).
+                                    w[k]
+            Theitems in S\A must have total weight at most W −C.Furthermore,
+                         i
+         all of their value-to-weight ratios are at most v[k]/w[k]; hence their total
+         value is at most
+                                v[k](W −C).
+                                    w[k]
+         We therefore have
+                 V(S)−V(A)< v[k](W −C) − v[k](W −C −w[k])
+                           i      w[k]           w[k]
+                            =v[k].
+            Because items i and k both belong to S and v[i] ≥ v[k], v[k] ≤ V(S)/2.
+         We therefore have
+                            V(S)−V(A)<V(S)/2
+                                      i
+                                   V(S) < 2V(A )
+                                             i
+                             V(S)/V(A ) < 2
+                                      i
+                              V(S)/V(A) <2.                      
+            Thoughwehaveaboundedapproximation ratio, an approximation ratio
+         of 2 may seem unsatisfactory, as in the worst case we may only achieve
+         half the actual maximum value. It turns out that we can improve the
+         approximation ratio by examining all pairs of items, then using the greedy
+         algorithm to complete each of these packings. More generally, we can achieve
+         an upper bound of 1 + 1 by examining all sets of k items and completing
+                           k

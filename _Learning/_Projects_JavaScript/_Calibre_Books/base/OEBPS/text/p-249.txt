@@ -1,0 +1,41 @@
+        230               Algorithms: A Top-Down Approach
+           The partial implementation shown in Figure 6.25 does not explicitly
+        handle the case in which the level of a new node exceeds the level of start
+        and end. In what follows, we will assume that these arrays are expanded as
+        needed using the expandable array design pattern. Later, we will argue that
+        for all practical purposes, a ﬁxed-sized array can be used. In the meantime,
+        we note that the time needed to expand the array is proportional to the
+        number of iterations of the while loop in Put, so we need not amortize
+        this cost.
+           We will devote the remainder of this section to analyzing the expected
+        running time of Put. This analysis is rather involved, but it uses some
+        important new tools for analyzing expected running times. Furthermore,
+        much of this analysis can be applied directly to the analyses of Get
+        and Remove; we therefore leave these analyses as exercises. In view of
+        the sometimes counter-intuitive nature of expected values, we will proceed
+        with care.
+           We will partition the algorithm into ﬁve parts:
+        • the while loop;
+        • the call to Find;
+        • the construction of a new SkipListNode;
+        • the for loop; and
+        • the remainder of the algorithm for the case in which x = nil.
+        At this point, let us observe that a worst-case input must have x = nil and k
+        as a new key, not already in the set. On any such input, the overall running
+        time is the sum of the running times of the above ﬁve parts. By the linearity
+        of expectation, the expected running time of the algorithm on a worst-case
+        input is therefore the sum of the expected running times of these ﬁve parts
+        on a worst-case input.
+           Webeginbyanalyzingthewhileloop.Wedeﬁnethediscreteprobability
+        space Seq to be the set of all ﬁnite sequences of ﬂips containing zero or more
+        heads, followed by exactly one tails. Note that for each positive integer i,there
+        is exactly one sequence in Seq with length i; hence, Seq is countable. As we
+        have already argued, the probability of achieving a sequence of length i is
+         −i
+        2 . In order to conclude that Seq is a discrete probability space, we must
+        show that
+                                ∞
+                               −i
+                                  2  =1.
+                               i=1
+        This fact follows from the following theorem, using c =2anda = −1.

@@ -1,0 +1,6 @@
+                                         Priority Queues                             163
+             Figure 5.7  The LeftistTree data structure.
+           items in the priority queue. Though it requires some work, it can be shown
+           that the lower bound for each of these running times is in Ω(lgn).
+               It is easy to see that the stack space usage of Merge is proportional to
+           the depth of recursion, which in turn is proportional to the running time.

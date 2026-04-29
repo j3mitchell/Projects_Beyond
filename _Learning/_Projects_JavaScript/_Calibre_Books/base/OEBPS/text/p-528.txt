@@ -1,0 +1,39 @@
+                                         NP-Completeness                               509
+               From our earlier discussion, it follows that Sat ∈    We use |x| to denote the
+           NP. We can clearly consider any array A[1..n]of lengthoftheencodingofx.
+           boolean values to be a bit string, and vice versa. We
+           then let the decision problem Y be the problem solved by BoolEval. Hence,
+           Y ∈P.Wecanthenletp(n)=n. Then a given expression F is satisﬁable
+           iﬀ there is a proof φ such that (x,φ) ∈ Y. Because we have assumed that
+           whenever an integer j represents a variable in F, all positive integers less
+           than j also represent variables in F, it follows that if a proof φ exists, there
+           will always be one with length no more than |F|.
+               Wetherefore have an example of a problem in NPthat may or may not
+           be in P. The following theorem gives the relationship between P and NP.
+           Theorem 16.1. P⊆NP.
+           Proof.    Let X ∈P,andletI be the set of instances of X. We then deﬁne
+           Y = X ×B.Thus,Y is comprised of all pairs (x,φ) such that x ∈ X and
+           φ ∈B. We can therefore decide whether (x,φ) ∈ I ×Bbelongs to Y by
+           simply deciding whether x ∈ X. Because X ∈P, it follows that Y ∈P.Let
+           p(n)=1.Thenx ∈ X iﬀ (x,0) ∈ Y, and the length of 0 is 1. Therefore
+           X∈NP.                                                                        
+               It is currently unknown whether the above containment is proper, or
+           whether P = NP.Infactthe“P = NP” question is the most famous open
+           question in computational complexity theory. Most complexity theorists
+           believe that these sets are not equal. Though many of the reasons for this
+           belief are beyond the scope of this book, we will soon see one compelling
+           reason. For now, let us simply state that we take as a working hypothesis
+           that P = NP. Thus, if we can show that some particular statement implies
+           that P = NP, we take this as strong evidence that the statement is false.
+               In order to focus on the relationship between P and NP,itisuseful
+           to identify problems that seem more likely to be in NP\P.Insomesense,
+           we want to identify the hardest problems in NP. We can do this using
+           a reﬁnement of the notion of problem reduction. Speciﬁcally, let X and
+           Y be two decision problems whose instances comprise the sets I and J,
+           respectively. We say that X is polynomially many-one reducible to Y, written
+           X≤p Y,if there is a function f : I → J such that
+                m
+           • for all x ∈ I, x ∈ X iﬀ f(x) ∈ Y ;and
+           • there is a deterministic polynomial-time algorithm for computing f.
+               Note that polynomial many-one reductions are transformations — given
+           an instance x of problem X, we can decide whether x ∈ X simply by

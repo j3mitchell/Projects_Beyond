@@ -1,0 +1,48 @@
+                               Analyzing Algorithms                 87
+            As a result of the above theorem, in order to prove properties about
+         either O(f(m,n)) or Ω(f(m,n)), where f is strictly non-decreasing, we only
+         need to prove one of the two inequalities in the deﬁnition. Consider, for
+         example, the following extension to Theorem 3.8.
+         Theorem 3.44. Suppose f (m,n)   ∈ O(g (m,n)) and f (m,n) ∈
+                                 1             1            2
+         O(g (m,n)), where g and g are strictly non-decreasing. Then
+            2             1    2
+         1.f(m,n)f (m,n)∈O(g (m,n)g (m,n)); and
+            1      2          1     2
+         2.f(m,n)+f (m,n)∈O(max(g (m,n),g(m,n))).
+            1        2              1       2
+         Proof.  We will only show part 3.44; part 3.44 will be left as an exercise.
+         Because f (m,n) ∈ O(g (m,n)) and f (m,n) ∈ O(g (m,n)), there exist
+                 1           1           2           2
+         positive real numbers c and c and natural numbers n and n such that
+                            1     2                   1     2
+         whenever m ≥ n1 and n ≥ n1,
+                               
+                              f (m,n) ≤ c g(m,n),
+                               1        1 1
+         and whenever m ≥ n2 and n ≥ n2,
+                               
+                              f (m,n) ≤ c g(m,n).
+                               2        2 2
+         In what follows we will let
+                 
+                f1f2(m,n)=max{f1(i,j)f2(i,j) | 0 ≤ i ≤ m,0 ≤ j ≤ n}.
+            We ﬁrst observe that for any natural numbers m and n,
+                                          
+                           f1f2(m,n) ≤ f1(m,n)f2(m,n).
+         Furthermore, because both g and g are strictly non-decreasing, so is g g .
+                                1     2                           1 2
+            Let n =max(n ,n). Then whenever m ≥ n and n ≥ n ,
+                0        1 2                    0         0
+                                         
+                          f1f2(m,n) ≤ f1(m,n)f2(m,n)
+                                  ≤c g(m,n)c g(m,n)
+                                     1 1     2 2
+                                  =c c g(m,n)g(m,n)
+                                     1 2 1     2
+                                  =cgg (m,n),
+                                      1 2
+         where c = c c . From Theorem 3.43,
+                  1 2
+                       f (m,n)f (m,n) ∈ O(g (m,n)g (m,n)).
+                        1      2         1      2                   

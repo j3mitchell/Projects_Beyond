@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 090</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-090.jpg" alt="Page 090" width="1282" height="1882"/>
+      <div class="ocr">                               Analyzing Algorithms                71
+         WecannowapplyTheorem3.31bylettingg(N)=N andf(k)=1.Because
+         Niseventually non-decreasing and unbounded,and because 1 is smooth, we
+         can conclude that the running time of the inner loop is in Ω(g(N)f(g(N))) =
+         Ω(N). The lower bound for the algorithm is therefore in
+                                   n−1
+                                   Ω(N).
+                                   i=0
+         Again, Theorem 3.31 does not immediately apply to this summation. First,
+         the lower limit of the index i is 0, not 1 as required by Theorem 3.31.
+         Furthermore, the theorem requires the expression inside the asymptotic
+         notation to be a function of the summation index i, not of N.
+            In order to take care of the latter problem, we observe that as i ranges
+         from 0 to n−1, N (or n−i) takes on each of the integer values from n to 1.
+         Wecan therefore write the above sum as:
+                                    n
+                                   Ω(N).
+                                  N=1
+         In order to apply Theorem 3.31, we let g(n)=n and f(N)=N. g(n)f(g(n))
+         is therefore n2. From Theorem 3.31 the running time of MaxSumOpt is in
+         Ω(n2). Note that this is the same bound that we obtained in Section 3.3,
+         but instead of using Equation (2.1), we used the more general (and hence,
+         more widely applicable) Theorem 3.31.
+            To further illustrate the power of Theorem 3.31, let’s now analyze the
+         running time of MaxSumIter, given in Figure 1.10 on page 15. A single
+         iteration of the inner loop has a running time in Θ(1). The total running
+         time of this loop is therefore in
+                               j−1      j−i
+                              Θ(1)=Θ(1).
+                               k=i      k=1
+         Letting J = j − i, which is a natural number because j ≥ i,fromTheorem
+         3.31, this running time is in Θ(J). The total running time of the middle loop
+         is then in
+                               n        n−i
+                              Θ(J)=Θ(J).
+                              j=i      J=0
+</div>
+    </div>
+  </body>
+</html>

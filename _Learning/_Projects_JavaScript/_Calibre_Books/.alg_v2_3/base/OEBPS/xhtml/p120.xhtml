@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 120</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-120.jpg" alt="Page 120" width="1282" height="1882"/>
+      <div class="ocr">                               Analyzing Algorithms                101
+         b.
+                              f(n) ∈ f(n−1)+Ω(nlgn),
+           for n&gt;0.
+         c.
+                               f(n) ∈ 4f(n/2)+O(lg2n),
+                          k
+         d. whenever n =3·2 for a positive integer k.
+                                f(n) ∈ 5f(n/3) +Θ(n2),
+                        k
+           whenever n =3 for a positive integer k.
+         e.
+                                f(n) ∈ 3f(n/2)+O(n),
+                          k
+           whenever n =8·2 for a positive integer k.
+         Exercise 3.18. Analyzetheworst-case runningtimeof SelectByMedian,
+         shown in Figure 2.7, assuming that Median is implemented to run in Θ(n)
+         time. Express your result as simply as possible using Θ-notation.
+         Exercise 3.19. Analyze the worst-case running time of the following
+         functions. Express your result as simply as possible using Θ-notation.
+         a. SlowSort(A[1..n])
+              if n =2and A[1] &gt;A[2]
+                A[1] ↔ A[2]
+              else if n&gt;2
+                SlowSort(A[1..n−1])
+                SlowSort(A[2..n])
+                SlowSort(A[1..n−1])
+         b. FindMax(A[1..n])
+              if n =0
+                error
+              else if n =1
+                return A[1]
+              else
+                return Max(FindMax(A[1..n/2]),FindMax(A[n/2+1..n]))
+</div>
+    </div>
+  </body>
+</html>

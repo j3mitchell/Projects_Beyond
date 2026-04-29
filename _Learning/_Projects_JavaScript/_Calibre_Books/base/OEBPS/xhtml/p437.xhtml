@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 437</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-437.jpg" alt="Page 437" width="1282" height="1882"/>
+      <div class="ocr">           418                     Algorithms: A Top-Down Approach
+               In order to avoid deleting vertices from the graph, we need a mechanism
+           for selecting a subgraph based on a given subset of the vertices. More
+           precisely, let G =(V,E) be a (directed or undirected) graph, and let V  ⊆ V .
+                                                                                
+           Wedeﬁnethe subgraph of G induced by V to be G =(V ,E), where E is
+           the set of edges connecting vertices from V . We therefore need a mechanism
+           for selecting a subset of the vertices in the graph.
+               For this purpose, we deﬁne the data structure Selector.ASelector
+           represents a set of n elements numbered 0,...,n− 1, each of which is
+           either selected or unselected. The constructor and operations for Selector
+           are speciﬁed in Figure 13.4. It is a straightforward matter to implement
+           Selector using an array of booleans so that the constructor, SelectAll,
+           and UnselectAll run in Θ(n) time, where n is the number of elements
+           represented, and so that the remaining operations run in Θ(1) time.
+            Figure 13.4   Speciﬁcation of the Selector data structure
+               Precondition: n is a Nat.
+               Postcondition: Constructs a Selector of size n, all of whose elements
+               are selected.
+               Selector(n)
+               Precondition: true.
+               Postcondition: Selects all elements.
+               Selector.SelectAll()
+               Precondition: true.
+               Postcondition: Unselects all elements.
+               Selector.UnselectAll()
+               Precondition: i is a Nat less than the number of elements.
+               Postcondition: Selects element i.
+               Selector.Select(i)
+               Precondition: i is a Nat less than the number of elements.
+               Postcondition: Unselects element i.
+               Selector.Unselect(i)
+               Precondition: i is a Nat less than the number of elements.
+               Postcondition: Returns true if element i is selected, or false otherwise.
+               Selector.IsSelected(i)
+</div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,37 @@
+                        Preface               vii
+         6. Storage/Retrieval I: Ordered Keys — ordered arrays, binary
+          search trees, AVL trees, splay trees, and skip lists.
+         7. Storage/Retrieval II: Unordered Keys — virtually initialized
+          arrays and hashing, including universal hashing.
+         8. Disjoint Sets — structures for supporting Merge and Find
+          operations on disjoint sets.
+         9. Graphs — introduction to graph theory and implementations of
+          graphs.
+      III. Algorithm Design Techniques — an in-depth look at standard
+         algorithmic design techniques.
+         10. Divide and Conquer — algorithms for sorting, selecting the
+           kth smallest, multiplying polynomials, and multiplying/dividing
+           integers.
+         11. Optimization I: Greedy Algorithms — algorithms for ﬁnding
+           a minimum-cost spanning tree, ﬁnding shortest paths, scheduling,
+           and generating Huﬀman codes.
+         12. Optimization II: Dynamic Programming — algorithms for
+           ﬁnding shortest paths, optimal ordering of chained matrix multi-
+           plication, and knapsack problems.
+      IV. Common Reduction Targets — algorithms for problems to which
+         many other problems can be reduced.
+         13. Depth-First Search — algorithms for topological sort, articula-
+           tion points, and strongly connected components.
+         14. Network Flow and Matching — a study of network ﬂow
+           algorithms and their applications.
+         15. * The Fast Fourier Transform — a study of the Fast Fourier
+           Transform algorithm and its application to problems such as integer
+           multiplication.
+       V. Intractable Problems — dealing with problems for which we cannot
+         ﬁnd eﬃcient solutions.
+         16. NP-Completeness — an introduction to the theory of NP-
+           completeness, including proofs of NP-completeness.
+         17. Approximation Algorithms — an introduction to design and
+           analysis of approximation algorithms for NP-complete problems.
+        Sections which may be omitted due to more mathematical content have
+      titles preﬁxed with a “∗”.

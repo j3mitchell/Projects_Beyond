@@ -1,0 +1,36 @@
+                                                                                Divide and Conquer                                                                            369
+                       algorithm to compute the Manhattan skyline, and show that your algorithm
+                       runs in Θ(nlgn)time.
+                       Exercise 10.30. A majority element of an array A[1..n]isanelementthat
+                       occurs more than n/2 times in the array. Construct an eﬃcient divide-and-
+                       conquer algorithm to ﬁnd the majority element of A if one exists. Your
+                       algorithm may only compare elements for equality (hence, it may not sort
+                       the elements). Analyze the worst-case running time of your algorithm. (Θ(n)
+                       is possible.)
+                       Exercise 10.31. Give a divide-and-conquer algorithm to construct a round-
+                       robin tournament involving n competitors. The tournament consists of a
+                       series of rounds. In each round, every competitor plays one other competitor
+                       if n is even; if n is odd, exactly one competitor is idle each round. Every
+                       competitor mustplayevery other competitor exactly once in the tournament.
+                       Therefore, the number of rounds is n−1ifn is even, or n if n is odd. Let the
+                       competitors be identiﬁed by the natural numbers 0,...,n−1. Your algorithm
+                       should produce a 2D array A of natural numbers such that A[i,j] indicates
+                       j’s opponent in round i;ifj is idle in round i, A[i,j] should be n.Your
+                       algorithm should run in Θ(n2) time. A possible output for n =5isshown
+                       below.
+                                                                                              01234
+                                                                                           0 10543
+                                                                                           1 24051
+                                                                                           2 32105
+                                                                                           3 45320
+                                                                                           4 53412
+                       * Exercise 10.32. Give a Θ(nlgn) divide-and-conquer algorithm for
+                       determining the closest pair of points in a given collection. You may assume
+                       that the points are given via two arrays: x[1..n]andy[1..n], where n ≥ 2.
+                       The n points are then (x[1],y[1]),(x[2],y[2]),...,(x[n],y[n]). The distance
+                                                                                                          
+                       between a pair of points (x,y)and(x ,y)isgivenby
+                                                                                                2                      2
+                                                                                  (x−x) +(y−y) .
+                       Your algorithm should return the minimum distance separating any two
+                       distinct points.

@@ -1,0 +1,30 @@
+           212                     Algorithms: A Top-Down Approach
+            Figure 6.11   Asingle rotate right
+           insertion should either leave the height unchanged or increase it by 1. We
+           will therefore include this condition in the postcondition of our insertion
+           function.
+               Based on the above discussion, it suﬃces to show how to balance a
+           binary search tree whose children are AVL trees having a height diﬀerence of
+           exactly 2. This restoration of balance is accomplished via rotations.Consider,
+           for example, the rotation shown in Figure 6.11. In this ﬁgure, circles denote
+           single nodes, and triangles denote arbitrary subtrees, which in some cases
+           maybeempty. All nodes and subtrees are labeled in a way that corresponds
+           to the order of nodes in a BST (e.g., subtree c is to the right of node b
+           and to the left of node d). The rotation shown is known as a single rotate
+           right. It is accomplished by promoting node b to the root, then ﬁlling in the
+           remaining pieces in the only way that maintains the ordering of keys in the
+           BST. Suppose that in the “before” picture, the right child (e)hasheighth
+           and the left child has height h+2. Because the left child is an AVL tree, one
+           of its two children has a height of h+1 and the other has a height of either
+           h or h + 1. Suppose subtree a has a height of h + 1. Then it is easily seen
+           that this rotation results in an AVL tree.
+               The rotation shown in Figure 6.11 does not restore balance, however,
+           if subtree a has height h. Because the left child in the “before” picture has
+           height h+2, subtree c must have height h+1 in this case. After the rotation,
+           the left child has height h, but the right child has height h+2. To take care
+           of this case, we need another kind of rotation called a double rotate right,
+           shown in Figure 6.12. It is accomplished by promoting node d to the root
+           and again ﬁlling in the remaining pieces in the only way that maintains the
+           ordering of keys. Suppose that subtrees a and g have height h and that the
+           subtree rooted at d in the “before” picture has height h +1.Thisisthen
+           the case for which a single rotate fails to restore balance. Subtrees c and e

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 344</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-344.jpg" alt="Page 344" width="1282" height="1882"/>
+      <div class="ocr">                                        Graphs                             325
+          temporary space in the worst case, where n and a are the number of vertices
+          and unique edges, respectively, in the given ListMultigraph.
+          9.6  Summary
+          Graphs are useful for representing relationships between data items. Various
+          algorithms can then be designed for manipulating graphs. As a result, we
+          can often use the same algorithm in a variety of diﬀerent applications.
+             Graphsmaybeeitherdirectedorundirected,butwecantreatundirected
+          graphs as directed graphs in which for every edge (u,v), there is a reverse
+          edge (v,u). We then have two implementations of graphs. The adjacency
+          matrix implementation has Get and Put operations that run in Θ(1) time,
+          but its AllFrom operation runs in Θ(n) time, where n is the number of
+          vertices in the graph. Its space usage is in Θ(n2). On the other hand, the
+          adjacency list implementation has an AllFrom operation that runs in Θ(1)
+          time, but its Get and Put operations run in Θ(m)timeintheworstcase,
+          where m is the number of vertices adjacent to the given source vertex. Its
+          space usage is in Θ(n + a)wheren is the number of vertices and a is the
+          number of edges.
+             In order to improve the running time of the Put operation — and
+          hence of building a graph — when using an adjacency list, we can relax
+          our deﬁnition to allow parallel edges. The resulting structure is known
+          as a multigraph. We can always use a multigraph whenever a graph is
+          required, though it might be useful to maintain an invariant that no
+          parallel edges exist. Furthermore, we can construct a ListGraph from a
+          ListMultigraph with no parallel edges in Θ(n+a)timeandΘ(n) space,
+          where n is the number of vertices and a is the number of edges. Figure 9.11
+          shows a summary of the running times of these operations for each of the
+          implementations of Graph,aswellasforListMultigraph.
+          9.7  Exercises
+          Exercise 9.1. Prove that UniversalSink, shown in Figure 9.4, meets its
+          speciﬁcation.
+          Exercise 9.2. Prove that TopSort, shown in Figure 9.6, meets its
+          speciﬁcation.
+          Exercise 9.3. Give an algorithm that takes as input a directed graph G =
+                                                   
+          (V,E) and returns a directed graph G =(V,E ), where
+                                 E = {(u,v) | (v,u) ∈ E}.
+</div>
+    </div>
+  </body>
+</html>

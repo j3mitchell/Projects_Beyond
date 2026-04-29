@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 053</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-053.jpg" alt="Page 053" width="1282" height="1882"/>
+      <div class="ocr">          34                  Algorithms: A Top-Down Approach
+             Let us now consider an algorithm with nested loops, such as Insertion-
+          Sort, shown in Figure 1.7 on page 12. When loops are nested, we apply
+          the same technique to each loop as we encounter it. Speciﬁcally, in order
+          to prove maintenance for the outer loop, we need to prove that the inner
+          loop satisﬁes some correctness property, which should in turn be suﬃcient
+          to complete the proof of maintenance for the outer loop. Thus, nested within
+          the maintenance step of the outer loop is a complete proof (i.e., initialization,
+          maintenance, termination and correctness) for the inner loop.
+             When we prove initialization for the inner loop, we are not simply
+          reasoning about the code leading to the ﬁrst execution of that loop. Rather,
+          we are reasoning about the code that initializes the loop on any iteration of
+          the outer loop. For this reason, we cannot consider the initialization code for
+          the outer loop when proving the initialization step for the inner loop. Instead,
+          because the proof for the inner loop is actually a part of the maintenance
+          proof for the outer loop, we can use any facts available for use in the proof
+          of maintenance for the outer loop. Speciﬁcally, we can use the assumption
+          that the invariant holds at the beginning of the outer loop iteration, and
+          we can reason about any code executed prior to the inner loop during this
+          iteration. We must then show that the invariant of the inner loop is satisﬁed
+          upon executing this code.
+             We will now illustrate this technique by giving a complete proof that
+          InsertionSort meets its speciﬁcation.
+          Theorem 2.7. InsertionSort meets its speciﬁcation.
+          Proof.  We must show that when the for loop ﬁnishes, A[1..n]isa
+          permutation of its original values in nondecreasing order.
+          Initialization: (Outer loop) When the loop begins, i = 1 and the contents
+          of A[1..n] have not been changed. Because A[1..i − 1] is an empty array, it
+          is in nondecreasing order.
+          Maintenance: (Outer loop) Suppose the invariant holds at the beginning
+                               [1..n] denote the contents of A at the end of the
+          of some iteration. Let A
+                         
+          iteration, and let i denote the value of i at the end of the iteration. Then
+          
+          i = i+1.Wemustshowthatthewhileloopsatisﬁesthecorrectnessproperty
+               
+          that A[1..n] is a permutation of the original values of A[1..n], and that
+                     
+          A[1..i −1] = A[1..i] is in nondecreasing order.
+</div>
+    </div>
+  </body>
+</html>

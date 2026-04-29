@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 166</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-166.jpg" alt="Page 166" width="1282" height="1882"/>
+      <div class="ocr">                                    Basic Techniques for Data Structures                        147
+             operating on natural numberswhichmay notﬁtinasinglemachineword.We
+             can implement this ADT using a single representation variable, bits[0..n−1],
+             which is an array of 0s and 1s. The structural invariant is that all elements
+             of bits are either 0 or 1, and that if SizeOf(bits) 	=0,
+                                        bits[SizeOf(bits) −1] = 1.
+             If n = SizeOf(bits), the represented number is then
+                                                 n−1
+                                                            i
+                                                     bits[i]2 .
+                                                 i=0
+             Note that the least signiﬁcant bit has the lowest index; hence, it might
+             be helpful to think of the array with index 0 at the far right, and indices
+             increasing from right to left.
+             a. Complete this implementation of BigNum such that
+                • NumBits runs in Θ(1) time;
+                • Shift and GetBits run in Θ(n) time, where n is the number of bits
+                   in the result;
+                • the constructor and the remaining operations run in Θ(n) time, where
+                   nis the number of bits in the largest number involved in the operation.
+             b. Prove that your implementation meets its speciﬁcation.
+             4.8    Notes
+             The phenomenon that occurs when multiple copies are made of the same
+             reference is known in the literature as aliasing. The problem is thoroughly
+             discussed by, e.g., Aho et al. [3] and Muchnick [94].
+                 Use of immutable structures has its roots in functional programming,
+             though it has carried over to some degree to languages from other paradigms.
+             Paulson [97] gives a nice introduction to functional programming using ML,
+             where immutable data types are the norm.
+                 The search tree viewer posted on this textbook’s web site contains
+             complete Java implementations of ConsList and ConsListStack. Deep
+             cloning is simulated in this code because only immutable items are placed
+             on the stacks.
+                 Exercise 4.12 is due to Tarjan [113], who gives an excellent survey of
+             amortized analysis. He credits D. Sleator for the potential function method
+             of amortized analysis.
+</div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 541</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-541.jpg" alt="Page 541" width="1282" height="1882"/>
+      <div class="ocr">          522                    Algorithms: A Top-Down Approach
+          Theorem 16.13. IS is NP-complete.
+          16.6   Three-Dimensional Matching
+          In this section, we will study a problem closely related to the bipartite
+          matching problem of Section 14.3. The input will consist of three non-empty
+          disjoint sets, X, Y,andZ, each having the same number of elements, and a
+          set of triples W ⊆ X×Y ×Z. We wish to decide if there is a subset M ⊆ W
+          such that each element of X ∪Y ∪Z occurs in exactly one triple in M.We
+          call this problem the 3D matching (3DM)problem.
+              Note that if we were to use two disjoint sets instead of three, we could
+          think of the two sets as the two vertex sets of a bipartite graph. The set of
+          pairs (instead of triples) would then be directed edges. Our problem would
+          thenbethatofdecidingwhetherthereisamatchingincludingallthevertices
+          of this directed graph. 3DM is then the natural extension of this problem to
+          3Dhypergraphs. Using the algorithm Matching (Figure 14.10 on page 458),
+          we can decide the two-dimensional version (2DM)inO(na) time, where n
+          is the number of vertices and a is the number of edges in the graph; thus,
+          2DM∈P.However, we will now show that 3DM is NP-complete.
+              In order to show that 3DM ∈NP, let us ﬁrst denote an instance by
+                                     X={x ,...,x }
+                                            1      m
+                                     Y ={y ,...,y }
+                                            1      m
+                                     Z ={z ,...,z }
+                                            1      m
+                                     W={w,...,w }.
+                                            1       n
+          Weinterpret a bit string φ as encoding an array A[1..k] such that each block
+          of b bits encodes an element of A,whereb is the number of bits needed
+          to encode n. Any bit string that does not have length exactly bm will be
+          considered to be invalid. To verify that the array A encoded by φ is a proof,
+          we can check that
+          • φ is valid;
+          • 1 ≤ A[i] ≤ n for 1 ≤ i ≤ m;and
+          • each element of X ∪Y ∪Z belongs to some triple w   ,where1≤i≤m.
+                                                             A[i]
+          This can easily be done in O(bm2) time — the details are left as an exercise.
+          Hence, 3DM ∈NP.
+</div>
+    </div>
+  </body>
+</html>

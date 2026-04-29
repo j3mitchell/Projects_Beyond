@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 580</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-580.jpg" alt="Page 580" width="1282" height="1882"/>
+      <div class="ocr">                         Approximation Algorithms       561
+        each packing using the greedy algorithm. (If there are fewer than k items,
+        we simply do an exhaustive search and return the optimal solution.) The
+        proof is a straightforward generalization of the proof of Theorem 17.3 — the
+        details are left as an exercise.
+          It is not hard to see that the algorithm outlined above can be
+        implemented to return a solution in Θ(nk+1)time.Ifk is a ﬁxed constant,
+        the running time is polynomial. We therefore have an inﬁnite sequence of
+        algorithms, each of which is polynomial, such that if an approximation ratio
+        of 1 +  is needed (for some positive ), then one of these algorithms will
+        provide such an approximation. Such a sequence of algorithms is called a
+        polynomial approximation scheme.
+          Although each of the algorithms in the above sequence is polynomial
+        in the length of the input, it is somewhat unsatisfying that to achieve an
+        approximation ratio of 1+1, arunningtimeinΘ(nk+1)isrequired.Wewould
+                         k
+        be more satisﬁed with a running time that is polynomial in both n and k.
+        More generally, suppose we have an approximation algorithm that takes as
+        an extra input a natural number k such that for any ﬁxed k, the algorithm
+        yields an approximation ratio of no more than 1 + 1. Suppose further that
+                                           k
+        this algorithm runs in a time polynomial in k and the length of its input.
+        We call such an algorithm a fully polynomial approximation scheme.
+          We can obtain a fully polynomial approximation scheme for the 0-1
+        knapsack problem using one of the dynamic programming algorithms
+        suggested in Section 12.4. The algorithm based on recurrence (12.5) on page
+        399 runs in Θ(nV) time, where n is the number of items and V is the sum
+        of their values. We can make V as small as we wish by replacing each value
+        v by v/d	 for some positive integer d. If some of the values become 0,
+        we remove these items. Observe that because we don’t change any weights
+        or the weight bound, any packing for the new instance is a packing for the
+        original. However, because we take the ﬂoor of each v/d,theoptimalpacking
+        for the new instance might not be optimal for the original. The smaller we
+        make d, the better our approximation, but the less eﬃcient our dynamic
+        programming algorithm.
+          In order to determine an appropriate value for d, we need to analyze the
+        approximation ratio of this approximation algorithm. Let S be some optimal
+        set of items. The optimal value is then
+                             V∗ =vi.
+                                 i∈S
+</div>
+    </div>
+  </body>
+</html>

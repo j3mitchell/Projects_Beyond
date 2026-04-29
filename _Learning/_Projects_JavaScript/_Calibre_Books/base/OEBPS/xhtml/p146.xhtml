@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 146</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-146.jpg" alt="Page 146" width="1282" height="1882"/>
+      <div class="ocr">                                    Basic Techniques for Data Structures                        127
+              Figure 4.7    The ConsList ADT
+             constructor. We will then complete the design by showing how to implement
+             ConsList.
+                 Our Stack representation will be a ConsList elements. We interpret
+             elements as storing the stack in reverse order; i.e., the head of elements is
+             the top element on the stack. The structural invariant will be that elements
+             refers to a ConsList. The implementation is shown in Figure 4.8. The one-
+             argument constructor is used to construct a shallow clone.
+                 Again, all constructors and operations can easily be seen to run in Θ(1)
+             time, and proving initialization, maintenance, termination, and correctness
+             is straightforward. Regarding security, we note that elements is shared when
+             the one-argument constructor is used; however, because a ConsList is
+             immutable, this sharing cannot violate security. The full correctness proof is
+             left as an exercise.
+</div>
+    </div>
+  </body>
+</html>

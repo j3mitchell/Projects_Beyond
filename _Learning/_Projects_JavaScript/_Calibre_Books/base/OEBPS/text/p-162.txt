@@ -1,0 +1,20 @@
+                                    Basic Techniques for Data Structures                        143
+              Figure 4.16     Implementation of the Increment operation for BinaryCounter,
+              speciﬁed in Figure 4.13
+             b. It is easily seen that the runningtime of Incrementis proportional to the
+                number of calls made (including recursive calls) to the internal function
+                Inc. Using a potential function, show that the amortized number of calls
+                to Inc is in O(1).
+             Exercise 4.7. Analyze the amortized cost of the ExpandableAr-
+             rayStackoperationsusingthenumberofiterations performedastheactual
+             cost and
+                                                      4n3
+                                                      3k2
+             as the potential function, where n is the number of elements in the stack
+             and k is the size of the array.
+             Exercise 4.8. Let c>1 be a ﬁxed real number. Suppose we modify Figure
+             4.6 so that the new array is of size c · size. Using the potential function
+             approach, show that the amortized running time of the stack operations is
+             in O(1).
+             Exercise 4.9. With ExpandableArrayStack, it is possible that the
+             stack reaches a state in which it is using much more space than it requires.

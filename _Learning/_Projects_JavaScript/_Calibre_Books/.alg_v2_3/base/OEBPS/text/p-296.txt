@@ -1,0 +1,34 @@
+                                    Storage/Retrieval II: Unordered Keys                        277
+              Figure 7.11    The structure of a perfect hash table
+                                 First level           Second level
+                                  0               12                    0 57
+                                  1                                     1
+                                  2                         0           2
+                                  3               51        1 15        3 64
+                                  4                         2 27        4
+                                  5               24        3           5 36
+                                  6                                     6
+                                  7               16                    7
+                                  8                                     8
+                                  9               83
+             Because the probability that any two distinct keys collide is no more than
+             c/m≤c/n2,wehave
+                                         n−1    n
+                              E[coll] ≤   c
+                                                    n2
+                                          i=1 j=i+1
+                                             n−1
+                                       = c (n−i)
+                                          n2
+                                             i=1
+                                             n−1
+                                       = c i              (reversing the sum)
+                                          n2
+                                             i=1
+                                       = cn(n−1)           (by (2.1))
+                                             2n2
+                                       <c/2.
+             From Markov’s Inequality (5.3) on page 194, the probability that there is at
+             least one collision is therefore less than c/2.
+                 Suppose,for example, that c = 1, as for a universal hash family. Then the
+             probability that a randomly chosen hash function results in no collisions is

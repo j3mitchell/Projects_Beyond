@@ -1,0 +1,30 @@
+           250                      Algorithms: A Top-Down Approach
+                                       n−1
+                                  = 1 (n−j)
+                                     mj=1
+                                       n−1
+                                  = 1 j             (reversing the sum)
+                                     mj=1
+                                  = n(n−1)
+                                       2m
+           by (2.1).
+               For example, if our hash table has 500,000 locations and we have more
+           than a thousand data elements, we should expect at least one collision, on
+           average. In general, it requires too much space to make the table large enough
+           so that we can reasonably expect to have no collisions.
+               Several solutions to the collision problem exist, but the most common is
+           to use a linked list to store all data elements that are mapped to the same
+           location. The approach we take here is similar, but we will use a ConsList
+           instead of a linked list. Using a ConsList results in somewhat simpler code,
+           and likely would not result in any signiﬁcant performance degradation. This
+           approach is illustrated in Figure 7.3.
+               In the remainder of this section, we will ignore the details of speciﬁc
+           hash functions and instead focus on the other implementation details of a
+             Figure 7.3  Illustration of a hash table.
+                             0          14
+                             1           829
+                             2
+                             3
+                             4          53          11         32
+                             5
+                             6

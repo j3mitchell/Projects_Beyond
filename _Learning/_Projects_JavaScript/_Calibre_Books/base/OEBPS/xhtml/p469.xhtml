@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 469</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-469.jpg" alt="Page 469" width="1282" height="1882"/>
+      <div class="ocr">              450                             Algorithms: A Top-Down Approach
+              let x be a vertex that is closest to u in R of all such vertices. There must
+              be some edge on the shortest path from u to x in R that is not in R,for
+              otherwise this path would also be a path from u to x in R. Speciﬁcally,
+              thelastedge(w,x) on this path must have been added, for otherwise w,
+              which is closer than x to u in R, would also be closer to u in R than in R.
+              This means that (x,w)isonashortestaugmentingpathinR,sothatx is
+              closer than w to u in R. Therefore, w is closer to u in R than in R —a
+              contradiction.                                                                                    
+                   Knowingthat no vertex ever gets any closer to the source over the course
+              of the Edmonds–Karp algorithm, we will now prove a lemma that shows
+              when a vertex must get farther away from the source. If a vertex is farther
+              than n−1 edges from the source, where n is the number of vertices, then it
+              must be unreachable. By Lemma 14.3, once a vertex becomes unreachable,
+              it will never become reachable. This next lemma will therefore enable us to
+              bound the number of iterations of the Edmonds–Karp algorithm.
+              Lemma14.4. Suppose that when some vertex x is at a distance d from the
+              source u, the Edmonds–Karp algorithm removes an edge (x,y). Suppose that
+              later this edge is added again. Then after this edge is added, the distance
+              from u to x is at least d +2.
+              Proof.       If  (x,y) is removed, then this edge must be on a shortest
+              augmenting path. Then before this edge is removed, the distance from u to y
+              is d+1.When(x,y) is added again, (y,x) must be on a shortest augmenting
+              path. From Lemma 14.3, the distance from u to y is still at least d+1when
+              this path is found. The distance to x is therefore at least d+2. From Lemma
+              14.3, the distance from u to x must still be at least d+2 after the edge (x,y)
+              is added.                                                                                         
+              Theorem14.5. In the worst case, the Edmonds–Karp algorithm iterates no
+              more than na times, where n is the number of vertices and a is the number
+              of edges in G.
+              Proof.       Because a ﬂow equal to the minimum edge capacity on a shortest
+              augmenting path is added by each iteration, each iteration removes at least
+              one edge. By Lemmas 14.3 and 14.4, no edge can be removed more than
+              n/2 times. When edges are added, they are always added in the opposite
+              direction of an existing edge; hence, at most 2a distinct edges ever appear
+              in the residual graph. The loop can therefore iterate at most na times.                           
+                   If the initialization and the body of the loop are implemented to run in
+              Θ(n+a)time,wecanconcludethat thealgorithm runsin O(na(n+a)) time
+</div>
+    </div>
+  </body>
+</html>

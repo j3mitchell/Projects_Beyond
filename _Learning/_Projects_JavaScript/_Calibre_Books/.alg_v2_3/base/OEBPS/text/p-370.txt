@@ -1,0 +1,9 @@
+                                       Divide and Conquer                            351
+             Figure 10.7  Divide-and-conquer implementation of Divide,speciﬁedinFigure10.6
+           at the top of the main loop. Before the while loop is executed, the value
+                                     n/2
+           of rem is multiplied by 2    ,andnext is added. Because next contains at
+                                              n/2
+           most n/2 signiﬁcant bits, next < 2    .Thus,whenthewhile loop executes,
+                     n/2
+           rem <v2      . Because v contains n signiﬁcant bits, rem contains at most

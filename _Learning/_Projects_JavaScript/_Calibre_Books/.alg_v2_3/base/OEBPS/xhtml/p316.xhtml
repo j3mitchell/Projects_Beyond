@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 316</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-316.jpg" alt="Page 316" width="1282" height="1882"/>
+      <div class="ocr">                                  Disjoint Sets                     297
+         CompressedDisjointSets.Find. Because we can still construct a tree
+         with height in Θ(lgn) with a sequence of Merges, we conclude that
+         CompressedDisjointSets.Find runs in Θ(lgn)timeintheworstcase.
+         Clearly, CompressedDisjointSets.Merge runs in Θ(1) time, so that in
+         the worst case, the asymptotic performance of CompressedDisjointSets
+         is identical to that of ShortDisjointSets.
+            On the other hand, because each path compression has the tendency
+         to improve the performance of subsequent Finds, we might suspect that
+         the amortized performance of this structure is improved. Indeed, we will
+         show that the amortized performance of the Merge and Find operations
+         for CompressedDisjointSets is “almost” constant.
+            In order to perform an amortized analysis, we need to assign actual costs
+         to the operations. The running time of Find(i) is proportional to the number
+         of nodes on the path from i to the root of its tree. Another way to say this
+         is that the running time is proportional to the number of locations of the
+         parent array that are accessed. Let us therefore deﬁne the actual cost of an
+         operation to be the number of locations accessed in the parent array. The
+         actual cost of Merge is therefore 2.
+            Thekeytoagoodamortizedanalysisisﬁndingagoodpotentialfunction.
+         Let S be the set of all possible states of some CompressedDisjointSets
+         with size n. We need a function Φ : S → R≥0 such that the initial state
+         is mapped to 0. To arrive at this function, we will deﬁne, for a given state
+         s ∈ S, a potential for each node; i.e., we will deﬁne a function φ : U → N,
+                                                             s
+         where U = {i ∈ N | i&lt;n}. We will then deﬁne the potential function to be
+         the sum of the potentials of all of the nodes:
+                                       n−1
+                                 Φ(s)=φ (i).
+                                           s
+                                       i=0
+            Let ranks and parents denote the values of the rank and parent arrays
+         in state s. We will deﬁne our potential function based on these values. Let 
+         denote the initial state. Thus, for 0 ≤ i&lt;n, rank[i] = 0. In order for Φ to
+         be a valid potential function, we need Φ() = 0. To accomplish this, we let
+         φ (i)=0ifrank [i]=0for0≤i&lt;nand any state s. Note that a node can
+          s           s
+         only obtain a non-zero rank when a Merge makes it the parent of another
+         node; thus, ranks[i]=0iﬀi is a leaf.
+            We have two operations we need to consider as we deﬁne φ (i) for non-
+                                                            s
+         leaf i. Merge is a cheap operation, having an actual cost of 2, whereas Find
+         is more expensive in the worst case. We therefore need to amortize the cost
+         of an expensive Find over preceding Merges. This means that we need
+</div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,41 @@
+           518                     Algorithms: A Top-Down Approach
+               Wenowclaimthatanyassignmentthat satisﬁes the new clauses will also
+           satisfy C. Suppose to the contrary that all the new clauses are satisﬁed, but
+           that C is not satisﬁed — i.e., that α ,...,α  are all false.Theninorderfor
+                                               1       m
+           the ﬁrst clause to be satisﬁed, u must be true. Likewise, it is easily shown
+                                            1
+           by induction on i that each ui must be true. Then the last clause is not
+           satisﬁed — a contradiction.
+               If we apply the above transformation to each clause having more than
+           3 literals in a CNF formula F and retain those clauses with no more than
+           3 literals, then the resulting 3-CNF formula is satisﬁable iﬀ F is satisﬁable.
+           Furthermore, it is not hard to implement this reduction in O(|F|)time—
+           the details are left as an exercise. Hence, CSat ≤p 3-Sat. We therefore
+                                                               m
+           conclude that 3-Sat is NP-complete.
+           16.5    Vertex Cover and Independent Set
+           So far, all of the problems that we have shown to be NP-complete are
+           satisﬁability problems for various kinds of boolean formulas. As we have
+           seen in earlier chapters, it is sometimes possible to reduce a problem A to
+           another problem B that at ﬁrst looks nothing like problem A. By applying
+           this technique to polynomial many-one reducibility, we can identify NP-
+           complete problems in other domains.
+               For example, let us consider the vertex cover problem, which we will
+           denote VC.LetG=(V,E) be an undirected graph. A vertex cover for G is
+           a subset C ⊆ V such that for each edge {u,v}∈E, C ∩{u,v} = ∅; i.e., at
+           least one endpoint of each edge is contained in the vertex cover. The vertex
+           cover problem is to decide whether a given undirected graph has a vertex
+           cover of size k,wherek is a given positive integer.
+               To show that VC ∈NP, we will treat bit strings as arrays A[0..m−1] of
+           boolean values. We can interpret an array A[0..m−1] as describing a subset
+           S of the vertices {0,1,...,n− 1} such that for 0 ≤ i<n, i ∈ S iﬀ i<m
+           and A[i]istrue.Itisthenaneasymattertocheck,intimelinearinthesize
+           of a graph G,whetherA[0..m−1] denotes a vertex cover of G with size k —
+           the details are left as an exercise. Therefore, VC ∈NP.
+               In order to show that VC is NP-hard, we need to reduce one of the three
+           satisﬁability problems to it. We will use 3-Sat because 3-CNF formulas have
+           a simpler structure than either CNF or arbitrary boolean formulas. Still, it is
+           not immediately clear how we can construct, from a given 3-CNF formula F,
+           anundirectedgraphGandapositiveinteger k suchthatGhasavertexcover
+           of size k iﬀ F is satisﬁable.

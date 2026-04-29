@@ -1,0 +1,35 @@
+                                                   Bibliography
+                  [1] G. M. Adel’son-Vel’ski˘ı and E. M. Landis. An algorithm for the organization of
+                      information. Soviet Mathematics Doklady, 3:1259–1263, 1962.
+                  [2] A. V. Aho, John E. Hopcroft, and Jeﬀrey D. Ullman. The Design and Analysis of
+                      Computer Algorithms. Addison Wesley, 1974.
+                  [3] A.V.Aho,MonicaS.Lam,RaviSethi,andJeﬀreyD.Ullman.Compilers: Principles,
+                      Techniques, and Tools, 2nd edition. Pearson Education Limited, 2014.
+                  [4] M. Aigner. Combinatorial Search. Wiley-Teubner, 1988.
+                  [5] A. Andersson. Balanced search trees made simple. In Proceedings of the Third
+                      Workshop on Algorithms and Data Structures, number 709 in Lecture Notes in
+                      Computer Science, pp. 60–71. Springer-Verlag, 1993.
+                  [6] K. R. Apt and E.-R. Olderog. Veriﬁcation of Sequential and Concurrent Programs,
+                      3rd edition. Springer-Verlag, 2009.
+                  [7] P.G.H.Bachmann.Analytische Zahlentheorie, Bd 2: Die Analysische Zahlentheorie.
+                      Teubner, Leipzig, Germany, 1894.
+                  [8] R. Bayer. Symmetric binary B-trees: Data structure and maintenance algorithms.
+                      Acta Informatica, 1:290–306, 1972.
+                  [9] R. Bayer and E. M. McCreight. Organization and maintenance of large ordered
+                      indexes. Acta Informatica, 1:173–189, 1972.
+                [10] R. E. Bellman. Dynamic Programming. Princeton University Press, 1957.
+                [11] J. L. Bentley. Multidimensional divide-and-conquer. Communications of the ACM,
+                      23:214–229, 1980.
+                [12] J. L. Bentley. Programming Pearls, 2nd edition. Addison-Wesley, Reading, MA,
+                      2000.
+                [13] C. Berge. Two theorems in graph theory. Proceedings of the National Academy of
+                      Sciences, 43:842–844, 1957.
+                [14] M. Blum, R. W. Floyd, V. R. Pratt, R. L. Rivest, and R. E. Tarjan. Time bounds
+                      for selection. Journal of Computer and System Sciences, 7:448–461, 1972.
+                [15] O.Boruvk˙   a. Ojist´em probl´emu minim´alnim. Pr´ace Moravsk´ePˇr´ırodovˇed Spolecnosti,
+                      3:37–58, 1926.
+                [16] G. Brassard. Crusade for a better notation. ACM SIGACT News, 17:60–64, 1985.
+                [17] G. Brassard and P. Bratley. Fundamentals of Algorithmics. Prentice Hall, 1996.
+                [18] C. Burnikel and J. Ziegler. Fast recursive division. Research Report MPI-I-98-1-022,
+                      Max-Planck-Institut fu¨r Informatik, 1998.
+                                                                 581

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 298</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-298.jpg" alt="Page 298" width="1282" height="1882"/>
+      <div class="ocr">                                    Storage/Retrieval II: Unordered Keys                        279
+             m locations. Further suppose that ni keys are mapped to index i in the
+             primary hash table. We will then construct a HashFunction by passing
+             n2 to the constructor of an implementation providing a c-universal hash
+              i
+             family. Due to the speciﬁcation of the HashFunction constructor, the
+             actual HashFunction constructed may contain up to 3n2 − 1locations
+                                                                                  i
+             when ni &gt; 0. The size of the table constructed is therefore linear in n2.The
+                                                                                            i
+             actual space used by all of the secondary hash tables is therefore linear in
+                                                    m−1
+                                                    n2.
+                                                          i
+                                                    i=0
+                 Let sumsq be a discrete random variable denoting the above sum. The
+             expected space usage of the secondary hash tables is then linear in E[sumsq].
+             In order to analyze E[sumsq], we ﬁrst observe that n2 is closely related to
+                                                                           i
+             the number of collisions at index i. The number of collisions at index i is
+             ni(ni −1)/2, so that
+                                                                
+                                                m−1
+                                 E[coll]=E  ni(ni−1)
+                                                i=0       2
+                                              	                          
+
+                                                    m−1              m−1
+                                         = 1 E n2 −E ni
+                                            2              i
+                                                     i=0             i=0
+                                         =(E[sumsq]−E[n])/2
+                                         =(E[sumsq]−n)/2.
+             Rearranging terms, we have
+                                          E[sumsq]=2E[coll]+n.
+                 By reasoning as in Section 7.2, it is easily seen that if the probability
+             that two keys collide is at most c/m,then
+                                            E[coll] ≤ cn(n−1).
+                                                           2m
+             Hence,
+                                        E[sumsq]=2E[coll]+n
+                                                    ≤ cn(n−1) +n.                             (7.6)
+                                                           m
+</div>
+    </div>
+  </body>
+</html>

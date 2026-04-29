@@ -1,0 +1,34 @@
+          46                   Algorithms: A Top-Down Approach
+             In Chapter 15, we will present algorithms that use mutual recursion.
+          As we will see there, mutual recursion is sometimes useful for breaking a
+          complicated algorithm into manageable pieces. Apart from that chapter, we
+          will not dwell on mutual recursion. We should always be careful, however,
+          whenwecombinealgorithms, that we do not inadvertently introduce mutual
+          recursion without proving termination of the implementation.
+          2.6  Finding Errors
+          The process of proving correctness of an algorithm is more than just an
+          academic exercise. A proper correctness proof should give us conﬁdence that
+          a given algorithm is, in fact, correct. It therefore stands to reason that if
+          a given algorithm is incorrect, the proof of correctness should fail at some
+          point. The process of proving correctness can therefore help us to ﬁnd errors
+          in algorithms.
+             Suppose, for example, that in MaxSumBU (see Figure 1.14 on page 18),
+          we had miscalculated msuf using the statement
+                                  msuf ←msuf +A[i].
+          We could have made such an error by forgetting that there is a suﬃx of
+          A[0..i] — the empty suﬃx — that does not end with A[i]. We would expect
+          that a proof of correctness for such an erroneous algorithm should break
+          down at some point.
+             This error certainly wouldn’t aﬀect the Initialization part of the proof, as
+          the initialization code is unchanged. Likewise, the Correctness part doesn’t
+          depend directly on code within the loop, but only on the invariant and the
+          loop exit condition. Because the Termination part is trivial, we are left with
+          the Maintenance part. Because we have changed the calculation of msuf,
+          we would expect that we would be unable to prove that the second part of
+          the invariant is maintained (i.e., that msuf is the maximum suﬃx sum for
+          A[0..i − 1]).
+             Let us consider how this statement changes the Maintenance part of the
+          proof of Theorem 2.5. The ﬁrst change is that now msuf = msuf + A[i].
+          This aﬀects the derivation from msuf in the following way:
+                         msuf = msuf +A[i]
+                               =ti+A[i]

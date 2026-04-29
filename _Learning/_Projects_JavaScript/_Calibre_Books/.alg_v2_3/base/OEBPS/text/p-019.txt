@@ -1,0 +1,24 @@
+           xviii                     Algorithms: A Top-Down Approach
+           Ω             asymptotic notation used to express lower bounds            61
+           ω             asymptotic notation used to express a growth rate           90
+                         signiﬁcantly faster than a given function
+           P             the set of all decision problems decidable in a             507
+                         polynomial amount of time
+           P(e)          probability of e                                            170
+           P(e | e )     conditional probability of e given e                        177
+            1 2                                    1        2
+           α∈Sf(a)       product of all values f(a)wherea ∈ S                        232
+           R             the set of real numbers                                     56
+           R≥0           the set of nonnegative real numbers                         56
+           R>0           the set of positive real numbers                            56
+           Θ             asymptotic notation used to express identical upper-        62
+                         and lower-bounds
+           x           the smallest integer no smaller than x                      37
+           x	           the largest integer no larger than x                        37
+           ×             the operator forming the set of all ordered pairs of two    84
+                         given sets
+           x←y           assign the value of y to x                                  10
+           x↔y           swap the values of x and y                                   8
+           Z             the set of integers                                         441
+           Z>0           the set of positive integers                                441
+           Zm            the set of natural numbers strictly less than m             478

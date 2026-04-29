@@ -1,0 +1,44 @@
+                                Optimization II: Dynamic Programming                     407
+            format the paragraph so that each line contains no more than m characters,
+            including a single blank character between adjacent words on the same line.
+            Furthermore, we wish to minimize a “sloppiness” criterion. Speciﬁcally, we
+            wish to minimize the following objective function:
+                                             k−1
+                                             f(m−c),
+                                                         i
+                                             i=1
+            where k is the total number of lines used, f : N → N is some nondecreasing
+            function, and c is the number of characters (including blanks between
+                             i
+            adjacent words) on line i. Give an eﬃcient dynamic programming algorithm
+            for computing the optimal arrangement. Your algorithm should run in O(n2)
+            time and use O(n) space. [Hint: Reduce this problem to the problem for
+            whichthemeasureofsloppinessincludesthelast line — i.e., the optimization
+            function is as above, but with k − 1 replaced by k.]
+            * Exercise 12.22. We are given a set of n points (x ,y), where each x
+                                                                       i  i                 i
+            and yi is a real number and all the xisaredistinct.Abitonic tour of these
+            points is a cycle that begins at the rightmost point, proceeds strictly to
+            the left to the leftmost point, then proceeds strictly to the right to return
+            to the rightmost point; furthermore, this cycle contains every point exactly
+            once (see Figure 12.6). We wish to ﬁnd the bitonic tour having minimum
+            Euclidean length; i.e., the distance between two points (x ,y )and(x ,y )
+                                                                          1  1         2  2
+            is given by
+                                      	            2            2
+                                         (x1 −x2) +(y1 −y2) .
+            Give an eﬃcient dynamic programming algorithm for ﬁnding a minimum-
+            length bitonic tour. Your algorithm should use O(n2) time and space. [Hint:
+            Reduce this problem to that of ﬁnding a minimum-length bitonic path that
+            includes all the points exactly once, but does not return to the starting
+            point.]
+            * Exercise 12.23. Suppose we were to modify the scheduling problem of
+            Section 11.1 so that each job also has a natural number execution time,which
+            must be fulﬁlled without interruption. Thus, a schedule including job i must
+            have job i scheduled for e contiguous time units lying between time 0 and
+                                       i
+            time d ,wheree is the execution time and d is the deadline of job i.Give
+                   i         i                              i
+            an eﬃcient dynamic programming algorithm to generate a schedule with
+            maximumvalue. Your algorithm should use O(n(m+lgn)) time and O(mn)
+            space, where n is the number of jobs and m is the maximum deadline.

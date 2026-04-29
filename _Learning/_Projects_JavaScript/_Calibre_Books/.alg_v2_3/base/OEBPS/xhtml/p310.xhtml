@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 310</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-310.jpg" alt="Page 310" width="1282" height="1882"/>
+      <div class="ocr">                                      Disjoint Sets                        291
+          8.1  Using DISJOINTSETS in Scheduling
+          Wewill use an instance of the DisjointSets ADT to maintain the disjoint
+          sets in the scheduling algorithm outlined above. In order to ﬁnd the time slot
+          in which to schedule a job, we ﬁrst need to ﬁnd the time interval containing
+          the last time slot prior to the job’s deadline. We can use the Find operation
+          for this purpose. Assuming that we can obtain the available time slot in a
+          given partition, and assuming this time slot is not 0, we have the time slot i
+          in which to schedule the job. We then need to combine this partition with
+          the one immediately preceding it. We can ﬁnd the preceding partition with
+          Find(i−1). We can then combine the two partitions using Merge.
+             We need one additional data structure in order to be able to ﬁnd the
+          available slot in an interval, given the representative of that interval. For this
+          purpose, we can use an array avail[0..n] such that if j is the representative of
+          an interval, then avail[j] is the available time slot in that interval. Initially,
+          avail[i]=i for all i. Suppose we schedule a job at time i.Wethenmergethe
+          interval containing i with the preceding interval. Let j be the representative
+          of the preceding interval prior to the merger. Then avail[j] is the available
+          element in the resulting interval. If k is the value returned by the call to
+          Merge,then we can update avail by assigning to avail[k]thevalueavail[j].
+          Because no other representatives change, no other updates are needed. The
+          entire algorithm is shown in Figure 8.2.
+          8.2  ATree-Based Implementation
+          In this section, we will consider a tree-based implementation of the
+          DisjointSets ADT, as illustrated in Figure 8.3. Each partition will be
+          represented by a tree. The nodes of the tree will be the elements of the
+          partition. The element at the root of the tree will be the representative of
+          that partition. Because we will need to ﬁnd the root from an arbitrary node
+          in the tree, the children will maintain references to their parents, rather than
+          vice versa. Note that because parents do not need to reference children, a
+          node can have arbitrarily many children.
+             Given a value k, we need to be able to ﬁnd the parent of the node
+          representing k. In order to accommodate this functionality, we will use an
+          array parent[0..n − 1] to represent the trees. Speciﬁcally, parent[k] will give
+          the parent of k in its tree, or if k is the root, parent[k] will be k.Thus,parent
+          will be the only representation variable. Our structural invariant will be that
+          for 0 ≤ i&lt;n:
+</div>
+    </div>
+  </body>
+</html>

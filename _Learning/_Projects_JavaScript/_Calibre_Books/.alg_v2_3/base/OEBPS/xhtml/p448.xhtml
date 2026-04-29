@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 448</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-448.jpg" alt="Page 448" width="1282" height="1882"/>
+      <div class="ocr">                                    Depth-First Search                      429
+          Proof.   Let 1 ≤ i&lt;n.Weﬁrstobservethats.highest[i] is only changed
+          by PreProc(i), TreePostProc(e), and OtherEdgeProc(e), where e
+          is an edge from i; i.e., s.highest[i] is only changed during the processing of
+          vertex i. We will show by induction on m, the number of descendants of i in
+          the depth-ﬁrst spanning tree, that the processing of vertex i gives s.highest[i]
+          the correct value.
+          Induction Hypothesis: Assume that for any j with fewer than m
+          descendants, the processing of vertex j gives s.highest[j] the correct value.
+          Induction Step: Suppose i has m descendants. It is easily seen that the
+          processing of vertex i assigns to s.highest[i]thevalue,
+                       min({s.pre.Num(k) |{i,k} is a back edge}∪
+                            {s.highest[j] | j is a child of i}).
+          We must show that s.pre.Num(k)ands.highest[j]      We are denoting edges as
+          have the correct values when they are used.        directed edges because a
+          s.pre.Num(k)isusedinOtherEdgeProc(e),              Graph uses only directed
+                                                             edges (see p. 321).
+          where e =(i,k). This operation is only called
+          when k is unselected, and hence after PreProc(k) has been called.
+          s.pre.Num(k) has therefore been set to its correct value. s.highest[j]isused
+          in TreePostProc(e), where e =(i,j). Hence, j is a child of i that has
+          been processed. Because j is a child of i,ithasstrictlyfewerthanm
+          descendants. Thus, by the Induction Hypothesis, its processing sets it to
+          its correct value. Thus, the processing of vertex i sets s.highest[i]tothe
+          value given in Equation (13.2), which we have shown to be equivalent to
+          Equation (13.1).                                                   
+              TheproofofLemma13.4reliesheavilyonknownpropertiesofdepth-ﬁrst
+          search and depth-ﬁrst spanning trees. As a result, it is quite straightforward.
+          Often proofs of correctness for algorithms using depth-ﬁrst search don’t even
+          require induction. Such is the case for the proof of the following theorem.
+          Theorem 13.5. ArtPts satisﬁes its speciﬁcation.
+          Proof.   Let 0 ≤ i&lt;n. We must show that the call to Dfs results in
+          s.artPoints[i]beingtrue if i is an articulation point, or false otherwise.
+          We ﬁrst note that artPoints[i] is changed only during the processing of i.
+          Furthermore, it is initialized to false in PreProc(i). We must therefore show
+          that it is set to true iﬀ i is an articulation point. We consider two cases.
+</div>
+    </div>
+  </body>
+</html>

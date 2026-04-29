@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 179</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-179.jpg" alt="Page 179" width="1282" height="1882"/>
+      <div class="ocr">           160                      Algorithms: A Top-Down Approach
+           Theorem 5.1. For any binary tree T with n nodes, the null path length of
+           T is at most lg(n +1).
+               Theproof of this theorem is typical of many proofs of properties of trees.
+           It proceeds by induction on n using the following general strategy:
+           • For the base case, prove that the property holds when n = 0 — i.e., for
+              an empty tree.
+           • For the induction step, apply the induction hypothesis to one or more of
+              the children of a nonempty tree.
+           Proof of Theorem 5.1.        By induction on n.
+           Base: n = 0. Then by deﬁnition, the null path length is 0 = lg1.
+           Induction Hypothesis: Assume for some n&gt;0thatfor0≤ i&lt;n,the
+           null path length of any tree with i nodes is at most lg(i +1).
+           Induction Step: LetT beabinarytreewithnnodes.Thenbecausethetwo
+           children together contain n − 1 nodes, they cannot both contain more than
+           (n−1)/2 nodes; hence, one of the two children has no more than (n−1)/2
+           nodes. By the induction hypothesis, this child has a null path of at most
+           lg((n −1)/2 +1). The null path length of T is therefore at most
+                            1+lg((n−1)/2+1)≤1+lg((n+1)/2)
+                                                    =lg(n+1).
+                                                                                      
+               By the above theorem, if we can always choose        The term “leftist” refers to
+           the child with smaller null path length for the          the tendency of these struc-
+           recursive call, then the merge will operate in O(lgn)    tures to be heavier on the
+                                                                    left.
+           time, where n is the number of nodes in the larger of
+           the two heaps. We can develop slightly simpler algorithms if we build our
+           heaps so that the right-hand child always has the smaller null path length, as
+           in Figure 5.6(a). We therefore deﬁne a leftist tree to be a binary tree which, if
+           nonempty, has two leftist trees as children, with the right-hand child having
+           a null path length no larger than that of the left-hand child. A leftist heap
+           is then a leftist tree that is also a heap.
+               In order to implement a leftist heap, we will use an implementation of
+           a leftist tree. The leftist tree implementation will take care of maintaining
+           the proper shape of the tree. Because we will want to combine leftist trees
+</div>
+    </div>
+  </body>
+</html>

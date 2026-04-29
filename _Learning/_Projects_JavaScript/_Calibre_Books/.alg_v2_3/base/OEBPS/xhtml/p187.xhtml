@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 187</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-187.jpg" alt="Page 187" width="1282" height="1882"/>
+      <div class="ocr">      168          Algorithms: A Top-Down Approach
+      shows this sequence of insertions for i = 3. Note that each time an even
+      key is inserted, because it is the largest in the heap, it becomes the new
+      root and the original heap becomes its left child. Then when the next key
+      is inserted, because it is smaller than the root, it is merged with the empty
+      right child, then swapped with the other child. Thus, after each odd key is
+      inserted, the heap will contain all the even keys in the rightmost path (i.e.,
+      the path beginning at the root and going to the right until it reaches an
+      empty subtree), and for i ≥ 1, key 2i will have key 2i − 1 as its left child.
+      Finally, when key 0 is inserted, because it is the smallest key in the heap,
+      it will successively be merged with each right child until it is merged with
+      the empty subtree at the far right. Each of the subtrees on this path to the
+      right is then swapped with its sibling. Clearly, this last insertion requires
+      Θ(i) running time, and i is proportional to the number of nodes in the heap.
+        The bad behavior described above results because a long rightmost
+      path is constructed. Note, however, that 2i Put operations were needed
+      to construct this path. Each of these operations required only Θ(1) time.
+      Furthermore, after the Θ(i) operation, no long rightmost paths exist from
+      any node in the heap (see Figure 5.11). This suggests that a skew heap might
+      have good amortized running time.
+        A good measure of the actual cost of the SkewHeap operations is the
+      number of calls to Merge, including recursive calls. In order to derive a
+      bound on the amortized cost, let us try to ﬁnd a good potential function.
+      Based upon the above discussion, let us say that a node is good if its left
+      child has at least as many nodes as its right child; otherwise, it is bad.We
+      now make two key observations, whose proofs are left as exercises:
+      • In any binarytree with n nodes, the numberof good nodesin therightmost
+       path is no more than lg(n+1).
+      • In the Merge function, if L is a bad node initially, it will be a good node
+       in the resulting heap.
+        Due to these observations, we use as our potential function the number
+      of bad nodes in the heap. Because the number of good nodes in each of the
+      two rightmost paths is logarithmic, the potential function can increase by
+      only a logarithmic amount on any Merge. Furthermore, because any bad
+      nodeencountered becomes good, the resulting change in potential will cancel
+      the actual cost associated with this call, leaving only a logarithmic number
+      of calls whose actual costs are not canceled. As a result, we should expect
+      the amortized costs of the SkewHeap operations to be in O(lgn), where n
+      is the number of elements in the priority queue (the details of the analysis
+</div>
+    </div>
+  </body>
+</html>

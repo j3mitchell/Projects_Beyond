@@ -1,0 +1,37 @@
+                                      Storage/Retrieval I: Ordered Keys                          201
+                – strictly larger than all keys in its left child;
+                – strictly smaller than all keys in its right child.
+             We can represent a binary search tree with the following variables:
+             • elements, which refers to a BinaryTreeNode (see Section 5.2);
+             • size, which is an integer giving the number of data items in the set.
+             We interpret elements as representing a binary search tree as follows. If
+             its root variable is nil, then the represented BST is empty. Otherwise, its
+             root variable is a Keyed item (see page 149) containing the data item
+             stored in the root with its associated key, and its leftChild and rightChild
+             variables represent the left and right children, respectively. Our structural
+             invariant is that elements refers to a binary search tree according to the above
+             interpretation, and that size gives the number of nodes in the represented
+             binary search tree. Note that this invariant implies that all non-nil root
+             variables in the BinaryTreeNodes refer to Keyed items.
+                 Because both Get and Removerequirethat we ﬁnda nodewith a given
+             key, we will design an internal function Find(k,t) to ﬁnd the node in the
+             BSTrooted at t with key k. If no such key exists in the tree, Find(k,t) will
+             return a reference to the empty subtree in which it could be inserted; thus,
+             we can also use Find in implementing Put.
+                 Consider how we might implement Find(k,t). If t is empty, then
+             obviously it does not contain the key. Otherwise, we should ﬁrst check the
+             root. If we don’t ﬁnd our key, we should see how it compares with the key
+             at the root. Proceeding top-down, we can then ﬁnd the key in either the left
+             or right child, depending on the outcome of the comparison. This algorithm
+             is a transformation, and so can be implemented as a loop, as is shown in
+             Figure 6.6.
+                 Complete implementations of Get and Put are shown in Figure 6.6.
+             The implementation of Remove requires a bit more work, however. Once
+             we ﬁnd the node containing the key k, we need to be able to remove that
+             nodet while maintaining a binary search tree. If t has no nonempty children,
+             all we need to do is remove it (i.e., make the subtree empty). If t has only
+             one nonempty child, we can safely replace the node to which t refers by that
+             child. The diﬃculty comes when t has two nonempty children. In order to
+             take care of this case, we replace t with the node in its right child having
+             smallest key. That node must have an empty left child, so we can easily
+             remove it. Furthermore, because it is in the right child of t,itskeyisgreater

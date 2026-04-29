@@ -1,0 +1,32 @@
+           314                      Algorithms: A Top-Down Approach
+             Figure 9.5  Adirected acyclic graph modeling precedence relationships
+           can be modeled by the directed acyclic graph shown in Figure 9.5. We need
+           to ﬁnd an ordering of the vertices such that for every edge (u,v), u precedes
+           v in the ordering. Such an ordering is called a topological sort of the graph.
+           Examples of topological sorts of the graph in Figure 9.5 are B,A,C,D
+           and B,D,A,C. In this section, we will present an algorithm for ﬁnding a
+           topological sort of a given directed acyclic graph. First, we will show that
+           every directed acyclic graph has a topological sort.
+           Lemma9.1. Every nonempty directed acyclic graph has at least one vertex
+           with no incoming edges.
+           Proof.    Bycontradiction. Supposeevery vertex in some nonempty directed
+           acyclic graph G has incoming edges. Then starting from any vertex, we may
+           always traverse an incoming edge backwards to its source. Because G has
+           ﬁnitely many vertices, if we trace a path in this fashion, we must eventually
+           repeat a vertex. We will have then found a cycle — a contradiction.        
+           Theorem 9.2. Every directed acyclic graph G =(V,E) has a topological
+           sort.
+           Proof.    By induction on the size of V.
+           Base: V = ∅. Then the empty ordering is a topological sort.
+           Induction Hypothesis: Suppose that for some n>0, every directed
+           acyclic graph with fewer than n vertices has a topological sort.
+           Induction Step: LetG =(V,E)beadirectedacyclic graphwithnvertices.
+           Because G is nonempty, it must have at least one vertex v with no incoming
+                                                                     0
+                         
+           edges. Let G be the graph obtained from G by removing v0 and all of
+                                                                
+           its outgoing edges. By the induction hypothesis, G has a topological sort
+           v ,...,v    . Because v has no incoming edges in G, v ,...,v            must
+            1       n−1            0                                   0      n−1
+           therefore be a topological sort for G.                                     

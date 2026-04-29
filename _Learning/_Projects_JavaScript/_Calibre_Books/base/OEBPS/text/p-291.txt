@@ -1,0 +1,15 @@
+           272                      Algorithms: A Top-Down Approach
+             Figure 7.9  Pairs resulting in collisions when applying mod
+               However, recall from Section 7.2 that Θ(1) amortized expected perfor-
+           mance can be achieved using rehashing if the probability of collisions is
+           bounded by c/m for some positive real number c. We therefore deﬁne a
+           family of hash functions to be c-universal if for each pair of distinct keys,
+           the probability of a collision is at most c/m. In what follows, we will derive
+           a c such that H4     is c-universal whenever 1 <m<p.
+                           p,l,m
+               Speciﬁcally, we need to ﬁnd a real number c such that whenever p is
+           prime and 1 <m<p,
+                              c ≥ 1 + (m−(pmodm))(pmodm)
+                              m m                    mp2
+                               c ≥ 1+(m−(pmodm))(pmodm).                           (7.5)
+                                                     p2

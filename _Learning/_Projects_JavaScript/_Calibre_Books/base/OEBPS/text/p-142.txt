@@ -1,0 +1,2 @@
+                                    Basic Techniques for Data Structures                        123
+              Figure 4.6    ExpandableArrayStack implementation of Stack

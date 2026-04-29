@@ -1,0 +1,37 @@
+       416            Algorithms: A Top-Down Approach
+       Termination:Because Lcontains ﬁnitely many elements and each iteration
+       removes one element from L, the loop must eventually terminate.
+       Correctness: Assume the invariant holds and that L is empty when the
+       loop terminates. We need to show that the postcondition holds when the
+       algorithm ﬁnishes. Let S denote the set of descendants of i.
+         Let us ﬁrst consider which values in pre and post have been changed
+       by the algorithm. From the invariant, only pre.Num(i), pre.Num(j), and
+       post.Num(j), where j ∈ S\{i},havechangedbythetimetheloop
+       terminates. The ﬁnal call to post.Visit(i) changes post.Num(i). Therefore,
+       the only values to have been changed by the algorithm are pre.Num(j)and
+       post.Num(j) such that j ∈ S.
+         Let j ∈ S and k ∈ S.Ifj = i, then from the invariant, pre.Num(j) >
+       pre.Num(k)andpost.Num(j) > post.Num(k). If j = i, then from the
+       invariant pre.Num(j) > pre.Num(k). Furthermore, the call to post.Visit(i)
+       makes post.Num(j) > post.Num(k).
+         Now let j,k ∈ S. We must show that j is a proper ancestor of k iﬀ
+       pre.Num(j) < pre.Num(k), and post.Num(j) > post.Num(k).
+       ⇒: Suppose j is a proper ancestor of k.Thenk = i, because i is an
+       ancestor of every node in S.Ifj = i, then it follows from the invariant
+       that pre.Num(j) < pre.Num(k)andpost.Num(j) > post.Num(k). If j = i
+       then from the invariant pre.Num(j) < pre.Num(k), and the ﬁnal call to
+       post.Visit(i)makespost.Num(j) > post.Num(k).
+       ⇐: Suppose pre.Num(j) < pre.Num(k)andpost.Num(j) > post.Num(k).
+       If neither j = i nor k = i, then from the invariant, j is a proper ancestor of
+       k.Ifj = i, then clearly j is a proper ancestor of k. Finally, k = i because the
+       ﬁnal call to post.Visit(i)wouldthenmakepost.Num(k) > post.Num(j).
+                                                     
+         In order to analyze the running time of PrePostTraverse,letus
+       assume that T is represented as a ListGraph. Then the call to AllFrom
+       runs in Θ(1) time. Furthermore, the while loop iterates exactly m times,
+       where m is the number of children of i. Because each iteration of the while
+       loop results in one recursive call, it is easily seen that the running time is
+       proportional to the total number of calls to PrePostTraverse. It is easily
+       shown by induction on n, the number of nodes in the subtree rooted at i,
+       that a call in which the second parameter is i results in exactly n total calls.
+       The running time is therefore in Θ(n).

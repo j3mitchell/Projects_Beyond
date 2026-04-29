@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 524</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-524.jpg" alt="Page 524" width="1282" height="1882"/>
+      <div class="ocr">                                        NP-Completeness                             505
+            Figure 16.1   Binary trees representing the formula ¬x ∨(y ∧ x)
+                                       ∨                  or
+                                   ¬       ∧         not      and
+                                x       y     x    121
+           1 ≤ i ≤ j, i represents some variable in the expression (note, however,
+           that we cannot apply this assumption to arbitrary subtrees). For example,
+           Figure 16.1 shows the tree representing the formula ¬x ∨ (y ∧ x), ﬁrst in a
+           more abstract form, then in a more concrete form using 1 to represent x and
+           2torepresenty. Finally, we can represent an assignment of truth values to
+           the variables using an array A[1..n] of boolean values, where A[i]givesthe
+           value assigned to the variable represented by i.
+               Given an expression tree for F and an array representing an assignment
+           of truth values, we can then evaluate F using BoolEval,shownin
+           Figure 16.2. It is not hard to see that this algorithm runs in Θ(m)time,
+           where m is the number of operators in F (note that the number of leaves in
+           the expression tree can be no more than m+1).
+               Returningtothesatisﬁability problem,we now point out some character-
+           istics that this problem has in common with the other problems we will study
+           in this chapter. First, it is a decision problem — the output is either “yes”
+           or “no”. Second, when the answer is “yes”, there is a relatively short proof
+           of this fact — an assignment of truth values that satisﬁes the expression.
+           Third, given a proposed proof of satisﬁability (i.e., some assignment of truth
+           values to the variables), we can eﬃciently verify whether it does, in fact,
+           prove the satisﬁability of the expression. However, ﬁnding such a proof, or
+           proving that none exists, appears to be an expensive task in the worst case
+                                 n
+           (note that there are 2 possible assignments of truth values to n variables).
+           16.2    The Set P
+           We have suggested that the boolean satisﬁability problem may not be
+           eﬃciently solvable. However, we have not yet formalized what this means.
+           In this section we will deﬁne a set of decision problems that we will consider
+           to be those that are eﬃciently decidable.
+</div>
+    </div>
+  </body>
+</html>

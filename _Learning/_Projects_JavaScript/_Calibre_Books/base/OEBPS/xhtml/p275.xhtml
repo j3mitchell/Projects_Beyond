@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 275</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-275.jpg" alt="Page 275" width="1282" height="1882"/>
+      <div class="ocr">         256                Algorithms: A Top-Down Approach
+            We will assume that our keys are represented as natural numbers. This
+         assumption does not result in any loss of generality, because all data types
+         can be viewed as sequences of bytes, or more generally, as w-bit components.
+         Wecanvieweachcomponentasanaturalnumberlessthan2w.Thesequence
+         k ,...,k then represents the natural number
+           1    l
+                                   l
+                                   w(l−i)
+                                     k 2    ;
+                                      i
+                                  i=1
+                                                            w
+         thus, we view the key as encoding a natural number in radix 2 .Wemust
+         realize, however, that the keys may be very large, so that they do not ﬁt in
+         a single machine word.
+            The basic idea of the division method is simple. For a natural number k,
+         we deﬁne
+                                h(k)=kmodm,
+         where m is the number of array locations in the hash table. Thus, 0 ≤
+         k modm&lt;m.Thetable shown in Figure 7.3 uses the division method.
+            It is not hard to show that
+                     (xy +z)modm=(x(y modm)+z)modm
+         (see Exercise 7.5). This relationship gives us a top-down solution to the
+         problem of computing h(k)forlargek.Ifz is the last w-bit component of k,
+                         w
+         we can write k =2y +z,wherey is the value obtained by removing the
+         component z from k.Wethenhave
+                                 w
+                         h(k)=(2 y+z)modm
+                                 w
+                             =(2(ymodm)+z)modm
+                                 w
+                             =(2h(y)+z)modm.
+         We can therefore compute h(k) bottom-up by starting with the ﬁrst com-
+                                            w
+         ponent of k and repeatedly multiplying by 2 , adding the next component,
+         and taking the result mod m.
+            The division method is illustrated in Figure 7.7, where an implementa-
+         tion of HashFunctionis presented. The representation of HashFunction
+         is a Nat size, and the structural invariant is size &gt; 0. We assume the
+         existence of a function ToArray(x,w), which returns an array of Nats,
+                            w
+         each strictly less than 2 , and which together give a representation of x.It
+         is easily seen that Index runs in time linear in the length of the key.
+</div>
+    </div>
+  </body>
+</html>

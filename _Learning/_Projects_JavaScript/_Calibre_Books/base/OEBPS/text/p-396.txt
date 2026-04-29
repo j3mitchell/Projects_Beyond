@@ -1,0 +1,39 @@
+                                     Optimization I: Greedy Algorithms                         377
+             insertions is in Θ(alga). Because G is connected, n − 1 ≤ a ≤ n(n − 1)/2.
+             Furthermore,lg(n(n−1)/2) < 2lgn,sothatΘ(n+a)+Θ(alga)=Θ(algn).
+             The last while loop is easily seen to run in Θ(algn) time as well.
+                 If G is implemented using MatrixGraph,theAllFrom operation
+             requires Θ(n) time, so that the for loop requires Θ(n2). The total running
+             timeisthereforeinΘ(n2+algn),whichisworsethanΘ(algn)forsuﬃciently
+             sparsegraphs(i.e., when a ∈ o(n2/lgn)). Kruskal’salgorithm therefore tends
+             to be better-suited for the ListGraph implementation, particularly when
+             the graph is sparse.
+                 As we suggested earlier, Kruskal’s algorithm isn’t the only greedy
+             algorithm for ﬁnding MSTs. We arrive at a diﬀerent algorithm if we
+             generalize the original problem in a slightly diﬀerent way. Rather than
+             allowing our input to consist of any set of edges that can be extended to
+             an MST, we instead require that this set of edges form a spanning tree on
+             some subset of the vertices. Thus, when we add an edge, it must extend
+             this spanning tree to another vertex; i.e., it must connect a vertex in the
+             spanning tree to one that is not in the spanning tree. Our selection criterion
+             will be to select such an edge having minimum cost. Theorem 11.2 tells us
+             that such a strategy results in an MST.
+                 Thedatastructures needed to implement this algorithm, which is known
+             as Prim’s algorithm, are simpler than those needed to implement Kruskal’s
+             algorithm. We need to partition the vertices into two disjoint sets — the set
+             of vertices in the spanning tree and those not in the spanning tree. A boolean
+             array inTree[0..n − 1] will suﬃce for this purpose. For each vertex k not in
+             the spanning tree, we need an eﬃcient way to ﬁnd a least-cost edge {i,k}
+             such that i is in the spanning tree. For this purpose, we use two arrays:
+             • an array bestCost[1..n−1] such that if k is not in the spanning tree, then
+               bestCost[k] is the minimum cost of any edge to k fromavertexinthe
+               spanning tree, or ∞ if there is no such edge; and
+             • an array best[1..n − 1] such that if k is not in the spanning tree and
+               bestCost[k] = ∞,then{best[k],k} is a least-cost edge from the spanning
+               tree to k.
+                 The spanning tree will initially contain only the vertex 0; hence, it is
+             unnecessary to include the index 0 for the arrays best and bestCost.We
+             can then initialize each best[k]to0andeachbestCost[k] to the cost of edge
+             {0,k},orto∞ if there is no such edge. In order to ﬁnd an edge to add
+             to the spanning tree we can ﬁnd the minimum bestCost[k] such that k is
+             not in the spanning tree. If we denote this index by next, then the edge

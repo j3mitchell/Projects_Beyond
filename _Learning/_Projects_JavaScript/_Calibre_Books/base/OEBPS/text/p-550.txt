@@ -1,0 +1,41 @@
+                                NP-Completeness                    531
+            In what follows, we will show that 4-Part is NP-hardinthestrong
+         sense. We leave it as exercises to show that
+         • k-Part ∈NPfor all k>1;
+         • 3-Part is NP-complete in the strong sense; and
+         • 2-Part ∈P.
+            We will show that 3DM ≤pp 4-Part. The reduction will be somewhat
+                                  m
+         similar to the reduction from 3DM to Part, but we must be careful that
+         the weights we construct are not too large. Let us describe an instance of
+         3DM using the same notation as we did for the earlier reduction. We will
+         assume that each element occurs in at least one triple. Otherwise, there is
+         no matching, and we can create an instance with seven items having weight
+         6 and one item having weight 8, so that the total weight is 50, and B = 25.
+         Clearly, 25/5 < 6 < 8 < 25/3; hence, this is a valid instance, but there is
+         clearly no way to form a subset with weight 25.
+            We will construct, for each triple x ,y ,z ∈W, four weights: one
+                                          i  j k
+         weight for each of xi, yj,andz , plus one weight for the triple itself. Because
+                                 k
+         each element of X ∪ Y ∪ Z can occur in several triples, we may construct
+         several items for each element. Exactly one of these will be a matching
+         item. All non-matching items constructed from the same element will have
+         the same weight, which will be diﬀerent from that of the matching item
+         constructed from that element. We will construct the weights so that in any
+         4-partition, the item constructed from a triple must be grouped with either
+         the matching items constructed from the elements of the triple, or three
+         non-matching items — one corresponding to each element of the triple. In
+         this way, a 4-partition will exist iﬀ W contains a matching.
+            As in the previous reduction, it will be convenient to view the weights
+         in a particular radix r, which we will specify later. In this case, however,
+         the weights will contain only a few radix-r digits. We will choose r to
+         be large enough that when we add any four of the weights we construct,
+         each column of digits will have a sum strictly less than r; hence, we will be
+         able to deal with each digit position independently in order to satisfy the
+         various constraints. Note that if we construct the weights so that for every
+         triple, the sum of the four weights constructed is the same, then this sum
+         will be B.
+            We will use the three low-order digits to enforce the constraint that the
+         four items within any partition must be derived from some triple and its
+         three components. To this end, we make the following assignments:

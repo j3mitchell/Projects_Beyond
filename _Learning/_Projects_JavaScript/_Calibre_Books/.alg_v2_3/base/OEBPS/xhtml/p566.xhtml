@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 566</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-566.jpg" alt="Page 566" width="1282" height="1882"/>
+      <div class="ocr">                                NP-Completeness                    547
+         location j. Finally, because F must be satisﬁed, one of these instructions
+                                 7
+         must be a Halt(1) instruction.
+            Now suppose that for some φ ∈B, M executes a Halt(1) instruction
+         on input (x,φ). By our choice of the polynomial p(n), we can assume that
+         |φ|≤p(|x|). Let us now set x = x and φ[1..|φ|]=φ. We will also set
+                                 
+         φ[k]=truefor1 ≤ k ≤|φ|and φ[k]=falsefor |φ| &lt;k≤ p(n). We can clearly
+         assign truth values to the variables in the sub-formulas F for 2 ≤ q ≤ 6so
+                                                       q
+         that all of these sub-formulas are satisﬁed. By the above construction, we
+         can then assign truth values to the variables in each of the sub-formulas F
+                                                                    q
+         for 1 ≤ q ≤ p(n) so that these formulas, along with F , are satisﬁed. Such
+                                                     1
+         an assignment will yield pij = true iﬀ pj is the ith instruction executed by
+         Moninput(x,φ). Because M executes a Halt(1) instruction on this input,
+         F must also be satisﬁed. Therefore, F is satisﬁed by this assignment.
+          7
+            WehavethereforeshownthatX ≤p Sat.BecauseX canbeanyproblem
+                                       m
+         in NP, it follows that Sat is NP-hard. Because Sat ∈NP, it follows that
+         Sat is NP-complete.
+         16.9  Summary
+         The NP-complete problems comprise a large class of decision problems
+         for which no polynomial-time algorithms are known. Furthermore, if a
+         polynomial time algorithm were found for any one of these problems, we
+         would be able to construct polynomial-time algorithms for all of them. For
+         this reason, along with many others that are beyond the scope of this book,
+         we tend to believe that none of these problems can be solved in polynomial
+         time. Note, however, that this conjecture has not been proven. Indeed, this
+         question — whether P = NP — is the most famous open question in
+         theoretical computer science.
+            Proofs of NP-completeness consist of two parts: membership in NP
+         and NP-hardness. Without knowledge of any NP-complete problems, it is
+         quite tedious to prove a problem to be NP-hard. However, given one or
+         more NP-complete problems, the task of proving additional problems to be
+         NP-hard is greatly eased using polynomial-time many-one reductions.
+            Some general guidelines for ﬁnding a reduction from a known
+         NP-complete problem to a problem known to be in NP are as follows:
+         • Look for a known NP-complete problem that has similarities with the
+           problem in question.
+         • If all else fails, try reducing from 3-Sat.
+</div>
+    </div>
+  </body>
+</html>

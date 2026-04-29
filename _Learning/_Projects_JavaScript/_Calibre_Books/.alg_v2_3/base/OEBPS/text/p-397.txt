@@ -1,0 +1,41 @@
+           378                     Algorithms: A Top-Down Approach
+            Figure 11.2   Prim’s algorithm for ﬁnding an MST
+            Precondition: G refers to a Graph which is undirected and connected,
+            and whose edges contain their costs as data.
+            Postcondition: Returns a ConsList of Edges representing an MST of
+            G. Each edge will occur once in the list.
+            Prim(G)
+               n←G.Size(); inTree ← new Array[0..n−1]; inTree[0] ← true
+               best ← new Array[1..n−1]; bestCost ← new Array[1..n−1]
+               T ←new ConsList()
+               for k ← 1 to n−1
+                  inTree[k] ← false; best[k] ← 0; bestCost[k] ← G.Get(0,k)
+                  if bestCost[k]=nil
+                    bestCost[k] ←∞
+               // Invariant: T contains count edges forming a spanning tree for the
+               // vertices k such that inTree[k]istrue,andthereisanMSTofG
+               // containing all of the edges in T.Foreachk such that inTree[k]isfalse,
+               // bestCost[k] is the minimum cost of any edge {i,k} such that inTree[i]
+               // is true,or∞ if there is no such edge. For each k such that inTree[k]
+               // is false and bestCost[k] = ∞, {best[k],k} is a least-cost edge
+               // leading to k from any vertex i such that inTree[i]istrue.
+               for count ← 0 to n−2
+                  m←∞
+                  for k ← 1 to n−1
+                    if not inTree[k] and bestCost[k] <m
+                       next ← k; m ← bestCost[k]
+                  e ←new Edge(best[next],next,m)
+                  T ←new ConsList(e,T); inTree[next] ← true
+                  for k ← 1 to n−1
+                    if not inTree[k]
+                       d ←G.Get(next,k)
+                       if d = nil and d<bestCost[k]
+               return T best[k] ← next; bestCost[k] ← d
+           {best[next],next} is the next edge to be added, thus connecting next to the
+           spanning tree. For each k that is still not in the spanning tree, we must then
+           update bestCost[k] by comparing it to the cost of {next,k}, and update
+           best[k] accordingly. The algorithm is shown in Figure 11.2.
+               It is easily seen that if G is a MatrixGraph, the running time
+           is in Θ(n2). This is an improvement over Kruskal’s algorithm when a
+           MatrixGraphis used. If a ListGraph is used, however, the running time
+           is still in Ω(n2), and can be as bad as Θ(n3) for dense graphs. Thus, Kruskal’s

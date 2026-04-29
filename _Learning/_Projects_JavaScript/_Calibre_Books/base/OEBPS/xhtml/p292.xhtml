@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 292</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-292.jpg" alt="Page 292" width="1282" height="1882"/>
+      <div class="ocr">                                    Storage/Retrieval II: Unordered Keys                        273
+             Let us ﬁx p at an arbitrary prime value and try to maximize the right-hand
+             side of (7.5). Suppose m&lt;p/2. Then p−(p mod m) &gt;m,and
+                                     p mod(p−pmodm)=pmodm.
+             Thus, by replacing m with p − p mod m in (7.5), we increase the value of
+             the expression. In order to maximize its value, we therefore need m ≥ p/2.
+             Because p is prime, we cannot have m = p/2, so we can assume m&gt;p/2.
+                 If m&gt;p/2, then p mod m = p−m. It therefore suﬃces to maximize
+                              (m−(p−m))(p−m)=(2m−p)(p−m)
+                                                        =−(2m2−3mp+p2),
+             or equivalently, to minimize
+                                          f(m)=2m2−3mp+p2.
+                 There are several ways to ﬁnd the minimum value of a quadratic, but
+             one way that does not involve calculus is by the technique of completing the
+                                                          2
+             square. A quadratic of the form (ax−b) is clearly nonnegative for all values
+             of a,x,andb. Furthermore, it reaches a value of 0 (its minimum) at x = b/a.
+             Wecan therefore minimize f(m) by ﬁnding a value d such that f(m)−d is
+             of the form
+                                                2     2  2              2
+                                      (am−b) =a m −2abm+b .
+             Because f(m)−d reaches a minimum value of 0 at m = b/a, f(m) reaches
+             a minimum value of d at the same point.                                           √
+                 In order to make the coeﬃcient of m2 have a value of 2, a must be               2.
+             To ﬁnd the coeﬃcient b,wemustsolve
+                                                         √
+                                               3mp=2 2bm,
+                                                         3p
+                                                   b = √ .
+                                                        2 2
+             To ﬁnd d, we must then solve
+                                               2         3p 2
+                                              p −d=         √
+                                                          2 2
+                                                        9p2
+                                                     = 8 ,
+                                                          p2
+                                                   d = − 8 .
+</div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,33 @@
+                                 NP-Completeness                      553
+         * Exercise 16.38. Deﬁne the predicates Iq(i), Eq(i), and Uq(i) for the case
+         in which the instruction at location q is Input(1,∗l). Show that the resulting
+         sub-formula F can be constructed in O(p5(n)) time.
+                     q
+         16.11   Notes
+         NP-completeness was introduced by Cook [23], who proved that Sat and
+         CSat are NP-complete. Karp [78] then demonstrated the importance of
+         this topic by proving NP-completeness of 21 problems, including VC, 3DM,
+         Part,andtheproblemsdescribedinExercises16.7, 16.9, 16.10, 16.13, 16.16,
+         16.18, and 16.23. The original deﬁnition of NPwas somewhat diﬀerent from
+         the one given here — it was based on non-deterministic Turing machines,
+         rather than on algorithms or RAMs. The deﬁnition given in Section 16.1
+         is based on a deﬁnition given by Brassard and Bratley [17]. All of these
+         deﬁnitions are equivalent.
+             Sat is an example of an NP-complete problem for which practical
+         algorithms exist. Even though each of these algorithms requires exponential
+         time in the worst case, they have been used to solve large instances arising
+         in ﬁelds such as software veriﬁcation and scheduling. For a survey of Sat-
+         solvers, see Gong and Zhou [58].
+             The notion of strong NP-completeness was introduced by Garey and
+         Johnson [53]. They provided the deﬁnitions of strong NP-completeness,
+         pseudopolynomial algorithms, and pseudopolynomial reductions. They had
+         earlier given NP-completeness proofs for k-Part for k ≥ 3 [51] and for the
+         problem described in Exercise 16.29 [52]. As it turned out, their reductions
+         were pseudopolynomial. Their book on NP-completeness [54] is an excellent
+         resource.
+             Exercise 16.20 is solved by Lovasz [91]. Exercise 16.21 is solved by
+         Kirkpatrick and Hell [79]. Exercise 16.22 is solved by van Leeuwen [115].
+         The solution to Exercise 16.30 is attributed to Perl and Zaks by Garey and
+         Johnson [54].
+             Axis and AlliesTM (mentioned in Exercise 16.25) is a registered trade-
+         mark of Hasbro, Inc.

@@ -1,0 +1,4 @@
+                                      Storage/Retrieval I: Ordered Keys                          221
+              Figure 6.18     The splay tree after the calls to Find and FindMin in Remove
+              Figure 6.19     The Remove operation for the SplayDictionary implementation of
+              OrderedDictionary

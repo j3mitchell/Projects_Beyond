@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 340</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-340.jpg" alt="Page 340" width="1282" height="1882"/>
+      <div class="ocr">                                        Graphs                             321
+          other vertices. Note that with these constraints, we can have up to n(n −
+          1) −n/2	 edges. For such a graph, the ﬁrst n/2	 iterations of the while
+          loop will have i = 0, while j ranges from n−1downto(n−1)/2	+1.For
+          each of these iterations, Get(i,j) runs in Θ(min(a,n)) time, because there
+          are Θ(min(a,n)) vertices adjacent to 0, but j is not adjacent to 0. Because
+          the number of these iterations is in Θ(n), the total time is in Θ(nmin(n,a)).
+             Now let us consider the case in which a&gt;n(n−1)−n/2	.Inthiscase,
+          we make sure that from each of the vertices 0,...,n/2	−1, there is an
+          edge to every other vertex. Furthermore, we make sure that in each of the
+          ConsLists of edges from these ﬁrst n/2	 vertices, the edge to vertex n−1
+          occurs last. From the remaining vertices we may have any edges listed in any
+          order. For such a graph, the ﬁrst n/2	 iterations of the while loop will have
+          j = n−1, while i ranges from 0 to n/2	−1. For each of these iterations,
+          Get(i,j) runs in Θ(n) time, because there are Θ(n) vertices adjacent to i,
+          and n − 1 is the last of these. Because the total number of iterations is
+          in Θ(n), the total time is in Θ(n2). Because a ≥ n, this is the same as
+          Θ(nmin(a,n)).
+             Based on the analyses of the two algorithms, we can see that neither
+          implementation is necessarily better than the other. If an algorithm relies
+          more heavily on Get than on AllFrom, it is better to use MatrixGraph.
+          If an algorithm relies more heavily on AllFrom, it is probably better to use
+          ListGraph, particularly if there is a reasonable expectation that the graph
+          will be sparse — i.e., that it will have relatively few edges. Note also that
+          for sparse graphs, a ListGraph will use considerably less space.
+          9.5  Multigraphs
+          Let us brieﬂy consider the building of a ListGraph. We must ﬁrst construct
+          a graph with no edges, then add edges one by one using the Put operation.
+          The constructor runs in Θ(n)time.ThePut operation runs in Θ(m)
+          time, where m is the number of vertices adjacent to the source of the
+          edge. It is easily seen that the time required to build the graph is in
+          O(n+amin(n,a)), where a is the number of edges. It is not hard to match
+          this upper boundusinggraphs in which the number of vertices with outgoing
+          edges is minimized for the given number of edges. An example of a sparse
+          graph (speciﬁcally, with a ≤ n) that gives this behavior is a graph whose
+          edge set is
+                                   {(0,j) | 1 ≤ j&lt;a}.
+</div>
+    </div>
+  </body>
+</html>

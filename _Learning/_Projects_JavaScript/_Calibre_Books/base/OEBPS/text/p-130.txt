@@ -1,0 +1,18 @@
+                                    Basic Techniques for Data Structures                        111
+                 In practice, we might want additional operations such as an operation
+             that returns the top element without changing the sequence; however, the
+             above operations are suﬃcient for now. Later, we will add to this set.
+                 Note that the deﬁnition of an ADT is purely mathematical; i.e., it deﬁnes
+             a stack as a sequence, which is a mathematical object. It says nothing about
+             howastackistobeimplemented.Suchamathematicaldeﬁnitionissuﬃcient
+             for proving the correctness of Undo, shown in Figure 4.3, together with
+             the speciﬁcation of the Editable ADT in Figure 4.2. Such a proof is, in
+             fact, trivial. Note that by specifying in the precondition that the stack is
+             nonempty, we place on the caller the responsibility of checking this condition
+             prior to calling Undo.
+                 Continuing with the top-down approach, we need to design an implemen-
+             tation for the Stack ADT. In what follows, we will ﬁrst consider a simple
+             approach that does not quite meet the speciﬁcation. We will then consider
+             two full implementations of the Stack ADT.
+              Figure 4.2    Speciﬁcation of the Editable ADT
+              Figure 4.3    Analgorithm to undo an editing operation

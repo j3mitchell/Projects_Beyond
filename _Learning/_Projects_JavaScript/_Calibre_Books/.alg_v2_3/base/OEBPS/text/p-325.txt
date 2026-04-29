@@ -1,0 +1,48 @@
+            306                      Algorithms: A Top-Down Approach
+            • if rank[i] = 0 then there is no j, such that 0 ≤ j<n, j = i,and
+              parent[j]=i;and
+            • if rank[i] > 0, then
+              –thereissomej such that 0 ≤ j<n, j = i,andparent[j]=i;and
+              – rank[i] > max{rank[j] | 0 ≤ j<n,j= i,parent[j]=i}.
+            Exercise 8.12. Suppose that we modify ShortDisjointSets so that in
+            the Merge operation we make the tree with fewer nodes a child of the root
+            of the other tree (choosing arbitrarily if both trees have the same number of
+            nodes). Prove by induction on k that any tree with k>0 nodes formed in
+            this way will have height at most lgk.
+            * Exercise 8.13. Suppose that we modify TreeDisjointSets so that in
+            the Merge operation we ﬂip a fair coin to determine which node will be
+            the new root. Analyze the worst-case expected running time of Find for
+            such an implementation. Express your answer as simply as possible using Θ-
+            notation. In showing the lower bound, describe a sequence of operations for
+            an arbitrarily large universe of elements such that the last Find is expected
+            to require the stated running time.
+                                                            (i)
+            Exercise 8.14. ProvebyinductiononithatA (n)=n+i,sothatA (n)=
+                                                            0                       1
+            2n+1.
+            Exercise 8.15. Using the result of Exercise 8.14, prove by induction on i
+                   (i)      i                                n+1
+            that A (n)=2(n+1)−1, so that A (n)=2                (n+1)−1.
+                   1                                2
+            Exercise 8.16. Prove by induction on k that each A is non-decreasing.
+                                                                    k
+            Exercise 8.17. Using the results of Exercises 8.15 and 8.16, prove by
+            induction on i that
+                                                         n
+                                                        ·2
+                                            (i)        ··
+                                                      2
+                                          A (n)≥2          ,
+                                            2
+            where the right-hand side has i 2s.
+            Exercise 8.18. Using the result of Exercise 8.15, evaluate A (1).
+                                                                            3
+            Exercise 8.19. Using the result of Exercises 8.17 and 8.18, show that
+                                                        ·2
+                                                       ··
+                                                      2
+                                            A (1) ≥ 2     ,
+                                             4
+            where the right-hand side has 2051 2s.
+            Exercise 8.20. For the following, you may use the results of Exercises 8.15
+            and 8.16.

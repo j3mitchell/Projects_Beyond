@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 081</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-081.jpg" alt="Page 081" width="1282" height="1882"/>
+      <div class="ocr">           62                     Algorithms: A Top-Down Approach
+            Figure 3.1  Venn diagram depicting the relationships between the sets O(f(n)),
+            Ω(f(n)), and Θ(f(n))
+              In other words, Θ(f(n)) is the set of all functions belonging to both
+           O(f(n)) and Ω(f(n)) (see Figure 3.1). We can restate this deﬁnition by
+           the following theorem, which characterizes Θ(f(n)) in terms similar to the
+           deﬁnitions of O and Ω.
+           Theorem 3.13. g(n) ∈ Θ(f(n)) iﬀ there exist positive constants c and c
+                                                                            1      2
+           and a natural number n0 such that
+                                    c f(n) ≤ g(n) ≤ c f(n)                      (3.3)
+                                     1                2
+           whenever n ≥ n0.
+           Proof.   Wemust prove the implication in two directions.
+           ⇒: Suppose g(n) ∈ Θ(f(n)). Then g(n) ∈ O(f(n)) and g(n) ∈ Ω(f(n)).
+           By the deﬁnition of Ω, there exist a positive real number c and a natural
+                                                                     1
+           number n such that c f(n) ≤ g(n) whenever n ≥ n . By the deﬁnition of
+                    1            1                             1
+           O, there exist a positive real number c and a natural number n such that
+                                                2                        2
+           g(n) ≤ c f(n) whenever n ≥ n .Letn =max(n ,n). Then (3.3) holds
+                    2                     2       0          1  2
+           whenever n ≥ n0.
+</div>
+    </div>
+  </body>
+</html>

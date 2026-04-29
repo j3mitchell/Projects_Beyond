@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 266</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-266.jpg" alt="Page 266" width="1282" height="1882"/>
+      <div class="ocr">                                    Storage/Retrieval II: Unordered Keys                        247
+              Figure 7.1    Anexample of a VArray
+                                01243 56789
+               elements:        ?????35                                 ??17                 ?
+                    used:       74?????? ??
+                num=2
+                      loc:      ?????1                                  ??0                  ?
+                 To store x at location i of the VArray, we must ﬁrst determine as
+             above whether elements[i]iscurrentlybeingusedtostoreadataitem—
+             i.e., whether 0 ≤ loc[i] &lt; num and used[loc[i]] = i.Ifso,wecansimplystore
+             x in elements[i]. Otherwise, we must also update the other representation
+             variables to reﬂect the fact that we are using location i to store a data
+             item. In particular, we must store i in used[num], store num in loc[i], and
+             increment num. As a result, we interpret elements[i]asstoringx,andthe
+             structural invariant is maintained. The entire implementation of VArray is
+             showninFigure7.2.
+                 It is easily seen that the constructor and all operations of VArray
+             operate in Θ(1) time. However, it uses Θ(n) space, where n is the size of
+             the range of indices, not the number of elements stored. Thus, if a VArray
+             is used to implement a Dictionary, its space usage will be proportional
+             to the number of possible keys. This number may be much larger than the
+             number of keys actually stored in the Dictionary.
+                 In the remainder of this chapter, we will examine techniques for
+             improving the space usage while maintaining fast storage and retrieval.
+             Though we cannot guarantee Θ(1) worst-case access time when we reduce
+             the space usage, we can achieve amortized expected access time proportional
+             to the length of the key, even if the keys are not natural numbers and have
+             an unbounded range. Consequently, if the keys do have a ﬁxed range, the
+             amortized expected access time is in Θ(1).
+</div>
+    </div>
+  </body>
+</html>

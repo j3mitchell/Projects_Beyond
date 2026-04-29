@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 036</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-036.jpg" alt="Page 036" width="1282" height="1882"/>
+      <div class="ocr">                                                Introduction                                   17
+              Figure 1.12    The suﬃx with maximum sum may begin anywhere in the array, but
+              must end at the end of the array
+                                          ⎧
+                                          ⎨
+                                             0ifn=0
+                                     sn =                                                  (1.1)
+                                          ⎩
+                                             max(s     ,t )ifn&gt;0,
+                                                    n−1 n
+            where tn is the maximum suﬃx sum of A[0..n−1].
+                 Let us consider how to compute the maximum suﬃx sum tn using the
+            top-down approach. Observe that every suﬃx of A[0..n − 1] — except the
+            empty suﬃx — ends with A[n−1]. If we remove A[n−1] from all of these
+            suﬃxes, we obtain all of the suﬃxes of A[0..n−2]. Thus, tn−1+A[n−1] = tn
+            unless tn = 0. We therefore have
+                                      tn =max(0,A[n−1]+tn−1).                              (1.2)
+            Using (1.1) and (1.2), we obtain the recursive solution given in Figure 1.13.
+            Note that we have combined the algorithm for MaxSuffixTD with its
+            speciﬁcation.
+                 Unfortunately, an analysis of this algorithm shows that it also has
+            a running time proportional to n2.Whatisworse,however,isthatan
+            analysis of its stack usage reveals that it is linear in n. Indeed, the program
+            implementing this algorithm threw a StackOverflowError on an input
+                     15
+            of size 2  .
+                 While these results are disappointing, we at least have some techniques
+            for improving the stack usage. Note that in both MaxSumTD and
+            MaxSuffixTD, the recursive calls don’t depend on any of the rest of the
+            computation; hence, we should be able to implement both algorithms in a
+            bottom-up fashion in order to remove the recursion. Furthermore, we can
+            simplify the resulting code with the realization that once ti is computed
+            (using (1.2)), we can immediately compute si using (1.1). Thus, we can
+            computebothvalueswithin a single loop. The result is shown in Figure 1.14.
+                 Because this algorithm uses no recursion, its stack usage is ﬁxed (i.e., it
+            does not grow as n increases). Furthermore, an analysis of its running time
+</div>
+    </div>
+  </body>
+</html>

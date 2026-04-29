@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 558</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-558.jpg" alt="Page 558" width="1282" height="1882"/>
+      <div class="ocr">                                         NP-Completeness                               539
+           of M.Wewantpij to be true iﬀ the program counter has a value of j after
+           i execution steps.
+               Recording the values of the memory locations at each execution step
+           presents more of a challenge. Because a memory location can contain any
+           value less than 2p(n), M can access any memory location with an address
+                       p(n)
+           less than 2    . If we were to construct variables for each of these locations,
+           we would end up with exponentially many variables. We cannot hope to
+           constructaformulacontainingthismanyvariablesinapolynomialamountof
+           time. However, the number of memory locations accessed by any instruction
+           is at most four — the number accessed by Copy(∗l ,∗l )intheworstcase.
+                                                                 1   2
+           As a result, M can access a total of no more than 4p(n) diﬀerent memory
+           locations. We can therefore use a technique similar to the implementation of
+           a VArray (see Section 9.5) in order to keep track of the memory locations
+           actually used.
+               Speciﬁcally, we will let the variables aj[k], for 1 ≤ j ≤ 4p(n)and1≤ k ≤
+           p(n), denote the value of the kth bit of the address of some location l ,where
+                                                                                 j
+           the ﬁrst bit is the least signiﬁcant bit. Here, we will let true represent 1 and
+           false represent 0. Then the variables vij[k], for 0 ≤ i ≤ p(n), 1 ≤ j ≤ 4p(n),
+           and 1 ≤ k ≤ p(n), will record the value of the kth bit of the value stored at
+           location l after i execution steps. We will make no requirement that location
+                     j
+           l  actually be used by M, nor do we require that l be a diﬀerent location
+            j                                                    j
+           from l  when j = j.
+                  j
+               Finally, we will use the additional variables c [0..p(n)] and d [1..p(n)] for
+                                                              i              i
+           1 ≤ i ≤ p(n). We will explain their purposes later.
+               Before we describe the formula F that we will construct, let us ﬁrst
+           deﬁne some abbreviations, or “macros”, that will make the description of F
+           simpler. First, we will deﬁne the following:
+                                          If(y,z)=¬y∨z.
+           Thisabbreviation speciﬁesthatif y is true,thenz must also betrue. However,
+           if y is false,thennoconstraintisplaceduponz. Note that such an expression
+           can be constructed in O(1) time.
+               We can extend the above abbreviation to specify an if-then-else
+           construct:
+                              IfElse(y,z ,z )=If(y,z )∧If(¬y,z ).
+                                         1   2          1            2
+           This speciﬁes that if y is true,thenz is true, but if not, then z is true.
+                                                   1                            2
+           Clearly it can be constructed in O(1) time.
+</div>
+    </div>
+  </body>
+</html>

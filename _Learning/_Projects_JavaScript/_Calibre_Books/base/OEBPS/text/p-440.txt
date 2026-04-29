@@ -1,0 +1,36 @@
+                                  Depth-First Search                    421
+          13.3  AGeneric Depth-First Search
+          Due to its hierarchical nature, a rooted tree is more amenable to the top-
+          down approach to algorithm design than is a graph. Furthermore, as we
+          will see shortly, a depth-ﬁrst spanning tree has several additional properties
+          that can prove useful for designing graph algorithms. For this reason, it
+          makessensetogeneralize ReachDFStoageneral-purposedepth-ﬁrstsearch
+          algorithm. With such an algorithm, we can then design our algorithms as
+          traversals of depth-ﬁrst spanning trees.
+             Inordertogeneralize thisalgorithm, weneedanADTfordeﬁningvarious
+          ways of processing a depth-ﬁrst spanning tree. Upon examining ReachDFS,
+          we see that there are ﬁve places where processing might occur:
+          • Preorder processing of vertices can occur prior to the loop.
+          • Preorder processing of tree edges might occur prior to the recursive call.
+          • Postorder processing of tree edges might occur following the recursive call.
+          • Though the if statement in ReachDFS has no else-block, we might
+            include an else-block for processing other edges.
+          • Postorder processing of vertices can occur following the loop.
+          Wetherefore have the ADT speciﬁed in Figure 13.6. The generic depth-ﬁrst
+          search is shown in Figure 13.7.
+             Let us now consider the useful properties of depth-ﬁrst spanning trees.
+          These properties concern the non-tree edges. First, we show the following
+          theorem regarding undirected graphs.
+          Theorem 13.2. Let G be a connected undirected graph with n vertices, and
+          let sel be a Selector of size n in which all elements are selected. Suppose
+          we call Dfs(G,i,sel,s), where s is a Searcher of size n. Then for every
+          edge {j,k} processed as a non-tree edge, either j is an ancestor of k or k is
+          an ancestor of j.
+          Proof.  Without loss of generality, assume j is unselected before k is.
+          Consider the call to Dfs on vertex j. Initially, j is preorder processed while
+          k is still selected. We consider two cases.
+          Case 1: {j,k} is processed as a non-tree edge in the call to Dfs on j.Then
+          when this happens, k must be unselected. There must therefore have been
+          acalltoDfs on k which unselected k. This call resulted in k being both
+          preorder processed and postorder processed after j was preorder processed,
+          but before j was postorder processed. j is therefore a proper ancestor of k.

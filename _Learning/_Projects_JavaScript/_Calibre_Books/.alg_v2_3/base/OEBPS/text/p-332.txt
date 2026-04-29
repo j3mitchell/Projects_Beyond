@@ -1,0 +1,19 @@
+                                             Graphs                                  313
+             Figure 9.4  Analgorithm to ﬁnd a universal sink in a directed graph
+               Wecanthereforesolve the original universal sink detection problem for a
+           nonempty graph by ﬁrst ﬁnding a candidate vertex i as described above. We
+           know that if there is a universal sink, it must be i. We then check whether
+           i is a universal sink by verifying that for every j = i,(j,i) is an edge but
+           (i,j) is not. The resulting algorithm is shown in Figure 9.4.
+           9.2   Topological Sort
+           A cycle in a directed graph G =(V,E) is a ﬁnite sequence of vertices
+           v ,...,v such that (v ,v ) ∈ E,andfor0≤ i<k,(v ,v                  ) ∈ E.A
+            0       k              k  0                                 i  i+1
+           directed graph with no cycles is said to be acyclic. These two terms apply
+           analogously to undirected graphs as well, except that in this case all the
+           edges in the sequence must be distinct. In either type of graph, a cycle in
+           which all the vertices in the sequence are distinct is said to be simple.
+               Directed acyclic graphs are often used to model precedence relationships
+           between objects or activities. Suppose, for example, that we have four jobs,
+           A, B, C,andD. We must schedule these jobs sequentially such that A
+           precedes C, B precedes A,andB precedes D. These precedence relationships

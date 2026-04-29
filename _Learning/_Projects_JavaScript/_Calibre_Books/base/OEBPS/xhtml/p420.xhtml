@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 420</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-420.jpg" alt="Page 420" width="1282" height="1882"/>
+      <div class="ocr">                                Optimization II: Dynamic Programming                     401
+            * Exercise 12.3. As we have seen, the greedy algorithm suggested in
+            Section 12.1 works for some sets of coin denominations but not for others.
+            a. Prove that for denominations d &lt;d &lt; ···&lt;d,wherek&gt;1, if the
+                                                 1     2            k
+               greedy algorithm fails for some value, then it must fail for some value
+               n&lt;d+d .
+                     k    k−1
+            b. Devise an eﬃcient dynamic programming algorithm which takes as input
+               a set of denominations and returns true if the greedy algorithm always
+               works for this set, or returns false otherwise. You may assume that the
+               denominations are given in increasing order. Your algorithm should use
+               O(Mk) time and space, where M is the largest denomination and k is
+               the number of denominations.
+            Exercise 12.4. Prove by induction on j − i that m(i,j), as deﬁned in
+            recurrence 12.2, is the minimum number of scalar multiplications needed to
+            compute a product M ···M ,whereM is a d              ×d matrix for i ≤ k ≤ j.
+                                   i      j          k       k−1    k
+            Exercise 12.5. Prove by induction on k that Lk(i,j), as deﬁned in
+            recurrence 12.3, gives the length of the shortest path from i to j in which all
+            intermediate vertices are strictly less than k.
+            Exercise 12.6.
+            a. ModifyFloyd’s algorithm (Figure 12.3) so that it returns an array S[0..n−
+               1,0..n−1] such that for i = j, S[i,j] gives the vertex k such that (i,k)is
+               the ﬁrst edge in a shortest path from i to j. If there is no path from i to
+               j,orifi = j,thenS[i,j] should be −1.
+            b. Give an algorithm that takes the array S[0..n−1,0..n−1] deﬁned above,
+               along with i and j such that 0 ≤ i&lt;nand 0 ≤ j&lt;n, and prints the
+               vertices along a shortest path from i to j. The ﬁrst vertex printed should
+               bei, followed by the vertices in order along the path, until the last vertex
+               j is printed. If i = j,onlyi should be printed. If there is no path from i
+               to j, a message to that eﬀect should be printed. Your algorithm should
+               run in O(n)time.
+            Exercise 12.7. Give an algorithm for the 0-1 knapsack problem that runs
+            in O(nW) time and space, where n is the number of items and W is the
+            weight bound. Your algorithm should use dynamic programming to compute
+            recurrence (12.4) for 0 ≤ i ≤ n and 0 ≤ j ≤ W, then use these values to
+            guide a greedy algorithm for selecting the items to put into the knapsack.
+            Your algorithm should return an array selected[1..n] of booleans such that
+            selected[i]istrue iﬀ item i is in the optimal packing.
+</div>
+    </div>
+  </body>
+</html>

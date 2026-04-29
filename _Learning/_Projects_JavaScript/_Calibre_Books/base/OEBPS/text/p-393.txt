@@ -1,0 +1,37 @@
+          374                 Algorithms: A Top-Down Approach
+             Theorem 11.1 tells us that our greedy strategy results in an optimal
+          schedule. To implement this strategy, we need to consider the jobs in
+          non-increasing order of their values, and schedule each schedulable job at the
+          latest time possible. Therefore, we should ﬁrst sort the jobs in non-increasing
+          order of their values. Using heap sort or merge sort, this can be done in
+          Θ(mlgm)time.Schedule,showninFigure8.2,thenimplementsthegreedy
+          strategy. Because Schedule can be implemented to run in O(n + mlgn)
+          time, if m ∈ Θ(n), the entire algorithm runs in Θ(nlgn)time.
+          11.2  Minimum-Cost Spanning Trees
+          Suppose we wish to construct a communications network connecting a given
+          set of nodes. Given the distances separating each pair of nodes, we wish to
+          ﬁnd the network topology that connects all of the nodes using as little cable
+          as possible.
+             We can state the above problem as a graph problem. In Exercise 9.6,
+          we deﬁned a tree to be connected, acyclic, undirected graph. (Note that a
+          tree is diﬀerent from a rooted tree as deﬁned on page 154, though we can
+          form a rooted tree from a tree by selecting any vertex as the root.) Given a
+          connected undirected graph G =(V,E), a spanning tree is a tree (V,T)such
+          that T ⊆ E; i.e., a spanning tree is a tree consisting of all of the vertices of
+          Gandasubset of the edges. Let cost : E → N give a cost for each edge. We
+          wish to ﬁnd a minimum-cost spanning tree (MST) for G — i.e., a spanning
+          tree whose edges have minimum total cost.
+             In order to develop a greedy algorithm, we ﬁrst generalize the problem
+          so that a portion of an MST is given as input. This partial MST will be a
+                                    
+          subset E ⊆ E such that (V,E ) is acyclic, but not necessarily connected.
+          In order to keep the cost as small as possible, we will use as our selection
+          criterion the cost of the edge; i.e., we will always select a least-cost edge that
+          does not introduce a cycle.
+             Weneedtoshowthat the above strategy will result in an MST. In order
+          to state the theorem that guarantees this fact, we need one deﬁnition. Let
+          G =(V,E) be an undirected graph. A connected component of G is any
+          connected subset C ⊆ V such that no vertex in C is adjacent to any vertex
+          in V \C. Thus, the connected component containing a vertex v is the set of
+          all vertices reachable from v using zero or more edges. We can now state the
+          following theorem, which validates our selection strategy.

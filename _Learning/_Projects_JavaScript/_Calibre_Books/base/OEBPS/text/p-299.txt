@@ -1,0 +1,38 @@
+        280             Algorithms: A Top-Down Approach
+          Thus,if m ∈ Θ(n), the expected number of locations in the primary hash
+        table and all of the secondary hash tables is in Θ(n). In particular, if m ≥ n,
+        then E[sumsq] ≤ (c+1)n. It turns out that the value of m that minimizes
+                           cn(n−1) +n+m,
+                              m
+        is roughly n (see Exercise 7.17); hence, we will construct our primary hash
+        function by passing n to constructor for an appropriate implementation of
+        HashFunction.
+          Of course, we could be unlucky in selecting a primary hash function, so
+        that the number of secondary locations is much larger than what we expect.
+        For example, if it happens that all keys hash to the same location, then a
+        single secondary hash table with at least n2 locations will be used. In order
+        to guarantee linear space usage in the worst case, we therefore need to select
+        primary hash functions repeatedly until we get one that yields a reasonable
+        total space usage. Because the space usage is linear in sumsq, we don’t need
+        to construct the actual secondary hash tables in order to determine whether
+        the space usage is reasonable — we can instead simply compute sumsq.We
+        should therefore determine some maximum acceptable value for sumsq.
+          In order to ensure a reasonable probability of success, we don’t want
+        this maximum value to be too small. From Markov’s Inequality (5.3), the
+        probability that a discrete random variable is at least twice its expected
+        value is at most 1/2, provided its expected value is strictly positive. Based
+        on (7.6) above, because we will be using a primary table size of at least
+        n, it makes sense to use 2(c +1)n as the maximum allowable value for
+        sumsq. Furthermore, our derivations have assumed that c<2; hence, we
+        can simplify the maximum allowable value to 6n. By using this maximum,
+        wewouldexpecttoselectnomorethan2primaryhashfunctions,onaverage,
+        and still guarantee linear space usage.
+          We represent an ImmutableDictionary with the following variables:
+        • table[0..m − 1]: an array of (possibly nil) arrays of (possibly nil) Keyed
+         elements;
+        • hash:aHashFunction;
+        • functions[0..m −1]: an array of (possibly nil) HashFunctions; and
+        • size: a readable Nat.
+          Our structural invariant is that:
+        • thesizeofhash is the number of locations m in table;
+        • for 0 ≤ i<m, table[i]isnil iﬀ functions[i]isnil;

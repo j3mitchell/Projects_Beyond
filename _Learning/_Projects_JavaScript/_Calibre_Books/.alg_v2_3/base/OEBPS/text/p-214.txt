@@ -1,0 +1,13 @@
+                                     Priority Queues                       195
+          5.9  Notes
+          Both heaps and heap sort were introduced by Williams [121]. The linear-
+          time construction of a binary heap is due to Floyd [41]. Leftist heaps were
+          introduced by Crane [26]; see also Knuth [84]. Skew heaps were introduced
+          by Sleator and Tarjan [108]. Randomized heaps were introduced by Gambin
+          and Malinowski [48].
+             Otherimplementations of priority queues have been deﬁned based on the
+          idea of a heap. For example, binomial queues were introduced by Vuillemin
+          [116]. Lazy binomial queues and Fibonacci heaps, each of which provide
+          Put and RemoveMax operations with amortized running times in O(1)
+          and O(lgn), respectively, were introduced by Fredman and Tarjan [46].
+             Theinformation on craps in Exercise 5.27 is taken from Silberstang [106].

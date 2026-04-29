@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 494</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-494.jpg" alt="Page 494" width="1282" height="1882"/>
+      <div class="ocr">                                     * The Fast Fourier Transform                       475
+            Wenowapply the following trigonometric identities:
+                                       cos2x−sin2x =cos2x
+            and
+                                        2(cosxsinx)=sin2x.
+            We therefore have
+                         cos 2π +isin 2πn/2 = cos 4π +isin 4πn/4
+                               n         n                n          n
+                                                                        n/2
+                                                          2π          2π    2
+                                                 = cosn/2 +isinn/2
+                                                 =−1
+            by the Induction Hypothesis.                                                  
+                Before we give the algorithm for computing a convolution, let us consider
+            a slight generalization of the problem. We have deﬁned a convolution to be
+            a vector whose size is the sum of the sizes of two given vectors. In order to
+            apply Fft, we must pad the two input vectors with enough zeros so that
+            each has a size n,wheren is a power of 2 and is at least as large as the size
+            of the convolution. It would be somewhat easier to do this if we required the
+            input vectors to be padded with enough zeros so that they were both the
+            size of the convolution.
+                                                                                  −1
+                Let us therefore consider the value of the vector (pA · qA)A          when
+            p and q are arbitrary 1 × n vectors over C and A is the DFT matrix with
+            respect to ω.Thejth component of the vector pA is given by
+                                        n−1          n−1
+                                        pA =pωij.
+                                              i ij        i
+                                         i=0         i=0
+            The jth component of the component-wise product (pA·qA) is therefore
+                              n−1       n−1          n−1n−1
+                              piωijqkωkj =piqkω(i+k)j.
+                               i=0      k=0          i=0 k=0
+</div>
+    </div>
+  </body>
+</html>

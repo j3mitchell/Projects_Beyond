@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 318</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-318.jpg" alt="Page 318" width="1282" height="1882"/>
+      <div class="ocr">                                            Disjoint Sets                               299
+            where f is as above and g is some function that depends on the ranks of i
+            and its parent in s and obeys the constraint
+                                        0 &lt;g(s,i) ≤ ranks[i].
+                Let us consider the nodes examined during the operation Find(j)on
+            somestate s. These nodes are the ancestors of j. Let us restrict our attention
+            to those ancestors that have nonzero rank and are not the root. (Note that as
+            a result, we ignore at most two ancestors.) Let A be a function describing
+                                                                k
+            the relationship between the ranks of i and its parent for any non-root i,
+            where k = f(s,i); i.e., ranks[parent [i]] ≥ A       (ranks[i]). When the path
+                                                  s        f(s,i)
+            compression is done, the parent of i may have the same rank (if i had already
+            been a child of the root), or it may be very little more than the rank of i’s
+            original parent. However, suppose that in the original state s, i has a proper
+                                                                                         
+            ancestor i other than the root such that f(s,i )=f(s,i)=k. Because i
+            is not a root, the rank of i’s new parent is at least the rank of the original
+                       
+            parent of i . Therefore, if A is nondecreasing, we have
+                                         k
+                                                                  
+                             ranks [parents[i]] ≥ ranks[parents[i ]]
+                                                              
+                                                ≥A (ranks[i ])
+                                                     k
+                                                ≥A (ranks[parent [i]]).
+                                                     k              s
+                Thus, each time a path compression moves a non-leaf i having a proper
+                                                                   
+            ancestor i (other than the root) with f(s,i)=f(s,i )=k, the rank of i’s
+            parent increases by at least the application of the function A .Furthermore,
+                                                                           k
+            because 0 ≤ f(s,i) &lt;α(n), there can be at most α(n)nodesi on the path
+            from j to the root, other than leaves or the root, that do not have a proper
+                                  
+            ancestor i with f(s,i )=f(s,i). Thus, if we can decrease the potential of
+                                                          
+            each i having a proper ancestor i with f(s,i )=f(s,i), without increasing
+            any potentials, then we will have a bound of α(n)+2 on the amortized cost
+            of a Find with respect to Φ.
+                The behavior described above gives us some insight into how we might
+            deﬁnef,g,andeachA .First, we would like g to give the maximum number
+                                   k
+            of times A      canbeappliedtotherankofi without exceeding the rank
+                       f(s,i)
+                                                                         
+            of i’s parent. Thus, if i has a proper ancestor i with f(s,i )=f(s,i), and
+            if f(s,i)=f(s,i), then g(s,i) &gt;g(s,i). As a result, the potential of i
+            decreases. In order to keep g(s,i) within the proper range, we should deﬁne
+            f(s,i)andA sothatifweapplyA              morethanranks(i)timestoranks(i),
+                         k                      f(s,i)
+</div>
+    </div>
+  </body>
+</html>

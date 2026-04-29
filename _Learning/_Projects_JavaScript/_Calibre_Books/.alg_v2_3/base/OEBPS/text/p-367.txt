@@ -1,0 +1,37 @@
+          348                 Algorithms: A Top-Down Approach
+             Returning to Figure 10.4, and taking the number of rows to be 5, we
+          see that for each two columns (ten elements) that we add, at least three
+          elements are excluded from the second recursive call. For example, when
+          5 ≤ n ≤ 14, at least three elements are excluded, and when 15 ≤ n ≤ 24, at
+          least six elements are excluded. In general, at least 3i elements are excluded
+          if 10i − 5 ≤ n ≤ 10i + 4. We need to ﬁnd the largest value of n such that
+          3i<n/4, if such an n exists. If we can do so, then for all larger values of n,
+          the number of elements in the second recursive call will be no more than
+          3n/4. Because the number of elements must be an integer, it will then be
+          bounded above by 3n/4.
+             We therefore need to ﬁnd the largest i such that
+                                    3i<(10i+4)/4
+                                   12i<10i+4
+                                     i<2.
+          The largest such n is therefore 10 + 4 = 14. Then for all n ≥ 15, recurrence
+          (10.5) gives an upper bound on the running time of LinearSelect.From
+          Theorem 10.2, the running time is in O(n), and hence in Θ(n).
+             Various performance improvements can be made to LinearSelect.For
+          example, if n = 5, there is no reason to apply the Dutch national ﬂag
+          algorithm after sorting the array — we can simply return A[k]. In other
+          words, it would be better if the base case included n = 5, and perhaps some
+          larger values as well. Furthermore, sorting is not the most eﬃcient way to
+          solve the selection problem for small n. We explore some alternatives in the
+          exercises.
+             Even with these performance improvements, however, LinearSelect
+          does not perform nearly as well as the randomized algorithm outlined at
+          the beginning of this section. Better still is using a quick approximation
+          of the median, such as ﬁnding the median of the ﬁrst, middle, and last
+          elements, as the value of p. This approach yields an algorithm whose worst-
+          case running time is in Θ(n2), but which typically performs better than even
+          the randomized algorithm.
+          10.5  Integer Division
+          Exercise 4.14 on page 145 discussed an implementation of a BigNum ADT
+          (speciﬁed in Figure 4.18, page 146) for arbitrary-precision natural numbers.
+          This ADT is rather limited, in that its only arithmetic operations are
+          addition and subtraction. Figure 10.6 speciﬁes multiplication and division

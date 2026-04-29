@@ -1,0 +1,21 @@
+           186                     Algorithms: A Top-Down Approach
+            Figure 5.19   Example of the RemoveMax operation for a binary heap
+           A[1..n − 1] into a heap, then to insert A[n]. We can easily implement this
+           bottom-up. The resulting algorithm does n−1 insertions into heaps of sizes
+           ranging from 1 to n−1. The total running time is therefore in
+                     n−1
+                     Θ(lgi)⊆Θ((n−1)lg(n−1)) (from Theorem 3.31)
+                     i=1
+                                =Θ(nlgn).
+               Wecandobetter, however, by viewing the array A[1..n] as a binary tree
+           in which the parent of A[i]isA[i/2]fori>1. With this view in mind, the
+           natural approach seems to be to make the children into heaps ﬁrst, then use
+           MakeHeapto make the entire tree into a heap. The resulting algorithm is
+           easiest to analyze when the tree is completely balanced — i.e., when n +1
+           is a power of 2. Let N = n +1,andletf(N) give the worst-case running
+           time for this algorithm. When N is a power of 2, we have
+                                   f(N)∈2f(N/2)+Θ(lgN).
+           From Theorem 3.35, f(N) ∈ Θ(N)=Θ(n).
+               This implementation of MakeHeap must be more general than the
+           implementation used for BinaryHeap. Speciﬁcally, we must be able to
+           apply MakeHeap to arbitrary subtrees in order to be able to use it to

@@ -1,0 +1,39 @@
+           258                     Algorithms: A Top-Down Approach
+               Thus, applying this hash function to the key is equivalent to applying it
+           to the sum of the bytes in the key. Because addition is commutative, we can
+           see that the hash function would yield the same value for any permutation
+           of the bytes in the key; hence every permutation of the same bytes would
+           hash to the same location. Such behavior is undesirable. Similar behavior
+           can occur for other values very near powers of 2.
+               As another example, suppose that all of the keys are even numbers. If
+           m is even, then k mod m will always be even. As a result, only half the
+           locations in the table are used, so we could expect the lists to be at least
+           twice as long. More generally, if even keys are more likely than odd keys,
+           even m will cause the division method to perform poorly. This tells us that
+           mshould not be even.
+               Wecangeneralize the above arguments to conclude that m should ideally
+           be a prime number — a number with no factors other than itself and 1 —
+           and not too close to a power of two. It turns out that these restrictions are
+           nearly always suﬃcient to yield good performance from the division method.
+               The constructor DivisionMethod(n) therefore needs to select a table
+           size m that is a prime number in the range n ≤ m<3n, such that m is
+           not too close to a power of 2. Searching for such a number can be somewhat
+           expensive.
+               Fortunately, we can simplify the search in practice. Consider the
+           following sequence of prime numbers:
+                     2           5          11          23         47           97
+                   197         397         797       1597        3203         6421
+                 12853       25717      51437      102877      205759       411527
+                823117    1646237     3292489     6584983    13169977     26339969
+              52679969 105359939 210719881 421439783 842879579 1685759167
+           Suppose we were to initialize an array with these values, beginning with
+                                      30
+           index 1. Then for 2 ≤ n ≤ 2  =1,073,741,824, the value at location lgn is
+           at least n and strictly less than 3n. Thus, by adding an extra 2 at location 0,
+                                                                            30
+           wecaneasilyﬁndaprimetablesizeinthecorrectrangeforalln ≤ 2 ,which
+           is suﬃciently large for most applications. Furthermore, except for the ﬁrst
+           three or four of these values, none are close to any power of 2. We can avoid
+           using the ﬁrst three or four sizes by setting the initial size to be suﬃciently
+           large, but even if we were to use them, rehashing guarantees that they will
+           only be used for very small data sets.

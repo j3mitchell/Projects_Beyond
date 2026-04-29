@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 229</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-229.jpg" alt="Page 229" width="1282" height="1882"/>
+      <div class="ocr">           210                    Algorithms: A Top-Down Approach
+           Thus, for suﬃciently large h, there is a positive real number c such that
+                                                                       1
+                                        g (2h)=g (h)
+                                          1        2
+                                                     h
+                                               ≥c 2 .
+                                                   1
+           Then for suﬃciently large even h,
+                                                   h/2
+                                        g (h) ≥ c 2   .
+                                         1       1
+           For suﬃciently large odd h,wehave
+                     g (h) ≥ g (h−1)
+                      1       1
+                                (h−1)/2
+                           ≥c 2          (because h−1iseven)
+                              1
+                              c
+                               1  h/2
+                           = √22     ,
+           so that for some positive real number c and all suﬃciently large h,
+                                                 2
+                                                   h/2
+                                        g (h) ≥ c 2   .                         (6.3)
+                                         1       2
+              Combining (6.3) with (6.2), we obtain
+                                            h/2
+                                         c 2   ≤g(h),
+                                          2
+           for suﬃciently large h. Applying lg to both sides and rearranging terms, we
+           obtain
+                                     h≤2(lgg(h)−lgc )
+                                                        2
+                                       ∈O(lgg(h)).
+           Because g(h) is the minimum number of nodes in an AVL tree of height h,it
+           follows that the height of an AVL tree is in O(lgn), where n is the number of
+           nodes. By a similar argument, it can be shown that the height is in Ω(lgn)
+           as well. We therefore have the following theorem.
+           Theorem 6.4. The worst-case height of an AVL tree is in Θ(lgn),wheren
+           isthenumberofnodes.
+              By Theorem 6.4, if we can design operations that run in time linear in
+           the height of an AVL tree, these operations will run in time logarithmic
+           in the size of the data set. Certainly, adding or deleting a node will change
+           the heights of some of the subtrees in an AVL tree; hence, these operations
+           must re-establish balance. Computing the height of a binary tree involves
+           ﬁndingthelongestpath,whichapparentlyrequiresexaminingtheentiretree.
+           However, we can avoid recomputing heights from scratch if we record the
+</div>
+    </div>
+  </body>
+</html>

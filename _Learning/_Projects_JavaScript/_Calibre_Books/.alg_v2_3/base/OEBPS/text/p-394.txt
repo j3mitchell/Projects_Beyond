@@ -1,0 +1,38 @@
+                                     Optimization I: Greedy Algorithms                         375
+             Theorem 11.2. Let G =(V,E) be a connected undirected graph with cost
+             function cost : E → N,andletE ⊂ E be such that for some MST (V,T) of
+                                               
+             G, E ⊆ T. Suppose that (V,E ) is not connected, and let C be a connected
+                                                         
+             component of (V,E ).If{u,v}∈E\E is a minimum-cost edge such that
+             u ∈ C and v ∈ C, then there is an MST of G containing all the edges in
+             E ∪{{u,v}}.
+                 Before we prove Theorem 11.2, we note that it is stronger than we
+             require. We state it in this way in order to justify a second greedy algorithm,
+             which we will discuss a bit later. Note, however, that a minimum-cost edge
+             that does not introduce a cycle certainly qualiﬁes as the edge {u,v} in the
+             statement of the theorem.
+             Proof of Theorem 11.2.            If {u,v}∈T, then there is nothing to show.
+             Suppose {u,v} ∈ T. We will show how to construct a set T such that
+             E ∪{{u,v}} ⊆ T and (V,T)isanMST.
+                 Because (V,T) is a tree, there is a path from u to v in T. However, this
+             path cannot contain the edge {u,v}, because {u,v} ∈ T. This path must
+             therefore consist of:
+             • a(possiblyempty)pathinC from u to some vertex w;
+             • an edge {w,x},wherex ∈ C;and
+             • a(possiblyempty)pathfromx to v.
+             Note that even though either path above might be empty, they cannot
+             both be empty, or we would have {w,x} = {u,v}. By the choice of {u,v},
+             cost({w,x}) ≥ cost({u,v}). Let T =(T ∪{{u,v}})\{{w,x}}. Then the
+             total cost of T is no more than the total cost of T. From Exercise 9.6 a, T,
+             and hence T, has exactly |V |−1 edges. Furthermore, (V,T) is connected, as
+             any path in T that contains {w,x} can be modiﬁed to use the edge {u,v} and
+             the paths from u to w and x to v in T. From Exercise 9.6 b, (V,T) is a tree.
+             Because its cost is no more than the cost of the MST (V,T), (V,T)isan
+             MSTcontaining all of the edges in E ∪{{u,v}}.                                      
+                 In order to implement this algorithm, we need an eﬃcient way to
+             determine whether two vertices belong to the same connected component
+                                   
+             of (V,E ), where E is the set of edges we have collected so far. The
+             connected components form disjoint subsets of V. We can therefore maintain
+             these connected components using a DisjointSets structure. In order

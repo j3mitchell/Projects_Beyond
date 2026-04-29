@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 206</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-206.jpg" alt="Page 206" width="1282" height="1882"/>
+      <div class="ocr">                                     Priority Queues                       187
+          form the heap initially. In order to allow us to express the speciﬁcation
+          of Figure 5.17 in terms of a binary heap, we introduce the notation
+          Tree(A,k,n) to denote the binary tree formed by using A[k]astheroot,
+          Tree(A,2k,n) as the left child, and Tree(A,2k +1,n)astherightchild,
+          provided k ≤ n.Ifk&gt;n, Tree(A,k,n) denotes an empty tree. Thus,
+          Tree(A,1,n) denotes the binary tree T implied by the array A[1..n], and
+          for k ≤ n, Tree(A,k,n) denotes the subtree of T rooted at A[k]. The full
+          implementation of HeapSort is shown in Figure 5.20.
+             It is not hard to show that MakeHeap operates in Θ(lg(n/k)) time in
+          the worst case. It is easily seen that the ﬁrst for loop in HeapSort operates
+          in O(nlgn) time, though in fact a careful analysis shows that it runs in
+          Θ(n) time, as suggested by the above discussion. It is not hard to show,
+          using Theorem 3.31, that the second for loop operates in Θ(nlgn)timein
+          the worst case. Therefore, HeapSort runs in Θ(nlgn)timeintheworst
+          case.
+             The only BinaryHeap method that uses more than O(1) space is the
+          recursive method MakeHeap. This algorithm uses stack space proportional
+          to its depth of recursion, which is in turn proportional to its running time.
+          Thus, it uses Θ(lg(n/k)) stack space, which in the worst case is in Θ(lgn).
+          The stack space usage for HeapSort is therefore in Θ(lgn).
+          5.7  Summary
+          A heap provides a clean framework for implementing a priority queue.
+          Although LeftistHeaps yield Θ(lgn) worst-case performance for the
+          operations Put and RemoveMax,thesimplerSkewHeapsandRandom-
+          izedHeaps yield O(lgn) amortized and Θ(lgn) expected costs, respectively,
+          for these operations. On the other hand, stack space usage for these two
+          implementations may be problematic unless the algorithms are restructured
+          to use iteration rather than recursion. BinaryHeaps, while providing no
+          asymptotic improvements over LeftistHeaps, nevertheless tend to be more
+          eﬃcient in practice because they require less dynamic memory allocation.
+          They also provide the basis for HeapSort,aΘ(nlgn) in-place sorting
+          algorithm that uses Θ(lgn)stackspaceintheworstcase.Asummary
+          of the running times of the PriorityQueue operations for the various
+          implementations is shown in Figure 5.21.
+             For the implementations that use a Merge function, it is possible
+          to provide Merge as an operation. However, this operation is not very
+          appropriate for the PriorityQueue ADT because we may need to require
+</div>
+    </div>
+  </body>
+</html>

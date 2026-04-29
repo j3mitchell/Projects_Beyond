@@ -1,0 +1,38 @@
+       396           Algorithms: A Top-Down Approach
+       present in this section is no faster asymptotically, it serves as a good example
+       of how certain space optimizations can sometimes be made for dynamic
+       programming algorithms. It also serves as an illustration of how dynamic
+       programmingcanbeappliedtoproblemsthatarenotoptimization problems
+       in the strictest sense of the word.
+         Let G =(V,E) be a directed graph, and let len : V2 → N ∪{∞}be a
+       function giving the length of each edge, so that
+       • len(u,u)=0foru∈V;and           2
+       • len(u,v)=∞ iﬀ u = v and (u,v) ∈ E,for(u,v) ∈ V .
+       Wewishtoﬁnd,for each ordered pair (u,v) ∈ V2, the length of the shortest
+       path from u to v; if there is no such path, we deﬁne the length to be ∞.
+       Notethatwehavesimpliﬁedtheproblemsothatinsteadofﬁndingtheactual
+       paths, we will only be ﬁnding their lengths.
+         This optimization problem is somewhat nonstandard in that the objec-
+       tive function is not a numeric-valued function. Instead, its range can be
+       thought of as a matrix of values. However, the optimum is well-deﬁned, as
+       it occurs when all values are simultaneously minimized, and this is always
+       possible.
+         Let p be a shortest path from i to j, and consider any vertex k other
+       than i or j. Then either k is in p or it isn’t. If k is not in p,thenp remains
+       the shortest path from i to j if we remove k from the graph. Otherwise, we
+       can break p into a path from i to k andapathfromk to j. Clearly, each
+       of these paths are shortest paths between their endpoints. Thus, if we can
+       ﬁnd the shortest path from i to k and the shortest path from k to j,wecan
+       determine the shortest path from i to j.
+         A shortcoming to this approach is that we haven’t actually reduced
+       the size of the problem, as the shortest paths from i to k and k to j are
+       with respect to the original graph. One way to avoid this shortcoming is to
+       generalize the problem so that a set of possible intermediate vertices is given
+       as additional input. The problem is then to ﬁnd, for each ordered pair (i,j)
+       of vertices, the length of the shortest path from i to j such that all vertices
+       other than i and j on this path belong to the given set. If the given set is
+       V, then the result is the solution to the all-pairs shortest paths problem.
+       In order to keep the number of subproblems from being too large, we can
+       restrict the sets we allow as input. Speciﬁcally, our additional input can be a
+       natural number k, which denotes the set of all natural numbers strictly less
+       than k.

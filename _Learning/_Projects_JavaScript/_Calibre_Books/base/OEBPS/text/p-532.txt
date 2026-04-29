@@ -1,0 +1,43 @@
+                         NP-Completeness             513
+       are boolean expressions for which the shortest equivalent CNF expression
+       has size exponential in the size of the original expression. As a result, any
+       such conversion algorithm must require at least exponential time in the
+       worst case.
+          Fortunately, our reduction doesn’t need to construct an equivalent
+       expression, but only one that is satisﬁable iﬀ the given expression is
+       satisﬁable. In fact, the constructed expression isn’t even required to contain
+       the same variables. We will use this ﬂexibility in designing our reduction.
+          For the ﬁrst step of our reduction, we will construct an equivalent
+       formula in which negations are applied only to variables. Because of this
+       restriction, we can simplify our representation for this kind of expression
+       by allowing leaves to contain either positive or negative integers, as in our
+       representation of CNF formulas. Using this representation, we no longer need
+       nodes representing the ¬ operation. We will refer to this representation as a
+       normalized expression tree.
+          Fortunately, there is a polynomial-time algorithm for normalizing a bool-
+       ean expression tree. The algorithm uses DeMorgan’s laws:
+       •¬(x∨y)=¬x∧¬y;and
+       •¬(x∧y)=¬x∨¬y.
+       Thealgorithm is shown in Figure 16.3. This algorithm solves a slightly more
+       general problem for which the input includes a boolean neg, which indicates
+       whether the normalized expression should be equivalent to F or ¬F.Itis
+       easily seen that its running time is proportional to the number of nodes in
+       the tree, which is in O(m), where m is the number of operators in F.
+          As the second step in our reduction, we need to ﬁnd the largest integer
+       used to represent a variable in a normalized expression tree. We need this
+       value in order to be able to introduce new variables. Such an algorithm is
+       shown in Figure 16.4. Clearly, its running time is in O(|F|).
+          As the third step in our reduction, we will construct from a normalized
+       expression tree F and a value larger than any integer representing a variable
+       in F, a CNF expression F having the following properties:
+       P : F contains all of the variables in F;
+        1
+       P : for any satisfying assignment A for F, there is a satisfying assignment
+        2
+             
+         A for F in which all the variables in F have the same values as in A;and
+                                 
+       P : for any satisfying assignment A for F , the assignment A for F in which
+        3
+                                      
+         each variable in F is assigned its value from A satisﬁes F.

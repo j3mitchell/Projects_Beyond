@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 122</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-122.jpg" alt="Page 122" width="1282" height="1882"/>
+      <div class="ocr">                                   Analyzing Algorithms                      103
+           c. Use parts (a) and (b), together with Equation (2.2), to show that if a&lt;b,
+                            n
+             then f(n) ∈ X(b g(n)).
+          d. Use parts (a) and (b), together with Theorem 3.31, to show that if a = b,
+                              n
+             then f(n) ∈ X(na g(n)).   
+           e. Suppose a&gt;b,andletr =      a/b. Show that there is a natural number
+             n2 ≥ n0 such that for every n ≥ n2,0&lt;g(n) ≤ g(n+1)and
+                                       n
+                                       i               r
+                                          (b/a) g(i) ≤ r − 1.
+                                    i=n2+1
+             [Hint: Use the result of Exercise 3.22 and Theorem 3.58 to show that for
+             suﬃciently large i, g(i) ≤ ri; then apply Equation (2.2).]
+           f. Use parts (a), (b), and (e) to show that if a&gt;b,thenf(n) ∈ X(an).
+          Exercise 3.24. Let f : N → R≥0 be a function satisfying (3.7). Prove by
+          induction on n that f(n) ≤ f(n+1)forn ≥ 1.
+          Exercise 3.25. Prove Theorem 3.35.
+          Exercise 3.26. Showthat Copy,speciﬁedinFigure1.18onpage22,canbe
+          implemented to run in Θ(n)time,Θ(n) space, and Θ(1) stack space, where
+          nis the size of both of the arrays. Note that function calls use space from the
+          stack, but constructed arrays do not. Also recall that the parameters A[1..n]
+          and B[1..n] should not be included in the analysis of space usage. Your
+          algorithm should work correctly even for calls like Copy(A[1..n−1],A[2..n])
+          (see Exercise 1.4).
+          Exercise 3.27. Prove Theorem 3.42.
+          Exercise 3.28. Complete the proof of Theorem 3.44.
+          Exercise 3.29. Prove Theorem 3.45.
+          * Exercise 3.30. Prove Theorem 3.50. [Hint: First work Exercise 3.13, but
+          note that not all parts of that exercise extend directly to multiple variables.]
+          Exercise 3.31. Let A[1..n] be an array of numbers. An inversion is a pair
+          of indices 1 ≤ i&lt;j≤ n such that A[i] &gt;A[j]. The number of inversions
+          in A is a way to quantify how nearly sorted A is — the fewer inversions A
+          has, the more nearly sorted it is. Let I denote the number of inversions in A.
+          Show that InsertionSort (Figure 1.7, page 12) runs in Θ(n + I)timein
+          the worst case. (Thus, InsertionSort is very eﬃcient when the array is
+          nearly sorted.) Note that because the analysis is in terms of two variables,
+          “worst case” refers to the worst-case input for each pair of values n and I.
+</div>
+    </div>
+  </body>
+</html>

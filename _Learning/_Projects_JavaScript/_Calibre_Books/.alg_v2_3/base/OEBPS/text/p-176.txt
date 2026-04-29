@@ -1,0 +1,46 @@
+                         Priority Queues          157
+       Ourstructural invariant will be that elements is a heap whose size is given by
+       size. We interpret the contents of the nodes comprising this heap as the set of
+       items stored in the priority queue, together with their associated priorities.
+         Implementation of MaxPriority is now trivial — we just return the
+       key of the root. To implement RemoveMax, we must remove the root
+       (provided the heap is non-empty) and return the data from its contents.
+       When we remove the root, we are left with the two children, which must
+       then be combined into one heap. We therefore will deﬁne an internal function
+       Merge,whichtakes as input two heaps h and h with no nodes in common
+                                1   2
+       (i.e., the two heaps share no common structure, though they may have keys
+       in common), and returns a single heap containing all of the nodes from h
+                                                    1
+       and h . Note that we can also use the Merge function to implement Put
+          2
+       if we ﬁrst construct a single-node heap from the element we wish to insert.
+         Let us consider how to implement Merge. If either of the two heaps h
+                                                    1
+       and h is nil (i.e., empty), we can simply return the other heap. Otherwise,
+          2
+       the root of the result must be the root of either h or h , whichever root
+                                      1   2
+       contains a Keyed item with larger key (a tie can be broken arbitrarily). Let
+       Ldenote the heap whose root contains the maximum key, and let S denote
+       the other heap. Then we must form a heap whose root is the root of L and
+       whose two children are heaps containing the nodes in the following three
+       heaps:
+       • the left child of L;
+       • the right child of L;and
+       • S.
+       We can form these two children by recursively merging two of these three
+       heaps.
+         A simple implementation, which we call SimpleHeap,isshownin
+       Figure 5.5. Note that we can maintain the structural invariant because we
+       can ensure that the precondition to Merge is always met (the details are left
+       as an exercise). Note also that the above discussion leaves some ﬂexibility in
+       theimplementation of Merge.Infact,wewillseeshortlythatthisparticular
+       implementation performs rather poorly. As a result, we will need to ﬁnd a
+       better way of choosing the two heaps to merge in the recursive call, and/or
+       a better way to decide which child the resulting heap will be.
+         Let us now analyze the running time of Merge. Suppose h and h
+                                               1    2
+       together have n nodes. Clearly, the running time excluding the recursive
+       call is in Θ(1). In the recursive call, L.RightChild() has at least one fewer
+       node than does L; hence the total number of nodes in the two heaps in the

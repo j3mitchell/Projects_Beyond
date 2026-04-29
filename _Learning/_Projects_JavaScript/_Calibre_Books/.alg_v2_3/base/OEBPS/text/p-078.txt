@@ -1,0 +1,44 @@
+                               Analyzing Algorithms                59
+         statements prior to the loop, including the initialization of the loop index i,
+         require a ﬁxed number of steps. Their running time is therefore bounded
+         by some constant a. Likewise, the number of steps required by any single
+         iteration of the loop (including the loop test and the increment of i)is
+         bounded by some constant b. Because the loop iterates n times, the total
+         number of steps required by the loop is at most bn. Finally, the last loop
+         condition test and the return statement require a number of steps bounded
+         by some constant c. The running time of the entire algorithm is therefore
+         bounded by a+bn+c,wherea, b,andc are ﬁxed positive constants. The
+         running time of MaxSumBU is in O(n), because a+bn+c ≤ (a+b+c)n
+         for all n ≥ 1.
+            We can simplify the above analysis somewhat using the following
+         theorem.
+         Theorem 3.8. Suppose f (n) ∈ O(g (n)) and f (n) ∈ O(g (n)).Then
+                             1        1        2       2
+         1.f(n)f (n) ∈ O(g (n)g (n)); and
+            1   2        1   2
+         2.f(n)+f (n)∈O(max(g (n),g(n))).
+            1     2            1    2
+         (By f1(n)f2(n), we mean the function that maps n to the product of f1(n)
+         and f (n). Likewise, max(g (n),g (n)) denotes the function that maps n to
+             2                1    2
+         the maximum of g (n) and g (n).)
+                       1       2
+         Proof. Because f (n) ∈ O(g (n)) and f (n) ∈ O(g (n)), there exist
+                         1        1         2         2
+         positive real numbers c and c and natural numbers n and n such that
+                           1     2                  1     2
+                          f (n) ≤ c g (n) whenever n ≥ n         (3.1)
+                          1      1 1               1
+         and
+                         f (n) ≤ c g (n) whenever n ≥ n .        (3.2)
+                          2      2 2               2
+         Because both of the above inequalities involve only nonnegative numbers,
+         we may multiply the inequalities, obtaining
+                           f (n)f (n) ≤ c c g (n)g (n),
+                            1   2      1 2 1  2
+         whenever n ≥ max(n ,n ). Let c = c c and n =max(n ,n ). Then
+                         1  2         1 2    0        1 2
+                            f (n)f (n) ≤ cg (n)g (n),
+                             1   2       1   2
+         whenever n ≥ n . Therefore, f (n)f (n) ∈ O(g (n)g (n)).
+                     0           1   2       1   2

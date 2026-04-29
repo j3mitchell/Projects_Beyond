@@ -1,0 +1,46 @@
+                                                         * The Fast Fourier Transform                                                      483
+                  Note that the last term in the above sum (i.e., for j =2b−1) is 0. We include
+                  it in order to simplify the derivation that follows.
+                                                      bl                                                                        k
+                        Because k = bl,2 = −1intheringZm,+,·,wherem =2 +1.We
+                  can therefore write the product uv in this ring as
+                                           ⎛b−1 j                        ⎞ ⎛2b−1 b−1                                         ⎞
+                                                                     jl                                         (j−b)l
+                                  uv = ⎝                   u v       2 ⎠−⎝                              u v       2          ⎠
+                                                             i  j−i                                        i  j−i
+                                               j=0 i=0                               j=b i=j−b+1
+                                           ⎛b−1 j                        ⎞ ⎛b−1 b−1                                   ⎞
+                                                                     jl                                        jl
+                                       =⎝                  u v       2 ⎠−⎝                          u v          2 ⎠
+                                                             i  j−i                                   i  j−i+b
+                                               j=0 i=0                               j=0i=j+1
+                                            b−1       ⎛ j                       b−1                  ⎞
+                                           jl⎝                                                    ⎠
+                                       =         2              u v        −            u v              .
+                                                                  i  j−i                  i  j−i+b
+                                            j=0           i=0                  i=j+1
+                        Let p = p0,...,p                  ,where
+                                                      b−1
+                                                                 j                    b−1
+                                                       p =uv −  uv                                       .
+                                                        j              i  j−i                  i  j−i+b
+                                                               i=0                  i=j+1
+                  Thus, in Zm,+,·,
+                                                                              b−1
+                                                                               jl
+                                                                     uv =           pj2 .
+                                                                              j=0
+                  Furthermore, the vector p closely resembles the positive wrapped convolution
+                  u ,...,u            ⊗v ,...,v                . The only diﬀerence is that the two sums are
+                      0           b−1            0           b−1
+                  subtracted, rather than added. For this reason, we deﬁne p to be the negative
+                  wrapped convolution of the two vectors. The following theorem shows how
+                  computing a negative wrapped convolution can be reduced to computing a
+                  positive wrapped convolution.
+                  Theorem15.8. Let Rbeacommutative ring with unitelement, and suppose
+                  ψ is a principal (2n)th root of unity in R.Letp and q be 1×n vectors over
+                  R, and let Ψ and Ψ be 1×n vectors such that Ψj = ψj and Ψ = ψ2n−j for
+                                                                                                                          j
+                  0 ≤ j<n. Then the negative wrapped convolution of p and q is given by
+                                                               Ψ · ((Ψ · p) ⊗ (Ψ · q)),                                              (15.1)
+                  where · denotes the component-wise product of two vectors over R.

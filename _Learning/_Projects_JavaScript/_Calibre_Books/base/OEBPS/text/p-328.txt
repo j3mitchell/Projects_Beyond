@@ -1,0 +1,30 @@
+                                            Chapter 9
+                                           Graphs
+           Often we need to model relationships that can be expressed using a
+           set of pairs. Examples include distances between points on a map, links
+           in a communications network, precedence constraints between tasks, and
+           compatibility of items or people. In some cases, the relationship is symmetric;
+           e.g., if A is compatible with B,thenB is compatible with A. In other cases,
+           the relationship is asymmetric; e.g., the requirement that A precedes B is
+           not the same as the requirement that B precedes A. All of these relationships
+           can be modeled using graphs. Having modeled the relationship, we can then
+           apply graph algorithms for extracting such information as a shortest path
+           between two points or a valid ordering of tasks.
+               There are two kinds of graphs, depending on whether the relationship
+           to be modeled is symmetric or asymmetric. For symmetric relationships, we
+           deﬁne an undirected graph to be a pair (V,E), where V is a ﬁnite set of
+           vertices (or nodes)andE is a set of 2-element subsets of V. We refer to the
+           elements of E as edges. We can represent undirected graphs pictorially as in
+           Figure 9.1, where vertices are denoted by circles and edges are denoted by
+           line segments or curves connecting their constituent vertices. We often say
+           that an edge {u,v} is incident on vertices u and v,andthatu and v are
+           therefore adjacent.
+               For modeling asymmetric relationships, we deﬁne       In some cases, we drop the
+           a directed graph to be a pair (V,E), where again V        requirement that the ele-
+           is a ﬁnite set of vertices or nodes, but E is a set of    ments be distinct.
+           ordered pairs of distinct elements of V. Again, we refer to the elements of E
+           as edges. In order to diﬀerentiate the edges of an undirected graph from the
+           edges of a directed graph, we sometimes refer to the former as undirected
+           edges andtothelatterasdirected edges. We can represent directed graphs
+           in a manner similar to our depiction of undirected graphs, using arrows to
+                                                 309

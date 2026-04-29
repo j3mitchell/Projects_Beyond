@@ -1,0 +1,36 @@
+         238                Algorithms: A Top-Down Approach
+         of nonempty levels. We can therefore use another indicator random variable
+         to express maxLevel — speciﬁcally,
+                                      ∞
+                           maxLevel = I(numi >0).
+                                      i=1
+            We therefore have
+                                        ∞           
+                        E[maxLevel]=E I(numi >0)
+                                        i=1
+                                      ∞
+                                   =E[I(numi>0)].              (6.13)
+                                     i=1
+            Clearly, I(num > 0)(e) ≤ 1 for all e ∈ Seqn,sothatE[I(num > 0)] ≤ 1.
+                        i                                   i
+         Furthermore,I(numi > 0)(e) ≤ numi(e), so that E[I(numi > 0)] ≤ E[numi].
+         We therefore have E[I(numi > 0)] ≤ min(1,E[numi]), which is the same
+         upper bound we showed for E[taili]. Therefore, following the derivation of
+         (6.11), we have
+                             E[maxLevel] ≤lgn+2.              (6.14)
+            Now combining (6.9), (6.10), (6.11), (6.12), and (6.14), it follows that
+         the expected number of tests of the while loop condition is no more than
+                            2(lgn+2)+2∈O(lgn),
+         for a worst-case input when Find is called by Put. The expected running
+         time of Find in this context is therefore in O(lgn).
+            A matching lower bound for the expected running time of Find can
+         also be shown — the details are outlined in Exercise 6.18. We can therefore
+         conclude that the expected running time of Find when called from Put on
+         a worst-case input is in Θ(lgn).
+            We can now complete the analysis of Put. We have shown that the
+         expected running times for both loops and the constructor for SkipList-
+         Nodeareall in Θ(1). The expected running time of Find(k,l)isinΘ(lgn).
+         The remainder of the algorithm clearly runs in Θ(1) time. The total time
+         is therefore expected to be in Θ(lgn) for a worst-case input. We leave as
+         exercises to design Get and Remove to run in Θ(lgn) expected time,
+         as well.

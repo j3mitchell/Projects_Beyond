@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 308</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-308.jpg" alt="Page 308" width="1282" height="1882"/>
+      <div class="ocr">                         Chapter 8
+                      Disjoint Sets
+       In order to motivate the topic of this chapter, let us consider the following
+       problem. We want to design an algorithm to schedule a set of jobs on a
+       single server. Each job requires one unit of execution time and has its own
+       deadline. We must assign a job with deadline d to some time slot t,where
+       1 ≤ t ≤ d. Furthermore, no two jobs can be assigned to the same time slot. If
+       we can’t ﬁnd a time slot for some jobs, we simply won’t schedule them. One
+       waytoconstructsuchascheduleistoassigneachjobinturntothelatest
+       available time slot prior to its deadline, provided there is such a time slot.
+       The challenge here is to ﬁnd an eﬃcient way of locating the latest available
+       time slot prior to the deadline.
+         One way to think about this problem is to partition the time slots into
+       disjoint sets — i.e., a collection of sets such that no two sets have any element
+       in common. In this case, each set will contain a non-empty range of time slots
+       such that the ﬁrst has not been assigned to a job, but all the rest have been
+       assigned to jobs. In order to be able to handle the case in which time slot 1
+       has been assigned a job, we will also include a time slot 0, which we will
+       consider to be always available.
+         Suppose, for example, that we have scheduled jobs in time slots 1,2, 5,
+       7, and 8. Each set must have a single available time slot, which must be the
+       smallest time slot in that set; thus, the elements 0, 3, 4, 6, and all elements
+       greater than 8 must bein diﬀerent sets and must each bethe smallest element
+       of its set. If 10 is the latest deadline, our disjoint sets will therefore be
+       {0,1,2}, {3}, {4,5}, {6,7,8}, {9},and{10}. If we then wish to schedule
+       a job with deadline 8, we need to ﬁnd the latest available time slot prior
+       to 8. This is simply the ﬁrst time slot in the set containing 8 — namely, 6.
+       Thus, in order to ﬁnd this time slot, we need to be able to determine which
+       set contains the deadline 8, and what is the ﬁrst time slot in that set.
+                            289
+</div>
+    </div>
+  </body>
+</html>

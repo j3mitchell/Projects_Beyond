@@ -1,0 +1,42 @@
+                  484                                     Algorithms: A Top-Down Approach
+                  Proof.          Let 0 ≤ j<n. Then the jth component (15.1) is
+                                                ⎛ j                                 n−1                                  ⎞
+                                      ψ2n−j ⎝ψipiψj−iqj−i+  ψipiψj−i+nqj−i+n⎠
+                                                    i=0                            i=j+1
+                                                             j                          n−1
+                                                =ψ2npiqj−i+ψ3n  piqj−i+n
+                                                            i=0                       i=j+1
+                                                       j                        n−1
+                                                =piqj−1+ψn  piqj−i+n
+                                                     i=0                       i=j+1
+                                                       j                   n−1
+                                                =piqj−1−  piqj−i+n.
+                                                     i=0                 i=j+1                                                               
+                        Let us therefore reduce multiplication in the ring Zm,+,· to computing
+                  a negative wrapped convolution. In order to do this, the negative wrapped
+                  convolution must be computed over a commutative ring with a principal
+                                                                                                                                    k
+                  (2b)th root of unity. If we are to use a ring Zm ,+,·,wherem =2 +1
+                  and k is a power of 2, then from Theorem 15.7, we must have k ≥ b.
+                        Furthermore, m must be large enough so that
+                                                 ⎛ j                       b−1                  ⎞
+                                                 ⎝uv −  uv                                    ⎠modm
+                                                             i  j−i                  i  j−i+b
+                                                     i=0                 i=j+1
+                  uniquely determines
+                                                             j                   b−1
+                                                           uv −  uv                                 .
+                                                                   i  j−i                  i  j−i+b
+                                                           i=0                  i=j+1
+                                                                                                                           l
+                  Because each component of u and v is strictly less than 2 ,theabove
+                                                                             2l                                                      2l
+                  expression is strictly less than b2                            and strictly greater than −b2 .We
+                  therefore need
+                                                               k                  2l
+                                                             2 +1≥2b2
+                                                                                    2l+1
+                                                                     k ≥lg(b2                −1).
+                        The above inequality is satisﬁed if k ≥ lgb +2l + 1. Because our
+                  convolution algorithm works on vectors whose size is a power of 2, it makes
+                  sense to choose b as a power of 2. Because k is a power of 2, this implies that

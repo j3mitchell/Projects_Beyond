@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 138</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-138.jpg" alt="Page 138" width="1282" height="1882"/>
+      <div class="ocr">                                                   Basic Techniques for Data Structures                                                119
+                  were to allow read access to the variable elements in the representation of a
+                  stack. Using this reference, a user’s code could change the contents of that
+                  array. Because this array’s contents belong to the state of the data structure,
+                  security would then be violated. We must therefore check for the following
+                  conditions, each of which might compromise security:
+                  • Anoperation returns a reference to a portion of the state of the structure.
+                      This condition can include an operation that gives explicit read access to a
+                      representation variable. This condition will violate security if the reference
+                      refers to a data item whose value can change.
+                  • An operation causes the data item to which one of its parameters refers
+                      to be a part of the state of the structure. Under this condition, the code
+                      that invokes the operation has a copy of the parameter, and hence has
+                      access to the state of the structure. If the data item in question can be
+                      changed, security is violated.
+                  • A reference to a portion of the state is copied to the state of another
+                      instance of the same type. For example, if S and T are of type
+                      SimpleStack,andtheirelements variables have the same value, then the
+                      operation S.Push(x) could change the contents of T.Thus,ifashared
+                      data item can be changed, security is violated.
+                        We can now illustrate the technique of proving security by proving
+                  Lemma 4.1.
+                  ProofofLemma4.1Read access is explicitly                                                  Speciﬁcally,   the   variable
+                  given to size. However, size refers to a Nat,which                                        size can receive a diﬀerent
+                  cannot be changed. The only other values returned                                         value, and hence refer to
+                                                                                                            a diﬀerent Nat; however,
+                  are references to elements stored in the stack, and the                                   the Natsthemselvescan-
+                                                                                                            not change.
+                  values of these elements are not part of the state of
+                  the stack. Likewise, the only parameters are the capacity and the parameter
+                  to Push, neither of which refers to a data item that becomes a part of
+                  the state of the stack. Finally, no operations copy any part of the state of
+                  a SimpleStack to the state of another SimpleStack. We therefore can
+                  conclude that SimpleStack is secure.                                                                                   
+                        Designing secure data structures is sometimes rather challenging. In fact,
+                  there are occasions when security becomes too much of a burden — for
+                  example, when we are designing a data structure to be used only locally
+                  within some algorithm. In such a case, it may be easier to prove that our
+                  algorithm doesn’t violate the security of the data structure, rather than to
+                  prove that such a violation is impossible. If we deﬁne a data structure for
+</div>
+    </div>
+  </body>
+</html>

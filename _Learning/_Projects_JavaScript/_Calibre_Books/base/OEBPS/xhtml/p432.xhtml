@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 432</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-432.jpg" alt="Page 432" width="1282" height="1882"/>
+      <div class="ocr">                                        Depth-First Search                          413
+            Figure 13.1   The data structure VisitCounter
+              Structural Invariant: For 0 ≤ i&lt;n, num[i]isaNat, and
+                                       count = max num[i].
+                                               0≤i&lt;n
+              Precondition: n is a Nat.
+              Postcondition: Constructs a VisitCounter of size n, all of whose
+              values are 0.
+              VisitCounter(n)
+                count ← 0; num ← new Array[0..n−1]
+                for i ← 0 to n−1
+                   num[i] ← 0
+              Precondition: i is a Nat strictly less than Size().
+              Postcondition: Associates with i a value of m+1,wherem is the largest
+              value initially associated with any j,0≤ j&lt;Size().
+              VisitCounter.Visit(i)
+                count ← count+1;num[i] ← count
+              Precondition: i is a Nat strictly less than Size().
+              Postcondition: Returns the value associated with i.
+              VisitCounter.Num(i)
+                return num[i]
+              Precondition: true.
+              Postcondition: Returns the size of this VisitCounter.
+              VisitCounter.Size()
+                return SizeOf(num)
+           preorder traversal, and post is a VisitCounter that records the order in
+           which nodes are visited in the postorder traversal.
+               Note that PrePostTraverse is diﬀerent from most recursive algo-
+           rithms in that there is no explicit base case. However, a base case does
+           exist—thecaseinwhichi has no outgoing edges. In this case, the loop will
+           not iterate, and no recursive call will be made. The lack of an explicit base
+           case is reﬂected in the following correctness proof, which likewise does not
+           contain a separate base case.
+</div>
+    </div>
+  </body>
+</html>

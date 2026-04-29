@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 163</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-163.jpg" alt="Page 163" width="1282" height="1882"/>
+      <div class="ocr">      144          Algorithms: A Top-Down Approach
+      This can happen if a large number of elements are pushed onto the stack,
+      then most are removed. One solution is to modify the Pop operation so that
+      if the number of elements drops below half the size of the array, then we copy
+      the elements to a new array of half the size. Give a convincing argument that
+      this solution would not result in O(1) amortized running time.
+      Exercise 4.10. Analternative to the solution sketched in the above exercise
+      is to reduce the size of the array by half whenever it becomes less than 1/4
+      full, but is still non-empty.
+        a. Give a modiﬁed Pop operation to implement this idea.
+       * b. Usingthe technique of Section 4.3, show that the stack operations have
+         an amortized running time in O(1) when this scheme is used. You may
+         assume that the array is initially of size 4.
+      ** c. Repeat the above analysis using a potential function. [Hint: Your
+         potential function will need to increase as the size of the array diverges
+         from 2n,wheren is the number of elements in the stack.]
+      Exercise 4.11. Aqueue is similar to a stack, but it provides ﬁrst in ﬁrst out
+      (FIFO) access to the data items. Instead of the operations Push and Pop,
+      it has operations Enqueue and Dequeue — Enqueue adds an item to the
+      end of the sequence, and Dequeue removes the item from the beginning of
+      the sequence.
+      a. Give an ADT for a queue.
+      b. Using the linked list design pattern, give an implementation of your ADT
+        for which all operations run in Θ(1) time.
+      c. Prove that your implementation meets its speciﬁcation.
+      Exercise 4.12. A certain data structure contains operations that each
+      consists of a sequence of zero or more Pops from a stack, followed by a
+      single Push. The stack is initially empty, and no Pop is attempted when
+      the stack is empty.
+      a. Prove that in any sequence of n operations on an initialized structure,
+        there are at most 2n stack operations (i.e., Pushes and Pops).
+      b. Use a simple potential function to show that the amortized number of
+        stack operations is bounded by a constant.
+      Exercise 4.13. A String, as speciﬁed in Figure 4.17, represents a ﬁnite
+      sequence of Chars, or characters.
+      a. Give an implementation of String for which
+</div>
+    </div>
+  </body>
+</html>

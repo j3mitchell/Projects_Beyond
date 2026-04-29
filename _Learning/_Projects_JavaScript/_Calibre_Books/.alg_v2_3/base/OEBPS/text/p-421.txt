@@ -1,0 +1,44 @@
+          402                    Algorithms: A Top-Down Approach
+          Exercise 12.8. Repeat Exercise 12.7 using recurrence (12.5) instead of
+          (12.4). Your algorithm should use Θ(nV) time and space, where n is the
+          number of items and V is the total value of all the items.
+          Exercise 12.9. Let A[1..n] be an array of integers. An increasing subse-
+          quence of A is a sequence of indices 
+i ,...,i  such that i <i   and
+                                                1     k            j    j+1
+          A[i ] <A[i    ]for1≤ j<k. (Note that the indices in the subsequence
+             j       j+1
+          are not necessarily contiguous.) A longest increasing subsequence of A is an
+          increasing subsequence of A with maximum length.
+          a. Give a recurrence for L(i), the length of the longest increasing subse-
+             quence of A[1..i] that ends with i,where1≤ i ≤ n.
+          b. Give a dynamic programming algorithm that prints the indices of a
+             longest increasing subsequence of A[1..n]. Your algorithm should operate
+             in O(n2)time.
+          Exercise 12.10. Let A[1..m]andB[1..n] be two arrays. An array C[1..k]
+          is a common subsequence of A and B if there are two sequences of indices
+          
+i ,...,i  and 
+j ,...,j  such that
+            1     k       1      k
+           • i <i <···<i;
+              1   2         k
+           • j <j <···<j;and
+              1    2        k
+           • C[l]=A[i ]=B[j ]for1≤ l ≤ k.
+                      l      l
+          Alongest common subsequence of A and B is a common subsequence of A
+          and B with maximum size.
+          a. Give a recurrence for L(i,j), the length of the longest common subse-
+             quence of A[1..i]andB[1..j].
+          b. Give a dynamic programming algorithm that returns the longest common
+             subsequence of A[1..m]andB[1..n]. Your algorithm should operate in
+             O(mn)time.
+          Exercise 12.11. A palindrome is a string that reads the same from right
+          to left as it does from left to right (“abcba”, for example). Give a dynamic
+          programming algorithm that takes a String (see Figure 4.17 on page 145) s
+          as input, and returns a longest palindrome contained as a substring within s.
+          Your algorithm should operate in O(n2) time, where n is the length of s.You
+          may use the results of Exercise 4.13 (page 144) in analyzing your algorithm.
+          [Hint: For each pair of indices i ≤ j, determine whether the substring from
+          i to j is a palindrome.]

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 589</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-589.jpg" alt="Page 589" width="1282" height="1882"/>
+      <div class="ocr">           570                     Algorithms: A Top-Down Approach
+            Figure 17.3   Conversion of an MST to a Hamiltonian cycle
+            Figure 17.4   An implementation of Searcher for use in the metric traveling
+            salesperson approximation algorithm
+                 MetricTspSearcher(n)
+                    pre ← new VisitCounter(n); order ← new Array[0..n−1]
+                 MetricTspSearcher.PreProc(i)
+                    pre.Visit(i); order[pre.Num(i)] ← i
+           vertices are ordered by their preorder traversal numbers. Therefore, it
+           is easy to construct this Hamiltonian cycle while doing the depth-ﬁrst
+           search on the MST. A Searcher for the depth-ﬁrst search needs only
+           a VisitCounter pre for recording the preorder traversal numbers and
+           a readable array order[0..n − 1] such that the Hamiltonian cycle will be
+           order[0],order[1],...,order[n − 1],order[0]. Such a Searcher is deﬁned
+           in Figure 17.4.
+</div>
+    </div>
+  </body>
+</html>

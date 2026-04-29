@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 488</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-488.jpg" alt="Page 488" width="1282" height="1882"/>
+      <div class="ocr">                                     * The Fast Fourier Transform                       469
+                Note that each sum on the right-hand side is the jth component of the
+                                    2                                             
+            DFTwithrespect to ω of a 1×n/2 vector. Speciﬁcally, let d and d be the
+            DFTsof p and p, respectively, with respect to ω2,andletd be the DFT of
+            p with respect to ω.Thenfor0≤ j&lt;n/2, we have
+                                                      j 
+                                           d =d +ω d .                               (15.1)
+                                             j    j       j
+            Furthermore,
+                                   n−1                        n−1
+                                   2                          2
+                         d      =pω2i(j+n/2) +ωj+n/2 pω2i(j+n/2)
+                          j+n/2         i                          i
+                                   i=0                        i=0
+                                   n−1                  n−1
+                                   2                    2
+                                =pω2ij +ωj+n/2 pω2ij
+                                        i                     i
+                                   i=0                  i=0
+                                        j+n/2 
+                                =d +ω          d .                                   (15.2)
+                                    j           j
+            The above equation can be simpliﬁed somewhat by applying the following
+            theorem.
+            Theorem 15.2. Let n&gt;1 be a power of 2.Thenω is a principal nth root
+            of unity iﬀ ωn/2 = −1.
+            Proof.    ⇒ Suppose ω is a principal nth root of unity. It follows from
+            Theorem 15.1 by induction on n that ωn/2 is a principal 2nd root of unity.
+            It is therefore suﬃcient to show that if ω is a principal 2nd root of unity,
+            then ω = −1.
+                Suppose ω is a principal 2nd root of unity. Then from the deﬁnition, we
+            have
+                                                    1
+                                                   ωi
+                                              0=
+                                                   i=0
+                                                =1+ω.
+            Rearranging terms, we have ω = −1.
+                          k                                                 n/2
+            ⇐:Letn=2.Wewillshowbyinduction on k ≥1thatifω                       =−1, then
+            ω is a principal nth root of unity.
+            Base: k =1.Thenn =2,andn/2=1. Because −1 is a principal 2nd root
+            of unity, the result follows.
+</div>
+    </div>
+  </body>
+</html>

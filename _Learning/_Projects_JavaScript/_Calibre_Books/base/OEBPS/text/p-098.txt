@@ -1,0 +1,49 @@
+                                    Analyzing Algorithms                      79
+              It is now tempting to conclude that because g(lgn) ∈ Θ(nlgn), f(n) ∈
+          Θ(nlgn); however, (3.9) is valid only when n is a power of 2. In order to
+          conclude that f(n) ∈ Θ(nlgn), we must know something about f(n)for
+          every suﬃciently large n. However, we can show by induction on n that
+          f(n) is eventually non-decreasing (the proof is left as an exercise). This
+                                                   k         k+1    k
+          tells us that for suﬃciently large n,when2 ≤ n ≤ 2    , f(2 ) ≤ f(n) ≤
+             k+1                       k               k
+          f(2   ). From the fact that f(2 )=g(k) ∈ Θ(k2 ), there exist positive real
+                                          k                    k+1
+          numbers c and c such that c k2 ≤ f(n) ≤ c (k +1)2       .Furthermore,
+                    1      2           1               2
+          because nlgn is smooth, there is a positive real number d such that for
+                                                                     k
+          suﬃciently large m,2mlg(2m) ≤ dmlgm. Hence, substituting 2 for m,we
+                k+1            k
+          have 2   (k +1)≤d2 k. Putting it all together, we have
+                                                    k+1
+                                   f(n) ≤ c (k +1)2
+                                           2
+                                               k
+                                        ≤c dk2
+                                           2
+                                        ≤c dnlgn
+                                           2
+                                        ∈O(nlgn).
+          Likewise,
+                                              k
+                                   f(n) ≥ c k2
+                                           1
+                                                    k+1
+                                          c (k +1)2
+                                        ≥ 1
+                                                d
+                                          c nlgn
+                                        ≥ 1
+                                             d
+                                        ∈Ω(nlgn).
+          Thus, f(n) ∈ Θ(nlgn). The running time of MaxSumDC is therefore
+          slightly worse than that of MaxSumBU.
+              The above technique is often useful when we have a recurrence which is
+          not of a form for which we have a solution. More importantly, however, we
+          can generalize this technique to prove the following theorem; the details are
+          left as an exercise.
+          Theorem 3.35. Let a ≥ 1 and q ≥ 0 be real numbers, and let n0 ≥ 1 and
+          b ≥ 2 be integers. Let g : N → R≥0 be such that g(n)=g(n0bn) is smooth.
+          Finally, let f : N → R≥0 be an eventually non-decreasing function satisfying
+                                f(n) ∈ af(n/b)+X(nqg(n)),

@@ -1,0 +1,53 @@
+         552                Algorithms: A Top-Down Approach
+         whether there is a non-preemptive schedule that meets the constraints of
+         all of the tasks. In other words, we wish to know if there is a function
+         f :[1..n] → N such that for 1 ≤ i ≤ n,
+         • ri ≤ f(i);
+         • f(i)+e ≤d ;and
+                 i   i
+         • for 1 ≤ j ≤ i and j = i,eitherf(j)+e ≤ f(i)orf(j) ≥ f(i)+e .
+                                          j                    i
+         Show that this problem is NP-complete in the strong sense.
+         *Exercise16.30. WearegivenanundirectedgraphG=(V,E),asequence
+         w1,...,w ofnaturalnumbers,andapositiveintegerk.Wewishtodecide
+                 |E|
+         whether there is a 1-1 function f : E →{1,...,|E|} such that if each edge
+         e ∈ E is assigned a length of wf(e), then for every pair of vertices u and v,
+         there is a path from u to v with length at most k. Prove that this problem
+         is NP-complete in the strong sense.
+         Exercise 16.31. Deﬁne the predicate P (i) for the case in which the
+                                           q
+         instruction at location q is Goto(q). Show that the resulting sub-formula
+         F can be constructed in O(p(n)) time.
+          q
+         Exercise 16.32. Deﬁne the predicates Eq(i)andUq(i) for the case in which
+         the instruction at location q is Copy(l ,l ). Show that the resulting sub-
+                                         1 2
+         formula F can be constructed in O(p4(n)) time.
+                 q
+         Exercise 16.33. Deﬁne the predicates Eq(i)andUq(i) for the case in which
+         the instruction at location q is Copy(∗l ,∗l ). Show that the resulting sub-
+                                         1  2
+         formula F can be constructed in O(p5(n)) time.
+                 q
+         Exercise 16.34. Deﬁne the predicates E (i), U (i), and P (i) for the case
+                                          q    q        q
+                                                       
+         in which the instruction at location q is IfLeq(∗l ,∗l ,q). Show that the
+                                                  1  2
+         resulting sub-formula F can be constructed in O(p5(n)) time.
+                            q
+         Exercise 16.35. Deﬁne the predicates Eq(i)andUq(i) for the case in which
+         the instruction at location q is Add(∗l ,∗l ). Show that the resulting sub-
+                                        1  2
+         formula F can be constructed in O(p5(n)) time.
+                 q
+         Exercise 16.36. Deﬁne the predicates Eq(i)andUq(i) for the case in which
+         the instruction at location q is Subtract(∗l ,∗l ). Show that the resulting
+                                             1  2
+         sub-formula F can be constructed in O(p5(n)) time.
+                    q
+         Exercise 16.37. Deﬁne the predicates Eq(i)andUq(i) for the case in which
+         the instruction at location q is Shift(∗l). Show that the resulting sub-
+         formula F can be constructed in O(p4(n)) time.
+                 q

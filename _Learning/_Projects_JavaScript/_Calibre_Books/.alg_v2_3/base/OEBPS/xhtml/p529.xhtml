@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 529</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-529.jpg" alt="Page 529" width="1282" height="1882"/>
+      <div class="ocr">         510                Algorithms: A Top-Down Approach
+         computing f(x) and deciding whether f(x) ∈ Y. The notation may seem
+         confusing at ﬁrst, because when we use the word “reduce”, we usually think
+         of decreasing the size. As a result, denoting a reduction from X to Y by
+         X ≤p Y seems backwards. The proper way to understand the notation is
+            m
+         to realize that when there is a polynomial many-one reduction from X to Y,
+         then in some sense, X is no harder than Y. This idea is formalized by the
+         following theorem.
+         Theorem 16.2. If X ≤p Y and Y ∈P,thenX ∈P.
+                            m
+         Proof. Let I and J be the sets of instances of X and Y, respectively, and
+         let f : I → J be the function computing the polynomial many-one reduction
+         from X to Y.Letp1(n) be a polynomial bounding the running time and
+         the values of variables for some algorithm to compute f,andletp2(n)bea
+         polynomial bounding the running time and the values of variables for some
+         algorithm to decide Y. We can then decide whether a given x ∈ I belongs to
+         X by ﬁrst computing f(x), then deciding whether f(x) ∈ Y.LetA denote
+         this algorithm.
+            The time required to compute f(x)isnomorethanp1(|x|). The time
+         required to decide whether f(x) ∈ Y is no more than p2(|f(x)|). Because
+         f(x) is computed using at most p1(|x|)steps,|f(x)|≤cp1(|x|), where c
+         is some positive integer constant bounding the number of bits that can be
+         written in a single step. The total time required by A is therefore no more
+         than
+                          p(|x|)=p1(|x|)+p2(cp1(|x|)),
+         which is a polynomial in |x|. Furthermore, the values of the variables in
+         Adonot exceed max(p (|x|),p (|x|)). Because p(n), p (n), and p (n)must
+                           1     2                 1        2
+         be nonnegative for all n ∈ N, all are bounded above by the polynomial
+         p(n)+p1(n)+p2(n). Therefore, X ∈P.                       
+            Note that Theorem 16.2 does not say that if Y can be decided in O(f(n))
+         time, then X can be decided in O(f(n)) time. Indeed, in the proof of the
+         theorem, the bound on the time to decide X can be much larger than the
+         time to decide Y. Thus, if we interpret X ≤p Y as indicating that X is no
+                                           m
+         harder than Y, we must understand “no harder than” in a very loose sense —
+         simply that if Y ∈P,thenX ∈P.
+            We will often utilize Theorem 16.2 in the following equivalent form.
+         Corollary 16.3. If X ≤p Y and X ∈P,thenY ∈P.
+                            m
+</div>
+    </div>
+  </body>
+</html>

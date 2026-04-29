@@ -1,0 +1,42 @@
+                                          Priority Queues                              155
+               –eachT is a rooted tree comprised of some (possibly empty) set N ⊆
+                        i                                                              i
+                 N\{x} (i.e., each element of each Ni is an element of N, but not the
+                 root node);
+               – k N =N\{x}(i.e., the elements in all of the sets N together form
+                   i=1  i                                                  i
+                 the set N, without the root node); and
+               –fori = j, N ∩N = ∅ (i.e., no two of these sets have any elements in
+                             i     j
+                 common).
+            Thus, the structure shown in Figure 5.3 is a rooted tree comprised of 10
+            nodes. Note that the data items contained in the nodes are not all distinct;
+            however, the nodes themselves are distinct. The root node contains 89. Its
+            ﬁrst child is a rooted tree comprised of six nodes and having a root node
+            containing 53.
+                When a node c is a child of a node p,wesaythatp is the parent of c.
+            Also, two children of a given node are called siblings. Thus, in Figure 5.3,
+            the node containing 48 has one node containing 53 as its parent and another
+            as its sibling. We refer to a non-empty tree whose children are all empty as
+            a leaf. Thus, in Figure 5.3, the subtree whose root contains 13 is a leaf.
+                We deﬁne the size of a rooted tree to be the number of nodes which
+            comprise it. Another important measure of a non-empty rooted tree is its
+            height, which we deﬁne recursively to be one plus the maximum height of
+            its non-empty children; if it has no non-empty children, we say its height
+            is 0. Thus, the height is the maximum of the distances from the root to the
+            leaves, where we deﬁne the distance as the number of steps we must take to
+            get from one node to the other. For example, the tree in Figure 5.3 has size
+            10 and height 4.
+                When we draw rooted trees, we usually do not draw empty trees. For
+            example, in Figure 5.3, the subtree whose root contains 24 has two children,
+            but the ﬁrst is empty. This practice can lead to ambiguity; for example, it is
+            not clear whether the subtree rooted at 13 contains any children, or if they
+            might all be empty. For this and other reasons, we often consider restricted
+            classes of rooted trees. Here, we wish to deﬁne a binary tree as a rooted tree
+            in which each non-empty subtree has exactly two children, either (or both)
+            of which may be empty. In a binary tree, the ﬁrst child is called the left
+            child, and the other is called the right child. If we then state that the rooted
+            tree in Figure 5.3 is a binary tree, it is clear that the subtree rooted at 13,
+            because it is nonempty, has two empty children.
+                It is rather diﬃcult to deﬁne an ADT for either trees or binary trees
+            in such a way that it can be implemented eﬃciently. The diﬃculty is in

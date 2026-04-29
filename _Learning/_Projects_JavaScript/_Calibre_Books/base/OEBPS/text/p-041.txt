@@ -1,0 +1,23 @@
+           22                      Algorithms: A Top-Down Approach
+            Figure 1.18   Speciﬁcation of Copy
+            Figure 1.19   Speciﬁcation for FindMax
+           Exercise 1.5. A palindrome is a sequence of characters that is the same
+           whenreadfromlefttorightaswhenreadfromrighttoleft.Wewishtodesign
+           an algorithm that recognizes whether an array of characters is a palindrome.
+              (a) Give a formal speciﬁcation for this problem. Use Char to denote the
+                  data type for a character.
+              (b) Usingthetop-downapproach,giveanalgorithmtosolvethisproblem.
+                  Your algorithm should contain a single recursive call.
+              (c) Give an iterative version of your algorithm from part (b) by either
+                  implementing it bottom-up or eliminating tail recursion, whichever
+                  is appropriate.
+           Exercise 1.6. FindMax is speciﬁed in Figure 1.19.
+              (a) Using the top-down approach, give an algorithm for FindMax.Note
+                  that according to the speciﬁcation, your algorithm may not change
+                  the values in A. Your algorithm should contain exactly one recursive
+                  call.
+              (b) Give an iterative version of your algorithm from part (a) by either
+                  implementing it bottom-up or eliminating tail recursion, whichever
+                  is appropriate.
+            * (c) Show how to reduce the sorting problem to FindMax (as speciﬁed
+                  in part (a)) and a smaller instance of sorting. Use the technique of

@@ -1,0 +1,37 @@
+                                              Analyzing Algorithms                                   61
+                  In general, big-O notation is useful for expressing upper bounds on the
+             growth rates of functions. In order to get a complete analysis, however, we
+             need additional notation for expressing lower bounds.
+             3.3    Big-Ω and Big-Θ
+             Deﬁnition 3.9. Let f : N → R≥0.Ω(f(n)) is deﬁned
+             to be the set of all functions g : N → R≥0 such that                Ω(f(n)) is pronounced
+                                                                                 “big-Omega of f of n”.
+             for some natural number n0 and some strictly positive
+             real number c, g(n) ≥ cf(n) whenever n ≥ n0.
+                  Note that the deﬁnition of Ω is identical to the deﬁnition of O, except
+             that the inequality, g(n) ≤ cf(n), is replaced by the inequality, g(n) ≥ cf(n).
+             Thus, Ω notation is used to express a lower bound in the same way that O
+             notation is used to express an upper bound. Speciﬁcally, if g(n) ∈ Ω(f(n)),
+             then for suﬃciently large n, g(n) is at least some constant multiple of f(n).
+             This constant multiple is only required to be a positive real number, so it
+             maybeverycloseto0.
+             Example 3.10. Let f(n)=3n+10andg(n)=n2.Wewishtoshowthat
+             g(n) ∈ Ω(f(n)). We therefore need to ﬁnd a positive real number c and a
+             natural number n0 such that n2 ≥ c(3n + 10) for every n ≥ n0.Wehave
+             already found such values in Example 3.3: c =1/13 and n0 =1.
+                  The above example illustrates a duality between O and Ω, namely, that
+             for any positive real number c, g(n) ≤ cf(n)iﬀf(n) ≥ g(n)/c. The following
+             theorem summarizes this duality.
+             Theorem 3.11. Let f : N → R≥0 and g : N → R≥0.Theng(n) ∈ O(f(n))
+             iﬀ f(n) ∈ Ω(g(n)).
+                  By applying Theorem 3.11 to Examples 3.2, 3.4, 3.6, and 3.7, we can see
+             that n2 ∈ Ω(2n2), n2 ∈ Ω(n3), Ω(n2) ⊆ Ω(n), and Ω(n2)=Ω(4n2 +7n).
+                  When we analyze the growth rate of a function g, we would ideally like
+             to ﬁnd a simple function f such that g(n) ∈ O(f(n)) and g(n) ∈ Ω(f(n)).
+             Doing so would tell us that the growth rate of g(n) is the same as that of
+             f(n), within a constant factor in either direction. We therefore have another
+             notation for expressing such results.
+             Deﬁnition 3.12. Let f : N → R≥0.Θ(f(n)) is
+             deﬁned to be                                                       Θ(f(n))  is pronounced
+                                                                                “big-Theta of f of n”.
+                                 O(f(n))∩Ω(f(n)).

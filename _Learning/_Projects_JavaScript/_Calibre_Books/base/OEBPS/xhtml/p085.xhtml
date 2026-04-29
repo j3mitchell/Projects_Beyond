@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 085</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-085.jpg" alt="Page 085" width="1282" height="1882"/>
+      <div class="ocr">           66                     Algorithms: A Top-Down Approach
+                                                     k−1
+                                              k       i
+                                        =akn +A         n
+                                                     i=0
+                                                     k−1
+                                              k       k−1
+                                        ≥akn +A         n
+                                                     i=0
+                     
+           because A ≤ 0andn ≥ 1. Because the summation in the above expression
+                          k−1
+           evaluates to kn   ,wehave
+                                                       k−1
+                                    f(n) ≥ (akn+Ak)n        .
+                                       
+           Now let n2 =max{n1,−2Ak/a .Whenn≥n2,wehave
+                                           k
+                                                      
+                                           n≥ −2Ak
+                                                   ak
+                                                     
+                                             ≥ −2Ak
+                                                  ak
+                                       −a n
+                                          k      
+                                         2   ≤Ak.
+           Thus,
+                                                       k−1
+                                    f(n) ≥ (a n+Ak)n
+                                             k
+                                         ≥(a n−akn)nk−1
+                                             k      2
+                                            a nk
+                                         = k .
+                                             2
+           Letting c = a /2, f(n) ≥ c nk whenever n ≥ n . From Theorem 3.13,
+                    2     k              2                    2
+           f(n) ∈ Θ(nk).                                                            
+               By the above theorem, the running time of MaxSumOpt is in Θ(n2).
+               This is a rather tedious analysis for such a simple algorithm. Fortunately,
+           there are techniques for simplifying analyses. In the next two sections, we
+           will present some of these techniques.
+           3.4   Operations on Sets
+           Asymptotic analysis can be simpliﬁed if we extend operations on functions to
+           operations on sets of functions. Such an extension will allow us to streamline
+           our notation without the need to introduce new constants or functions
+           representing the running times of various code segments.
+</div>
+    </div>
+  </body>
+</html>

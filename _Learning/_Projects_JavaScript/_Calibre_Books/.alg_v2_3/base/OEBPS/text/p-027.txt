@@ -1,0 +1,31 @@
+          8                     Algorithms: A Top-Down Approach
+            Figure 1.4  An algorithm implementing the speciﬁcation of Insert, given in
+            Figure 1.3
+              To complete the implementations of SimpleSelect and InsertSort,
+          we need an algorithm for Insert. We can again use the the top-down
+          approach to reduce an instance of Insert to a smaller instance of the same
+          problem. According to the precondition (see Figure 1.3), A[1..n−1] must be
+          sorted in nondecreasing order; hence, if either n =1orA[n] ≥ A[n−1], the
+          postcondition is already satisﬁed. Otherwise, A[n − 1] must be the largest
+          element in A[1..n]. Therefore, if we swap A[n]withA[n − 1], A[1..n − 2] is
+           sorted in nondecreasing order and A[n] is the largest element in A[1..n]. If we
+           then solve the smaller instance A[1..n−1], we will satisfy the postcondition.
+              The algorithm is shown in Figure 1.4. In this book, we will assume
+           that a logical and or or is evaluated by ﬁrst evaluating its ﬁrst operand,
+           then if necessary, evaluating its second operand. Thus, in evaluating the if
+           statement in RecursiveInsert,ifn ≤ 1, the second operand will not be
+           evaluated, as the value of the expression must be false. We use the notation
+           x ↔y to swap the values of variables x and y.
+           1.3  Proving Algorithm Correctness
+           Once we have an algorithm, we would like some assurance that it meets
+           its speciﬁcation. We have argued somewhat informally that the three
+           algorithms, SimpleSelect, InsertSort,andRecursiveInsert, meet
+          their respective speciﬁcations; however, these arguments may not convince
+          everyone. For example, it might not be clear that it is valid to assume that
+          therecursivecalltoInsertSort in Figure 1.3 meets its speciﬁcation. After
+          all, the whole point of that discussion was to argue that InsertSort meets
+          its speciﬁcation. That argument might therefore seem circular.
+              In the next chapter, we will show how to prove formally that an algo-
+          rithm meets its speciﬁcation. These proofs will rest on solid mathematical
+          foundations, so that a careful application of the techniques should give us
+          conﬁdence that a given algorithm is, indeed, correct. In particular, we will

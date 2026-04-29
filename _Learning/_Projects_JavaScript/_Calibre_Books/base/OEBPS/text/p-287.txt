@@ -1,0 +1,51 @@
+                  268                                     Algorithms: A Top-Down Approach
+                  equally likely, the probability that fm(h                                (k)) = fm(h               (k)) is at most
+                                                                                     p,a,b                     p,a,b
+                                                                     pp−1
+                                                                            m       = 1.
+                                                                     p(p−1)              m                                                   
+                        Note that by the above theorem, H2                                 is universal for any positive m.
+                                                                                     p,m
+                  As a result, the size of the hash table does not need to be a particular kind
+                  of number, such as a prime number or a power of 2, in order for this strategy
+                  to yield good expected performance. However, the restriction that p is a
+                  prime number larger than the value of the largest possible key places some
+                  limitations on the eﬀectiveness of this approach. Speciﬁcally, if there is no
+                  upper bound on the length of a key, we cannot choose a p that is guaranteed
+                  to work. Furthermore, even if an upper bound is known, unless it is rather
+                  small, the sizes of p, a,andb would make the cost of computing the hash
+                  function too expensive.
+                        Let us therefore treat keys as sequences of natural numbers strictly
+                  smaller than some value p, which we presume to be not too large (e.g.,
+                  small enough to ﬁt in a single machine word). Furthermore, let us choose p
+                  to be a prime number. Let k ,...,k be a key, and let s = a ,...,a be a
+                                                                   1           l                                         1           l
+                  sequence of natural numbers, each of which is strictly less than p.Wethen
+                  deﬁne
+                                                                                  	 l            
+
+                                                 h (k ,...,k)= a k                                modp.
+                                                    p,s     1            l                   i  i
+                                                                                     i=1
+                        We ﬁrst observe that we cannot guarantee that h                                           (k) = h          (k)for
+                                                                                                              p,s               p,s
+                  each distinct pair of keys k and k. The reason for this is that there are
+                  potentially more keys than there are values of h                                    . However, suppose k and
+                                                                                                  p,s
+                  k are distinct keys, and let k = k,where1≤ i ≤ l. Let us arbitrarily ﬁx
+                                                                    i        i
+                  the values of all a such that j = i,andlet
+                                                j
+                                       ⎛i−1                     l                i−1                  l            ⎞
+                                                                                               
+                                c = ⎝           a k +                a k −             a k −               a k ⎠ mod p.
+                                                  j j                  j j               j j                  j j
+                                          j=1               j=i+1                j=1              j=i+1
+                  Then
+                                                                                ⎛ l                     l          ⎞
+                                                                                                    
+                                 (h     (k) −h (k )) mod p = ⎝                            a k −            a k ⎠ modp
+                                     p,s            p,s                                     j j               j j
+                                                                                    j=1               j=1
+                                                                            =(a(k −k)−c)modp.
+                                                                                    i   i       i

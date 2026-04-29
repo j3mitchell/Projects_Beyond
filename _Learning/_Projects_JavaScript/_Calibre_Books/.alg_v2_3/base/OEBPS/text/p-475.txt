@@ -1,0 +1,36 @@
+           456                     Algorithms: A Top-Down Approach
+            Figure 14.8   MatchingGraph implementation of Graph (partial)
+               Structural Invariant: For 0 ≤ i<n,ifmatching[i] = −1, then
+               matching[matching[i]] = i.
+               Precondition: G refers to a bipartite Graph.
+               Postcondition: Constructs a MatchingGraph representing G with an
+               empty matching.
+               MatchingGraph(G)
+                 n←G.Size(); bipartite ← G; matching ← new Array[0..n−1]
+                 for i ← 0 to n−1
+                    matching[i] ←−1
+               MatchingGraph.Size()
+                 return bipartite.Size()+1
+               MatchingGraph.AllFrom(i)
+                 n←bipartite.Size(); L ← new ConsList()
+                 if i<n
+                    foundUnmatched ← false; adj ← bipartite.AllFrom(i)
+                    while not adj.IsEmpty()
+                       e ←adj.Head(); adj ← adj.Tail()
+                       k ←e.Dest(); j ← matching[k]
+                       if j = −1 and not foundUnmatched
+                         L←newConsList(new Edge(i,n,k),L)
+                         foundUnmatched ← true
+                       else if j = −1
+                         L←newConsList(new Edge(i,j,k),L)
+                 return L
+               Precondition: i and j are distinct Nats representing vertices in the
+               bipartite graph.
+               Postcondition: Adds {i,j} to the matching, removing from the matching
+               any edge incident on i or j.
+               MatchingGraph.Match(i,j)
+                 if matching[i] = −1
+                    matching[matching[i]] ←−1
+                 if matching[j] = −1
+                    matching[matching[j]] ←−1
+                 matching[i] ← j; matching[j] ← i

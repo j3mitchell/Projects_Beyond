@@ -1,0 +1,36 @@
+         82                 Algorithms: A Top-Down Approach
+         hence, the stack usage is in Θ(n). We typically would not have a runtime
+         stack capable of occupying space proportional to an input of, say, a million
+         elements.
+            Let us now complete the analysis of MaxSumTD. Ignoring the space
+         usage of the recursive call, we see that MaxSumTD uses Θ(n) space, due to
+         the space usage of MaxSuffixTD. However, this does not mean that the
+         following recurrence describes the total space usage:
+                             f(n) ∈ f(n−1)+Θ(n),
+         for n>0. The reason is that the call made to MaxSuffixTD can
+         reuse the space used by the recursive call. Furthermore, any calls made to
+         MaxSuffixTDasaresultoftherecursivecallwillbeonarraysoffewerthan
+         nelements, sothey may reuse thespace used by MaxSuffixTD(A[0..n−1]).
+         Therefore, the total space used by all calls to MaxSuffixTD is in Θ(n).
+         Ignoring this space, the space used by MaxSumTD is given by
+                              f(n) ∈ f(n−1)+Θ(1),
+         for n>0, so that f(n) ∈ Θ(n). The total space used is therefore in Θ(n)+
+         Θ(n)=Θ(n).
+            Now let’s consider MaxSumDC. MaxSuffixBU and MaxPrefixBU
+         each use Θ(1) space. Because the two recursive calls can reuse the same
+         space, the total space usage is given by
+                              f(n) ∈ f(n/2)+Θ(1)
+         for n>1.ApplyingTheorem3.35,weseethatf(n) ∈ Θ(lgn).Becauselgnis
+                                        6
+         such a slow-growing function (e.g., lg10 < 20), we can see that MaxSumDC
+         is a much more space-eﬃcient algorithm than MaxSumTD. Because the
+         space used by both algorithms is almost entirely from the runtime stack,
+         MaxSumDCwill not have the stack problems that MaxSumTD has.
+         3.9  Multiple Variables
+         Consider the algorithm AddMatrices shown in Figure 3.4. Applying the
+         techniques we have developed so far, we can easily see that the inner loop
+         runs in Θ(n) time. Furthermore, the outer loop iterates exactly m times.
+         It is tempting at this point to say that the algorithm runs in Θ(mn)
+         time; however, we must be careful here because we have deﬁned asymptotic
+         notation for single-variable functions only. In this section, we discuss how to
+         apply asymptotic analysis to functions on more than one variable.

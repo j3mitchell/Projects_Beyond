@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 337</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-337.jpg" alt="Page 337" width="1282" height="1882"/>
+      <div class="ocr">          318                   Algorithms: A Top-Down Approach
+             The number of edges does not aﬀect the asymptotic running time,
+          however, because MatrixGraph.AllFromrunsinΘ(n)time,regardlessof
+          how many edges it retrieves. If we can make this operation more eﬃcient, we
+          might be able to improve the running time for TopSort on graphs with few
+          edges. In the next section, we will examine an alternative implementation
+          that accomplishes this.
+          9.4  Adjacency List Implementation
+          In this section, we consider an implementation designed to improve the
+          eﬃciency of the AllFrom operation. The two-dimensional array used in
+          the adjacency matrix implementation can be thought of as an array of
+          arrays each containing the adjacency information for a single vertex. In
+          the adjacency list implementation, we still use an array indexed by vertices
+          to store the adjacency information for each vertex; however, we maintain
+          this adjacency information in a ConsList instead of an array. In such a
+          representation, the ConsList for vertex i is exactly the ConsList that
+          needs to be returned by AllFrom(i). Furthermore, because a ConsList is
+          immutable, we can return it without violating security.
+             We again use a single representation variable:
+          • elements[0..n −1]: an array of ConsLists.
+          Our structural invariant will be that for 0 ≤ i&lt;n, elements[i] refers to a
+          ConsList containing Edgesrepresentingatmostone(i,j)foreachj such
+          that 0 ≤ j&lt;nand j = i,whereeachEdge has a non-nil data item (see the
+          speciﬁcation for Graph.AllFrom in Figure 9.3 for an explanation of this
+          representation). We interpret the Edges in this structure as representing the
+          edges in the graph, along with the information associated with each edge.
+             A partial implementation of ListGraph is shown in Figure 9.8. In
+          addition, the Size operation returns the size of elements,andAllFrom(i)
+          returns elements[i].
+             It is easily seen that the Size and AllFrom operations run in Θ(1) time,
+          andthat the constructor runs in Θ(n) time. Each iteration of the while loop
+          in the Get operation reduces the size of L by 1. The length of L is initially
+          the number of vertices adjacent to i. Because each iteration runs in Θ(1)
+          time, the entire operation runs in Θ(m)timeintheworstcase,wherem is
+          the number of vertices adjacent to i. The worst case for Get occurs when
+          vertex j is not adjacent to i. Similarly, it can be seen that the Put operation
+</div>
+    </div>
+  </body>
+</html>

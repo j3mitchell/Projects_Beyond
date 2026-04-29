@@ -1,0 +1,37 @@
+            426                       Algorithms: A Top-Down Approach
+                If we can eﬃciently test the above property, then we should be able
+            to ﬁnd all articulation points with a single depth-ﬁrst search. Note that
+            it is suﬃcient to know, for each vertex j other than the root, the highest
+            ancestor k of j that is adjacent to some descendant of j. The parent i of
+            j is an articulation point if k = i. On the other hand, if for each child
+            j of i, the highest ancestor k adjacent to some descendant of j is a proper
+            ancestor of i,theni is not an articulation point. Because a vertex is preorder
+            processed before all of its descendants, we can determine which of a given set
+            of ancestors of a vertex is the closest to the root by determining which was
+            preorder processed ﬁrst. Thus, let us use a VisitCounter pre to keep track
+            of the order the vertices are preorder processed. We then need to compute
+            the following value for each vertex i other than the root:
+              highest[i]=min{pre.Num(k) | k is adjacent to a descendant of i}. (13.1)
+                Let us consider a top-down approach to computing highest[i]. We ﬁrst
+            observe that if j is a child of i,thenhighest[i] ≤ highest[j]. Furthermore,
+            the vertex k determining highest[i] is adjacent to either i or some proper
+            descendant of i.Ifk is adjacent to a proper descendant of i,thenhighest[i]=
+            highest[j] for some child j of i. Finally, because i is adjacent to its parent,
+            which has a smaller value in pre than does any child of i,wecanignore
+            the pre values of the children of i in computing highest[i]. We therefore
+            conclude that
+                       highest[i]=min({pre.Num(k) |{i,k} is a back edge}
+                                          ∪{highest[j] | j is a child of i}).           (13.2)
+                We can now build a Searcher s so that Dfs(G,0,sel,s) will ﬁnd the
+            articulation points of G,wheresel is an appropriate Selector. (Note that
+            it doesn’t matter which node is used as the root of the depth-ﬁrst search,
+            so we will arbitrarily use 0.) Let n be the number of vertices in G.We
+            need as representation variables a VisitCounter pre of size n, an array
+            highest[0..n−1], a readable array artPoints[0..n−1] of booleans to store the
+            results, and a natural number rootChildren to record the number of children
+            of the root. Note that making artPoints readable makes this data structure
+            insecure, because code that can read the reference to the array can change
+            values in the array. We will discuss this issue in more detail shortly.
+                To implement the Searcher operations, we only need to determine
+            whenthevariouscalculations need to be done. Initialization should go in the
+            constructor; however, because the elements of the arrays are not needed until

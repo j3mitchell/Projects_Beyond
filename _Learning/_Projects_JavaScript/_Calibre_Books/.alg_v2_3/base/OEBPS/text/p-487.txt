@@ -1,0 +1,43 @@
+            468                      Algorithms: A Top-Down Approach
+            Note that for i ≥ n/2,
+                                         ωi(2j) = ωnjω(2i−n)j
+                                               =ω(2i−n)j,
+            because ωn = 1. Therefore, we can write
+                              n−1          n−1         n−1
+                                           2
+                              ωi(2j) = ω2ij +  ω2ij
+                              i=0          i=0        i=n/2
+                                           n−1         n−1
+                                           2
+                                        =ω2ij+  ω(2i−n)j
+                                           i=0        i=n/2
+                                           n−1        n−1
+                                           2          2
+                                        =ω2ij+ω(2(i+n/2)−n)j
+                                           i=0        i=0
+                                            n−1
+                                             2
+                                             2ij
+                                        =2 ω .
+                                             i=0
+            Because the above value is 0, it follows that
+                                            n−1
+                                            2
+                                             2ij
+                                               (ω )   =0.
+                                            i=0
+            Hence, ω2 is a principal (n/2)nd root of unity.                              
+                Knowing that ω2 is a principal n/2nd root of unity, we can now reduce
+            the problem of computing a DFT for a 1×n vector to two smaller instances.
+            We form these two smaller instances by dividing a given 1 × n vector p
+            into its odd components p = p ,p ,...,p          and its even components
+            p = p ,p ,...,p    .Thus,      1  3       n−1
+                   0   2      n−2
+                             n−1          n−1
+                                          2
+                             piωij = (p2iω2ij +p2i+1ω(2i+1)j)
+                             i=0          i=0
+                                          n−1              n−1
+                                          2                2
+                                       =p2iω2ij+ωj p2i+1ω2ij.
+                                          i=0              i=0

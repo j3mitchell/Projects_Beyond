@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 204</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-204.jpg" alt="Page 204" width="1282" height="1882"/>
+      <div class="ocr">                                         Priority Queues                            185
+            Figure 5.18   The BinaryHeap.RemoveMaxoperation.
+           operation, an element is inserted into a path in the heap; however, in this
+           case, the path follows the larger of the children of a node, and the elements
+           preceding the insertion location are moved upward.
+               Forexample,supposeweweretoperformaRemoveMaxon the binary
+           heap shown in Figure 5.19(a). We would remove 89 and ﬁnd the path that
+           follows the larger child of each node. This path is 65,48,33	.Wewould
+           then insert 41, the last leaf, into this path between 48 and 33, moving the
+           preceding priorities upward. The result is shown in Figure 5.19(b).
+               It is easily seen that both Put and RemoveMaxoperatein Θ(lgn)time,
+           excluding any time needed to expand the array. Furthermore, as we saw in
+           Section 4.3, we can amortize the cost of array expansion to constant time
+           per insertion. The amortized running time for Put is therefore in Θ(lgn),
+           and the worst-case time for RemoveMax is in Θ(lgn).
+               We now return to the sorting problem. In order to sort an array A,we
+           ﬁrst need to arrange it into a binary heap. One approach is ﬁrst to make
+</div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 304</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-304.jpg" alt="Page 304" width="1282" height="1882"/>
+      <div class="ocr">                                    Storage/Retrieval II: Unordered Keys                        285
+             hashing, we can construct an ImmutableDictionary in expected time
+             linear in the sum of the key lengths. Retrievals can then be performed by
+             computing two hash functions — no searching is required. However, if the
+             keys are long, the cost of computing a second hash function may exceed the
+             cost of searching for the key in an ordinary hash table.
+             7.8    Exercises
+             Exercise 7.1. Prove that VArray, shown in Figure 7.2, meets its
+             speciﬁcation.
+             Exercise 7.2. Give an algorithm that takes as input an array A[1..n]of
+             natural numbers and returns an array B[1..n] such that for 1 ≤ i ≤ n, B[i]
+             gives the last location in A that contains A[i]. Your algorithm must run in
+             O(n) time in the worst case, and you may make no assumptions about how
+             large the elements in A are. Prove the correctness and time complexity of
+             your algorithm. [Hint: Use a VArray.]
+             Exercise 7.3. Complete the implementation of HashTable shown in
+             Figures 7.5 (p. 252) and 7.6 (p. 255) by adding a Remove operation as
+             speciﬁed in Figure 6.2 (p. 204).
+             Exercise 7.4. Prove that if the cost of rehashing, as implemented in
+             Figure 7.6 (p. 255), is amortized over all Put and Remove operations,
+             the amortized cost of rehashing is proportional to the cost of computing the
+             index for a single key.
+             Exercise 7.5. Prove the following for all integers x and y and all positive
+             integers m:
+             a. (x +(y mod m)) mod m =(x+y)modm.
+            b. (x(y mod m)) mod m =(xy)modm.
+             c. (−(x mod m)) mod m =(−x)modm.
+             Exercise 7.6. Show the hash table that results from inserting the following
+             keys in the order listed, assuming the division method is used with a table
+             of size 13:
+                                          27,36,14,40,42,15,25,2.
+             You may assume that no rehashing is done. How does the number of
+             collisions, as deﬁned by the random variable coll in Section 7.2, compare with
+             the expected number, assuming that distinct keys collide with probability
+             1/13?
+</div>
+    </div>
+  </body>
+</html>

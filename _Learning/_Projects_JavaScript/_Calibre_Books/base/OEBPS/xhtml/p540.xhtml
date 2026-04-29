@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 540</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-540.jpg" alt="Page 540" width="1282" height="1882"/>
+      <div class="ocr">                                                     NP-Completeness                                            521
+               ⇐: Suppose F is satisﬁable. Let A be a satisfying assignment. We can then
+               construct a vertex cover S as follows. First, for 1 ≤ i ≤ m,ifxi is true in
+               A, we include xi in S; otherwise, we include ¬xi. Thus, each of the edges
+               {x ,¬x } is covered. Then for 1 ≤ i ≤ n, we include in S two of c , c ,
+                  i     i                                                                                   i1   i2
+               and c , so that the vertex that is not included is adjacent to an α                             ∈ S
+                      i3                                                                                    ij
+               (note that because A is a satisfying assignment, such a vertex exists for each
+               clause). Thus, S is of size m +2n = k and covers all edges in G.                                   
+                    It is easily seen that the above construction can be implemented to run
+               in O(m+n)time, or linear in the size of the formula — the details are left as
+               an exercise. From Lemma 16.10, 3-Sat ≤p VC. Because 3-Sat is NP-hard,
+                                                                      m
+               it follows that VC is NP-hard. Because we have shown that VC ∈NP,we
+               have the following theorem.
+               Theorem 16.11. VC is NP-complete.
+               Aproblem closely related to VC is the independent set problem, which we
+               denote IS. An independent set in an undirected graph G is a subset S of the
+               vertices such that no pair of vertices in S is adjacent in G. The independent
+               set problem is to decide, for a given undirected graph G and natural number
+               k,whetherG has an independent set of size k. The relationship between IS
+               and VC is shown by the following theorem.
+               Theorem 16.12. Let G =(V,E) be an undirected graph and S ⊂ V.Then
+               S is an independent set iﬀ V \S is a vertex cover.
+               Proof.       Wemust show the implication in both directions.
+               ⇐:SupposeS is an independentset. Let {u,v}∈E. Because u and v cannot
+               bothbeinS,atleastoneofthemisinV \S.Itfollows that V \S is a vertex
+               cover.
+               ⇒:SupposeV \S isavertex cover. Let u and v be two vertices in S. Because
+               V \S is a vertex cover containing neither u nor v, u cannot be adjacent to v.
+               It follows that S is an independent set.                                                           
+                    Given this close relationship between the two
+               problems, it is an easy matter to modify the proof                         If k&gt;n,wecanusen+1
+                                                                                          instead.
+               that VC ∈NPtoshowthatIS∈NP.Furthermore,
+               it follows from Theorem 16.12 that for an undirected graph G with n vertices
+               and a positive integer k, G has an independent set of size n − k iﬀ G has a
+               vertex cover of size k. Clearly, we can construct n − k in polynomial time;
+               hence, VC ≤p IS. We therefore have the following theorem.
+                                m
+</div>
+    </div>
+  </body>
+</html>

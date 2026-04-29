@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 468</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-468.jpg" alt="Page 468" width="1282" height="1882"/>
+      <div class="ocr">                                     Network Flow and Matching                          449
+                In Section 14.2, we will consider how to make good augmenting path
+            choices. For now, we note that in the worst case, the loop in NetworkFlow
+            can iterate M times, where M is the value of the maximum ﬂow. Assuming
+            the initialization and the body of the loop are implemented to run in Θ(n+a)
+            time, where n is the number of vertices and a is the number of edges in G,
+            the algorithm runs in Θ(M(n + a)) time in the worst case. If we assume
+            that all vertices are reachable from the source, then a ≥ n − 1, and we can
+            simplify the running time to Θ(Ma).
+                Before we move on to a discussion on ﬁnding augmenting paths, we note
+            one additional property of the Ford–Fulkerson algorithm. As long as each
+            augmenting path found is simple — and there is no reason a path-ﬁnding
+            algorithm would ﬁnd a path containing a cycle — the path will not contain
+            any edges to the source or any edges from the sink. The obvious consequence
+            is that if the graph contains edges into the source or out of the sink, they
+            will not be used. A less obvious consequence is that after such edges are
+            introduced into the residual graph, they will not be used. Thus, once a ﬂow
+            is added to an edge from the source or to the sink, the ﬂow on that edge will
+            never be decreased.
+            14.2   The Edmonds–Karp Algorithm
+            We have seen that the way augmenting paths are chosen by the Ford–
+            Fulkerson algorithm can signiﬁcantly impact its performance. In this section,
+            we consider how to select augmenting paths in order to avoid very bad
+            performance. One might suppose that we should try to select edges with
+            high capacity; however, the approach we take does not even consider the
+            edge capacities. Rather, we instead select a shortest augmenting path, in
+            terms of the number of edges. The resulting network ﬂow algorithm is known
+            as the Edmonds–Karp algorithm.
+                Exercise 11.6 on page 386 outlined the breadth-ﬁrst search technique for
+            ﬁndingashortestpathinΘ(n+a)time,wherenisthenumberofverticesand
+            a is the number of edges. We will therefore focus on analyzing the running
+            time of the Edmonds–Karp algorithm. We ﬁrst show the following lemma.
+            Lemma 14.3. No iteration of the Edmonds–Karp algorithm can bring any
+            vertex nearer to the source.
+            Proof.    By contradiction. Let R be the residual graph at the beginning of
+            an iteration, and let R be the residual graph at the end of the iteration.
+            Suppose some vertex x is closer to the source u in R than in R. Speciﬁcally,
+</div>
+    </div>
+  </body>
+</html>

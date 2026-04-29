@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 409</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-409.jpg" alt="Page 409" width="1282" height="1882"/>
+      <div class="ocr">           390                      Algorithms: A Top-Down Approach
+           ﬁrst takes 25. At this point, the only denomination that does not cause the
+           total to exceed n is 1. The greedy strategy therefore gives a total of six coins:
+           one 25 and ﬁve 1s. This solution is not optimal, however, as we can produce
+           30 with three 10s.
+               Let us consider a more direct top-down solution. If k =1,thend =1,
+                                                                                  k
+           so the only solution contains n coins. Otherwise, if d &gt;n, we can reduce
+                                                                  k
+           the size of the problem by removing d from the set of denominations, and
+                                                  k
+           the solution to the resulting problem is the solution to the original problem.
+           Finally, suppose d ≤ n. There are now two possibilities: the optimal solution
+                             k
+           either contains d or it does not. In what follows, we consider these two cases
+                            k
+           separately.
+               Let us ﬁrst consider the case in which the optimal
+           solution does not contain d . In this case, we do not    These two possibilities are
+                                       k                            not exclusive — there could
+           change the optimal solution if we remove d from the      beoneoptimalsolutionthat
+                                                      k             contains dk and another
+           set of denominations. We therefore have reduced the      that does not.
+           original problem to a smaller problem instance.
+               Now suppose the optimal solution contains d . Suppose we remove one
+                                                             k
+           d coin from this optimal solution. What remains is an optimal solution
+            k
+           to the instance with the same set of denominations and a target value of
+           n−d . Now working in the other direction, if we have the optimal solution
+                 k
+           to the smaller instance, we can obtain an optimal solution to the original
+           instance by adding a d coin. Again, we have reduced the original problem
+                                   k
+           to a smaller problem instance.
+               To summarize, when d ≤ n, the optimal solution can be obtained from
+                                      k
+           the optimal solution to one of two smaller problem instances. We have no
+           way of knowing in advance which of these smaller instances is the right one;
+           however, if we obtain both of them, we can compare the two resulting candi-
+           date solutions. The one with fewer coins is the optimal solution. In fact, if we
+           could quickly determine which of these smaller instances would yield fewer
+           coins, we could use this test as the selection criterion for a greedy algorithm.
+           Therefore, let us focus for now on the more diﬃcult aspect of this problem
+           —thatofdeterminingthe minimum numberof coins in an optimal solution.
+               Based on the above discussion, the following recurrence gives the mini-
+           mumnumberofcoins needed to obtain a value of n from the denominations
+           d ,...,d :
+            1       k
+                        ⎧n                                    if k =1
+                        ⎪
+                        ⎨
+              C(n,k)= C(n,k−1)                                if k&gt;1, d &gt;n        (12.1)
+                        ⎪                                                k
+                        ⎩min(C(n,k−1),C(n−d ,k)+1) ifk&gt;1, n≥d .
+                                                   k                         k
+</div>
+    </div>
+  </body>
+</html>

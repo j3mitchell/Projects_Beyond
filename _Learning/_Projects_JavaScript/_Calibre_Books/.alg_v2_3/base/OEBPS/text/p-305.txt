@@ -1,0 +1,43 @@
+          286                   Algorithms: A Top-Down Approach
+          Exercise 7.7. Give a modiﬁed version of HashTable.Put(x,k)(seeFigure
+          7.6) which uses a compression map, as described in Section 7.3. Use the
+          HashFunction ADT to represent both hash functions (i.e., both the
+          compression map and the function to compute the index in the hash table).
+          You may need to deﬁne an additional data structure in order to save results
+          of the compression map for use in rehashing (you need to be able to retrieve
+          these values quickly).
+          Exercise 7.8. Give an implementation of HashFunction that uses poly-
+          nomial hashing, as described in Section 7.3. You may assume that the
+          variable r contains an appropriate value to use as the radix, and that the
+          variable w contains the number of bits in a machine word. The size should
+          be the smallest power of 2 that is no smaller than the parameter given to
+          the constructor. For clarity, your implementation should include the mod
+          operation rather than relying on overﬂow (we don’t assume any explicit
+          bounds on integer variables in our algorithms).
+                                                  1
+          * Exercise 7.9. Prove that for each h ∈H   there is exactly one s ∈ Sl,m
+                                                  l,m
+          such that h = h.[Hint: Prove that if s = s,thenh = h .Inordertodo
+                     s                                    s    s
+          this, it is suﬃcient to ﬁnd a k such that h (k) = h (k).]
+                                                s       s
+          *Exercise 7.10. Modify UniversalHash1(Figure7.8)tohandlevarying-
+          length keys of unboundedlength. Use the expandable-array design pattern to
+          store the randomly-generated indices. Show that when this implementation
+          is used with HashTable (shown in Figures 7.5 and 7.6), the amortized
+          expected running time of the Dictionary operations is in O(l), where l is
+          the number of bits in the longest key in the table. You may assume that the
+          actual running time of Remove(k) is proportional to the running time of
+          hash.Index(k) plus the length of the ConsList at the resulting index.
+          * Exercise 7.11. Complete the proof of Theorem 7.3.
+          Exercise 7.12. Implement HashFunction to provide H2 .Youmay
+                                                                  p,m
+          assume the variable p contains a prime number larger than any key. You
+          may also assume that all values will ﬁt into integer variables.
+          Exercise 7.13. Implement HashFunction to provide H3 .Youmay
+                                                                  p,l
+          assume the variable p contains a prime number larger than w bits, where w
+          is another variable. You may also assume that if a,b,andc are all natural
+          numbers less than p,thenab + c will ﬁt in an integer variable; however,
+          you may not assume that arbitrarily many of these values added together
+          will ﬁt.

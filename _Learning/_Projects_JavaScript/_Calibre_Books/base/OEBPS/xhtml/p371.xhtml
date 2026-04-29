@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 371</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-371.jpg" alt="Page 371" width="1282" height="1882"/>
+      <div class="ocr">           352                    Algorithms: A Top-Down Approach
+           3n/2 signiﬁcant bits. Likewise, it is not hard to show that at the beginning
+           of the while loop, approx contains at most n/2+1 signiﬁcant bits, and that
+           prod contains at most 3n/2+1 signiﬁcant bits. The body of the while loop
+           therefore runs in Θ(n)timeintheworstcase.
+              In order to get a tight bound on the number of iterations of the while
+           loop, we need a tighter bound on approx. In particular, we need to know
+                                                         −n/2
+           howclose approx is to rem/v.Letr = rem×2       .Weﬁrstobservethat
+                                          
+          n/2      
+                                  r       =        r ×2
+                              vFirst +1                      n/2
+                                            (vFirst +1)×2      
+                                          =          rem         ,
+                                                            n/2
+                                             (vFirst +1)×2
+           because the n/2 low-order bits of the numerator do not aﬀect the value of
+           the expression. Furthermore, the right-hand side above is no larger than
+           rem/v.Thus,                                       
+                                            r           r
+                     approx −rem/v≤ vFirst − vFirst+1
+                                      ≤ r −r−vFirst
+                                         vFirst   vFirst +1
+                                      = r(vFirst +1)−vFirst(r −vFirst)
+                                                 vFirst(vFirst +1)
+                                            r +vFirst2
+                                      =                   .
+                                         vFirst(vFirst +1)
+                                    n/2                            n/2
+              Nowbecauserem&lt;v2         , it follows that r&lt;vFirst×2   . We therefore
+           have
+                                                 r +vFirst2
+                         approx −rem/v≤vFirst(vFirst+1)
+                                                       n/2         2
+                                           &lt; vFirst×2      +vFirst
+                                                vFirst(vFirst +1)
+                                               n/2
+                                           = 2    +vFirst
+                                               vFirst +1
+                                                  n/2
+                                           =    2       + vFirst .
+                                              vFirst +1   vFirst +1
+              Because vFirst contains n/2 signiﬁcant bits, its value must be at least
+            n/2−1
+           2     . The value of the ﬁrst term on the right-hand side above is therefore
+           strictly less than 2. Clearly, the value of the second term is strictly less than
+</div>
+    </div>
+  </body>
+</html>

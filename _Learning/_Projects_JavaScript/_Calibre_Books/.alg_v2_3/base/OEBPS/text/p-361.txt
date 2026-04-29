@@ -1,0 +1,37 @@
+          342                 Algorithms: A Top-Down Approach
+          randomized. Instead of choosing the pivot element randomly, they use
+          heuristics, such as choosing the median of the ﬁrst, middle, and last elements.
+          Such heuristics tend to choose pivot elements nearer to the median than
+          those chosen randomly. Furthermore, they typically involve less overhead
+          than generating a random (or pseudorandom)number.
+             Because of the Θ(n2) worst-case running time and Θ(n) worst-case
+          stack space usage of deterministic versions of quick sort, the most common
+          implementations combine quick sort with two other sorting algorithms. In
+          order to avoid the bad worst case, heap sort is typically used to handle
+          subproblems in which the recursion gets too deep (see Exercise 10.10). In
+          order to speed up sorting of small subproblems, insertion sort is typically
+          usedtosortsmallbasecases.Themostbasiccombination ofthesealgorithms
+          is called introsort.
+          10.4  Selection
+          In Section 1.1, we introduced the selection problem. Recall that this problem
+          is to ﬁnd the kth smallest element of an array of n elements. We showed
+          that it can be reduced to sorting. Using either heap sort or merge sort, we
+          therefore have an algorithm for this problem with a runningtime in Θ(nlgn).
+          In this section, we will improve upon this running time.
+             Section 2.4 shows that the selection problem can be reduced to the Dutch
+          National Flag problem and a smaller instance of itself. This reduction is
+          very similar to the reduction upon which quick sort is based. Speciﬁcally, we
+          choose a pivot element p and solve the resulting Dutch national ﬂag problem
+          as we did for the quick sort reduction. Let r and w denote the numbers of
+          red items and white items, respectively. We then have three cases:
+          • If r ≥ k, we return the kth smallest red item.
+          • If r<kand r+w ≥k,wereturnp.
+          • If r + w<k, we return the (k −r −w)th smallest blue element.
+             Due to the similarity of this algorithm to quick sort, some of the same
+          problems arise in choosing the pivot element appropriately. For example, if
+          we always use the ﬁrst element as the pivot, then selecting the nth smallest
+          element in a sorted array of n distinct elements always results in a recursive
+          call with all but one of the original elements. As we saw in Section 10.3,
+          this yields a running time in Θ(n2). On the other hand, it is possible to
+          show that selecting the pivot at random yields an expected running time in
+          Θ(n) — the details are left as an exercise.

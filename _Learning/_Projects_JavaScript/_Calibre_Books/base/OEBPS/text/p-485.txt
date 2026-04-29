@@ -1,0 +1,43 @@
+                 466                                   Algorithms: A Top-Down Approach
+                 in fact the hidden constant becomes quite large as  approaches 0). We wish
+                 to improve on these algorithms.
+                       It is a well-known fact that a polynomial of degree n − 1 is uniquely
+                 determined by its values at any n distinct points. Therefore, one way to
+                 multiply two polynomials p(x)andq(x) whose product has degree n −1is
+                 as follows:
+                 1. Evaluate p(xi)andq(xi)forn distinct values xi,0≤ i<n.
+                 2. Compute r(xi)=p(xi)q(xi)for0≤ i<n.
+                 3. Construct the unique polynomial r(x)ofdegreen−1 determined by the
+                      values r(xi)for0≤ i<n.
+                 Note that step 2 can be done in Θ(n) time, assuming each multiplication
+                 can be done in Θ(1) time. We need to show how steps 1 and 3 can be done
+                 eﬃciently.
+                       The evaluation of a polynomial of degree less than n at n distinct points
+                 can be viewed as a linear transformation — i.e., a multiplication of a 1 × n
+                 vector by an n×n matrix. Speciﬁcally, let p be the 1×n vector representing
+                 the coeﬃcients of a polynomial p(x) as described above (if the degree is less
+                 than n − 1, we can use coeﬃcients of 0 for the high-order terms). Let A
+                 be the n × n matrix such that A                         =xi for 0 ≤ i<n,0≤ j<n,where
+                                                                      ij        j
+                 x ,...,x            are distinct values. Then the product pA yields the 1×n vector
+                   0           n−1
+                 v = v ,...,v              such that
+                           0          n−1
+                                                                         n−1
+                                                                 v =pA
+                                                                   j             i   ij
+                                                                         i=0
+                                                                         n−1
+                                                                     =pixi
+                                                                                    j
+                                                                         i=0
+                                                                     =p(xj).
+                                                                                   −1
+                       Furthermore, if A has an inverse A                              ,  then this transformation is
+                 invertible:
+                                                                     −1             −1
+                                                                vA =pAA
+                                                                         =p.
+                 Thus, given the values of a polynomial at the n points x ,...,x                                          ,wecan
+                                                                                                         0           n−1−1
+                 compute the polynomial by multiplying the vector of values by A                                              .The

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 398</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-398.jpg" alt="Page 398" width="1282" height="1882"/>
+      <div class="ocr">                                     Optimization I: Greedy Algorithms                         379
+             algorithm is preferred when a ListGraph is used, but Prim’s algorithm is
+             preferred when a MatrixGraph is used. If we have the freedom of choosing
+             the Graph implementation, we should choose a ListGraph and Kruskal’s
+             algorithm for sparse graphs, but a MatrixGraph and Prim’s algorithm for
+             dense graphs.
+             11.3    Single-Source Shortest Paths
+             Consider a route ﬁnding program that we might ﬁnd online or within GPS
+             software. There are typically many possible routes leading from a given
+             starting point to a given destination, but the software will typically try
+             to optimize a particular objective function such as the total expected time.
+             We can model such a problem as an instance of a shortest path problem.
+             We model the various road segments as edges of a directed graph G whose
+             vertices are the road intersections. We represent the starting point with a
+             start vertex u and the destination with an end vertex v. A cost (representing,
+             for example, the expected time) is associated with each edge. We wish to
+             ﬁnd a least-cost path from u to v in G.
+                 Wewill use the term length to refer to the cost of an edge, regardless of
+             what kind of cost is being represented. A least-cost path is then a shortest
+             path. We will assume that edge lengths are positive integers. Note that if
+             we have found a shortest path from u to v,andifvertexw occurs on this
+             path, then the subpath from u to w is also a shortest path from u to w.
+             As a result, when we ﬁnd a shortest path from u to v, we typically ﬁnd
+             many other shortest paths from u as well. For this reason, it simpliﬁes the
+             discussion to generalize the problem to that of ﬁnding, for every vertex w,
+             ashortestpathfromu to w.
+                 Weﬁrst observe that for each vertex w = u, if we consider only a single
+             shortest path from u to w, then there is a unique predecessor x of w on
+             this path. Furthermore, we can select the shortest paths in such a way that
+             x precedes w on any shortest path on which w occurs. Thus, for each vertex
+             in G, there is a unique sequence of these predecessors leading back to u.
+             This predecessor relationship therefore gives the parent relationship of a tree
+             rooted at u. This rooted tree can be used to represent the shortest paths.
+                 Let us now generalize the problem so that a tree T rooted at u and
+             containing a subset of the edges and vertices of the graph is provided as
+             additional input. Suppose that this tree is a proper subtree of a shortest
+             path tree; i.e., suppose that for each vertex w in the tree, the path from u to
+             winthetree is a shortest path from u to w in G. We need to add a vertex x
+</div>
+    </div>
+  </body>
+</html>

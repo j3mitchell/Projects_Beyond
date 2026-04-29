@@ -1,0 +1,8 @@
+           78                      Algorithms: A Top-Down Approach
+             Figure 3.3  Divide-and-conquer algorithm for maximum subsequence sum, speciﬁed
+             in Figure 1.9
+                                                                            k
+           for k>0. Theorem 3.34 applies to (3.8), yielding g(k) ∈ Θ(k2 ). Because
+                 k
+           n=2,wehavek=lgn,sothat
+                                      f(n)=g(k)=g(lgn).                            (3.9)

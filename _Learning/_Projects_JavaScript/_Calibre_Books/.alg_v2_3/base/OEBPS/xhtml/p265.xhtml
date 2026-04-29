@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 265</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-265.jpg" alt="Page 265" width="1282" height="1882"/>
+      <div class="ocr">      246          Algorithms: A Top-Down Approach
+      (or equivalently, each key can be treated as a natural number). Second,
+      we assume that there is a known upper bound on the values of all of the
+      keys. Even with these assumptions, it can still be the case that the range
+      of the keys is much larger than the number of keys. For example, suppose
+      our data set consists of 5,000 items keyed by 9-digit natural numbers (e.g.,
+      Social Security Numbers). An array of 1 billion elements is required to store
+      these 5,000 items. Initializing such an array would be very expensive.
+        Note, however, that once an array is initialized, storage and retrieval
+      can both be done in Θ(1) time in the worst case. What we need is a
+      technique for initializing an array in Θ(1) time while maintaining constant-
+      time accesses to elements. We will now present such a technique, known
+      as virtual initialization. This technique involves keeping track of which
+      array elements have been initialized in a way that facilitates making this
+      determination quickly. We assume that the environment provides a facility
+      for allocating an array in Θ(1) time without initializing its locations. We will
+      call the resulting data structure a VArray.
+        In addition to an array elements[0..n−1] to store the data, we also need
+      an array used[0..n−1] of Nats to keep track of which locations of elements
+      areusedtostoredata.WeuseaNat num to keep track of how many
+      locations of elements store data items. Thus, used[0..num−1] will be indices
+      at which data items are stored in elements. Finally, in order to facilitate a
+      quick determination of whether elements[i] contains a data element, we use
+      a third array loc[0..n − 1] such that loc[i] stores the index in used at which
+      i is stored, if indeed i is in used[0..num −1]. The structural invariant is that
+      0 ≤ num ≤ n,andfor0≤ i&lt;num,loc[used[i]] = i. We interpret elements[i]
+      as giving the data item at location i if 0 ≤ loc[i] &lt; num and used[loc[i]] = i;
+      otherwise, we interpret the value stored at location i as nil.
+        For example, Figure 7.1 shows a VArray with 10 locations, storing 35
+      at location 4, 17 at location 7, and nil at all other locations. Note that for
+      i =4ori =7,0≤ loc[i] &lt; num and used[loc[i]] = i. For other values of i,
+      it is possible that loc[i] stores a natural number less than num; however, if
+      this is the case, then used[loc[i]] is either 4 or 7, so that used[loc[i]] = i.
+        To initialize all locations of the VArray to nil,wesimplysetnum to 0.
+      In this way, there is no possible value of loc[i] such that 0 ≤ loc[i] &lt; num,
+      so we interpret all locations as being nil. To retrieve the value at location
+      i, we ﬁrst determine whether 0 ≤ loc[i] &lt; num and used[loc[i]] = i.Note,
+      however, that loc[i] may not yet have been initialized, so that it may not
+      even refer to a Number. Therefore, we must ﬁrst verify that it is a Nat.If
+      all these tests are passed, we return elements[i]; otherwise, we return nil.
+</div>
+    </div>
+  </body>
+</html>

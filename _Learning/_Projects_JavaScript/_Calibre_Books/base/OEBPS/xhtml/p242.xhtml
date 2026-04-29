@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 242</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-242.jpg" alt="Page 242" width="1282" height="1882"/>
+      <div class="ocr">                                      Storage/Retrieval I: Ordered Keys                          223
+             plus the change in the potential function Φ. Noting that |T| = |T |,we
+                                                                                     b        c
+             conclude that the change in Φ is
+                                      lg|T| +lg|T|−lg|T |−lg|T |.                            (6.4)
+                                           a         c         a         b
+                 We need to simplify the above expression. It will be much easier to use
+             if we can bound it in terms of subtrees of the original tree. In particular, we
+             would like to get an expression involving only |T | and |T | so that, when the
+                                                                    b         c
+             amortized costs of all rotations in one operation are added together, perhaps
+             most terms will cancel out.
+                 Let us therefore apply Theorem 5.7 (page 174) to lg|T|+lg|T| in (6.4).
+                                                                               a         c
+             We know that |T|+|T|≤|T |. By Theorem 5.7, we have lg|T|+lg|T|≤
+                                a       c      c                                      a         c
+             2lg|T |−2. Using the fact that |T | &gt; |T | and adding in the actual cost, we
+                   c                                a       b
+             obtain the following upper bound on the amortized cost of a zig-zag rotation:
+                            2lg|T |−2−2lg|T |+1=2(lg|T |−lg|T |)−1.                            (6.5)
+                                  c               b                c         b
+                 Let us now analyze the amortized cost of a zig-zig rotation. Referring to
+             Figure 6.21 and adopting the same notational conventions as above, we see
+             that the change in Φ is
+                                      lg|T| +lg|T|−lg|T |−lg|T |.                            (6.6)
+                                           b         c         a         b
+             In order to get a tight bound for this expression in terms of lg|T |−lg|T |,
+                                                                                        c         a
+             we need to be a bit more clever. We would again like to use Theorem 5.7.
+             Note that |T |+|T|≤|T |; however, lg|T |+lg|T| does not occur in (6.6).
+                           a      c       c                  a         c
+              Figure 6.21     The subtrees that are modiﬁed by a zig-zig rotation
+                           Tc                                                     Ta
+                                     c                                     a
+                        Tb                                                             Tb
+                   T            bD                                    A        b           T
+                     a                                                                       c
+                            aC                                             B        c
+                       AB                                                      CD
+</div>
+    </div>
+  </body>
+</html>

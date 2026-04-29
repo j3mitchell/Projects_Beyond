@@ -1,0 +1,49 @@
+                                       Proving Algorithm Correctness                           35
+            Initialization: (Inner loop) Because A[1..n] has not been changed since the
+            beginning of the current iteration of the outer loop, from the outer loop
+            invariant, A[1..n] is a permutation of its original values. From the outer loop
+            invariant, A[1..i−1] is in nondecreasing order; hence, because j = i,wehave
+                                                            
+            for 1 ≤ k<k≤i,wherek =j, A[k] ≤ A[k ].
+            Maintenance: (Inner loop) Suppose the invariant holds at the beginning
+                                        
+            of some iteration. Let A [1..n] denote the contents of A[1..n] following the
+            iteration, and let j denote the value of j following the iteration. Hence,
+                     
+               (i) A [j]=A[j −1];
+                     
+              (ii) A [j − 1] = A[j];
+                     
+             (iii) A [k]=A[k]for1≤ k ≤ n, k = j,andk = j −1; and
+             (iv) j = j − 1.
+                                                                                       
+            Thus, A[1..n]isapermutationofA[1..n]. From the invariant, A [1..n]is
+            therefore a permutation of the original values of A[1..n]. Suppose 1 ≤ k<
+                                                                            
+            k ≤i,wherek = j = j−1. We must show that A [k] ≤ A [k ]. We consider
+            three cases.
+                                                                     
+            Case1:k <j−1.ThenA[k]=A[k]andA[k]=A[k].Fromtheinvariant,
+                                              
+            A[k] ≤ A[k ]; hence, A [k] ≤ A [k ].
+                                                                             
+            Case 2: k = j.ThenA[k ]=A[j −1]. If k = j −1, then A[k]=A[j], and
+            from the while loop condition, A[j] <A[j − 1]. Otherwise, k<j− 1and
+              
+            A[k]=A[k]; hence, from the invariant, A[k] ≤ A[j − 1]. In either case, we
+                                        
+            conclude that A [k] ≤ A [k ].
+                                                         
+            Case 3: k >j.ThenA[k ]=A[k ], and A[k]=A[l], where l is either k, j,
+                                                                                              
+            or j−1. In each of these cases, l<k; hence, from the invariant, A[l] ≤ A[k ].
+                               
+            Thus, A[k] ≤ A [k ].
+            Termination (Inner loop): Each iteration decreases the value of j by 1;
+            hence, if the loop keeps iterating, j must eventually be no greater than 1.
+            At this point, the loop will terminate.
+                                                    
+            Correctness(Innerloop):LetA[1..n]denotethecontents ofA[1..n]when
+            the while loop terminates, and let i and j denote their values at this point.
+                                     
+            From the invariant, A [1..n] is a permutation of its original values. We must

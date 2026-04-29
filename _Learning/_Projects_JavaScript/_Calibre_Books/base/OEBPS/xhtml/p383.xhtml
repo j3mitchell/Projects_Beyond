@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 383</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-383.jpg" alt="Page 383" width="1282" height="1882"/>
+      <div class="ocr">       364           Algorithms: A Top-Down Approach
+       of the original polynomials. Show that your algorithm has a running time in
+       Θ(nlog35). (Note that log 5 &lt; lg3.)
+                      3
+       ** Exercise 10.4. Generalize Exercise 10.3 by showing that for suﬃciently
+       large n and any k ≥ 2, the product of two degree-(n−1) polynomials can be
+       computed from the products of 2k −1 polynomials of degree approximately
+       (n/k)−1. Using this result, show that for any  ∈ R&gt;0, there is an algorithm
+       to multiply two degree-(n −1) polynomials in O(n1+)time.
+       Exercise 10.5. Adapt PolyMult to implement Multiply, as speciﬁed in
+       Figure 10.6, in Θ(nlg3) time, where n is the number of bits in the product.
+       Exercise 10.6. Prove that MergeSort, shown in Figure 10.2, meets its
+       speciﬁcation.
+       Exercise 10.7. Suppose we are given a tape containing a large number of
+       Keyeditems to be sorted. The number of items is too large to ﬁt into main
+       memory, but we have three additional tapes we can use, and we can rewrite
+       the input tape. Give a bottom-up version of merge sort that produces the
+       sorted output on one of the tapes. You may not assume that data items on
+       the tapes can be accessed “randomly” — they must be accessed in sequence.
+       Your algorithm must make at most O(lgn) passes through each tape.
+       Exercise 10.8. Prove that QuickSort, shown in Figure 10.3, meets its
+       speciﬁcation.
+       Exercise 10.9. Notice that one of the recursive calls in QuickSort is
+       tail recursion. Taking advantage of this fact, convert one of the recursive
+       calls to iteration. Notice that the calls can be made in either order, and so
+       either may be converted to iteration. Make the proper choice so that the
+       resulting algorithm uses Θ(lgn) stack space in the worst case on an array of
+       n elements.
+       Exercise 10.10. Suppose we modify QuickSort by introducing a second
+       parameter d giving the depth of recursion and a third parameter giving the
+       length N of the entire array (not just the portion currently being sorted).
+       Then prior to selecting the pivot element, if d ≥ 2lgN, instead of sorting
+       using the given algorithm, sort A[lo..hi]usingaΘ(nlgn) algorithm such as
+       heap sort or merge sort. Show that this modiﬁcation results in an algorithm
+       that runs in Θ(nlgn) in the worst case, even if A[lo]isalwaysusedasthe
+       pivot element.
+</div>
+    </div>
+  </body>
+</html>

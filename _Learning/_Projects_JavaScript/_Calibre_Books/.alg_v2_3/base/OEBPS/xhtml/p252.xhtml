@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 252</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-252.jpg" alt="Page 252" width="1282" height="1882"/>
+      <div class="ocr">                                      Storage/Retrieval I: Ordered Keys                          233
+             probabilities in Seq of e ,...,e ; i.e.,
+                                        1        n
+                                                             n
+                                                             −len(ei)
+                                       P(e ,...,e )=          2        .
+                                             1       n
+                                                            i=1
+             It can be shown by a straightforward induction on n that the sum of the
+             probabilities of the elementary events in Seqn is 1. Seqn is therefore a discrete
+             probability space.
+                 We now need to determine what comprises a worst-case input to Find.
+             As we suggested earlier, the components of an elementary event in Seqn
+             correspondtothen data elements in a skip list. The length of a component
+             gives the level of the skip list element. Apart from the number of elements in
+             the structure, the shape of a skip list is determined completely at random,
+             independent of the data elements inserted or the order in which they are
+             inserted. Speciﬁcally, the keys in the data elements determine their order,
+             but their levels are determined solely by coin ﬂips. Thus, in order to
+             determine a worst-case input, we needn’t worry about how the structure
+             was constructed — we need only concern ourselves with the parameters to
+             Find. Both of these values can aﬀect the running time.
+                 In order to determine the worst-case input, we need to consider the
+             behavior of the while loop. For a given value of i,thewhile loop iterates
+             once for each key at level i that is
+             • less than k;and
+             • greater than the largest key less than k at any level j&gt;i(or −∞ if there
+               is no such key).
+             It is easily seen that at any level i, the expected number of iterations is
+             maximized when the number of keys less than k is maximized, because the
+             levels of these keys are determined randomly. The worst-case input therefore
+             has k greater than any key in the data set.
+                 We therefore deﬁne tail (e), where e = e ,...,e ∈Seqn,tobethe
+                                             i                     1       n
+             largest natural number j such that some suﬃx of e contains j components
+             with length exactly i and no components longer than i.Thus,ife contains at
+             least one component strictly longer than i,thentaili(e) is the number of com-
+             ponents with length i that follow the last component strictly longer than i.
+             Otherwise, taili(e) is simply the number of components with length i.
+             Example6.8. LeterepresenttheskiplistshowninFigure6.23onpage226.
+             Then
+             • tail1(e) = 0 because there are no level-1 nodes following the last node with
+               level greater than 1;
+</div>
+    </div>
+  </body>
+</html>

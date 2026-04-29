@@ -1,0 +1,46 @@
+          332                 Algorithms: A Top-Down Approach
+          it also can give us some insight into what must be done to make an algorithm
+          more eﬃcient. We will explain this concept further as we illustrate the
+          technique by applying it to several problems.
+          10.1  Polynomial Multiplication
+          Suppose we are given two polynomials:
+                                          n−1
+                                   p(x)=axi,
+                                              i
+                                          i=0
+                                          n−1
+                                   q(x)=bxi.
+                                              i
+                                          i=0
+          Wewish to compute the product polynomial:
+                                    2n−2⎛ i       ⎞
+                             pq(x)=⎝ab ⎠xi,
+                                              j i−j
+                                     i=0  j=0
+          where we deﬁne a = b =0forn ≤ j<2n. We can clearly compute each of
+                         j   j
+          the 2n −1coeﬃcientsinpq in Θ(n) time; hence, by Theorem 3.31, we can
+          compute the entire product in Θ(n2)time.
+             We wish to apply the divide-and-conquer technique to obtain a more
+          eﬃcient solution. Observe that if n>1, then we can divide each polynomial
+          into two smaller polynomials:
+                                p(x)=p (x)+xmp (x),
+                                       0        1
+                                q(x)=q (x)+xmq (x),
+                                       0        1
+          where
+                                       m−1
+                                p (x)=axi,
+                                 0          i
+                                        i=0
+                                       n−m−1
+                                p1(x)=  am+ixi,
+                                         i=0
+                                       m−1
+                                q (x)=bxi,
+                                 0          i
+                                        i=0
+                                       n−m−1
+                                q (x)=  b       xi.
+                                 1            m+i
+                                         i=0

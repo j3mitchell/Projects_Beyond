@@ -1,0 +1,20 @@
+           42                      Algorithms: A Top-Down Approach
+            Figure 2.7   An algorithm for solving the selection problem, speciﬁed in Figure 1.1,
+            using the median
+               Figure 2.7 shows the result of eliminating the tail recursion from Dutch-
+           FlagTailRec,incorporatingitintotheselection algorithm describedearlier
+           in this section, and making some minor modiﬁcations. First, lo and hi
+           have been replaced by 1 and n, respectively. Second, the array N has been
+           removed, andr,w,bareuseddirectlyinstead.Finally, referringto Figure 2.6,
+           note that when a recursive call is made, lo is incremented exactly when r is
+           incremented, and hi is decremented exactly when b is incremented. Because
+           we are replacing lo with 1, which cannot be changed, and hi with n,which
+           we would rather not change, we instead use the expressions r+1andn−b,
+           respectively. Thus, for example, instead of having a while loop condition of
+           w<hi−lo+1,wereplace lo with r+1andhi with n−b, rearrange terms,
+           and obtain r +w+b<n.
+               As we have already observed, the invariant for a loop implementing
+           a transformation is closely related to the precondition for the problem.
+           Thus, in order to obtain the loop invariant, we take the precondition for
+           DutchFlagTailRec,remove“A[lo..hi] is an array of Numbers”, as this
+           is understood, and replace lo with r +1andhi with n − b. This gives us

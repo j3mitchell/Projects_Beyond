@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 452</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-452.jpg" alt="Page 452" width="1282" height="1882"/>
+      <div class="ocr">                                  Depth-First Search                   433
+             Let us consider a depth-ﬁrst spanning forest of a directed graph G.We
+          will begin by trying to ﬁnd one strongly connected component. We ﬁrst note
+          that from any vertex i, we can reach all descendants of i. Depending on which
+          back edges exist, we may be able to reach some ancestors of i. Depending
+          on which cross edges exist, we may be able to reach some other vertices as
+          well; however, we cannot reach any vertices in a tree to the right of the tree
+          containing i (i.e., vertices in a tree that is processed later).
+             This suggests that we might focus on either the ﬁrst or the last tree
+          processed. Consider the last tree processed. Let i be the root, and let j be
+          any vertex such that there is a path from j to i.Thenj must be in the same
+          tree as i, and hence must be a descendant of i. There is therefore a path
+          from i to j. As a result, the strongly connected component containing i is
+          the set of vertices j such that there is a path from j to i. We generalize this
+          fact with the following theorem.
+          Theorem 13.6. Let G be a directed graph, and let F be a depth-ﬁrst
+          spanning forest of G.LetS be a strongly connected component of G, and let
+                                                           
+          i be the vertex in S that is postorder processed last. Let G be the subgraph
+          of G induced by set of vertices postorder processed no later than i.ThenS
+                                                                
+          is the set of vertices j such that there is a path from j to i in G .
+          Proof.  Clearly, for every vertex j ∈ S, there is a path from j to i that
+          stays entirely within S. Because i is postorder processed last of the vertices
+                                   
+          in S, this path stays within G . Therefore, let j be a vertex such that there
+                                
+          is a path from j to i in G . We will show that j ∈ S. Speciﬁcally, we will
+          show that j is a descendant of i, so that there is a path from i to j.The
+                                                                        
+          proof is by induction on n, the length of the shortest path from j to i in G .
+          Base: n =0.Thenj =i,sothatj is a descendant of i.
+          Induction Hypothesis: Let n&gt;0, and assume that for every m&lt;n,if
+                                               
+          there is a path of length m from k to i in G ,thenk is a descendant of i.
+                                                                     
+          Induction Step: Suppose there is a path of length n from j to i in G .Let
+          (j,k) be the ﬁrst edge in this path. Then there is a path of length n−1from
+                   
+          k to i in G . From the Induction Hypothesis, k is a descendant of i.Wenow
+          have three cases.
+          Case 1: (j,k) is a back edge. Then j is clearly a descendant of i.
+</div>
+    </div>
+  </body>
+</html>

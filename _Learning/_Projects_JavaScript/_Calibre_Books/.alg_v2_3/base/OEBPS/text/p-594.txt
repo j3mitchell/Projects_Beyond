@@ -1,0 +1,43 @@
+                              Approximation Algorithms                575
+             We claim that if x ≥ k3, the maximum cut for G partitions the vertices
+         so that each group forms a cluster. To see this, ﬁrst note that when we
+         partition G in this way, the resulting cut includes exactly those edges with
+         weight x. Because the sum of all other edges is less than x, the maximum cut
+         must contain all of the edges with weight x. Note that connecting any two of
+                            2
+         the vertices 0,k,...,k −k is an edge with weight x; hence, a maximum cut
+         must place all of these k vertices into diﬀerent clusters. Then for 0 ≤ i<k
+                                                                       
+         and 1 ≤ j<k, there is an edge of weight x between vertex ik + j and i k
+                 
+         for each i 
+= i.Asaresult,vertexik +j must be placed in the same cluster
+         as vertex ik. Hence, the maximum cut partitions the vertices so that each
+         group forms a cluster.
+             Now consider the behavior of MaxCut on G. It will ﬁrst place vertices
+         0,1,...,k− 1 into diﬀerent clusters. Then vertex k is adjacent to exactly
+         onevertexineachoftheclustersviaanedgewithweightx. Because placing
+         k in any of the clusters would increase the weight of that cluster by x, k is
+         placed in the ﬁrst cluster with vertex 0. Placing k + 1 in this cluster would
+         increase its weight by x+1; however, placing k+1 in any other cluster would
+         increase that cluster’s weight by only x.Asaresult,k + 1 is placed in the
+         second cluster with vertex 1. It is easily seen that the algorithm continues
+         by placing vertices into clusters in round-robin fashion, so that each cluster
+         ultimately contains exactly one vertex from each group.
+             We can use symmetry to help us to evaluate the approximation ratio
+         of MaxCut on G. In the maximum cut, each vertex is adjacent to (k −
+         1)k vertices in other clusters via edges whose weights are all x.Inthecut
+         produced by MaxCut, each vertex is also adjacent to (k − 1)k vertices in
+         other clusters; however, only (k−1)2 of these edges have weight x, while the
+         remaining edges each have weight 1. The approximation ratio is therefore
+                              (k −1)kx    =     kx     ,
+                           (k −1)2x+k−1     (k −1)x+1
+         which approaches
+                                   k   =1+ 1
+                                  k−1       k −1
+         as x approaches ∞. The bound of Theorem 17.8 is therefore tight.
+             Let us now analyze the approximation ratio for MaxCut as an
+         approximation algorithm for the minimum cluster problem. Again we can
+         use symmetry to simplify the analysis. In the optimal solution, each vertex
+         is adjacent to k −1 vertices in the same cluster via edges whose weights are
+         all 1. In the solution given by MaxCut, each vertex is adjacent to k − 1

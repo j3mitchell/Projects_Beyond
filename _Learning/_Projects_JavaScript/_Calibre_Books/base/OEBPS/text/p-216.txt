@@ -1,0 +1,29 @@
+                       Chapter 6
+          Storage/Retrieval I: Ordered Keys
+      In this chapter, we begin an examination of data structures for general
+      storage and retrieval. We will assume that with each data item is associated
+      a key that uniquely identiﬁes the data item. An example of this kind of key
+      might be a bank account number. Thus, if we provide a bank’s database with
+      a customer’s account number, we should be able to retrieve that customer’s
+      account information.
+        WewillletKeydenotethetypetowhichthekeysbelong.Wewillassume
+      that, even though the Key may not be a numeric type, it is still possible
+      to sort elements of this type using a comparison operator ≤.Moreover,we
+      assume that we need an eﬃcient way to obtain data items in order of their
+      keys. In the next chapter, we will examine data structures that do not require
+      these two assumptions.
+        In order to facilitate arbitrary processing of all of the items in the data
+      structure, we provide the Visitor interface, shown in Figure 6.1. We can
+      then deﬁne an implementation of Visitor so that its Visit() operation
+      does whatever processing we wish on a data item. (The use of this interface
+      is known as the visitor pattern.)
+        We then deﬁne a Dictionary as a ﬁnite set of data items, each
+      having a unique key of type Key, together with the operations shown
+      in Figure 6.2. In the next chapter, we will examine implementations of
+      this ADT. In this chapter, we will explore several implementations of the
+      OrderedDictionary ADT, which is the extension of the Dictionary
+      ADTobtained by adding the interface shown in Figure 6.3.
+      Example 6.1. Suppose we would like to print all of the data items in an
+      instance of OrderedDictionary in order of keys. We can accomplish this
+      by implementing Visitor so that its Visit operation prints its argument.
+                          197

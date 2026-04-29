@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 563</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-563.jpg" alt="Page 563" width="1282" height="1882"/>
+      <div class="ocr">          544                    Algorithms: A Top-Down Approach
+          •P(i), which speciﬁes the new value of the program counter.
+              q
+          ψ (i) is then deﬁned as follows:
+            q
+                             ψ (i)=U (i)∧E(i)∧I(i)∧P(i).                   (16.2)
+                              q       q     q      q      q
+              There are some instances of the above predicates that occur for more
+          than one type of instruction.
+          • If the instruction at location q is not an Input instruction, then
+                                                        
+                              I (i)=Eq(x ,x   ) ∧ Eq(φ ,φ   ).           (16.3)
+                               q          i  i−1        i  i−1
+          • If this instruction is neither a Goto,anIfLeq,noraHalt,then
+                                        P (i)=p      .                     (16.4)
+                                         q       i,q+1
+          • If this instruction is either a Goto or a Halt,then
+                                         4p(n)
+                                  U (i)=  Eq(v ,v        ),               (16.5)
+                                   q              ij  i−1,j
+                                          j=1
+             and
+                                         Eq(i)=true.                       (16.6)
+              In what follows, we will deﬁne the remaining predicates for several of the
+          possible instructions. We leave the remaining cases as exercises.
+              Let us ﬁrst consider an instruction Load(n,l). Because l is the only
+          memory location that is accessed, we can deﬁne
+                                           4p(n)
+                                   Eq(i)=  Eq(aj,l).
+                                           j=1
+          Because its value changes to n, we can deﬁne
+                          4p(n)
+                   U (i)=  IfElse(Eq(a ,l),Eq(v ,n),Eq(v ,v          )).
+                    q                      j        ij        ij  i−1,j
+                           j=1
+          Note that the above expression speciﬁes that every vij such that aj = l has
+          its value changed to n.
+              Let us now compute the time needed to construct the resulting sub-
+          formula F. Because the arrays a and l each contain p(n)elements,E (i,j)
+                    q                    j                                 q
+          can be constructed in O(p2(n)) time. It is not hard to verify that Uq(i)can
+</div>
+    </div>
+  </body>
+</html>

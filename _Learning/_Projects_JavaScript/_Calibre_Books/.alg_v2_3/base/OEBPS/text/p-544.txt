@@ -1,0 +1,44 @@
+                                                 NP-Completeness                                        525
+              • 2mn copies of literals;
+              • mn asandncs; and
+              • mn bsandnds.
+              In order to make the above three sets of equal size, we add e to the second
+                                                                                         i
+              set and fi to the third set, for 1 ≤ i ≤ (m−1)n. We then include all possible
+              triples x ,e ,f  and ¬x ,e ,f  for 1 ≤ i ≤ n and 1 ≤ j ≤ (m−1)n.Using
+                         i  j   j            i   j   j
+              this construction, we can now show the following theorem.
+              Theorem 16.14. 3DM is NP-complete.
+              Proof.      Wehaveshownthat3DM∈NP.WewillshowthatitisNP-hard
+              by showing that 3-Sat ≤p 3DM. Speciﬁcally, we will show that the above
+                                             m
+              construction is a polynomial-time many-one reduction.
+                  Wewill ﬁrst show that the construction can be computed in polynomial
+              time. It is easily seen that the time required for the construction is
+              proportional to the number of triples produced. Suppose the CNF formula
+              F contains m variables and n clauses. The triples produced include
+              • 2mn triples for setting truth values;
+              • one triple for each literal in each clause, or at most 3n triples; and
+              • triples x ,e ,f  and ¬x ,e ,f  for each variable x,eachi such that
+                            i   j   j             i  j   j
+                 1 ≤ i ≤ n,andeachj such that 1 ≤ j ≤ (m−1)n,or2(m−1)mn2 triples.
+              Thus, the total number of triples produced is at most
+                                            2mn+3n+2(m−1)mn2.
+              Because this value is polynomial in the size of F, the construction can be
+              done in polynomial time.
+                  Let W be the set of triples constructed. In order to complete the proof,
+              we must show that W contains a matching iﬀ F is satisﬁable.
+              ⇒: Suppose W contains a matching M.Aswehavearguedabove,foreach
+              variable x, M must contain either those triples x ,a ,b  or those triples
+                                                                            i   xi  xi
+              ¬x ,a ,b ,for1≤ i ≤ n.Letussetx to false iﬀ the triples x ,a ,b 
+                  i   xi   xi                                                                   i   xi  xi
+              belong to M. M must also contain some triple α ,c,d for 1 ≤ i ≤ n.
+                                                                              ij  i   i
+              Because α      cannot also be in another triple in M, α              must be true.Thus,
+                          ij                                                    ij
+              each clause contains at least one true literal, so that F is satisﬁable.
+              ⇐: Suppose F is satisﬁable, and let A denote a satisfying assignment of
+              boolean values to the variables in F. We construct a matching M as follows.
+              First, if x is false in A, we include x ,a ,b  for 1 ≤ i ≤ n;otherwise,
+                                                              i   xi  xi

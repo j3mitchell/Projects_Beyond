@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 408</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-408.jpg" alt="Page 408" width="1282" height="1882"/>
+      <div class="ocr">                                 Chapter 12
+          Optimization II: Dynamic Programming
+         In the last chapter, we saw that greedy algorithms are eﬃcient solutions to
+         certain optimization problems. However, there are optimization problems for
+         which no greedy algorithm exists. In this chapter, we will examine a more
+         general technique, known as dynamic programming, for solving optimization
+         problems.
+            Dynamic programming is a technique of implementing a top-down
+         solution using bottom-up computation. We have already seen several exam-
+         ples of how top-down solutions can be implemented bottom-up. Dynamic
+         programming extends this idea by saving the results of many subproblems
+         in order to solve the desired problem. As a result, dynamic programming
+         algorithms tend to be more costly, in terms of both time and space, than
+         greedy algorithms. On the other hand, they are often much more eﬃcient
+         than straightforward recursive implementations of the top-down solution.
+         Thus, when greedy algorithms are not possible, dynamic programming
+         algorithms are often the most appropriate.
+         12.1 Making Change
+         Suppose we wish to produce a speciﬁc value n ∈ N from a given set of coin
+         denominations d &lt;d &lt; ···&lt;d, each of which is a positive integer. Our
+                      1   2        k
+         goal is to achieve a value of exactly n using a minimum number of coins. To
+         ensure that it is always possible to achieve a value of exactly n, we assume
+         that d = 1andthatwehaveasmanycoinsineachdenominationaswe need.
+             1
+            Anobvious greedy strategy is to choose at each step the largest coin that
+         does not cause the total to exceed n. For some sets of coin denominations,
+         this strategy will result in the minimum number of coins for any n. However,
+         suppose n =30,d =1,d = 10, and d = 25. The greedy strategy
+                        1      2           3
+                                     389
+</div>
+    </div>
+  </body>
+</html>

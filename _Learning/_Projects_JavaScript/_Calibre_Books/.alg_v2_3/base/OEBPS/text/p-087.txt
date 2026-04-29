@@ -1,0 +1,39 @@
+         68                Algorithms: A Top-Down Approach
+         Example 3.24.
+                                   n
+                                   2
+                                     Θ(i )
+                                  i=1
+         is the set of all functions of the form
+                                   n
+                                   f(i)
+                                   i=1
+                        2
+         such that f(i) ∈ Θ(i ).
+         Example 3.25. f(n) ∈ f(n−1)+Θ(n)forn ≥ 1. This is an example of
+         an asymptotic recurrence. The meaning is that f is a function satisfying a
+         recurrence of the form
+                             ⎧
+                             ⎨f(n−1)+h(n)forn≥1
+                       f(n)=
+                             ⎩h(n)otherwise,
+         for some h(n) ∈ Θ(n). Note that because h(0) may have any nonnegative
+         value, so may f(0).
+            We can use the above deﬁnitions to simplify our analysis of the lower
+         bound for MaxSumOpt. Instead of introducing the constant a to represent
+         the running time of a single iteration of the inner loop, we can simply use
+         Ω(1) to represent the lower bound for this running time. We can therefore
+         conclude that the total running time of the inner loop is in
+                                  n−1
+                                  Ω(1).
+                                  k=i
+            While this notation allows us to simplify the expression of bounds on
+         running times, we still need a way of manipulating such expressions as the
+         one above. In the next section, we present powerful tools for performing such
+         manipulation.
+         3.5 Smooth Functions and Summations
+         Asymptotic analysis involving summations can be simpliﬁed by applying a
+         rather general property of summations. This property relies on the fact that
+         our summations typically involve well-behaved functions — functions that
+         obey three important properties. The following deﬁnitions characterize these
+         properties.

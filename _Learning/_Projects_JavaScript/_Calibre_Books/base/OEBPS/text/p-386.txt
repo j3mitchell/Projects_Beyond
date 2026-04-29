@@ -1,0 +1,25 @@
+                                       Divide and Conquer                          367
+            Figure 10.11   Additional functions for BigNums
+           Exercise 10.25. Design a divide-and-conquer algorithm that implements
+           Powerasspeciﬁed in Figure 10.11. Your algorithm should run in O(M(n))
+           time, where n is the number of bits in the result and M(n)isthetime
+           needed for Multiply when the product contains n bits. You may make
+           reasonable assumptions about M(n), provided nlg3 and nlgnlglgn satisfy
+           these assumptions.
+           * Exercise 10.26. Design a divide-and-conquer algorithm that implements
+           ToStringas speciﬁed in Figure 10.11. Your algorithm should run in O(nq)
+           time, where n is the number of bits in u, assuming Multiply needs O(nq)
+           time to producean n-bit product. You may assume q is a real number strictly
+           larger than 1.
+           * Exercise 10.27. Given two natural numbers u and v which are not both
+           0, the greatest common divisor of u and v (or gcd(u,v)) is the largest integer
+           that evenly divides both u and v.
+           a. Prove that for any positive integers u and v,gcd(u,v)=gcd(v,u mod v).
+           b. Design a divide-and-conquer algorithm that takes as input two positive
+              integers u and v and returns gcd(u,v). Your algorithm should run in
+              O(lgmax(u,v)) time.
+           * Exercise 10.28. Given two positive integers u and m such that u<m,
+           a multiplicative inverse of u mod m is any positive integer v such that 1 ≤
+           v<mand(uv)modm=1.
+           a. Prove that for any positive integers u and v, there exist integers a and b
+              such that au+bv =gcd(u,v).

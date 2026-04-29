@@ -1,0 +1,30 @@
+          474                 Algorithms: A Top-Down Approach
+          these values. The theorem actually holds for all positive n, but the proof is
+          simpler when n is a power of 2.
+          Theorem 15.5. Let n be a power of 2.Then
+                                   cos 2π +isin 2π
+                                      n        n
+          is a principal nth root of unity.
+          Proof.  Weﬁrst observe that if n =1,then
+                               cos 2π +isin 2π =1+0i
+                                   n       n
+                                             =1.
+          Thus, from Theorem 15.2, it suﬃces to show that
+                             cos 2π +isin 2πn/2 = −1
+                                  n        n
+          whenever n>1 is a power of 2. We proceed by induction on n.
+          Base: n =2.Then
+                         cos 2π +isin 2πn/2 =cosπ+isinπ
+                              n        n
+                                             =−1+0i
+                                             =−1.
+          Induction Hypothesis: Assume for some n>2, where n is a power of 2,
+          that for any k such that 1 <k<n,ifk is a power of 2, then
+                             cos 2π +isin 2πk/2 = −1.
+                                  k        k
+          Induction Step:
+                                               	n/4
+                2π      2π n/2         2π      2π 2
+            cos n +isin n      =    cos n +isin n
+                               =cos2 2π −sin2 2π +2icos 2π sin 2πn/4.
+                                       n       n          n     n

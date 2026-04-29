@@ -1,0 +1,40 @@
+      56           Algorithms: A Top-Down Approach
+      processor. Thus, if we simply count execution steps, we obtain an estimate
+      on the running time, accurate to within a factor of u/l.
+        Obviously, these bounds will be diﬀerent for diﬀerent processors. Thus, if
+      an analysis of an algorithm is to be independent of the platform on which the
+      algorithm runs, the analysis must ignore constant factors.Inotherwords,
+      our analyses will be unable to conclude, for example, that algorithm A is
+      twice as fast (or a million times as fast) as algorithm B. By ignoring constant
+      factors, we therefore lose a great deal of precision in measuring performance.
+      However, we will see that this loss of precision leads us to focus on the
+      more dramatic diﬀerences in algorithm performance. These diﬀerences are
+      important enough that they tend to transcend the diﬀerences in platforms
+      on which an algorithm is executed.
+        Because we are ignoring constant factors, it only makes sense to consider
+      the behavior of an algorithm on an inﬁnite set of inputs. To see why, consider
+      that the execution times of two algorithms on the same single input are
+      always related by a constant factor — we simply divide the number of steps
+      in one execution by the number of steps in the other. This argument can be
+      extended to any ﬁnite set of inputs by dividing the number of steps in the
+      longest execution of one algorithm by the number of steps in the shortest
+      execution of the other.
+        Mathematically, we will describe the running time of an algorithm by a
+      function f : N → N. The input to f is a natural number representing the size
+      of an input. f(n) then represents the number of steps taken by the algorithm
+      on some particular input of size n. The context will determine which input of
+      size n we are considering, but usually we will be interested in the worst-case
+      input — an input of size n resulting in the maximum number of execution
+      steps.
+        Our analysis will then focus on this function f, not its value at speciﬁc
+      points. More precisely, we will focus our attention on the behavior of f(n)as
+      n increases. This behavior is known as the asymptotic behavior of f.Most
+      algorithms behave well enough if their inputs are small enough. By focusing
+      on asymptotic behavior, we can see how quickly the algorithm’s performance
+      will degrade as it processes larger inputs.
+        Throughout the remainder of this chapter, we will deﬁne various nota-
+      tions that allow us to relate the asymptotic behaviors of various functions
+      to each other. In this context, all functions will be of the form f : N → R≥0,
+      where R≥0 denotes the set of nonnegative real numbers (likewise, we will
+      use R to denote the set of all real numbers and R>0 to denote the set of
+      positive real numbers). Each of the notations we introduce will relate a set

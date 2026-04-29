@@ -1,0 +1,39 @@
+                                    Basic Techniques for Data Structures                        135
+                 This notion of amortized cost is therefore meaningful and more general
+             than the one introduced in Section 4.3. Speciﬁcally, because an amortized
+             cost is deﬁned for each operation, we can analyze this cost much like we
+             would analyze the actual running time of an operation. Note, however, that
+             this notion of amortization only provides an upper bound. For this reason,
+             we only use O-notation (not Ω or Θ) when we perform this type of analysis.
+                 This technique can now be used to analyze the amortized performance
+             of ExpandableArrayStack. However, ﬁnding an appropriate potential
+             function for this analysis turns out to be a bit tricky. As Theorem 4.5 implies,
+             we can perform an amortized analysis using any valid potential function;
+             however,apoorchoiceofpotentialfunctionmayresultinapoorupperbound
+             ontheamortized cost. For example, wecould choose as our potential function
+             the constant function 0 — i.e., for each state, the potential is 0. This function
+             meets the requirements of a potential function; however, because the change
+             in potential will always be 0, the amortized cost relative to this potential
+             function is the same as the actual cost. Finding a potential function that
+             yields constant amortized cost for the ExpandableArrayStackoperations
+             requires a bit of insight.
+                 For this reason, before we give a potential-function analysis for Expand-
+             ableArrayStack, we will begin with a simpler example. In particular,
+             consider the ADT BinaryCounter, speciﬁed in Figure 4.13. A Bina-
+             ryCountermaintains a value that is initially 1. The Increment operation
+             can be used to increment the value by 1, and the Value operation can be
+             used to retrieve the value as a ConsList of 1s and 0s, least signiﬁcant
+             bit ﬁrst. It is unlikely that this ADT has any useful purpose; however, the
+             implementation shown in Figure 4.14 yields an amortized analysis that is
+             simple enough to illustrate clearly the potential-function technique.
+                 This implementation uses a single readable representation variable,
+             value. The structural invariant states that value refers to the ConsList
+             speciﬁed by the Value operation. We leave it as an exercise to show that
+             this implementation satisﬁes its speciﬁcation.
+                 Let us now analyze the worst-case running time of Increment.Inthe
+             worst case, the ﬁrst loop can iterate n times, where n is the length of value.
+             This case occurs when value consists entirely of 1s; however, when value
+             begins with a 0, this loop will not iterate at all. It is easily seen that the
+             second loop always iterates the same number of times as the ﬁrst loop; hence,
+             in the worst case, the Increment operation runs in Θ(n) time, or in Θ(lgv)
+             time, where v is the value represented.

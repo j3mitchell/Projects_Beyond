@@ -1,0 +1,19 @@
+           310                      Algorithms: A Top-Down Approach
+             Figure 9.1  Anundirected graph
+             Figure 9.2  Adirected-graph-ﬁgure
+           indicate the directions of the edges. Conventionally, we draw the edge (u,v)
+           as an arrow from u to v (see Figure 9.2). For a directed edge (u,v)wesay
+           that v is adjacent to u, but not vice versa (unless (v,u)isalsoanedgein
+           the graph).
+               We usually want to associate some additional information with the
+           vertices and/or the edges. For example, if the graph is used to represent
+           distances between points on a map, we would want to associate a distance
+           with each edge. In addition, we might want to associate the name of a city
+           with each vertex. In order to simplify our presentation, we will focus our
+           attention on the edges of a graph and any information associated with them.
+           Speciﬁcally, as we did for disjoint sets in the previous chapter, we will adopt
+           the convention that the vertices of a graph will be designated by natural
+           numbers 0,...,n−1. If additional information needs to be associated with
+           vertices, it can be stored in an array indexed by the numbers designating the
+           vertices. While some applications might require more ﬂexibility, this scheme
+           is suﬃcient for our purposes.

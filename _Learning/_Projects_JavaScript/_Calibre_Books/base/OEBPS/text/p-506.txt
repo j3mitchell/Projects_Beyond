@@ -1,0 +1,43 @@
+                                        * The Fast Fourier Transform                            487
+              Figure 15.5    Implementation of NegConv,asspeciﬁedinFigure15.4
+                  NegConv(p[0..n−1],q[0..n−1],k)
+                     lgPsi ← k/n; p ← new Array[0..n−1]; q ← new Array[0..n−1]
+                     for j ← 0 to n−1
+                        p [j] ← ToRing(p[j].Shift(j ·lgPsi),k)
+                        q [j] ← ToRing(q[j].Shift(j ·lgPsi),k)
+                     r ←PosConv(p,q,k)
+                     r ←new Array[0..n−1]
+                     for j ← 0 to n−1
+                        r[j] ← ToRing(r [j].Shift((2n−j)lgPsi),k)
+                     return r
+                  Precondition: p[0..n−1] and q[0..n−1] are arrays of BigNums each no
+                              k
+                  larger than 2 , k is a Nat containing a power of 2, and n is a Nat containing
+                  a power of 2 such that n ≤ k.
+                  Postcondition: ReturnsaBigNumrepresentingthepositivewrappedcon-
+                                                                            k
+                  volution of p and q over the ring   m,+, , where m =2 +1.
+                  PosConv(p[0..n−1],q[0..n−1],k)
+             order to compute m, we assume the existence of a constant one, which refers
+             to a BigNum representing 1.
+                 Let us now turn to the implementation of ToRing, speciﬁed in
+             Figure 15.4. A straightforward way of computing x mod m is to divide x
+             by m using long division, and return the remainder. Fortunately, the form
+             of m makes this long division easy. Suppose we break m and x into k-bit
+             digits. Then the representation of m in this radix is 11.
+                 In order to see how each step of the long division can proceed, suppose
+                     k                     k
+             x = a2 +b,whereb<2 and a<m. We ﬁrst approximate the quotient
+             as a.Ifa ≤ b, the quotient is, in fact a, and the remainder is b−a.Ifa>b,
+                                                                              k
+             we try a −1 as the quotient. Then because a<m, a ≤ 2 ,sothat
+                                               k            k         k
+                                    (a−1)(2 +1)=a2 +a−2 −1
+                                                            k
+                                                      ≤a2 −1
+                                                            k
+                                                      ≤a2 +b.
+             Then a−1 is the quotient, and the remainder is
+                                   k                  k               k
+                                a2 +b−(a−1)(2 +1)=b+2 −a+1
+                                                             =b+m−a.

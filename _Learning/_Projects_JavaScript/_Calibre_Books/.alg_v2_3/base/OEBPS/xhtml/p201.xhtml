@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 201</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-201.jpg" alt="Page 201" width="1282" height="1882"/>
+      <div class="ocr">           182                     Algorithms: A Top-Down Approach
+           then insert the other into one of the children. We select which child based
+           on where we need the new leaf.
+               In this insertion algorithm, unless the tree is empty, there will always
+           be a recursive call. This recursive call will always be on the child in the
+           path that leads to the location at which we want to add the new node. Note
+           that the keys along this path from the root to the leaf are in nonincreasing
+           order. As long as the key to be inserted is smaller than the key to which it
+           is compared, it will be the inserted element in the recursive call. When it is
+           compared with a smaller key, that smaller key is used in the recursive call.
+           When this happens, the key passed to the recursive call will always be at
+           least as large as the root of the subtree in which it is being inserted; thus,
+           it will become the new root, and the old root will be used in the recursive
+           call. Thus, the entire process results in inserting the new key at the proper
+           point in the path from the root to the desired insertion location.
+               For example, suppose we wish to insert the priority 35 into the binary
+           heap shown in Figure 5.15(a). We ﬁrst ﬁnd the path to the next insertion
+           point. This path is 89,32,17	. The proper position of 35 in this path is
+           between 89 and 32. We insert 35 at this point, pushing the following priorities
+           downward. The result is shown in Figure 5.15(b).
+               Because we can easily ﬁnd the parent of a node in a BinaryHeap,we
+           can implement this algorithm bottom-up by starting at the location of the
+            Figure 5.15   Example of inserting 35 into a binary heap
+</div>
+    </div>
+  </body>
+</html>

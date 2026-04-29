@@ -1,0 +1,50 @@
+                                                NP-Completeness                                     543
+                  As the ﬁnal initialization speciﬁcation, we need to specify that all
+             memory locations are initially 0. We therefore construct
+                                                    4p(n)p(n)
+                                             F =  ¬v [k].
+                                               6                 0,j
+                                                     j=1 k=1
+             Clearly, we can construct this sub-formula in O(p2(n)) time.
+                  We now need a constraint specifying that at some point, a Halt(1)
+             instruction is executed. Let A be the set of program locations at which a
+             Halt(1) instruction appears. We then construct
+                                                      p(n)−1
+                                               F =  p .
+                                                 7                 ij
+                                                        i=0 j∈A
+             Because the size of A depends only on the problem X, this sub-formula can
+             be constructed in O(p(n)) time.
+                  To complete the formula, we need constraints specifying the correct
+             behavior of M. To this end, we will construct one sub-formula for each
+             instruction in the program of M. These sub-formulas will depend on the
+             particular instruction. Let 0 ≤ q<P,whereP is the number of instructions
+             in the program. In what follows, we will describe how the sub-formula F is
+                                                                                                    q
+             constructed depending on the instruction at program location q.
+                  Regardless of the speciﬁc instruction, the sub-formula will have the same
+             general form. In each case, F must specify that some particular behavior
+                                                 q
+             occurs whenever the program counter has a value of q. F will therefore have
+                                                                                q
+             the following form:
+                                                  p(n)
+                                           F =  If(p           ,ψ(i)),                         (16.1)
+                                             p              i−1,q   q
+                                                  i=1
+             where ψ (i) is a predicate specifying the result of executing the ith
+                        q
+             instruction.
+                  Each ψ (i) will be a conjunction of predicates, each specifying some
+                           q
+             aspect of the result of executing the ith instruction. In particular, ψ (i) will
+                                                                                              q
+             be the conjunction of the following predicates:
+             •U(i), which speciﬁes how the memory locations are updated;
+                  q
+             •E(i), which speciﬁes what memory locations must be represented in F in
+                 q
+                order for this instruction to be simulated (this speciﬁcation is needed to
+                prevent Uq(i) from being vacuously satisﬁed);
+             •I(i), which speciﬁes which input bits remain unread; and
+                  q

@@ -1,0 +1,35 @@
+                                    Basic Techniques for Data Structures                        115
+                i.e., with an error condition, then we assume the structure has not been
+                constructed.)
+             2. Maintenance: If the structural invariant holds prior to the beginning of
+                an operation, then it holds following completion of that operation.
+             3. Security: If the structural invariant holds, then the state can only be
+                modiﬁed by invoking one of this structure’s operations.
+             4. Termination: Each operation and constructor terminates.
+             5. Correctness: If the structural invariant and the precondition hold prior
+                to the beginning of an operation, then the postcondition holds following
+                the completion of that operation.
+                 We have already seen four of these ﬁve parts in proofs of algorithm
+             correctness. Security is needed not only to make sure that malicious or
+             untrusted code cannot violate the intended purpose of the data structure,
+             but also to guarantee that the structural invariant is maintained between
+             operations. In order to guarantee security, we need a mechanism for
+             restricting access to the representation variables. Before we can discuss
+             this mechanism, however, we ﬁrst need to provide some details about the
+             computational model we are assuming. We will tackle all of this shortly;
+             however, let us ﬁrst give an example of the other four parts via a correctness
+             proof for SimpleStack. We will ﬁrst state security as a lemma to be proved
+             later, then we will show that SimpleStack meets its speciﬁcation.
+             Lemma 4.1. Security holds for SimpleStack.
+             Theorem 4.2. SimpleStack meets its speciﬁcation.
+             Proof.     We must show initialization, maintenance, security, termination,
+             and correctness.
+             Initialization: First, suppose the precondition to the constructor is met;
+             i.e., that cap is a Nat. Then the constructor will terminate normally with
+             size = 0, which we interpret as meaning the represented sequence is empty.
+             Because we interpret SizeOf(elements), which is cap, to be the capacity of
+             the stack, the postcondition is therefore met. Furthermore, regardless of the
+             truth of the precondition, if the constructor terminates without error, size
+             will be 0 and elements will refer to an array. Because an array cannot have a
+             negative number of elements, its size is at least 0. Therefore, the structural
+             invariant holds (0 ≤ size ≤ SizeOf(elements)).

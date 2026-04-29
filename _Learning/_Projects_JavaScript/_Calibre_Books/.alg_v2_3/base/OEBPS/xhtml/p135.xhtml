@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 135</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-135.jpg" alt="Page 135" width="1282" height="1882"/>
+      <div class="ocr">           116                     Algorithms: A Top-Down Approach
+           Maintenance:Supposethestructuralinvariant holds priorto the execution
+           of an operation. We will only consider the operation Push(a); proofs for the
+           other two operations are left as an exercise.
+               The size of elements is not changed by this operation. The value of size
+           is only changed if it is strictly less than the size of elements.Inthiscase,
+           because it is incremented by 1, the value of size will remain nonnegative,
+           but will not exceed the size of elements. The structural invariant therefore
+           holds after this operation completes.
+           Security: Follows from Lemma 4.1.
+           Termination: Because there are no loops or recursive calls, all constructors
+           and operations terminate.
+           Correctness: Suppose the structural invariant holds prior to the execution
+           of an operation. We will only consider the operation Push(a); proofs for the
+           other two operations are left as an exercise.
+               Suppose the precondition holds, i.e., that the number of elements in
+           the stack is strictly less than the stack’s capacity. Because we interpret the
+           size of elements to be the stack’s capacity and the value of size to be the
+           number of elements in the stack, it follows that size &lt; SizeOf(elements).
+           The if condition is therefore true. size is therefore incremented by 1, which
+           we interpret as increasing the number of elements on the stack by 1. a is
+           then assigned to elements[size], which we interpret as the last element of the
+           represented sequence. The postcondition is therefore met.                
+               As the above proof illustrates, initialization, maintenance, termination,
+           and correctness can be shown using the techniques introduced in Chapter 2,
+           although the speciﬁc statements to be shown are somewhat diﬀerent. Proving
+           security, on the other hand, not only uses diﬀerent techniques, it also requires
+           a more detailed speciﬁcation of the underlying computational model that
+           we are assuming. We have chosen a model that is reasonably simple and
+           consistent, and which may beimplemented easily in avariety of programming
+           languages. In what follows, we will give its details.
+               One characteristic of our model involves the way in which data items
+           are associated with variables. With each data item, there is a reference that
+           uniquely identiﬁes it (i.e., two distinct references may not identify the same
+           data item). Furthermore, a reference may not itself be a data item; i.e., a
+           reference may not refer to another reference. It is the reference, not the data
+           item itself, that will be stored in a variable. We do not specify anything
+</div>
+    </div>
+  </body>
+</html>

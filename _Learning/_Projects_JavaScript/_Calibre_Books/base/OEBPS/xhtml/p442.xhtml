@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Page 442</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=1282, height=1882"/>
+    <link rel="stylesheet" type="text/css" href="../styles.css"/>
+  </head>
+  <body>
+    <div class="page" style="width:1282px;height:1882px;">
+      <img class="bg" src="../images/page-442.jpg" alt="Page 442" width="1282" height="1882"/>
+      <div class="ocr">                                            Depth-First Search                               423
+              Figure 13.7   Ageneric depth-ﬁrst search algorithm
+               Precondition: G refers to a Graph, i is a Nat less than G.Size(), sel
+               refers to a Selector with size G.Size() such that i is selected, and s refers
+               to a Searcher with size G.Size().
+               Postcondition:      Traverses a depth-ﬁrst spanning tree rooted at i on
+               the connected component containing i in the subgraph of G induced by
+               the selected vertices.  Each vertex j in this tree is processed by calling
+               s.PreProc(j) before any of j’s proper descendants are processed and by
+               calling s.PostProc(j) after all of j’s descendants are processed.        Each
+               edge (j,k) in the tree is processed by calling s.TreePreProc((j,k)) be-
+               fore k is processed and by calling s.TreePostProc((j,k)) after k is pro-
+               cessed. All other edges e from j to any node in G are processed by calling
+               s.OtherEdgeProc(e).
+               Dfs(G,i,sel,s)
+                  sel.Unselect(i); s.PreProc(
+                  while not L.IsEmpty()           i); L ← G.AllFrom(i)
+                     edge ← L.Head(); next ← edge.Dest(); L ← L.Tail()
+                     if sel.IsSelected(next)
+                        s.TreePreProc(edge)
+                        Dfs(G,next,sel,s)
+                        s.TreePostProc(edge)
+                     else
+                        s.OtherEdgeProc(edge)
+                  s.PostProc(i)
+                However, Theorem13.2 does not apply to depth-ﬁrst search on a directed
+            graph. To see why, consider the graph shown in Figure 13.8. The solid edges
+            in part (b) show a depth-ﬁrst search tree for the graph in part (a); the
+            remainingedgesofthegraphareshownwithdashedlinesinpart(b).Because
+            0 is the root and all other vertices are reachable from 0, all other vertices
+            are descendants of 0. Suppose (0,1) is the ﬁrst edge from 0 to be processed.
+            Because 2is the only vertex reachable from 1, it is the only proper descendant
+            of 1. Of the remaining edges from 0, only (0,3) leads to a vertex that has
+            not yet been reached, so 3 is the only other child of 0. Finally, because 4 is
+            reachable from 3, 3 is the parent of 4. In the resulting depth-ﬁrst spanning
+            tree, 3 is neither an ancestor nor a descendant of 1, but there is an edge
+            (3,1) in the graph.
+</div>
+    </div>
+  </body>
+</html>

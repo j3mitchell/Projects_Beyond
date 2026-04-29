@@ -1,0 +1,39 @@
+         92                  Algorithms: A Top-Down Approach
+         whenever n ≥ n2. Combining (3.11) and (3.12), we have
+                                         c g(n)
+                                  f(n) ≤ 1
+                                         c nq−p
+                                          2
+         whenever n ≥ max(n ,n ). Let c be an arbitrary positive real number. Let
+                           1  2
+                                1/(q−p)                     q−p
+         n =max(n ,n,(c /(c c))      )+1. Thenwhenn≥n ,n     >c/(c c)
+          0        1  2   1  2                           0        1  2
+         because q>p. We therefore have,
+                                         c g(n)
+                                  f(n) ≤ 1
+                                         c nq−p
+                                          2
+                                       <cg(n).
+         Therefore, f(n) ∈ o(g(n)).                                   
+         Theorem 3.58. Let p and q be any positive real numbers. Then
+         1.O(lgpn) ⊆ o(nq); and
+               p      qn
+         2.O(n )⊆o(2 ).
+            The proof of Theorem 3.58 requires some additional techniques, which
+         we present in the next section.
+         3.11  * Use of Limits in Asymptotic Analysis
+         The astute reader may have noticed a relationship between asymptotic
+         analysis and the concept of a limit. Both of these concepts involve the
+         behavior of a function f(n)asn increases. In order to examine this
+         relationship precisely, we now give the formal deﬁnition of a limit.
+         Deﬁnition 3.59. Let f : N → R,andletu ∈ R.Wesaythat
+                                   lim f(n)=u,
+                                   n→∞
+         if for every positive real number c, there is a natural number n0 such that
+         |f(n) − u| <cwhenever n ≥ n0. Likewise, for a function g : R≥0 → R,we
+         say that
+                                   lim g(x)=u,
+                                   x→∞
+         if for every positive real number c,thereisarealnumberx0 such that
+         |g(x) −u| <cwhenever x ≥ x0.
