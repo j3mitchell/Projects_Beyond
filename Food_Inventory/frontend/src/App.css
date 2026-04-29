@@ -1,0 +1,294 @@
+body {
+  margin: 0;
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+  background: linear-gradient(160deg, #f9f3ea 0%, #ebe9dc 100%);
+  color: #1f2933;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.app-shell {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.toolbar-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.error {
+  color: #9f1239;
+  font-weight: 700;
+}
+
+.progress-wrap {
+  width: 100%;
+  height: 16px;
+  background: #e5e7eb;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #16a34a, #22c55e);
+  transition: width 0.25s ease;
+}
+
+.card-grid {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.card-grid.stats {
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+
+.card-grid.two {
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #d3d5d1;
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.form-grid {
+  display: grid;
+  gap: 8px;
+}
+
+.ingredient-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.ingredient-grid .field-name {
+  grid-column: 1 / span 2;
+  grid-row: 1;
+}
+
+.ingredient-grid .field-category {
+  grid-column: 3;
+  grid-row: 1;
+}
+
+.ingredient-grid .field-barcode {
+  grid-column: 4;
+  grid-row: 1;
+}
+
+.ingredient-grid .field-amount {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.ingredient-grid .field-unit {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.ingredient-grid .field-unit-cost {
+  grid-column: 3;
+  grid-row: 2;
+}
+
+.ingredient-grid .field-cost-unit {
+  grid-column: 4;
+  grid-row: 2;
+}
+
+.ingredient-grid .field-expiration {
+  grid-column: 1;
+  grid-row: 3;
+}
+
+.ingredient-grid .field-shelf-life {
+  grid-column: 2;
+  grid-row: 3;
+}
+
+.ingredient-grid .field-reorder {
+  grid-column: 3;
+  grid-row: 3;
+}
+
+.ingredient-grid .field-submit {
+  grid-column: 1 / -1;
+  grid-row: 4;
+}
+
+.line {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.po-header-row {
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  gap: 8px;
+}
+
+.po-line {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.po-line select:nth-child(1) {
+  grid-column: 1 / span 2;
+}
+
+.po-line select:nth-child(2) {
+  grid-column: 3 / span 2;
+}
+
+.po-line .po-qty,
+.po-line .po-size,
+.po-line .po-unit-cost {
+  grid-row: 2;
+}
+
+.po-line .po-qty {
+  grid-column: 1 / span 1;
+}
+
+.po-line .po-size {
+  grid-column: 2 / span 1;
+}
+
+.po-line .po-unit-cost {
+  grid-column: 3 / span 2;
+}
+
+.meal-meta-row {
+  display: flex;
+  gap: 8px;
+}
+
+.meal-meta-row .meal-type-select,
+.meal-meta-row .meal-restrictions-select {
+  width: 50%;
+}
+
+.meal-meta-row .meal-restrictions-select {
+  min-height: 38px;
+  max-height: 38px;
+  overflow-y: hidden;
+  transition: max-height 0.18s ease, min-height 0.18s ease;
+}
+
+.meal-meta-row .meal-restrictions-select:hover,
+.meal-meta-row .meal-restrictions-select:focus,
+.meal-meta-row .meal-restrictions-select:focus-visible,
+.meal-meta-row .meal-restrictions-select:active {
+  min-height: 140px;
+  max-height: 140px;
+  overflow-y: auto;
+}
+
+input,
+select,
+button {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #bcc2c8;
+}
+
+.optional-field {
+  background: #f2f4f7;
+  color: #667085;
+  border-color: #d0d5dd;
+}
+
+.optional-field:focus,
+.optional-field:not(:placeholder-shown),
+.optional-field.has-value {
+  background: #ffffff;
+  color: #1f2933;
+  border-color: #98a2b3;
+}
+
+button {
+  border: none;
+  background: #1d4ed8;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  border-bottom: 1px solid #e5e7eb;
+  padding: 6px;
+  text-align: left;
+}
+
+@media (max-width: 640px) {
+  .toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .line {
+    grid-template-columns: 1fr;
+  }
+
+  .po-header-row {
+    grid-template-columns: 1fr;
+  }
+
+  .meal-meta-row {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .meal-meta-row .meal-type-select,
+  .meal-meta-row .meal-restrictions-select {
+    width: 100%;
+  }
+
+  .ingredient-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ingredient-grid .field-name,
+  .ingredient-grid .field-category,
+  .ingredient-grid .field-barcode,
+  .ingredient-grid .field-amount,
+  .ingredient-grid .field-unit,
+  .ingredient-grid .field-unit-cost,
+  .ingredient-grid .field-reorder,
+  .ingredient-grid .field-shelf-life,
+  .ingredient-grid .field-expiration,
+  .ingredient-grid .field-cost-unit,
+  .ingredient-grid .field-submit {
+    grid-column: 1;
+  }
+
+  .card-grid.two {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,8 @@
+Dear {{hiring_manager}},
+
+I am excited to apply for the {{job_title}} role at {{company_name}} in {{city}}.
+I bring strong experience in {{top_skill}}, and recently delivered {{impact_metric}}.
+I would welcome the opportunity to discuss how I can contribute to your team.
+
+Sincerely,
+[Your Name]

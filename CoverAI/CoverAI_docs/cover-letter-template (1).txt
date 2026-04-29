@@ -1,0 +1,12 @@
+Dear {{hiring_manager}},
+
+I am excited to apply for the {{position_title}} role at {{company_name}}.
+
+My background aligns with your needs in {{pos_skill_1}}, {{pos_skill_2}}, and {{pos_skill_3}}.
+I have applied these strengths in hands-on delivery at {{prev_company}}, with additional impact in {{additional_exp_1}} and {{additional_exp_2}}.
+
+Job posting: {{job_url}}
+Reference: {{ref}}
+
+Sincerely,
+{{my_signature}}
