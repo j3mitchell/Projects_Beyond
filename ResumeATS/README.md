@@ -17,6 +17,16 @@ A local-first app that takes a resume + job URL and outputs ATS-focused versions
 - Basic style inheritance from original DOCX (font name, size, bold, italic from first run).
 
 ## Run locally
+### One-click launcher
+```bash
+./start-resumeats.command
+```
+
+To stop it:
+```bash
+./stop-resumeats.command
+```
+
 ### Backend
 ```bash
 cd backend
