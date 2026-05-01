@@ -853,15 +853,13 @@ const server = createServer(async (req, res) => {
   }
 
   if (req.method === "POST" && requestUrl.pathname === "/api/control/restart") {
-    launchDetachedShell(`"${STOP_SCRIPT}" >/dev/null 2>&1; sleep 1; "${START_SCRIPT}" >/dev/null 2>&1`, {
-      COVERAI_SKIP_OPEN: "1",
-    });
+    launchDetachedShell(`sleep 1; "${START_SCRIPT}" >/dev/null 2>&1`);
     send(
       res,
       json({
         ok: true,
         action: "restart",
-        message: "CoverAI restart requested.",
+        message: "CoverAI restart requested. A fresh browser tab should open.",
       })
     );
     return;

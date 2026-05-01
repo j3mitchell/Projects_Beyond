@@ -52,7 +52,7 @@ const DEFAULT_COMPANY_SEED = [
   "Marriott Interntional",
   "Berkshire Hathaway",
   "CostCo",
-  "JPMorgan Chase",
+  "JP Morgan Chase",
   "CVS Health",
   "Apple",
   "Microsoft",
@@ -62,6 +62,7 @@ const DEFAULT_COMPANY_SEED = [
 // Starter position-title list for the Position Title dropdown.
 const DEFAULT_POSITION_SEED = [
   "Software Engineer",
+  "Data Engineer",
   "Web Developer",
   "Database Administrator",
   "Administrative Asst.",
@@ -105,6 +106,7 @@ const DEFAULT_POSITION_SKILL_SEED = [
   "Oracle",
   "MS SQL Server",
   "Accounting",
+  "AI", "Machine Learning", "Robotics",
   "Management",
   "Marketing",
   "Customer Service",
@@ -254,7 +256,7 @@ const FIELD_SUGGESTIONS = {
 
 const FIELD_LABEL_SUGGESTIONS = {
   hiring_manager: "Hiring Manager",
-  company_name: "Company Name",
+  company_name: "Company",
   position_title: "Position Title",
   pos_skill_1: "Pos Skill 1",
   pos_skill_2: "Pos Skill 2",
@@ -1264,6 +1266,14 @@ function toTemplateFields(fields) {
   });
 }
 
+function toSessionFields(fields) {
+  return fields.map((field) => ({
+    ...field,
+    label: typeof field.label === "string" ? field.label : "",
+    value: typeof field.value === "string" ? field.value : "",
+  }));
+}
+
 function formatDateYYMMDD(dateObj = new Date()) {
   const yy = String(dateObj.getFullYear()).slice(-2);
   const mm = String(dateObj.getMonth() + 1).padStart(2, "0");
@@ -1526,6 +1536,14 @@ function getFieldTextByKey(fields, fieldKey) {
   return (field.value || field.label || "").trim();
 }
 
+function normalizeSearchQuery(raw) {
+  return (raw || "").toLowerCase().replace(/\s+/g, " ").trim();
+}
+
+function hasInProgressSpacing(raw) {
+  return /\s{2,}/.test(raw || "") || (raw || "").trim() !== (raw || "");
+}
+
 function mergeSuggestionEntries(fieldSuggestions, fieldOrder = AI_REVIEW_FIELD_ORDER) {
   const normalized = normalizeAiFieldSuggestions(fieldSuggestions);
   const orderedKeys = [
@@ -1541,9 +1559,13 @@ function mergeSuggestionEntries(fieldSuggestions, fieldOrder = AI_REVIEW_FIELD_O
 
 function normalizeManagedFieldValues(fields) {
   const list = Array.isArray(fields) ? fields : [];
-  const company = cleanCompanyName(getFieldTextByKey(list, "company_name"));
-  const currentTitle = getFieldTextByKey(list, "position_title");
+  const companyField = list.find((field) => field.key === "company_name");
+  const positionField = list.find((field) => field.key === "position_title");
   const referenceTitle = getFieldTextByKey(list, "job_listing_ref_title");
+  const rawCompany = companyField ? companyField.value || companyField.label || "" : "";
+  const rawCurrentTitle = positionField ? positionField.value || positionField.label || "" : "";
+  const company = cleanCompanyName(rawCompany);
+  const currentTitle = rawCurrentTitle.trim();
 
   const currentLooksWrong =
     !currentTitle ||
@@ -1558,12 +1580,18 @@ function normalizeManagedFieldValues(fields) {
   let changed = false;
   const next = list.map((field) => {
     if (field.key === "company_name") {
+      if (hasInProgressSpacing(field.label || "") || hasInProgressSpacing(field.value || "")) {
+        return field;
+      }
       const nextValue = company;
       if ((field.label || "") === nextValue && (field.value || "") === nextValue) return field;
       changed = true;
       return { ...field, label: nextValue, value: nextValue };
     }
     if (field.key === "position_title") {
+      if (hasInProgressSpacing(field.label || "") || hasInProgressSpacing(field.value || "")) {
+        return field;
+      }
       const nextValue = normalizedTitle;
       if (!nextValue) return field;
       if ((field.label || "") === nextValue && (field.value || "") === nextValue) return field;
@@ -1908,9 +1936,9 @@ function App() {
   }, [companyUsage]);
 
   const companyMenuOptions = useMemo(() => {
-    const query = companyMenuFilter.trim().toLowerCase();
+    const query = normalizeSearchQuery(companyMenuFilter);
     if (!query) return companyDropdownOptions;
-    return companyDropdownOptions.filter((name) => name.toLowerCase().includes(query));
+    return companyDropdownOptions.filter((name) => normalizeSearchQuery(name).includes(query));
   }, [companyDropdownOptions, companyMenuFilter]);
 
   const positionDropdownOptions = useMemo(
@@ -1922,9 +1950,9 @@ function App() {
   );
 
   const positionMenuOptions = useMemo(() => {
-    const query = positionMenuFilter.trim().toLowerCase();
+    const query = normalizeSearchQuery(positionMenuFilter);
     if (!query) return positionDropdownOptions;
-    return positionDropdownOptions.filter((name) => name.toLowerCase().includes(query));
+    return positionDropdownOptions.filter((name) => normalizeSearchQuery(name).includes(query));
   }, [positionDropdownOptions, positionMenuFilter]);
 
   const positionSkillDropdownOptions = useMemo(
@@ -1936,9 +1964,9 @@ function App() {
   );
 
   const positionSkillMenuOptions = useMemo(() => {
-    const query = skillMenuFilter.trim().toLowerCase();
+    const query = normalizeSearchQuery(skillMenuFilter);
     if (!query) return positionSkillDropdownOptions;
-    return positionSkillDropdownOptions.filter((name) => name.toLowerCase().includes(query));
+    return positionSkillDropdownOptions.filter((name) => normalizeSearchQuery(name).includes(query));
   }, [positionSkillDropdownOptions, skillMenuFilter]);
 
   const isPositionSkillKey = (fieldKey) => ["pos_skill_1", "pos_skill_2", "pos_skill_3"].includes(fieldKey);
@@ -2068,6 +2096,25 @@ function App() {
   // Update one property on one field card.
   const updateField = (id, key, value) => {
     setFields((prev) => prev.map((field) => (field.id === id ? { ...field, [key]: value } : field)));
+  };
+
+  const updateFieldText = (id, rawValue) => {
+    setFields((prev) =>
+      prev.map((field) => {
+        if (field.id !== id) return field;
+        return { ...field, label: rawValue, value: rawValue };
+      })
+    );
+  };
+
+  const commitManualFieldText = (fieldKey, rawValue) => {
+    const normalized = normalizeFieldValue(rawValue);
+    setFields((prev) =>
+      prev.map((field) =>
+        field.key === fieldKey ? { ...field, label: normalized, value: normalized } : field
+      )
+    );
+    if (fieldKey === "company_name") recordCompanyUsage(normalized);
   };
 
   // Increase usage count for a company so frequent choices rise in the dropdown.
@@ -2674,6 +2721,37 @@ function App() {
     }
   };
 
+  const exportSessionFile = async () => {
+    const sessionFields = toSessionFields(fields);
+    const payload = JSON.stringify(
+      {
+        type: "coverai_session",
+        version: 1,
+        createdAt: new Date().toISOString(),
+        style: getSelectedStyleCode(),
+        template,
+        fields: sessionFields,
+      },
+      null,
+      2
+    );
+    const suggestedName = `coverai_session_${formatDateYYMMDD()}_${getSelectedStyleCode()}`;
+    const savedFileName = await saveJsonWithDialog(payload, suggestedName);
+    if (savedFileName) {
+      saveRecentSession(savedFileName, {
+        template,
+        fields: sessionFields,
+        selectedStyle,
+        customStyle1Code,
+        customStyle2Code,
+      });
+      setNotice("Session JSON created.");
+      setError("");
+    } else {
+      setNotice("Session save canceled.");
+    }
+  };
+
   // Load a previously exported JSON project/template file.
   const importProjectFromFile = async (file) => {
     if (!file) return;
@@ -2877,10 +2955,10 @@ function App() {
 
     try {
       const response = await requestControlRestart();
-      setNotice(response?.message || "Starting CoverAI services...");
-      window.setTimeout(() => {
-        window.location.reload();
-      }, 3200);
+      clearStartupTimer();
+      setStartupProgress(100);
+      setStartupPhase("ready");
+      setNotice(response?.message || "CoverAI restart requested. A fresh browser tab should open.");
     } catch (requestError) {
       clearStartupTimer();
       setStartupPhase("ready");
@@ -3004,8 +3082,11 @@ function App() {
               >
                 Import Session
               </button>
-              <button type="button" className="menu-item" onClick={createTemplateFile} disabled={!isReady}>
+              <button type="button" className="menu-item" onClick={exportSessionFile} disabled={!isReady}>
                 Export Session
+              </button>
+              <button type="button" className="menu-item" onClick={createTemplateFile} disabled={!isReady}>
+                Export Template
               </button>
               <div className="menu-submenu">
                 <button type="button" className="menu-item submenu-trigger" disabled={!isReady}>
@@ -3341,6 +3422,60 @@ function App() {
                 </>
               )}
             </section>
+
+            <section className="ai-workbench">
+              <div className="ai-workbench-header">
+                <h3>AI Workbench</h3>
+                <p>Use the Job URL field or paste raw job text here. Resume text helps the draft stay grounded.</p>
+              </div>
+              <textarea
+                className="field-textarea ai-textarea"
+                value={aiJobText}
+                onChange={(event) => setAiJobText(event.target.value)}
+                disabled={!isReady}
+                placeholder="Paste job description text here for AI extraction or drafting."
+              />
+              <textarea
+                className="field-textarea ai-textarea"
+                value={resumeText}
+                onChange={(event) => setResumeText(event.target.value)}
+                disabled={!isReady}
+                placeholder="Paste resume or profile text here to ground AI drafts."
+              />
+              <label className="ai-session-toggle">
+                <input
+                  type="checkbox"
+                  checked={useCurrentBrowserSession}
+                  onChange={(event) => setUseCurrentBrowserSession(event.target.checked)}
+                  disabled={!isReady}
+                />
+                <span>Use current Chrome session for site access</span>
+              </label>
+              <div className="ai-inline-actions">
+                <button type="button" className="button" onClick={runAiExtractJob} disabled={!isReady || isAiExtracting}>
+                  {isAiExtracting ? "Extracting..." : "AI Extract Job"}
+                </button>
+                <button type="button" className="button" onClick={runAiDraftLetter} disabled={!isReady || isAiDrafting}>
+                  {isAiDrafting ? "Drafting..." : "AI Draft Letter"}
+                </button>
+              </div>
+              {aiScreenshotPreviews.length > 0 && (
+                <div className="ai-screenshot-grid" aria-label="AI screenshot previews">
+                  {aiScreenshotPreviews.map((preview) => (
+                    <figure className="ai-screenshot-card" key={preview.id}>
+                      <img className="ai-screenshot-image" src={preview.src} alt={preview.label} />
+                      <figcaption>
+                        <strong>{preview.label}</strong>
+                        {preview.excerpt && <span>{preview.excerpt}</span>}
+                      </figcaption>
+                    </figure>
+                  ))}
+                </div>
+              )}
+              <div className="ai-json-preview" aria-label="AI extracted job JSON">
+                {jsonPreText || "Job-related JSON from AI extraction will appear here."}
+              </div>
+            </section>
           </div>
         </section>
 
@@ -3371,60 +3506,6 @@ function App() {
               {showAdvancedFields ? "Hide advanced fields" : "Show advanced fields"}
             </button>
           </div>
-
-          <section className="ai-workbench">
-            <div className="ai-workbench-header">
-              <h3>AI Workbench</h3>
-              <p>Use the Job URL field or paste raw job text here. Resume text helps the draft stay grounded.</p>
-            </div>
-            <textarea
-              className="field-textarea ai-textarea"
-              value={aiJobText}
-              onChange={(event) => setAiJobText(event.target.value)}
-              disabled={!isReady}
-              placeholder="Paste job description text here for AI extraction or drafting."
-            />
-            <textarea
-              className="field-textarea ai-textarea"
-              value={resumeText}
-              onChange={(event) => setResumeText(event.target.value)}
-              disabled={!isReady}
-              placeholder="Paste resume or profile text here to ground AI drafts."
-            />
-            <label className="ai-session-toggle">
-              <input
-                type="checkbox"
-                checked={useCurrentBrowserSession}
-                onChange={(event) => setUseCurrentBrowserSession(event.target.checked)}
-                disabled={!isReady}
-              />
-              <span>Use current Chrome session for site access</span>
-            </label>
-            <div className="ai-inline-actions">
-              <button type="button" className="button" onClick={runAiExtractJob} disabled={!isReady || isAiExtracting}>
-                {isAiExtracting ? "Extracting..." : "AI Extract Job"}
-              </button>
-              <button type="button" className="button" onClick={runAiDraftLetter} disabled={!isReady || isAiDrafting}>
-                {isAiDrafting ? "Drafting..." : "AI Draft Letter"}
-              </button>
-            </div>
-            {aiScreenshotPreviews.length > 0 && (
-              <div className="ai-screenshot-grid" aria-label="AI screenshot previews">
-                {aiScreenshotPreviews.map((preview) => (
-                  <figure className="ai-screenshot-card" key={preview.id}>
-                    <img className="ai-screenshot-image" src={preview.src} alt={preview.label} />
-                    <figcaption>
-                      <strong>{preview.label}</strong>
-                      {preview.excerpt && <span>{preview.excerpt}</span>}
-                    </figcaption>
-                  </figure>
-                ))}
-              </div>
-            )}
-            <div className="ai-json-preview" aria-label="AI extracted job JSON">
-              {jsonPreText || "Job-related JSON from AI extraction will appear here."}
-            </div>
-          </section>
 
           <div className="token-grid">
             {fields.map((field) => (
@@ -3531,11 +3612,12 @@ function App() {
                           return;
                         }
                         if (field.key === "company_name") {
-                          recordCompanyUsage(event.target.value);
+                          commitManualFieldText("company_name", event.target.value);
                           window.setTimeout(() => setIsCompanyMenuOpen(false), 120);
                           return;
                         }
                         if (field.key === "position_title") {
+                          commitManualFieldText("position_title", event.target.value);
                           window.setTimeout(() => setIsPositionMenuOpen(false), 120);
                           return;
                         }
@@ -3661,7 +3743,18 @@ function App() {
                     <textarea
                       className="field-textarea"
                       value={field.value}
-                      onChange={(event) => updateField(field.id, "value", event.target.value)}
+                      onChange={(event) => {
+                        const next = event.target.value;
+                        if (
+                          field.key === "company_name" ||
+                          field.key === "position_title" ||
+                          isPositionSkillKey(field.key)
+                        ) {
+                          updateFieldText(field.id, next);
+                          return;
+                        }
+                        updateField(field.id, "value", next);
+                      }}
                       onPaste={(event) => {
                         if (field.key !== "job_url") return;
                         const pasted = event.clipboardData.getData("text/plain") || "";
@@ -3673,6 +3766,14 @@ function App() {
                         if (field.key !== "job_url") return;
                         if (!isHttpUrl(event.target.value)) return;
                         resolveJobReferenceFromUrl(event.target.value);
+                      }}
+                      onFocus={(event) => {
+                        event.target.select();
+                      }}
+                      onBlurCapture={(event) => {
+                        if (field.key === "company_name" || field.key === "position_title" || isPositionSkillKey(field.key)) {
+                          commitManualFieldText(field.key, event.target.value);
+                        }
                       }}
                       onKeyDown={(event) => {
                         if (field.key !== "job_url") return;
