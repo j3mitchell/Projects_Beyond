@@ -1,0 +1,10 @@
+.DS_Store
+.venv/
+__pycache__/
+.pycache/
+*.pyc
+node_modules/
+build/
+.tech180.*
+.tech180*.pid
+.tech180*.log
