@@ -210,6 +210,15 @@ function injectBridge(html) {
   if (!html) return "";
   const doc = new DOMParser().parseFromString(html, "text/html");
 
+  // The rendered backend snapshot already places the browser-selected image in
+  // `src`. Remove stale responsive candidates so they cannot override it inside
+  // Tech180's differently-sized preview frame.
+  doc.querySelectorAll("img[src]").forEach((image) => {
+    image.removeAttribute("srcset");
+    image.removeAttribute("sizes");
+    image.setAttribute("loading", "eager");
+  });
+
   doc.querySelectorAll("[data-tech180-active]").forEach((node) => {
     node.removeAttribute("data-tech180-active");
   });
@@ -581,18 +590,18 @@ function buildSeparatedExport(html, baseName = "") {
 
   const stylesheet = doc.createElement("link");
   stylesheet.rel = "stylesheet";
-  stylesheet.href = `${baseName}styles.css`;
+  stylesheet.href = `css/${baseName}styles.css`;
   doc.head.appendChild(stylesheet);
 
   const script = doc.createElement("script");
-  script.src = `${baseName}script.js`;
+  script.src = `js/${baseName}script.js`;
   script.defer = true;
   doc.body.appendChild(script);
 
   return {
     [`${baseName ? baseName.slice(0, -1) : "index"}.html`]: "<!doctype html>\n" + doc.documentElement.outerHTML,
-    [`${baseName}styles.css`]: cssParts.join("\n\n") + "\n",
-    [`${baseName}script.js`]:
+    [`css/${baseName}styles.css`]: cssParts.join("\n\n") + "\n",
+    [`js/${baseName}script.js`]:
       (jsParts.length
         ? jsParts.join("\n\n")
         : "// Tech180 export: no active JavaScript was present in the safe recreation.") + "\n",
@@ -647,6 +656,7 @@ function App() {
   const [replaceText, setReplaceText] = useState("");
   const [findIndex, setFindIndex] = useState(-1);
   const [pageTabs, setPageTabs] = useState([]);
+  const [exportPageUrls, setExportPageUrls] = useState(new Set());
   const [commandHistory, setCommandHistory] = useState([]);
   const [elementFilter, setElementFilter] = useState("");
   const [elementTypeFilter, setElementTypeFilter] = useState("all");
@@ -854,6 +864,8 @@ function App() {
       setStatus(`${data.elements.length} editable elements found`);
       const tabs = data.subpages?.length ? data.subpages : [{ title: data.title, url: data.source_url }];
       setPageTabs(tabs);
+      // Every discovered page is included unless the user opts it out.
+      setExportPageUrls(new Set(tabs.map((tab) => tab.url)));
       pageCacheRef.current = new Map([[data.source_url, data]]);
       setImportProgress(100);
     } catch (err) {
@@ -971,49 +983,73 @@ function App() {
       localObjectUrlsRef.current.forEach((objectUrl) => URL.revokeObjectURL(objectUrl));
       localObjectUrlsRef.current.clear();
 
-      const rawHtml = await htmlFile.text();
+      const projectFile = files.find((file) =>
+        /(^|\/)dev\/tech180-project\.json$/i.test(file.webkitRelativePath || file.name)
+      );
+      let projectSettings = null;
+      if (projectFile) {
+        try {
+          projectSettings = JSON.parse(await projectFile.text());
+        } catch {
+          throw new Error("dev/tech180-project.json is not valid JSON.");
+        }
+      }
       setImportProgress(35);
-      setStatus("Preparing saved HTML");
+      setStatus(`Preparing ${htmlFiles.length} saved page${htmlFiles.length === 1 ? "" : "s"}`);
       await nextPaint();
 
-      const doc = new DOMParser().parseFromString(rawHtml, "text/html");
-      doc.querySelectorAll("script").forEach((script) => script.remove());
-      doc.querySelectorAll("[data-tech180-active]").forEach((node) => {
-        node.removeAttribute("data-tech180-active");
-      });
-      if (files.length > 1) {
-        setImportProgress(58);
-        setStatus(`Reconnecting assets from ${files.length} files`);
+      const restoredPages = [];
+      for (let index = 0; index < htmlFiles.length; index += 1) {
+        const savedHtmlFile = htmlFiles[index];
+        const rawHtml = await savedHtmlFile.text();
+        const doc = new DOMParser().parseFromString(rawHtml, "text/html");
+        doc.querySelectorAll("script").forEach((script) => script.remove());
+        doc.querySelectorAll("[data-tech180-active]").forEach((node) => node.removeAttribute("data-tech180-active"));
+        if (files.length > 1) {
+          await restoreFolderStyles(doc, files, savedHtmlFile);
+          restoreFolderAssets(doc, files, savedHtmlFile, localObjectUrlsRef.current);
+        }
+        const restoredElements = buildEditableElements(doc);
+        const restoredHtml = "<!doctype html>\n" + doc.documentElement.outerHTML;
+        const relativeName = savedHtmlFile.webkitRelativePath || savedHtmlFile.name;
+        const rootFilename = relativeName.split("/").pop();
+        const metadata = projectSettings?.pages?.find((item) => item.filename === rootFilename);
+        const title = metadata?.title || doc.title || rootFilename.replace(/\.html?$/i, "");
+        const sourceLabel = metadata?.sourceUrl || relativeName;
+        restoredPages.push({
+          title,
+          source_url: sourceLabel,
+          html: restoredHtml,
+          elements: restoredElements,
+          subpages: [],
+          warnings: ["Saved project restored locally. Active scripts remain disabled for preview safety."],
+          render_mode: "local",
+        });
+        setImportProgress(35 + Math.round(((index + 1) / htmlFiles.length) * 50));
         await nextPaint();
-        await restoreFolderStyles(doc, files, htmlFile);
-        restoreFolderAssets(doc, files, htmlFile, localObjectUrlsRef.current);
       }
 
-      setImportProgress(78);
-      setStatus("Restoring editable elements");
-      await nextPaint();
-      const restoredElements = buildEditableElements(doc);
-      const restoredHtml = "<!doctype html>\n" + doc.documentElement.outerHTML;
-      const title = doc.title || htmlFile.name.replace(/\.html?$/i, "");
-      const sourceLabel = htmlFile.webkitRelativePath || htmlFile.name;
-      const restoredPage = {
-        title,
-        source_url: sourceLabel,
-        subpages: [],
-        warnings: ["Saved project restored locally. Active scripts remain disabled for preview safety."],
-        render_mode: "local",
-      };
+      const primaryFilename = htmlFile.name.split("/").pop();
+      const restoredPage = restoredPages.find((item) =>
+        projectSettings?.pages?.find((metadata) => metadata.filename === primaryFilename)?.sourceUrl === item.source_url
+      ) || restoredPages[0];
+      const tabs = restoredPages.map((item) => ({ title: item.title, url: item.source_url }));
 
       setPage(restoredPage);
-      setHtml(restoredHtml);
-      setIframeHtml(restoredHtml);
-      setElements(restoredElements);
+      setHtml(restoredPage.html);
+      setIframeHtml(restoredPage.html);
+      setElements(restoredPage.elements);
       setUrl("");
-      setActiveId(restoredElements[0]?.id || "");
+      setActiveId(restoredPage.elements[0]?.id || "");
       setCommandHistory([]);
-      setStatus(`${restoredElements.length} editable elements restored`);
-      setPageTabs([{ title, url: sourceLabel }]);
-      pageCacheRef.current = new Map([[sourceLabel, { ...restoredPage, html: restoredHtml, elements: restoredElements }]]);
+      setStatus(`${restoredPages.length} page${restoredPages.length === 1 ? "" : "s"} restored`);
+      setPageTabs(tabs);
+      const selectedUrls = projectSettings?.pages
+        ?.filter((item) => item.selectedForExport !== false)
+        .map((item) => item.sourceUrl);
+      setExportPageUrls(new Set(selectedUrls?.length ? selectedUrls : tabs.map((tab) => tab.url)));
+      setVideoOptionChoices(projectSettings?.videoOptions || {});
+      pageCacheRef.current = new Map(restoredPages.map((item) => [item.source_url, item]));
       setImportProgress(100);
       await nextPaint();
     } catch (err) {
@@ -1306,7 +1342,9 @@ function App() {
     try {
       await nextPaint();
       if (page?.source_url) pageCacheRef.current.set(page.source_url, { ...page, html, elements });
-      const pages = pageTabs.length ? pageTabs : [{ title: page?.title, url: page?.source_url }];
+      const availablePages = pageTabs.length ? pageTabs : [{ title: page?.title, url: page?.source_url }];
+      const pages = availablePages.filter((item) => exportPageUrls.has(item.url));
+      if (!pages.length) throw new Error("Select at least one page to export.");
       const uniquePages = pages.filter((item, index, all) =>
         item.url && all.findIndex((other) => other.url.replace(/\/$/, "") === item.url.replace(/\/$/, "")) === index
       );
@@ -1335,6 +1373,20 @@ function App() {
         urlToFilename.set(item.url.replace(/\/$/, ""), `${baseName ? baseName.slice(0, -1) : "index"}.html`);
       }
       rewriteExportLinks(files, urlToFilename);
+      // Keep editor-only project information separate from the public site.
+      // This file lets Open Folder restore page tabs and export selections.
+      files["dev/tech180-project.json"] = JSON.stringify({
+        format: "tech180-project",
+        version: 1,
+        exportedAt: new Date().toISOString(),
+        pages: uniquePages.map((item, index) => ({
+          title: item.title || item.url,
+          sourceUrl: item.url,
+          filename: urlToFilename.get(item.url.replace(/\/$/, "")),
+          selectedForExport: exportPageUrls.has(item.url),
+        })),
+        videoOptions: videoOptionChoices,
+      }, null, 2);
       const exportAssets = [];
       const usedNames = new Set();
       largeVideoFilesRef.current.forEach((file, objectUrl) => {
@@ -1357,19 +1409,17 @@ function App() {
       setStatus("Saving project folder");
       await nextPaint();
 
-      let response;
-      if (exportAssets.length) {
-        const form = new FormData();
-        form.append("files_json", JSON.stringify(files));
-        exportAssets.forEach(({ file, safeName }) => form.append("assets", file, safeName));
-        response = await fetch(`${API_BASE}/api/export-assets`, { method: "POST", body: form });
-      } else {
-        response = await fetch(`${API_BASE}/api/export`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ files }),
-        });
-      }
+      // Always stream exports. Multi-page sites with captured images can make
+      // the page JSON hundreds of megabytes even when no video was replaced;
+      // sending that through the regular JSON endpoint can exhaust the server.
+      const form = new FormData();
+      form.append(
+        "files_json",
+        new Blob([JSON.stringify(files)], { type: "application/json" }),
+        "tech180-files.json"
+      );
+      exportAssets.forEach(({ file, safeName }) => form.append("assets", file, safeName));
+      const response = await fetch(`${API_BASE}/api/export-assets`, { method: "POST", body: form });
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.detail || "Folder export failed.");
@@ -1426,11 +1476,11 @@ function App() {
         <div className="saved-import">
           <span>Continue a saved project</span>
           <div className="saved-import-actions">
-            <button type="button" onClick={() => fileInputRef.current?.click()} disabled={isImporting}>
+            <button type="button" onClick={() => folderInputRef.current?.click()} disabled={isImporting}>
               Open project
             </button>
-            <button type="button" onClick={() => folderInputRef.current?.click()} disabled={isImporting}>
-              Open folder
+            <button type="button" onClick={() => fileInputRef.current?.click()} disabled={isImporting}>
+              Open ZIP / HTML
             </button>
           </div>
           <input
@@ -1489,10 +1539,41 @@ function App() {
         <section className="editor-panel">
           <div className="panel-heading">
             <h2>Page elements</h2>
-            <button type="button" onClick={exportProject} disabled={!html || isImporting}>
+            <button type="button" onClick={exportProject} disabled={!html || isImporting || !exportPageUrls.size}>
               Export folder
             </button>
           </div>
+          {pageTabs.length > 0 && (
+            <section className="export-page-picker" aria-label="Pages to export">
+              <div className="export-page-heading">
+                <strong>Pages to export</strong>
+                <div>
+                  <button
+                    type="button"
+                    onClick={() => setExportPageUrls(new Set(pageTabs.map((tab) => tab.url)))}
+                  >Select all</button>
+                  <button type="button" onClick={() => setExportPageUrls(new Set())}>Deselect all</button>
+                </div>
+              </div>
+              <div className="export-page-list">
+                {pageTabs.map((tab) => (
+                  <label key={tab.url}>
+                    <input
+                      type="checkbox"
+                      checked={exportPageUrls.has(tab.url)}
+                      onChange={(event) => setExportPageUrls((current) => {
+                        const next = new Set(current);
+                        if (event.target.checked) next.add(tab.url);
+                        else next.delete(tab.url);
+                        return next;
+                      })}
+                    />
+                    <span title={tab.title || tab.url}>{tab.title || tab.url}</span>
+                  </label>
+                ))}
+              </div>
+            </section>
+          )}
 
           <p className="element-help">Click an item to select it. Use the Selection controls on the right to climb through its containers.</p>
           <div className="element-filters">

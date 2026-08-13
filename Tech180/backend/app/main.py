@@ -78,6 +78,11 @@ COMPUTED_STYLE_SCRIPT = """
 
     if (element.tagName === "IMG" && element.currentSrc) {
       element.setAttribute("src", element.currentSrc);
+      // Freeze the browser-selected rendered image. Keeping the website's old
+      // responsive list can make `srcset` override this working `src` later.
+      element.removeAttribute("srcset");
+      element.removeAttribute("sizes");
+      element.setAttribute("loading", "eager");
     }
   }
 
@@ -477,25 +482,45 @@ def _create_export_directory() -> tuple[Path, str]:
 
 @app.post("/api/export", response_model=ExportResponse)
 def export_project(payload: ExportRequest) -> ExportResponse:
-    required_files = {"index.html", "styles.css", "script.js"}
+    required_files = {"index.html", "css/styles.css", "js/script.js"}
     if not required_files.issubset(payload.files):
         raise HTTPException(
             status_code=400,
             detail="Export must contain at least index.html, styles.css, and script.js.",
         )
 
-    safe_files = {
-        filename: content
-        for filename, content in payload.files.items()
-        if Path(filename).name == filename and re.fullmatch(r"[A-Za-z0-9._-]+", filename)
-    }
+    # Exported code may live only in the approved css/ and js/ folders. HTML
+    # pages remain in the project root, keeping the final site easy to browse.
+    def is_safe_export_path(filename: str) -> bool:
+        path = Path(filename)
+        if path.is_absolute() or ".." in path.parts:
+            return False
+        if len(path.parts) == 1:
+            return path.suffix.lower() == ".html" and bool(re.fullmatch(r"[A-Za-z0-9._-]+", path.name))
+        return (
+            len(path.parts) == 2
+            and path.parts[0] in {"css", "js", "dev"}
+            and bool(re.fullmatch(r"[A-Za-z0-9._-]+", path.name))
+            and (
+                (path.parts[0] == "css" and path.suffix == ".css")
+                or (path.parts[0] == "js" and path.suffix == ".js")
+                or (path.parts[0] == "dev" and path.name == "tech180-project.json")
+            )
+        )
+
+    safe_files = {filename: content for filename, content in payload.files.items() if is_safe_export_path(filename)}
     if len(safe_files) != len(payload.files):
         raise HTTPException(status_code=400, detail="Export contains an unsafe filename.")
 
     export_directory, folder_name = _create_export_directory()
     try:
+        # Reserve a clean place for future developer-only files. This folder is
+        # intentionally empty in a normal static-site export.
+        (export_directory / "dev").mkdir(exist_ok=True)
         for filename, content in sorted(safe_files.items()):
-            (export_directory / filename).write_text(content, encoding="utf-8")
+            destination = export_directory / filename
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            destination.write_text(content, encoding="utf-8")
     except OSError as exc:
         raise HTTPException(status_code=500, detail=f"Could not write export files: {exc}") from exc
 
@@ -504,13 +529,16 @@ def export_project(payload: ExportRequest) -> ExportResponse:
 
 @app.post("/api/export-assets", response_model=ExportResponse)
 async def export_project_with_assets(
-    files_json: str = Form(...),
+    files_json: UploadFile = File(...),
     assets: list[UploadFile] = File(default=[]),
 ) -> ExportResponse:
     try:
-        files = json.loads(files_json)
+        # Receive project JSON as a streamed file. Form text fields have a low
+        # size ceiling that rejects realistic rendered pages before this route
+        # can process them.
+        files = json.loads((await files_json.read()).decode("utf-8"))
         payload = ExportRequest(files=files)
-    except (json.JSONDecodeError, ValueError) as exc:
+    except (UnicodeDecodeError, json.JSONDecodeError, ValueError) as exc:
         raise HTTPException(status_code=400, detail="Export file data is invalid.") from exc
 
     result = export_project(payload)
