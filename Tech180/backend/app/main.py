@@ -30,7 +30,6 @@ CONTENT_SELECTORS = "h1,h2,h3,h4,h5,h6,p,a,button,span,li,figcaption,blockquote,
 CONTAINER_SELECTORS = "div,section,article,header,footer,main,nav,aside,form"
 CONTAINER_TAGS = {"div", "section", "article", "header", "footer", "main", "nav", "aside", "form"}
 MAX_SUBPAGES = 40
-MAX_EDITABLE_ELEMENTS = 250
 RENDER_WAIT_MS = 1800
 COMPUTED_STYLE_SCRIPT = """
 () => {
@@ -52,6 +51,12 @@ COMPUTED_STYLE_SCRIPT = """
     "width", "z-index"
   ];
 
+  const inheritedProperties = new Set([
+    "color", "cursor", "font", "font-family", "font-size", "font-style",
+    "font-weight", "letter-spacing", "line-height", "list-style", "text-align",
+    "text-decoration", "text-transform", "visibility", "white-space"
+  ]);
+
   const isVisible = (element, styles) => {
     if (element.tagName === "BODY" || element.tagName === "HTML") return true;
     const rect = element.getBoundingClientRect();
@@ -64,17 +69,18 @@ COMPUTED_STYLE_SCRIPT = """
     );
   };
 
-  for (const element of document.querySelectorAll("html, body, body *")) {
+  const elements = Array.from(document.querySelectorAll("html, body, body *"));
+  const snapshots = new Map();
+
+  // Read every computed style before changing the document. This prevents an
+  // earlier parent cleanup from changing the values observed on its children.
+  for (const element of elements) {
     const styles = window.getComputedStyle(element);
     element.dataset.tech180Visible = isVisible(element, styles) ? "true" : "false";
 
-    const declarations = [];
-    for (const property of copiedProperties) {
-      const value = styles.getPropertyValue(property);
-      if (value) declarations.push(`${property}: ${value};`);
-    }
-
-    element.setAttribute("style", declarations.join(" "));
+    const values = {};
+    for (const property of copiedProperties) values[property] = styles.getPropertyValue(property);
+    snapshots.set(element, values);
 
     if (element.tagName === "IMG" && element.currentSrc) {
       element.setAttribute("src", element.currentSrc);
@@ -85,6 +91,179 @@ COMPUTED_STYLE_SCRIPT = """
       element.setAttribute("loading", "eager");
     }
   }
+
+  const elementDeclarations = new Map();
+  for (const element of elements) {
+    const values = snapshots.get(element);
+    const parentValues = snapshots.get(element.parentElement);
+
+    const declarations = new Map();
+    for (const property of copiedProperties) {
+      const value = values[property];
+      if (!value) continue;
+      // Keep inherited styling at the highest ancestor that establishes it.
+      // A child receives a declaration only when it genuinely differs.
+      if (inheritedProperties.has(property) && parentValues && parentValues[property] === value) continue;
+      declarations.set(property, value);
+    }
+
+    element.removeAttribute("style");
+    elementDeclarations.set(element, declarations);
+  }
+
+  // A manual graduation pass may run on a page that Tech180 already organized.
+  // The snapshots above preserve the page's current appearance, so old generated
+  // rules and class names can now be removed before rebuilding cleaner groups.
+  document.querySelectorAll(
+    "style[data-tech180-promoted-styles], style[data-tech180-captured-styles], " +
+    "style[data-tech180-class-overrides]"
+  ).forEach(function(style) { style.remove(); });
+  elements.forEach(function(element) {
+    Array.from(element.classList).forEach(function(className) {
+      if (
+        className.indexOf("tech180-shared-") === 0 ||
+        className.indexOf("tech180-captured-") === 0
+      ) element.classList.remove(className);
+    });
+  });
+
+  // Promote repeated property/value pairs to the largest original class whose
+  // complete membership shares that value. This keeps shared styling editable
+  // at class level without accidentally changing an exception.
+  const classMembers = new Map();
+  for (const element of elements) {
+    for (const className of element.classList) {
+      if (className.indexOf("tech180-captured-") === 0) continue;
+      if (!classMembers.has(className)) classMembers.set(className, []);
+      classMembers.get(className).push(element);
+    }
+  }
+
+  const candidatesByPair = new Map();
+  classMembers.forEach(function(members, className) {
+    if (members.length < 2) return;
+    const firstDeclarations = elementDeclarations.get(members[0]);
+    if (!firstDeclarations) return;
+    firstDeclarations.forEach(function(value, property) {
+      const sharedByEveryMember = members.every(function(member) {
+        return elementDeclarations.get(member)?.get(property) === value;
+      });
+      if (!sharedByEveryMember) return;
+      const pairKey = JSON.stringify([property, value]);
+      if (!candidatesByPair.has(pairKey)) candidatesByPair.set(pairKey, []);
+      candidatesByPair.get(pairKey).push({ className, members, property, value });
+    });
+  });
+
+  const promotedByClass = new Map();
+  candidatesByPair.forEach(function(candidates) {
+    // An element can share the same value through several classes. Give it to
+    // the widest safe class first, then continue until every matching group is
+    // covered. This prevents identical values from lingering on #element.
+    candidates.sort(function(left, right) { return right.members.length - left.members.length; });
+    const coveredMembers = new Set();
+    candidates.forEach(function(candidate) {
+      const uncoveredMembers = candidate.members.filter(function(member) {
+        const declarations = elementDeclarations.get(member);
+        return !coveredMembers.has(member) && declarations?.get(candidate.property) === candidate.value;
+      });
+      if (!uncoveredMembers.length) return;
+      if (!promotedByClass.has(candidate.className)) {
+        promotedByClass.set(candidate.className, new Map());
+      }
+      promotedByClass.get(candidate.className).set(candidate.property, candidate.value);
+      candidate.members.forEach(function(member) {
+        coveredMembers.add(member);
+        const declarations = elementDeclarations.get(member);
+        if (declarations?.get(candidate.property) === candidate.value) {
+          declarations.delete(candidate.property);
+        }
+      });
+    });
+  });
+
+  // Some repeated values have no usable original class in common. Group the
+  // remaining identical pairs by the exact set of elements that use them and
+  // create one editable shared class for that set. A value is left at element
+  // level only when it is truly unique.
+  const elementIndexes = new Map(elements.map(function(element, index) {
+    return [element, index];
+  }));
+  const remainingPairs = new Map();
+  elementDeclarations.forEach(function(declarations, element) {
+    declarations.forEach(function(value, property) {
+      // Generated shared classes only join the same kind of HTML element.
+      // For example, a matching DIV and SPAN value should not be coupled merely
+      // because the browser gave both the same computed default.
+      const pairKey = JSON.stringify([element.tagName, property, value]);
+      if (!remainingPairs.has(pairKey)) {
+        remainingPairs.set(pairKey, { property, value, members: [] });
+      }
+      remainingPairs.get(pairKey).members.push(element);
+    });
+  });
+
+  const sharedByMembership = new Map();
+  remainingPairs.forEach(function(group) {
+    if (group.members.length < 2) return;
+    const membershipKey = group.members
+      .map(function(member) { return elementIndexes.get(member); })
+      .join("|");
+    if (!sharedByMembership.has(membershipKey)) {
+      sharedByMembership.set(membershipKey, {
+        className: `tech180-shared-${sharedByMembership.size + 1}`,
+        members: group.members,
+        declarations: new Map()
+      });
+    }
+    sharedByMembership.get(membershipKey).declarations.set(group.property, group.value);
+    group.members.forEach(function(member) {
+      elementDeclarations.get(member)?.delete(group.property);
+    });
+  });
+
+  sharedByMembership.forEach(function(group) {
+    promotedByClass.set(group.className, group.declarations);
+    group.members.forEach(function(member) {
+      member.classList.add(group.className);
+    });
+  });
+
+  const promotedStyle = document.createElement("style");
+  promotedStyle.setAttribute("data-tech180-promoted-styles", "true");
+  promotedStyle.textContent = Array.from(promotedByClass.entries())
+    .map(function(entry) {
+      const className = entry[0];
+      const declarations = Array.from(entry[1].entries())
+        .map(function(pair) { return pair[0] + ": " + pair[1] + " !important;"; })
+        .join(" ");
+      return "." + CSS.escape(className) + " { " + declarations + " }";
+    })
+    .join("\\n");
+  document.head.appendChild(promotedStyle);
+
+  // Any remaining exception sets share compact internal capture classes.
+  const groups = new Map();
+  for (const element of elements) {
+    const declarations = Array.from(elementDeclarations.get(element).entries())
+      .map(function(pair) { return pair[0] + ": " + pair[1] + " !important;"; });
+    if (declarations.length) {
+      const signature = declarations.join("|");
+      let group = groups.get(signature);
+      if (!group) {
+        group = { className: `tech180-captured-${groups.size + 1}`, declarations };
+        groups.set(signature, group);
+      }
+      element.classList.add(group.className);
+    }
+  }
+
+  const capturedStyle = document.createElement("style");
+  capturedStyle.setAttribute("data-tech180-captured-styles", "true");
+  capturedStyle.textContent = Array.from(groups.values())
+    .map((group) => `.${group.className} { ${group.declarations.join(" ")} }`)
+    .join("\\n");
+  document.head.appendChild(capturedStyle);
 
   document.documentElement.dataset.tech180ComputedStyles = "true";
 }
@@ -107,8 +286,6 @@ class ImportRequest(BaseModel):
     include_subpages: bool = True
     viewport_width: Optional[int] = Field(
         default=None,
-        ge=640,
-        le=1920,
         description="Approximate editor preview width for browser rendering.",
     )
 
@@ -125,6 +302,7 @@ class EditableElement(BaseModel):
     selector: str
     value: str
     tag: str
+    button_like: bool = False
 
 
 class ImportResponse(BaseModel):
@@ -139,6 +317,17 @@ class ImportResponse(BaseModel):
 
 class ExportRequest(BaseModel):
     files: dict[str, str]
+
+
+class GraduateCssRequest(BaseModel):
+    html: str
+    viewport_width: Optional[int] = None
+
+
+class GraduateCssResponse(BaseModel):
+    html: str
+    elements: list[EditableElement]
+    promoted_classes: int
 
 
 class ExportResponse(BaseModel):
@@ -325,12 +514,8 @@ def _annotate_elements(soup: BeautifulSoup) -> list[EditableElement]:
     elements: list[EditableElement] = []
     seen_text: set[int] = set()
 
-    # Reserve sidebar space for containers. Large pages can have 250 text/image
-    # nodes before the first DIV would otherwise reach the editable list.
     content_candidates = list(soup.select(CONTENT_SELECTORS))
-    media_candidates = list(soup.select("iframe,video,img"))
     container_candidates = list(soup.select(CONTAINER_SELECTORS))
-    listed_candidates = set(map(id, media_candidates + content_candidates[:175] + container_candidates[:75]))
     candidates = [*content_candidates, *container_candidates]
     for index, tag in enumerate(candidates, start=1):
         if not isinstance(tag, Tag):
@@ -361,19 +546,28 @@ def _annotate_elements(soup: BeautifulSoup) -> list[EditableElement]:
                 continue
             seen_text.add(id(tag))
 
-        # Every candidate receives an ID so hierarchy navigation can climb into
-        # deep parents. Only the sidebar list is capped for browser performance.
-        if id(tag) in listed_candidates and len(elements) < MAX_EDITABLE_ELEMENTS:
-            elements.append(
-                EditableElement(
-                    id=element_id,
-                    type=element_type,
-                    label=_label_for(tag, f"{tag.name} {index}"),
-                    selector=f'[data-tech180-id="{element_id}"]',
-                    value=value,
-                    tag=tag.name or "element",
-                )
+        # Store every editable element. The React sidebar paginates this full
+        # collection so IDs and editing access are never capped.
+        elements.append(
+            EditableElement(
+                id=element_id,
+                type=element_type,
+                label=_label_for(tag, f"{tag.name} {index}"),
+                selector=f'[data-tech180-id="{element_id}"]',
+                value=value,
+                tag=tag.name or "element",
+                button_like=(
+                    tag.name == "button"
+                    or tag.get("role") == "button"
+                    or bool(re.search(r"(^|[-_])(btn|button|cta)([-_]|$)", " ".join(tag.get("class", [])), re.I))
+                    or (
+                        tag.name == "a"
+                        and "background-color:" in str(tag.get("style", ""))
+                        and "background-color: rgba(0, 0, 0, 0)" not in str(tag.get("style", ""))
+                    )
+                ),
             )
+        )
 
     return elements
 
@@ -430,8 +624,6 @@ def _prepare_html(
     _inject_editor_styles(soup)
 
     title = soup.title.get_text(" ", strip=True) if soup.title else urlparse(source_url).netloc
-    if len(elements) >= MAX_EDITABLE_ELEMENTS:
-        warnings.append(f"Editable elements were capped at {MAX_EDITABLE_ELEMENTS} for this import.")
     warnings.append("Scripts are disabled in imported pages so the editor can safely control the recreation.")
 
     return str(soup), elements, subpages, title, warnings
@@ -455,6 +647,41 @@ async def import_page(payload: ImportRequest) -> ImportResponse:
         elements=elements,
         warnings=warnings,
         render_mode=render_mode,
+    )
+
+
+@app.post("/api/graduate-css", response_model=GraduateCssResponse)
+async def graduate_css(payload: GraduateCssRequest) -> GraduateCssResponse:
+    """Rebuild shared CSS classes from the currently edited page."""
+    try:
+        from playwright.async_api import async_playwright
+
+        async with async_playwright() as playwright:
+            browser = await playwright.chromium.launch(channel="chrome", headless=True)
+            context = await browser.new_context(
+                viewport={"width": _normalize_viewport_width(payload.viewport_width), "height": 1200}
+            )
+            page = await context.new_page()
+            try:
+                await page.set_content(payload.html, wait_until="domcontentloaded", timeout=30000)
+                await page.wait_for_timeout(250)
+                await page.evaluate(COMPUTED_STYLE_SCRIPT)
+                rendered = await page.content()
+            finally:
+                await context.close()
+                await browser.close()
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Could not graduate page CSS: {exc}") from exc
+
+    soup = BeautifulSoup(rendered, "html.parser")
+    elements = _annotate_elements(soup)
+    _inject_editor_styles(soup)
+    promoted_style = soup.find("style", attrs={"data-tech180-promoted-styles": "true"})
+    promoted_classes = len(re.findall(r"\.[A-Za-z0-9_-]+\s*\{", promoted_style.get_text() if promoted_style else ""))
+    return GraduateCssResponse(
+        html=str(soup),
+        elements=elements,
+        promoted_classes=promoted_classes,
     )
 
 

@@ -115,11 +115,18 @@ def main() -> None:
     print("Installing Python dependencies...")
     run([str(PYTHON), "-m", "pip", "install", "-r", str(BACKEND / "requirements.txt")])
 
-    # Tech180 uses Playwright's Chromium browser to render JavaScript-heavy sites.
-    print("Ensuring Playwright Chromium is installed...")
-    run([str(PYTHON), "-m", "playwright", "install", "chromium"])
-    print("Installing frontend dependencies...")
-    run(["npm", "install"], cwd=FRONTEND)
+    # The importer launches the Mac's installed Google Chrome (`channel="chrome"`).
+    # Running `playwright install chromium` here downloaded a second browser and
+    # could hang every startup when the network was slow or unavailable.
+    print("Using installed Google Chrome for browser rendering.")
+
+    # Install frontend packages only on a dry startup. Existing node_modules is
+    # immediately reusable and should not delay every normal launch.
+    if not (FRONTEND / "node_modules").exists():
+        print("Installing frontend dependencies...")
+        run(["npm", "install"], cwd=FRONTEND)
+    else:
+        print("Frontend dependencies are already installed.")
 
     # Check before starting so an unrelated app is never silently replaced.
     for port in (API_PORT, APP_PORT):

@@ -9,6 +9,12 @@ const CONTAINER_TAGS = new Set([
   "DIV", "SECTION", "ARTICLE", "HEADER", "FOOTER", "MAIN", "NAV", "ASIDE", "FORM",
 ]);
 const VIDEO_EMBED_HOSTS = ["gumlet.io", "youtube.com", "youtu.be", "vimeo.com", "wistia.com", "wistia.net"];
+const SIDEBAR_PAGE_SIZE = 250;
+
+function editorPreviewWidth(previewPaneRef) {
+  const measuredWidth = Math.round(previewPaneRef.current?.clientWidth || 1120);
+  return Math.max(640, Math.min(1920, measuredWidth));
+}
 
 function isVideoElement(element) {
   if (element.tag === "video") return true;
@@ -63,13 +69,7 @@ function buildEditableElements(doc) {
   let nextId = 1;
 
   const contentCandidates = Array.from(doc.querySelectorAll(CONTENT_SELECTOR));
-  const mediaCandidates = Array.from(doc.querySelectorAll("iframe,video,img"));
   const containerCandidates = Array.from(doc.querySelectorAll(CONTAINER_SELECTOR));
-  const listedCandidates = new Set([
-    ...mediaCandidates,
-    ...contentCandidates.slice(0, 175),
-    ...containerCandidates.slice(0, 75),
-  ]);
   const candidates = [...contentCandidates, ...containerCandidates];
   candidates.forEach((node) => {
     if (node.closest('[data-tech180-visible="false"]')) return;
@@ -104,16 +104,19 @@ function buildEditableElements(doc) {
         : node.tagName === "IFRAME" || node.tagName === "VIDEO"
           ? node.getAttribute("title") || value
         : (node.textContent || "").trim();
-    if (listedCandidates.has(node) && elements.length < 250) {
-      elements.push({
-        id,
-        type,
-        label: (label || `${node.tagName.toLowerCase()} ${elements.length + 1}`).slice(0, 80),
-        selector: `[data-tech180-id="${id}"]`,
-        value,
-        tag: node.tagName.toLowerCase(),
-      });
-    }
+    elements.push({
+      id,
+      type,
+      label: (label || `${node.tagName.toLowerCase()} ${elements.length + 1}`).slice(0, 80),
+      selector: `[data-tech180-id="${id}"]`,
+      value,
+      tag: node.tagName.toLowerCase(),
+      button_like:
+        node.tagName === "BUTTON" ||
+        node.getAttribute("role") === "button" ||
+        /(^|[-_])(btn|button|cta)([-_]|$)/i.test(Array.from(node.classList).join(" ")) ||
+        (node.tagName === "A" && node.style.backgroundColor && node.style.backgroundColor !== "rgba(0, 0, 0, 0)"),
+    });
   });
 
   return elements;
@@ -338,21 +341,27 @@ function injectBridge(html) {
       tech180TrimTopWhitespace();
     }, 150);
 
+    var tech180CssProperties = [
+      "align-content", "align-items", "align-self", "aspect-ratio",
+      "background", "background-color", "background-image", "background-position",
+      "background-repeat", "background-size", "border", "border-radius", "bottom",
+      "box-shadow", "box-sizing", "clear", "color", "column-gap", "cursor",
+      "display", "flex", "flex-basis", "flex-direction", "flex-grow", "flex-shrink",
+      "flex-wrap", "float", "font", "font-family", "font-size", "font-style",
+      "font-weight", "gap", "grid", "grid-area", "grid-template", "height",
+      "justify-content", "justify-items", "justify-self", "left", "letter-spacing",
+      "line-height", "list-style", "margin", "max-height", "max-width", "min-height",
+      "min-width", "object-fit", "opacity", "overflow", "overflow-x", "overflow-y",
+      "padding", "place-content", "place-items", "position", "right", "row-gap",
+      "text-align", "text-decoration", "text-transform", "top", "transform",
+      "transform-origin", "vertical-align", "visibility", "white-space", "width",
+      "z-index"
+    ];
+
     function tech180ReportCss(node) {
       if (!node) return;
-      var properties = [
-        "display", "position", "top", "right", "bottom", "left", "z-index",
-        "box-sizing", "width", "min-width", "max-width", "height", "min-height",
-        "max-height", "margin", "padding", "overflow", "color", "background",
-        "border", "border-radius", "box-shadow", "opacity", "font-family",
-        "font-size", "font-style", "font-weight", "letter-spacing", "line-height",
-        "text-align", "text-decoration", "text-transform", "white-space",
-        "align-items", "align-content", "align-self", "justify-content",
-        "gap", "flex", "flex-direction", "flex-wrap", "grid", "object-fit",
-        "transform", "visibility"
-      ];
       var styles = window.getComputedStyle(node);
-      var declarations = properties
+      var declarations = tech180CssProperties
         .map(function(property) {
           var value = styles.getPropertyValue(property);
           return value ? "  " + property + ": " + value + ";" : "";
@@ -365,10 +374,154 @@ function injectBridge(html) {
           type: "tech180-css",
           id: node.dataset.tech180Id,
           css: selector + " {\\n" + declarations + "\\n}",
-          html: node.outerHTML
+          html: node.outerHTML,
+          classes: Array.prototype.slice.call(node.classList).filter(function(className) {
+            return className.indexOf("tech180-captured-") !== 0;
+          }),
+          classCss: Array.prototype.slice.call(node.classList).some(function(className) {
+            return className.indexOf("tech180-captured-") !== 0;
+          })
+            ? "." + CSS.escape(Array.prototype.slice.call(node.classList).find(function(className) {
+                return className.indexOf("tech180-captured-") !== 0;
+              })) + " {\\n" + declarations + "\\n}"
+            : ""
         },
         "*"
       );
+    }
+
+    function tech180ReportClass(activeId, className, inherited, probeOnly) {
+      var active = document.querySelector('[data-tech180-id="' + CSS.escape(activeId) + '"]');
+      if (!active || !className) return;
+      var owner = active;
+      if (inherited) {
+        owner = active.parentElement;
+        while (owner && !owner.classList.contains(className)) owner = owner.parentElement;
+      }
+      if (!owner) return;
+
+      var allProperties = tech180CssProperties;
+      // Disable Tech180's frozen snapshot while measuring so it cannot mask
+      // what the original website class actually contributes. Compare the
+      // selected child with the class present and temporarily removed.
+      var capturedStyles = Array.prototype.slice.call(
+        document.querySelectorAll('style[data-tech180-captured-styles]')
+      );
+      var previousDisabled = capturedStyles.map(function(style) {
+        return style.sheet ? style.sheet.disabled : false;
+      });
+      capturedStyles.forEach(function(style) {
+        if (style.sheet) style.sheet.disabled = true;
+      });
+
+      // Older projects stored the entire computed snapshot inline. Temporarily
+      // remove those values along the selected-to-owner path while measuring.
+      var measurementNodes = [];
+      var measurementNode = active;
+      while (measurementNode) {
+        measurementNodes.push({
+          node: measurementNode,
+          hadStyle: measurementNode.hasAttribute("style"),
+          style: measurementNode.getAttribute("style") || ""
+        });
+        if (measurementNode === owner) break;
+        measurementNode = measurementNode.parentElement;
+      }
+      measurementNodes.forEach(function(entry) { entry.node.removeAttribute("style"); });
+
+      var withClassStyles = window.getComputedStyle(active);
+      var withClass = {};
+      allProperties.forEach(function(property) {
+        withClass[property] = withClassStyles.getPropertyValue(property);
+      });
+
+      owner.classList.remove(className);
+      var withoutClassStyles = window.getComputedStyle(active);
+      var withoutClass = {};
+      allProperties.forEach(function(property) {
+        withoutClass[property] = withoutClassStyles.getPropertyValue(property);
+      });
+      owner.classList.add(className);
+      measurementNodes.forEach(function(entry) {
+        if (entry.hadStyle) entry.node.setAttribute("style", entry.style);
+      });
+      capturedStyles.forEach(function(style, index) {
+        if (style.sheet) style.sheet.disabled = previousDisabled[index];
+      });
+
+      var contributingProperties = [];
+      var declarations = allProperties.map(function(property) {
+        var value = withClass[property];
+        if (!value || value === withoutClass[property]) return "";
+        contributingProperties.push(property);
+        return "  " + property + ": " + value + ";";
+      }).filter(Boolean).join("\\n");
+      if (!declarations) declarations = "  /* This class adds no CSS attributes to the selected element. */";
+      window.parent.postMessage({
+        type: probeOnly ? "tech180-class-contribution" : "tech180-class-css",
+        id: activeId,
+        className: className,
+        contributes: contributingProperties.length > 0,
+        properties: contributingProperties,
+        css: "." + CSS.escape(className) + " {\\n" + declarations + "\\n}"
+      }, "*");
+    }
+
+    function tech180FindClassForProperty(activeId, property, options) {
+      var active = document.querySelector('[data-tech180-id="' + CSS.escape(activeId) + '"]');
+      if (!active || !property) return;
+      var capturedStyles = Array.prototype.slice.call(
+        document.querySelectorAll('style[data-tech180-captured-styles]')
+      );
+      var previousDisabled = capturedStyles.map(function(style) {
+        return style.sheet ? style.sheet.disabled : false;
+      });
+      capturedStyles.forEach(function(style) {
+        if (style.sheet) style.sheet.disabled = true;
+      });
+
+      var match = null;
+      (options || []).some(function(option) {
+        var owner = active;
+        if (option.inherited) {
+          owner = active.parentElement;
+          while (owner && !owner.classList.contains(option.className)) owner = owner.parentElement;
+        }
+        if (!owner || !owner.classList.contains(option.className)) return false;
+        var measurementNodes = [];
+        var measurementNode = active;
+        while (measurementNode) {
+          measurementNodes.push({
+            node: measurementNode,
+            hadStyle: measurementNode.hasAttribute("style"),
+            style: measurementNode.getAttribute("style") || ""
+          });
+          if (measurementNode === owner) break;
+          measurementNode = measurementNode.parentElement;
+        }
+        measurementNodes.forEach(function(entry) { entry.node.removeAttribute("style"); });
+        var withClass = window.getComputedStyle(active).getPropertyValue(property);
+        owner.classList.remove(option.className);
+        var withoutClass = window.getComputedStyle(active).getPropertyValue(property);
+        owner.classList.add(option.className);
+        measurementNodes.forEach(function(entry) {
+          if (entry.hadStyle) entry.node.setAttribute("style", entry.style);
+        });
+        if (withClass !== withoutClass) {
+          match = option;
+          return true;
+        }
+        return false;
+      });
+
+      capturedStyles.forEach(function(style, index) {
+        if (style.sheet) style.sheet.disabled = previousDisabled[index];
+      });
+      if (match) {
+        tech180ReportClass(activeId, match.className, Boolean(match.inherited));
+      } else {
+        window.parent.postMessage({ type: "tech180-class-not-found", property: property }, "*");
+      }
     }
 
     function tech180Activate(id, shouldScroll) {
@@ -462,6 +615,30 @@ function injectBridge(html) {
             : cssText;
         cssNode.style.cssText = declarations;
       }
+      if (event.data && event.data.type === "tech180-class-css-update") {
+        var classStyle = document.querySelector("style[data-tech180-live-class]");
+        if (!classStyle) {
+          classStyle = document.createElement("style");
+          classStyle.setAttribute("data-tech180-live-class", "true");
+          document.head.appendChild(classStyle);
+        }
+        var classRules = classStyle.tech180Rules || {};
+        var classSelector = event.data.selector || "." + CSS.escape(event.data.className);
+        classRules[classSelector] = event.data.ruleText || classSelector + " {" + (event.data.css || "") + "}";
+        classStyle.tech180Rules = classRules;
+        classStyle.textContent = Object.keys(classRules).map(function(name) { return classRules[name]; }).join("\\n");
+      }
+      if (event.data && event.data.type === "tech180-report-class") {
+        tech180ReportClass(
+          event.data.id,
+          event.data.className,
+          Boolean(event.data.inherited),
+          Boolean(event.data.probeOnly)
+        );
+      }
+      if (event.data && event.data.type === "tech180-find-class-for-property") {
+        tech180FindClassForProperty(event.data.id, event.data.property, event.data.options || []);
+      }
       if (event.data && event.data.type === "tech180-html-update") {
         var htmlNode = document.querySelector(
           '[data-tech180-id="' + CSS.escape(event.data.id) + '"]'
@@ -521,6 +698,65 @@ function cssDeclarations(css) {
   return openBrace >= 0 && closeBrace > openBrace
     ? css.slice(openBrace + 1, closeBrace)
     : css;
+}
+
+// Captured computed styles are inline, so shared class edits need !important
+// to visibly override them across every member of the selected class.
+function importantCssDeclarations(css) {
+  return cssDeclarations(css)
+    .split(";")
+    .map((declaration) => declaration.trim())
+    .filter(Boolean)
+    .map((declaration) => `${declaration.replace(/\s*!important\s*$/i, "")} !important;`)
+    .join("\n");
+}
+
+const INHERITED_CSS_PROPERTIES = new Set([
+  "color", "cursor", "font", "font-family", "font-size", "font-style",
+  "font-weight", "letter-spacing", "line-height", "list-style", "text-align",
+  "text-decoration", "text-transform", "visibility", "white-space",
+]);
+
+function inheritedImportantCssDeclarations(css) {
+  return importantCssDeclarations(css)
+    .split("\n")
+    .filter((declaration) => INHERITED_CSS_PROPERTIES.has(declaration.split(":", 1)[0].trim()))
+    .join("\n");
+}
+
+// Convert CSS rgb()/rgba()/hex values into the six-digit format expected by
+// the browser's native color picker.
+function colorToHex(value) {
+  if (value.startsWith("#")) {
+    const hex = value.slice(1);
+    if (hex.length === 3 || hex.length === 4) return `#${hex.slice(0, 3).split("").map((part) => part + part).join("")}`;
+    return `#${hex.slice(0, 6)}`;
+  }
+  const numbers = value.match(/[\d.]+/g)?.slice(0, 3).map(Number);
+  if (!numbers || numbers.length < 3) return "#000000";
+  return `#${numbers.map((number) => Math.max(0, Math.min(255, Math.round(number))).toString(16).padStart(2, "0")).join("")}`;
+}
+
+function cssColorOccurrences(css) {
+  return css.split("\n").flatMap((line, lineIndex) => {
+    const matches = [...line.matchAll(/rgba?\([^)]*\)|#[0-9a-f]{3,8}\b/gi)];
+    return matches.map((match, colorIndex) => ({
+      key: `${lineIndex}-${match.index}-${match[0]}`,
+      lineIndex,
+      colorIndex,
+      property: line.match(/^\s*([a-z-]+)\s*:/i)?.[1] || "CSS color",
+      value: match[0],
+      hex: colorToHex(match[0]),
+    }));
+  });
+}
+
+function replaceCssColorOnLine(css, lineIndex, oldValue, nextValue) {
+  const lines = css.split("\n");
+  if (lines[lineIndex] !== undefined) {
+    lines[lineIndex] = lines[lineIndex].replace(oldValue, nextValue);
+  }
+  return lines.join("\n");
 }
 
 function replaceElementCss(html, elementId, css) {
@@ -631,6 +867,22 @@ function rewriteExportLinks(files, urlToFilename) {
   });
 }
 
+// FastAPI validation errors are arrays of objects. Turn them into a useful
+// sentence instead of letting JavaScript display "[object Object]".
+function apiErrorMessage(detail, fallback) {
+  if (typeof detail === "string" && detail.trim()) return detail;
+  if (Array.isArray(detail)) {
+    const messages = detail
+      .map((item) => (typeof item === "string" ? item : item?.msg))
+      .filter(Boolean);
+    if (messages.length) return messages.join("; ");
+  }
+  if (detail && typeof detail === "object") {
+    return detail.msg || detail.message || fallback;
+  }
+  return fallback;
+}
+
 function App() {
   const previewPaneRef = useRef(null);
   const previewFrameRef = useRef(null);
@@ -646,11 +898,16 @@ function App() {
   const [elements, setElements] = useState([]);
   const [activeId, setActiveId] = useState("");
   const [activeCss, setActiveCss] = useState("");
+  const [elementCssDraft, setElementCssDraft] = useState("#element {\n\n}");
   const [activeHtml, setActiveHtml] = useState("");
+  const [selectedClass, setSelectedClass] = useState("");
+  const [classCss, setClassCss] = useState("");
+  const [classContributions, setClassContributions] = useState({});
   const [htmlEditError, setHtmlEditError] = useState("");
   const [status, setStatus] = useState("");
   const [error, setError] = useState("");
   const [isImporting, setIsImporting] = useState(false);
+  const [isGraduatingCss, setIsGraduatingCss] = useState(false);
   const [importProgress, setImportProgress] = useState(0);
   const [findText, setFindText] = useState("");
   const [replaceText, setReplaceText] = useState("");
@@ -660,25 +917,57 @@ function App() {
   const [commandHistory, setCommandHistory] = useState([]);
   const [elementFilter, setElementFilter] = useState("");
   const [elementTypeFilter, setElementTypeFilter] = useState("all");
+  const [elementListPage, setElementListPage] = useState(0);
   const [imageComparison, setImageComparison] = useState(null);
   const [videoComparison, setVideoComparison] = useState(null);
   const [videoOptionChoices, setVideoOptionChoices] = useState({});
 
   const activeElement = elements.find((element) => element.id === activeId);
   const visibleElements = useMemo(() => {
-    const query = elementFilter.trim().toLowerCase();
+    const customQuery = elementFilter.trim().toLowerCase();
+    const findQuery = findText.trim().toLowerCase();
+    const document = html ? new DOMParser().parseFromString(html, "text/html") : null;
+
     return elements.filter((element) => {
       const typeMatches =
         elementTypeFilter === "all" ||
         element.type === elementTypeFilter ||
         (elementTypeFilter === "div" && element.tag === "div") ||
         (elementTypeFilter === "video" && isVideoElement(element)) ||
-        (elementTypeFilter === "iframe" && element.tag === "iframe");
-      const textMatches = !query ||
-        `${element.tag} ${element.type} ${element.label}`.toLowerCase().includes(query);
-      return typeMatches && textMatches;
+        (elementTypeFilter === "iframe" && element.tag === "iframe") ||
+        (elementTypeFilter === "button" && (element.tag === "button" || element.button_like));
+
+      // Search the real element so Find can match tags, IDs, classes, any
+      // attribute, visible text, URLs, and descriptions such as image alt text.
+      const node = document?.querySelector(element.selector);
+      const attributes = node
+        ? Array.from(node.attributes).map((attribute) => `${attribute.name} ${attribute.value}`).join(" ")
+        : "";
+      const searchableText = [
+        `<${element.tag}>`,
+        element.tag,
+        element.type,
+        element.id,
+        element.label,
+        element.value,
+        attributes,
+        node?.textContent || "",
+      ].join(" ").toLowerCase();
+
+      const customMatches = !customQuery || searchableText.includes(customQuery);
+      const findMatches = !findQuery || searchableText.includes(findQuery);
+      return typeMatches && customMatches && findMatches;
     });
-  }, [elements, elementFilter, elementTypeFilter]);
+  }, [elements, elementFilter, elementTypeFilter, findText, html]);
+  const elementPageCount = Math.max(1, Math.ceil(visibleElements.length / SIDEBAR_PAGE_SIZE));
+  const sidebarElements = visibleElements.slice(
+    elementListPage * SIDEBAR_PAGE_SIZE,
+    (elementListPage + 1) * SIDEBAR_PAGE_SIZE
+  );
+
+  useEffect(() => {
+    setElementListPage(0);
+  }, [elements, elementFilter, elementTypeFilter, findText]);
   const previewHtml = useMemo(() => injectBridge(iframeHtml), [iframeHtml]);
   const activeElementHidden = useMemo(() => {
     if (!html || !activeId) return false;
@@ -693,6 +982,120 @@ function App() {
     const node = doc.querySelector(`[data-tech180-id="${CSS.escape(activeId)}"]`);
     return node ? readVideoOptions(node) : null;
   }, [html, activeId, activeElement, videoOptionChoices]);
+  const activeIdentity = useMemo(() => {
+    const emptyIdentity = {
+      id: "", classes: [], classOptions: [], inlineProperties: [], elementCss: "#element {\n\n}",
+    };
+    if (!html || !activeId) return emptyIdentity;
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    const node = doc.querySelector(`[data-tech180-id="${CSS.escape(activeId)}"]`);
+    if (!node) return emptyIdentity;
+
+    const isSourceClass = (className) => !className.startsWith("tech180-captured-");
+    const ownClasses = Array.from(node.classList).filter(isSourceClass);
+    const classOptions = ownClasses.map((className) => ({ className, inherited: false }));
+    const seen = new Set(ownClasses);
+    let ancestor = node.parentElement;
+    while (ancestor && ancestor !== doc.documentElement) {
+      Array.from(ancestor.classList).filter(isSourceClass).forEach((className) => {
+        if (seen.has(className)) return;
+        seen.add(className);
+        classOptions.push({
+          className,
+          inherited: true,
+          ancestorTag: ancestor.tagName.toLowerCase(),
+        });
+      });
+      ancestor = ancestor.parentElement;
+    }
+    const inlineProperties = Array.from(node.style);
+    const inlineDeclarations = inlineProperties
+      .map((property) => {
+        const value = node.style.getPropertyValue(property);
+        const priority = node.style.getPropertyPriority(property);
+        return `  ${property}: ${value}${priority ? " !important" : ""};`;
+      })
+      .join("\n");
+    return {
+      id: node.id || "",
+      classes: ownClasses,
+      classOptions,
+      inlineProperties,
+      elementCss: `#element {\n${inlineDeclarations}\n}`,
+    };
+  }, [html, activeId]);
+  const elementClassOption = { className: "#element", element: true };
+  const contributingClassOptions = [
+    ...activeIdentity.classOptions.filter(
+      (option) => classContributions[option.className]?.contributes
+    ),
+    elementClassOption,
+  ];
+  const classControlledProperties = new Set(
+    Object.values(classContributions).flatMap((entry) => entry.properties || [])
+  );
+  const elementDeclarations = activeCss
+    .split("\n")
+    .filter((line) => {
+      const property = line.match(/^\s*([a-z-]+)\s*:/i)?.[1];
+      return property && (
+        activeIdentity.inlineProperties.includes(property) ||
+        !classControlledProperties.has(property)
+      );
+    })
+    .join("\n");
+  const elementCss = `#element {\n${elementDeclarations}\n}`;
+  const selectedClassOption = contributingClassOptions.find(
+    (option) => option.className === selectedClass
+  );
+  const selectedClassIndex = contributingClassOptions.findIndex(
+    (option) => option.className === selectedClass
+  );
+
+  useEffect(() => {
+    setClassContributions({});
+    setSelectedClass("");
+    setClassCss("");
+    activeIdentity.classOptions.forEach((option) => {
+      sendToPreview({
+        type: "tech180-report-class",
+        id: activeId,
+        className: option.className,
+        inherited: option.inherited,
+        probeOnly: true,
+      });
+    });
+  }, [activeIdentity, activeId, activeCss]);
+
+  useEffect(() => {
+    if (!contributingClassOptions.length) {
+      setSelectedClass("");
+      setClassCss("");
+      return;
+    }
+    if (!contributingClassOptions.some((option) => option.className === selectedClass)) {
+      const firstOption = contributingClassOptions[0];
+      setSelectedClass(firstOption.className);
+      if (firstOption.element) {
+        setClassCss(elementCss);
+      } else {
+        sendToPreview({
+          type: "tech180-report-class",
+          id: activeId,
+          className: firstOption.className,
+          inherited: firstOption.inherited,
+        });
+      }
+    }
+  }, [contributingClassOptions, selectedClass, activeId]);
+
+  useEffect(() => {
+    if (selectedClass === "#element") setClassCss(elementCss);
+  }, [selectedClass, elementCss]);
+
+  useEffect(() => {
+    setElementCssDraft(elementCss);
+  }, [activeId, elementCss]);
 
   function sendToPreview(message) {
     previewFrameRef.current?.contentWindow?.postMessage(message, "*");
@@ -794,7 +1197,27 @@ function App() {
       if (event.data?.type === "tech180-css") {
         setActiveCss(event.data.css || "");
         setActiveHtml(event.data.html || "");
+        const classes = event.data.classes || [];
+        setSelectedClass((current) => classes.includes(current) ? current : (classes[0] || ""));
+        setClassCss(event.data.classCss || "");
         setHtmlEditError("");
+      }
+      if (event.data?.type === "tech180-class-css") {
+        setSelectedClass(event.data.className || "");
+        setClassCss(event.data.css || "");
+      }
+      if (event.data?.type === "tech180-class-contribution") {
+        setClassContributions((current) => ({
+          ...current,
+          [event.data.className]: {
+            contributes: Boolean(event.data.contributes),
+            properties: event.data.properties || [],
+            css: event.data.css || "",
+          },
+        }));
+      }
+      if (event.data?.type === "tech180-class-not-found") {
+        setStatus(`No source class directly controls ${event.data.property}`);
       }
     }
 
@@ -827,7 +1250,7 @@ function App() {
       return;
     }
 
-    const previewWidth = Math.round(previewPaneRef.current?.clientWidth || 1120);
+    const previewWidth = editorPreviewWidth(previewPaneRef);
 
     setIsImporting(true);
     setImportProgress(8);
@@ -851,7 +1274,7 @@ function App() {
 
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.detail || "Import failed.");
+        throw new Error(apiErrorMessage(data.detail, "Import failed."));
       }
 
       setPage(data);
@@ -894,14 +1317,14 @@ function App() {
     try {
       let nextPage = pageCacheRef.current.get(tab.url);
       if (!nextPage) {
-        const previewWidth = Math.round(previewPaneRef.current?.clientWidth || 1120);
+        const previewWidth = editorPreviewWidth(previewPaneRef);
         const response = await fetch(`${API_BASE}/api/import`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ url: tab.url, include_subpages: false, viewport_width: previewWidth }),
         });
         nextPage = await response.json();
-        if (!response.ok) throw new Error(nextPage.detail || "Page import failed.");
+        if (!response.ok) throw new Error(apiErrorMessage(nextPage.detail, "Page import failed."));
         pageCacheRef.current.set(tab.url, nextPage);
       }
 
@@ -1304,15 +1727,225 @@ function App() {
     setStatus(`Replaced ${count} instance${count === 1 ? "" : "s"}`);
   }
 
-  function updateActiveCss(nextCss) {
+  function updateElementCss(nextCss) {
     if (!activeElement) return;
-    setActiveCss(nextCss);
+    setElementCssDraft(nextCss);
+    const declarations = importantCssDeclarations(nextCss);
     sendToPreview({
       type: "tech180-css-update",
       id: activeElement.id,
-      css: nextCss,
+      css: declarations,
     });
-    setHtml((currentHtml) => replaceElementCss(currentHtml, activeElement.id, nextCss));
+    setHtml((currentHtml) => replaceElementCss(currentHtml, activeElement.id, declarations));
+  }
+
+  function selectClassOption(option) {
+    if (!option) return;
+    setSelectedClass(option.className);
+    if (option.element) {
+      setClassCss(elementCss);
+      return;
+    }
+    sendToPreview({
+      type: "tech180-report-class",
+      id: activeId,
+      className: option.className,
+      inherited: option.inherited,
+    });
+  }
+
+  function navigateClassSelection(destination) {
+    const options = contributingClassOptions;
+    if (!options.length) return;
+    const currentIndex = Math.max(0, options.findIndex((option) => option.className === selectedClass));
+    let nextIndex = currentIndex;
+    if (destination === "top") nextIndex = 0;
+    if (destination === "up") nextIndex = Math.max(0, currentIndex - 1);
+    if (destination === "down") nextIndex = Math.min(options.length - 1, currentIndex + 1);
+    if (destination === "bottom") nextIndex = options.length - 1;
+    selectClassOption(options[nextIndex]);
+  }
+
+  function updateElementCssColor(lineIndex, oldValue, nextHex) {
+    updateElementCss(replaceCssColorOnLine(elementCssDraft, lineIndex, oldValue, nextHex));
+  }
+
+  function updateClassCssColor(lineIndex, oldValue, nextHex) {
+    setClassCss((current) => replaceCssColorOnLine(current, lineIndex, oldValue, nextHex));
+  }
+
+  function syncCssPickerScroll(event) {
+    event.currentTarget.parentElement?.style.setProperty(
+      "--css-scroll-top",
+      `${event.currentTarget.scrollTop}px`
+    );
+  }
+
+  function applyClassCss() {
+    if (!selectedClass || !activeElement) return;
+    const nextCss = classCss;
+    setCommandHistory((current) => [...current, { type: "html", html, activeId }].slice(-30));
+    if (selectedClass === "#element") {
+      const declarations = importantCssDeclarations(nextCss);
+      const nextHtml = replaceElementCss(html, activeElement.id, declarations);
+      setHtml(nextHtml);
+      setIframeHtml(nextHtml);
+      setStatus("Applied CSS to #element and refreshed the preview");
+      return;
+    }
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    let style = doc.querySelector("style[data-tech180-class-overrides]");
+    if (!style) {
+      style = doc.createElement("style");
+      style.setAttribute("data-tech180-class-overrides", "true");
+      doc.head.appendChild(style);
+    }
+    const selector = `.${CSS.escape(selectedClass)}`;
+    const declarations = importantCssDeclarations(nextCss);
+
+    // When a value graduates to a class, remove identical inline copies from
+    // every matching member. Inherited properties are also cleaned from child
+    // elements; differing values remain as intentional exceptions.
+    const draftStyle = doc.createElement("div").style;
+    draftStyle.cssText = cssDeclarations(nextCss);
+    const declarationValues = new Map(
+      Array.from(draftStyle).map((property) => [property, draftStyle.getPropertyValue(property).trim()])
+    );
+    const inheritedValues = new Map(
+      Array.from(declarationValues).filter(([property]) => INHERITED_CSS_PROPERTIES.has(property))
+    );
+    const removeMatchingInlineValue = (node, property, value) => {
+      if (node.style.getPropertyValue(property).trim() === value) node.style.removeProperty(property);
+      if (!node.getAttribute("style")?.trim()) node.removeAttribute("style");
+    };
+
+    // Imported values usually live in shared internal capture classes instead
+    // of style="". Split those classes when only some members graduate, so
+    // other elements using the original capture class remain untouched.
+    const capturedStyle = doc.querySelector("style[data-tech180-captured-styles]");
+    const capturedRules = new Map();
+    const capturedRulePattern = /\.([a-zA-Z0-9_-]+)\s*\{([^}]*)\}/g;
+    let capturedMatch;
+    while ((capturedMatch = capturedRulePattern.exec(capturedStyle?.textContent || ""))) {
+      const ruleStyle = doc.createElement("div").style;
+      ruleStyle.cssText = capturedMatch[2];
+      capturedRules.set(capturedMatch[1], new Map(
+        Array.from(ruleStyle).map((property) => [property, {
+          value: ruleStyle.getPropertyValue(property).trim(),
+          priority: ruleStyle.getPropertyPriority(property),
+        }])
+      ));
+    }
+    const captureVariants = new Map();
+    const newCapturedRules = [];
+    let captureVariantIndex = 1;
+    const cleanCapturedValues = (node, values) => {
+      Array.from(node.classList)
+        .filter((className) => className.startsWith("tech180-captured-"))
+        .forEach((className) => {
+          const capturedDeclarations = capturedRules.get(className);
+          if (!capturedDeclarations) return;
+          const removable = Array.from(values).filter(([property, value]) =>
+            capturedDeclarations.get(property)?.value === value
+          ).map(([property]) => property);
+          if (!removable.length) return;
+          const variantKey = `${className}|${removable.sort().join("|")}`;
+          if (!captureVariants.has(variantKey)) {
+            const remaining = new Map(capturedDeclarations);
+            removable.forEach((property) => remaining.delete(property));
+            let variantClass = "";
+            if (remaining.size) {
+              do {
+                variantClass = `tech180-captured-edit-${captureVariantIndex++}`;
+              } while (doc.querySelector(`.${CSS.escape(variantClass)}`));
+              const variantDeclarations = Array.from(remaining)
+                .map(([property, entry]) => `  ${property}: ${entry.value}${entry.priority ? " !important" : ""};`)
+                .join("\n");
+              newCapturedRules.push(`.${variantClass} {\n${variantDeclarations}\n}`);
+            }
+            captureVariants.set(variantKey, variantClass);
+          }
+          node.classList.remove(className);
+          const variantClass = captureVariants.get(variantKey);
+          if (variantClass) node.classList.add(variantClass);
+        });
+    };
+    doc.querySelectorAll(selector).forEach((owner) => {
+      declarationValues.forEach((value, property) => {
+        removeMatchingInlineValue(owner, property, value);
+      });
+      cleanCapturedValues(owner, declarationValues);
+      owner.querySelectorAll("*").forEach((child) => {
+        inheritedValues.forEach((value, property) => {
+          removeMatchingInlineValue(child, property, value);
+        });
+        cleanCapturedValues(child, inheritedValues);
+      });
+    });
+    if (capturedStyle && newCapturedRules.length) {
+      capturedStyle.textContent = `${capturedStyle.textContent || ""}\n${newCapturedRules.join("\n")}`;
+    }
+
+    const rule = `${selector} {\n${declarations}\n}`;
+    const inheritedDeclarations = selectedClassOption?.inherited
+      ? inheritedImportantCssDeclarations(nextCss)
+      : "";
+    const descendantRule = inheritedDeclarations
+      ? `\n${selector} ${activeElement.tag} {\n${inheritedDeclarations}\n}`
+      : "";
+    const ruleKey = `${selectedClass}:${selectedClassOption?.inherited ? activeElement.tag : "self"}`;
+    const startMarker = `/* tech180-class:${ruleKey}:start */`;
+    const endMarker = `/* tech180-class:${ruleKey}:end */`;
+    const markedRule = `${startMarker}\n${rule}${descendantRule}\n${endMarker}`;
+    const escapedStart = startMarker.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const escapedEnd = endMarker.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    const rulePattern = new RegExp(`${escapedStart}[\\s\\S]*?${escapedEnd}`, "g");
+    style.textContent = rulePattern.test(style.textContent || "")
+      ? style.textContent.replace(rulePattern, markedRule)
+      : `${style.textContent || ""}\n${markedRule}`.trim();
+    const nextHtml = "<!doctype html>\n" + doc.documentElement.outerHTML;
+    setHtml(nextHtml);
+    setIframeHtml(nextHtml);
+    setStatus(`Applied .${selectedClass}, cleaned matching child CSS, and refreshed the preview`);
+  }
+
+  async function graduatePageCss() {
+    if (!html || isGraduatingCss) return;
+    setIsGraduatingCss(true);
+    setError("");
+    setStatus("Scanning the page for matching CSS property/value pairs");
+    setCommandHistory((current) => [...current, { type: "html", html, activeId }].slice(-30));
+    try {
+      const response = await fetch(`${API_BASE}/api/graduate-css`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          html,
+          viewport_width: editorPreviewWidth(previewPaneRef),
+        }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(apiErrorMessage(data.detail, "Could not graduate page CSS"));
+
+      setHtml(data.html);
+      setIframeHtml(data.html);
+      setElements(data.elements || []);
+      if (page) {
+        const nextPage = { ...page, html: data.html, elements: data.elements || [] };
+        setPage(nextPage);
+        if (page.source_url) pageCacheRef.current.set(page.source_url, nextPage);
+      }
+      setActiveId("");
+      setSelectedClass("");
+      setClassCss("");
+      setClassContributions({});
+      setStatus(`Graduated matching CSS into ${data.promoted_classes} shared class${data.promoted_classes === 1 ? "" : "es"}`);
+    } catch (err) {
+      setError(err.message);
+      setStatus("");
+    } finally {
+      setIsGraduatingCss(false);
+    }
   }
 
   function applyActiveHtml() {
@@ -1366,7 +1999,7 @@ function App() {
                 body: JSON.stringify({ url: item.url, include_subpages: false }),
               });
               const data = await response.json();
-              if (!response.ok) throw new Error(data.detail || `Could not import ${item.url}`);
+              if (!response.ok) throw new Error(apiErrorMessage(data.detail, `Could not import ${item.url}`));
               return buildSeparatedExport(data.html, baseName);
             })();
         Object.assign(files, pageFiles);
@@ -1422,7 +2055,7 @@ function App() {
       const response = await fetch(`${API_BASE}/api/export-assets`, { method: "POST", body: form });
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.detail || "Folder export failed.");
+        throw new Error(apiErrorMessage(data.detail, "Folder export failed."));
       }
       setImportProgress(100);
       setStatus(`${data.folder_name} saved to ${data.path}`);
@@ -1473,6 +2106,13 @@ function App() {
           </div>
         </form>
 
+        {isImporting && (
+          <div className="import-progress" aria-label="Import or export progress">
+            <span style={{ width: `${importProgress}%` }} />
+            <strong>{importProgress}%</strong>
+          </div>
+        )}
+
         <div className="saved-import">
           <span>Continue a saved project</span>
           <div className="saved-import-actions">
@@ -1501,27 +2141,80 @@ function App() {
           />
         </div>
 
-        {isImporting && (
-          <div className="import-progress" aria-label="Import in progress">
-            <span style={{ width: `${importProgress}%` }} />
-            <strong>{importProgress}%</strong>
-          </div>
-        )}
-
         <div className="status-line">
           {status && <span>{status}</span>}
           {error && <strong>{error}</strong>}
         </div>
 
+        <details className="twirl-panel">
+          <summary>Page Elements &amp; Export</summary>
+          <div className="twirl-content">
+            <button
+              className="export-folder-button"
+              type="button"
+              onClick={exportProject}
+              disabled={!html || isImporting || !exportPageUrls.size}
+            >Export folder</button>
+            <button
+              className="graduate-css-button"
+              type="button"
+              onClick={graduatePageCss}
+              disabled={!html || isGraduatingCss || isImporting}
+            >{isGraduatingCss ? "Scanning page CSS…" : "Graduate common CSS"}</button>
+            {pageTabs.length > 0 && (
+              <section className="export-page-picker" aria-label="Pages to export">
+                <div className="export-page-heading">
+                  <strong>Pages to export</strong>
+                  <div>
+                    <button type="button" onClick={() => setExportPageUrls(new Set(pageTabs.map((tab) => tab.url)))}>Select all</button>
+                    <button type="button" onClick={() => setExportPageUrls(new Set())}>Deselect all</button>
+                  </div>
+                </div>
+                <div className="export-page-list">
+                  {pageTabs.map((tab) => (
+                    <label key={tab.url}>
+                      <input
+                        type="checkbox"
+                        checked={exportPageUrls.has(tab.url)}
+                        onChange={(event) => setExportPageUrls((current) => {
+                          const next = new Set(current);
+                          if (event.target.checked) next.add(tab.url);
+                          else next.delete(tab.url);
+                          return next;
+                        })}
+                      />
+                      <span title={tab.title || tab.url}>{tab.title || tab.url}</span>
+                    </label>
+                  ))}
+                </div>
+              </section>
+            )}
+          </div>
+        </details>
+
+        <details className="twirl-panel">
+          <summary>Element Selection</summary>
+          <div className="twirl-content">
         <section className="find-replace" aria-label="Find and replace">
           <label htmlFor="find-text">Find + Replace</label>
-          <input
-            id="find-text"
-            value={findText}
-            onChange={(event) => { setFindText(event.target.value); setFindIndex(-1); }}
-            placeholder="Find text"
-            disabled={!html}
-          />
+          <div className="find-input-wrap">
+            <input
+              id="find-text"
+              value={findText}
+              onChange={(event) => { setFindText(event.target.value); setFindIndex(-1); }}
+              placeholder="Find text"
+              disabled={!html}
+            />
+            {findText && (
+              <button
+                type="button"
+                className="clear-find-button"
+                aria-label="Clear Find text"
+                title="Clear"
+                onClick={() => { setFindText(""); setFindIndex(-1); }}
+              >×</button>
+            )}
+          </div>
           <input
             value={replaceText}
             onChange={(event) => setReplaceText(event.target.value)}
@@ -1537,44 +2230,6 @@ function App() {
         </section>
 
         <section className="editor-panel">
-          <div className="panel-heading">
-            <h2>Page elements</h2>
-            <button type="button" onClick={exportProject} disabled={!html || isImporting || !exportPageUrls.size}>
-              Export folder
-            </button>
-          </div>
-          {pageTabs.length > 0 && (
-            <section className="export-page-picker" aria-label="Pages to export">
-              <div className="export-page-heading">
-                <strong>Pages to export</strong>
-                <div>
-                  <button
-                    type="button"
-                    onClick={() => setExportPageUrls(new Set(pageTabs.map((tab) => tab.url)))}
-                  >Select all</button>
-                  <button type="button" onClick={() => setExportPageUrls(new Set())}>Deselect all</button>
-                </div>
-              </div>
-              <div className="export-page-list">
-                {pageTabs.map((tab) => (
-                  <label key={tab.url}>
-                    <input
-                      type="checkbox"
-                      checked={exportPageUrls.has(tab.url)}
-                      onChange={(event) => setExportPageUrls((current) => {
-                        const next = new Set(current);
-                        if (event.target.checked) next.add(tab.url);
-                        else next.delete(tab.url);
-                        return next;
-                      })}
-                    />
-                    <span title={tab.title || tab.url}>{tab.title || tab.url}</span>
-                  </label>
-                ))}
-              </div>
-            </section>
-          )}
-
           <p className="element-help">Click an item to select it. Use the Selection controls on the right to climb through its containers.</p>
           <div className="element-filters">
             <select
@@ -1586,6 +2241,7 @@ function App() {
               <option value="text">Text</option>
               <option value="image">Images</option>
               <option value="link">Links</option>
+              <option value="button">Buttons</option>
               <option value="embed">Embeds</option>
               <option value="video">Videos</option>
               <option value="iframe">Iframes</option>
@@ -1602,7 +2258,7 @@ function App() {
           </div>
 
           <div className="element-list">
-            {visibleElements.map((element) => (
+            {sidebarElements.map((element) => (
               <button
                 key={element.id}
                 type="button"
@@ -1614,7 +2270,24 @@ function App() {
               </button>
             ))}
           </div>
+          {visibleElements.length > SIDEBAR_PAGE_SIZE && (
+            <div className="element-pagination">
+              <button
+                type="button"
+                disabled={elementListPage === 0}
+                onClick={() => setElementListPage((pageNumber) => Math.max(0, pageNumber - 1))}
+              >Previous 250</button>
+              <span>{elementListPage + 1} / {elementPageCount}</span>
+              <button
+                type="button"
+                disabled={elementListPage >= elementPageCount - 1}
+                onClick={() => setElementListPage((pageNumber) => Math.min(elementPageCount - 1, pageNumber + 1))}
+              >Next 250</button>
+            </div>
+          )}
         </section>
+          </div>
+        </details>
       </aside>
 
       <section className="workspace">
@@ -1813,6 +2486,11 @@ function App() {
                       Apply HTML
                     </button>
                   </div>
+                  <div className="element-identity">
+                    <span>ID: <code>{activeIdentity.id || activeId}</code></span>
+                    <span>Classes: <code>{activeIdentity.classes.length ? activeIdentity.classes.join(" ") : "none"}</code></span>
+                    <span>Inherited: <code>{activeIdentity.classOptions.filter((option) => option.inherited).map((option) => option.className).join(" ") || "none"}</code></span>
+                  </div>
                   <textarea
                     id="active-html"
                     className="html-code"
@@ -1823,19 +2501,109 @@ function App() {
                   />
                   {htmlEditError && <strong className="code-error">{htmlEditError}</strong>}
                 </div>
+                {contributingClassOptions.length > 0 && (
+                  <div className="class-css-inspector">
+                    <div className="code-editor-heading">
+                      <label htmlFor="class-css">Class CSS</label>
+                      <button type="button" onClick={applyClassCss}>
+                        Apply CSS
+                      </button>
+                    </div>
+                    <div className="class-option-list" aria-label="Element and inherited classes">
+                      {contributingClassOptions.map((option) => (
+                        <button
+                          key={option.className}
+                          type="button"
+                          className={selectedClass === option.className ? "active" : ""}
+                          onClick={() => selectClassOption(option)}
+                        >
+                          <strong>{option.element ? "#element" : `.${option.className}`}</strong>
+                          <span>{option.element ? "inline attributes" : (option.inherited ? `parent <${option.ancestorTag}>` : "selected element")}</span>
+                        </button>
+                      ))}
+                    </div>
+                    <div className="class-navigation" aria-label="Navigate CSS classes">
+                      <button type="button" aria-label="First class" title="First class" onClick={() => navigateClassSelection("top")} disabled={selectedClassIndex <= 0}>
+                        ⇤ Top
+                      </button>
+                      <button type="button" aria-label="Previous class" title="Previous class" onClick={() => navigateClassSelection("up")} disabled={selectedClassIndex <= 0}>
+                        ↑ Up
+                      </button>
+                      <button type="button" aria-label="Next class" title="Next class" onClick={() => navigateClassSelection("down")} disabled={selectedClassIndex >= contributingClassOptions.length - 1}>
+                        ↓ Down
+                      </button>
+                      <button type="button" aria-label="Last class" title="Last class" onClick={() => navigateClassSelection("bottom")} disabled={selectedClassIndex >= contributingClassOptions.length - 1}>
+                        Bottom ⇥
+                      </button>
+                    </div>
+                    <div className="css-code-wrap">
+                      <textarea
+                        id="class-css"
+                        className="css-code"
+                        value={classCss || (selectedClass ? `.${selectedClass} {\n  \n}` : "")}
+                        onChange={(event) => setClassCss(event.target.value)}
+                        onScroll={syncCssPickerScroll}
+                        spellCheck="false"
+                        aria-label="CSS applied to every element sharing the selected class"
+                      />
+                      <div className="css-line-color-tools" aria-label="Class CSS color pickers">
+                        {cssColorOccurrences(classCss).map((color) => (
+                          <label
+                            key={color.key}
+                            style={{
+                              top: `calc(11px + ${color.lineIndex * 16.5}px - var(--css-scroll-top, 0px))`,
+                              right: `${8 + color.colorIndex * 24}px`,
+                            }}
+                            title={`${color.property}: ${color.value}`}
+                          >
+                            <span style={{ backgroundColor: color.value }} />
+                            <input
+                              type="color"
+                              value={color.hex}
+                              onChange={(event) => updateClassCssColor(color.lineIndex, color.value, event.target.value)}
+                            />
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
                 <div className="css-inspector">
                   <div className="code-editor-heading">
-                    <label htmlFor="active-css">Active CSS</label>
-                    <span>Live editor</span>
+                    <label htmlFor="active-css">Element CSS</label>
+                    <span>Direct only</span>
                   </div>
-                  <textarea
-                    id="active-css"
-                    className="css-code"
-                    value={activeCss}
-                    onChange={(event) => updateActiveCss(event.target.value)}
-                    spellCheck="false"
-                    aria-label="Editable active CSS for selected element"
-                  />
+                  <div className="css-code-wrap">
+                    <textarea
+                      id="active-css"
+                      className="css-code"
+                      value={elementCssDraft}
+                      onChange={(event) => updateElementCss(event.target.value)}
+                      onScroll={syncCssPickerScroll}
+                      spellCheck="false"
+                      aria-label="Editable CSS stored directly on the selected element"
+                      title="Only properties stored directly on this element"
+                    />
+                    <div className="css-line-color-tools" aria-label="Element CSS color pickers">
+                      {cssColorOccurrences(elementCssDraft).map((color) => (
+                        <label
+                          key={color.key}
+                          style={{
+                            top: `calc(11px + ${color.lineIndex * 16.5}px - var(--css-scroll-top, 0px))`,
+                            right: `${8 + color.colorIndex * 24}px`,
+                          }}
+                          title={`${color.property}: ${color.value}`}
+                        >
+                          <span style={{ backgroundColor: color.value }} />
+                          <input
+                            type="color"
+                            value={color.hex}
+                            onChange={(event) => updateElementCssColor(color.lineIndex, color.value, event.target.value)}
+                          />
+                        </label>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </>
             ) : (
