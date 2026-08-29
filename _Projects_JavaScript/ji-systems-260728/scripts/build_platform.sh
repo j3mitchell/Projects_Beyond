@@ -7,7 +7,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PLATFORM_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 TECH180_DIR="$(cd "${PLATFORM_DIR}/../../Tech180" && pwd)"
 DIST_DIR="${PLATFORM_DIR}/dist"
-API_URL="${TECH180_PUBLIC_API_URL:-https://api.jisystems.net}"
+API_URL="${TECH180_PUBLIC_API_URL:-https://ji-tech180-api-553979127849.us-east4.run.app}"
 
 cd "${TECH180_DIR}/frontend"
 PUBLIC_URL=/app/tech180 \
