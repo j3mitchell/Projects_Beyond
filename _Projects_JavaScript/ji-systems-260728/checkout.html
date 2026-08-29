@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Book a Systems Diagnostic | J.I. Systems</title>
+    <meta name="description" content="Review and accept the J.I. Systems service policies before secure payment.">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="ji-supabase-url" content="https://hecteqqrkjchdhvdkuxs.supabase.co">
+    <meta name="ji-supabase-publishable-key" content="sb_publishable_8Nc78Pxi99_M3Rs3kuKSHw_H6GBKpaR">
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+
+<body>
+    <header class="legal-header">
+        <div class="container"><a class="brand" href="index.html">J.I. Systems</a><a class="button button--secondary"
+                href="index.html">Back to home</a></div>
+    </header>
+    <main class="legal-main">
+        <div class="container checkout-shell">
+            <p class="eyebrow" id="checkout-eyebrow">Secure checkout</p>
+            <h1 id="checkout-title">Confirm your business details</h1>
+            <p class="section-copy" id="checkout-description">Review the policies and provide the business name associated with this purchase.
+                You’ll continue to Stripe for secure payment.</p>
+            <div class="checkout-selection" id="checkout-selection" hidden></div>
+            <form class="consent-card" id="checkout-consent">
+                <div class="form-field"><label for="company-name">Company or legal business name</label><input
+                        id="company-name" name="companyName" autocomplete="organization" maxlength="120" required></div>
+                <div class="form-field"><label for="company-id">Company or customer ID</label><input id="company-id"
+                        name="companyId" maxlength="80" required aria-describedby="company-id-help">
+                    <p class="form-help" id="company-id-help">Use a registration number, internal customer ID, or other
+                        identifier associated with your business. Do not enter a Social Security number.</p>
+                </div><label class="consent-row" for="terms-consent"><input id="terms-consent" name="accepted"
+                        type="checkbox" required><span>I am authorized to act for the company above and agree to the <a
+                            href="terms.html" target="_blank">Terms of Service</a>, <a href="refund-policy.html"
+                            target="_blank">Refund and Cancellation Policy</a>, and acknowledge the <a
+                            href="privacy.html" target="_blank">Privacy Policy</a>.</span></label><button
+                    class="button button--primary checkout-submit" id="checkout-submit" type="submit">Accept and continue to Stripe</button>
+                <p class="checkout-error" id="checkout-error" role="alert" hidden></p>
+                <p class="form-help">Your payment information is collected securely by Stripe. A consent reference will
+                    be attached to your Stripe checkout.</p>
+            </form>
+        </div>
+    </main>
+    <div data-site-footer></div>
+    <script src="assets/js/footer.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="assets/js/checkout.js"></script>
+</body>
+
+</html>

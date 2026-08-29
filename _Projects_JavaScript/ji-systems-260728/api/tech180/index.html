@@ -1,0 +1,62 @@
+<!doctype html>
+<html class="no-js" lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Tech180 API Boundary | J.I. Systems</title>
+  <meta name="description" content="Planned Tech180 API boundary and endpoint groups.">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="canonical" href="https://api.jisystems.net/tech180/">
+  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#365f4f">
+  <link rel="stylesheet" href="../../assets/css/styles.css">
+</head>
+
+<body class="site">
+  <div data-platform-header></div>
+
+  <main>
+    <section class="platform-hero platform-hero--compact">
+      <div class="container platform-hero__content">
+        <p class="eyebrow">Tech180 backend</p>
+        <h1 class="platform-title platform-title--product">API namespace reserved.</h1>
+        <p class="platform-lead">These routes document the intended separation between the public site, authenticated workspace, and Python authority.</p>
+      </div>
+    </section>
+    <section class="section section--white">
+      <div class="container">
+        <p class="route-note">This page is a structural placeholder—not a live public API. Authentication and authorization will be required before production endpoints are exposed.</p>
+        <div class="platform-grid platform-grid--spaced">
+          <article class="api-card">
+            <h2>Project operations</h2>
+            <div class="api-endpoint"><span class="api-method">POST</span><code>/v1/tech180/imports</code></div>
+            <div class="api-endpoint"><span class="api-method">GET</span><code>/v1/tech180/projects</code></div>
+            <div class="api-endpoint"><span class="api-method">POST</span><code>/v1/tech180/exports</code></div>
+          </article>
+          <article class="api-card">
+            <h2>Required controls</h2>
+            <p>Authenticated account</p>
+            <p>Authorized project ownership</p>
+            <p>Backend usage and request limits</p>
+            <p>Safe URL and upload validation</p>
+          </article>
+          <article class="api-card">
+            <h2>Access gateway</h2>
+            <div class="api-endpoint"><span class="api-method">POST</span><code>/v1/auth/magic-link</code></div>
+            <div class="api-endpoint"><span class="api-method">GET</span><code>/v1/access/tech180</code></div>
+            <p>Both routes fail closed until identity and entitlement services are configured.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div data-site-footer></div>
+  <script src="../../assets/js/platform-header.js"></script>
+  <script src="../../assets/js/footer.js"></script>
+  <script src="../../assets/js/main.js"></script>
+  <script src="../../assets/js/platform.js"></script>
+</body>
+
+</html>

@@ -4,6 +4,7 @@
 # These are all part of Python's standard library, so they do not need pip.
 # Each module handles one job: files, processes, networking, timing, or browsers.
 import os
+import secrets
 import shutil
 import socket
 import subprocess
@@ -26,6 +27,40 @@ VENV = BACKEND / ".venv"
 PYTHON = VENV / "bin" / "python"
 API_PORT = 8050
 APP_PORT = 4050
+ENV_FILE = ROOT / ".env"
+
+
+def ensure_local_env() -> None:
+    """Create a private development .env the first time Tech180 starts.
+
+    The generated token is random and exists only on this Mac. Git ignores the
+    file, so the credential cannot accidentally become part of a commit.
+    """
+    if ENV_FILE.exists():
+        return
+
+    token = secrets.token_urlsafe(48)
+    ENV_FILE.write_text(
+        "TECH180_ENV=development\n"
+        f"TECH180_API_TOKEN={token}\n"
+        "TECH180_ALLOWED_ORIGINS=http://127.0.0.1:4050,http://localhost:4050\n",
+        encoding="utf-8",
+    )
+    # Only this macOS account should be able to read or change the secret file.
+    ENV_FILE.chmod(0o600)
+    print("Created private local settings in Tech180/.env")
+
+
+def load_local_env() -> dict[str, str]:
+    """Read simple KEY=VALUE settings from the project-root .env file."""
+    values: dict[str, str] = {}
+    for raw_line in ENV_FILE.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        values[key.strip()] = value.strip()
+    return values
 
 
 def run(args, cwd=None) -> None:
@@ -99,6 +134,13 @@ def main() -> None:
         if not shutil.which(command):
             raise SystemExit(f"Missing {command}. Install Python 3 and Node.js, then try again.")
 
+    # Both servers receive the same private development configuration. Existing
+    # shell/hosting variables win, which keeps production settings separate.
+    ensure_local_env()
+    runtime_env = os.environ.copy()
+    for key, value in load_local_env().items():
+        runtime_env.setdefault(key, value)
+
     # PID files record the process IDs from the previous launch. Stop those
     # processes first so repeated launches do not create duplicate servers.
     for pid_file in (ROOT / ".tech180.pid", ROOT / ".tech180.api.pid"):
@@ -140,15 +182,24 @@ def main() -> None:
         [str(PYTHON), "-m", "uvicorn", "app.main:app", "--host", "127.0.0.1", "--port", str(API_PORT)],
         BACKEND,
         ROOT / ".tech180.api.log",
+        runtime_env,
     )
     # Save the process ID so stop_tech180.py knows exactly what to stop later.
     (ROOT / ".tech180.api.pid").write_text(str(api.pid))
 
     # React reads these environment variables when its development server starts.
-    frontend_env = os.environ.copy()
+    frontend_env = runtime_env.copy()
     # HOST and PORT choose the frontend address. REACT_APP_API_BASE tells React
     # where its Python API lives. BROWSER=none prevents npm from opening a tab.
-    frontend_env.update(HOST="127.0.0.1", PORT=str(APP_PORT), REACT_APP_API_BASE=f"http://127.0.0.1:{API_PORT}", BROWSER="none")
+    frontend_env.update(
+        HOST="127.0.0.1",
+        PORT=str(APP_PORT),
+        REACT_APP_API_BASE=f"http://127.0.0.1:{API_PORT}",
+        # This is acceptable only for local development. React variables are
+        # bundled into browser code and must never contain production secrets.
+        REACT_APP_TECH180_API_TOKEN=runtime_env.get("TECH180_API_TOKEN", ""),
+        BROWSER="none",
+    )
     app = spawn(["npm", "start"], FRONTEND, ROOT / ".tech180.log", frontend_env)
     (ROOT / ".tech180.pid").write_text(str(app.pid))
 

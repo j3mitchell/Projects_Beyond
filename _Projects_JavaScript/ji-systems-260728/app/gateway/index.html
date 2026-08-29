@@ -1,0 +1,85 @@
+<!doctype html>
+<html class="no-js" lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Secure Access | J.I. Systems</title>
+  <meta name="description" content="Secure account and access verification for J.I. Systems tools.">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="ji-api-base" content="https://api.jisystems.net/v1">
+  <meta name="ji-supabase-url" content="https://hecteqqrkjchdhvdkuxs.supabase.co">
+  <meta name="ji-supabase-publishable-key" content="sb_publishable_8Nc78Pxi99_M3Rs3kuKSHw_H6GBKpaR">
+  <meta name="ji-tech180-app-url" content="https://jisystems.net/app/tech180/">
+  <link rel="canonical" href="https://app.jisystems.net/gateway/">
+  <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#365f4f">
+  <link rel="stylesheet" href="../../assets/css/styles.css">
+</head>
+
+<body class="site">
+  <div data-platform-header data-active="app"></div>
+
+  <main id="top" class="access-gateway" data-access-gateway>
+    <section class="hero tools-hero">
+      <div class="container hero__inner">
+        <div class="hero__content">
+          <p class="eyebrow">J.I. Systems secure access</p>
+          <h1 class="hero__title">Verify access before opening <span data-tool-name>Tech180</span>.</h1>
+          <p class="hero__lead">Sign in with your account. The gateway checks membership and tool access before the workspace launches.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--white" aria-labelledby="gateway-title">
+      <div class="container gateway-layout">
+        <article class="gateway-card">
+          <div class="gateway-card__heading">
+            <div>
+              <p class="eyebrow eyebrow--compact">Account gateway</p>
+              <h2 class="gateway-card__title" id="gateway-title">Continue to <span data-tool-name>Tech180</span></h2>
+            </div>
+            <span class="gateway-state" data-gateway-state data-state="checking">Checking</span>
+          </div>
+
+          <p class="gateway-message" data-gateway-message role="status" aria-live="polite">Checking for an existing secure session…</p>
+
+          <form class="gateway-form" data-gateway-form hidden>
+            <label for="gateway-email">Account email</label>
+            <div class="gateway-form__row">
+              <input id="gateway-email" name="email" type="email" autocomplete="email" placeholder="you@company.com" required>
+              <input id="gateway-password" name="password" type="password" autocomplete="current-password" placeholder="Temporary password" data-dev-password hidden>
+              <button class="button button--primary" type="submit" data-gateway-submit>Send secure sign-in link</button>
+            </div>
+            <p class="gateway-help">Use the email address connected to your J.I. Systems membership.</p>
+            <p class="gateway-help gateway-test-credentials" data-test-credentials hidden><strong>Temporary test:</strong> demo@jisystems.net / Tech180Temp!</p>
+          </form>
+
+          <div class="gateway-actions">
+            <a class="button button--primary" data-launch-tool hidden>Launch <span data-tool-name>Tech180</span></a>
+            <button class="button button--secondary" data-recheck-access type="button">Check access again</button>
+            <a class="button button--link" data-return-tool href="../../tools/index.html">Return to tool details</a>
+          </div>
+        </article>
+
+        <aside class="gateway-card gateway-card--steps" aria-label="Access steps">
+          <p class="eyebrow eyebrow--compact">Access sequence</p>
+          <ol class="gateway-steps">
+            <li><span>1</span><div><strong>Sign in</strong><p>Confirm your account through a secure email link.</p></div></li>
+            <li><span>2</span><div><strong>Verify access</strong><p>Check the account's membership and tool entitlement.</p></div></li>
+            <li><span>3</span><div><strong>Launch</strong><p>Open the tool only after access is approved.</p></div></li>
+          </ol>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <div data-site-footer></div>
+  <script src="../../assets/js/platform-header.js"></script>
+  <script src="../../assets/js/footer.js"></script>
+  <script src="../../assets/js/main.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../../assets/js/gateway.js"></script>
+</body>
+
+</html>

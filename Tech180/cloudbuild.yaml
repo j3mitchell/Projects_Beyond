@@ -1,0 +1,24 @@
+substitutions:
+  _REGION: us-east4
+  _SERVICE: ji-tech180-api
+
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args: [build, -f, backend/Dockerfile, -t, "gcr.io/$PROJECT_ID/${_SERVICE}:$BUILD_ID", .]
+  - name: gcr.io/cloud-builders/docker
+    args: [push, "gcr.io/$PROJECT_ID/${_SERVICE}:$BUILD_ID"]
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - ${_SERVICE}
+      - --image=gcr.io/$PROJECT_ID/${_SERVICE}:$BUILD_ID
+      - --region=${_REGION}
+      - --platform=managed
+      - --allow-unauthenticated
+      - --set-env-vars=^|^TECH180_ENV=production|TECH180_ALLOWED_ORIGINS=https://jisystems.net,https://www.jisystems.net|SUPABASE_URL=https://hecteqqrkjchdhvdkuxs.supabase.co|SUPABASE_PUBLISHABLE_KEY=sb_publishable_8Nc78Pxi99_M3Rs3kuKSHw_H6GBKpaR
+      - --set-secrets=SUPABASE_SECRET_KEY=SUPABASE_SECRET_KEY:latest,STRIPE_WEBHOOK_SECRET=STRIPE_WEBHOOK_SECRET2:latest
+
+images:
+  - "gcr.io/$PROJECT_ID/${_SERVICE}:$BUILD_ID"

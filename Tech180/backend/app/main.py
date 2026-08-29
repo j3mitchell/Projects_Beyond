@@ -1,7 +1,12 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
+from functools import lru_cache
 from pathlib import Path
+import ipaddress
+import os
+import secrets
+import socket
 from typing import Literal, Optional
 from urllib.parse import urljoin, urlparse, urlunparse
 
@@ -9,9 +14,99 @@ import httpx
 import re
 import json
 from bs4 import BeautifulSoup, Tag
-from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from dotenv import load_dotenv
+from fastapi import Depends, FastAPI, File, Header, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
+
+from .stripe_webhook import router as stripe_webhook_router
+
+
+# The root .env is private local configuration. Hosting platforms should inject
+# production variables directly instead of uploading this file.
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+load_dotenv(PROJECT_ROOT / ".env")
+
+TECH180_ENV = os.getenv("TECH180_ENV", "development").strip().lower()
+TECH180_API_TOKEN = os.getenv("TECH180_API_TOKEN", "").strip()
+SUPABASE_URL = os.getenv("SUPABASE_URL", "").strip().rstrip("/")
+SUPABASE_PUBLISHABLE_KEY = os.getenv("SUPABASE_PUBLISHABLE_KEY", "").strip()
+ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in os.getenv(
+        "TECH180_ALLOWED_ORIGINS",
+        "http://127.0.0.1:4050,http://localhost:4050",
+    ).split(",")
+    if origin.strip()
+]
+
+
+async def require_api_access(
+    authorization: Optional[str] = Header(default=None),
+    x_tech180_api_key: Optional[str] = Header(default=None),
+) -> dict[str, str]:
+    """Verify either the local development key or a production Supabase user.
+
+    Production requests carry the user's short-lived Supabase access token. The
+    API asks Supabase to validate that token, then reads the user's own Tech180
+    entitlement through RLS. A public publishable key identifies this project;
+    it does not grant administrator access.
+    """
+    if TECH180_ENV != "production":
+        if not TECH180_API_TOKEN:
+            raise HTTPException(status_code=503, detail="The Tech180 API credential is not configured.")
+        if not x_tech180_api_key or not secrets.compare_digest(x_tech180_api_key, TECH180_API_TOKEN):
+            raise HTTPException(status_code=401, detail="Valid Tech180 authentication is required.")
+        return {"id": "local-development", "email": "local@jisystems.net"}
+
+    if not SUPABASE_URL or not SUPABASE_PUBLISHABLE_KEY:
+        raise HTTPException(status_code=503, detail="Production authentication is not configured.")
+    if not authorization or not authorization.lower().startswith("bearer "):
+        raise HTTPException(status_code=401, detail="Sign in before using Tech180.")
+
+    access_token = authorization.split(" ", 1)[1].strip()
+    if not access_token:
+        raise HTTPException(status_code=401, detail="The account session is missing.")
+
+    request_headers = {
+        "apikey": SUPABASE_PUBLISHABLE_KEY,
+        "Authorization": f"Bearer {access_token}",
+    }
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            user_response = await client.get(f"{SUPABASE_URL}/auth/v1/user", headers=request_headers)
+            if user_response.status_code != 200:
+                raise HTTPException(status_code=401, detail="The account session is invalid or expired.")
+            user = user_response.json()
+
+            entitlement_response = await client.get(
+                f"{SUPABASE_URL}/rest/v1/tool_entitlements",
+                headers={**request_headers, "Accept": "application/json"},
+                params={
+                    "user_id": f"eq.{user['id']}",
+                    "tool_slug": "eq.tech180",
+                    "select": "status,expires_at",
+                    "limit": "1",
+                },
+            )
+            if entitlement_response.status_code != 200:
+                raise HTTPException(status_code=503, detail="Tech180 access could not be verified.")
+    except HTTPException:
+        raise
+    except (httpx.HTTPError, KeyError, ValueError) as exc:
+        raise HTTPException(status_code=503, detail="The account service is temporarily unavailable.") from exc
+
+    entitlements = entitlement_response.json()
+    entitlement = entitlements[0] if entitlements else None
+    expires_at = entitlement.get("expires_at") if entitlement else None
+    if expires_at:
+        expiry = datetime.fromisoformat(expires_at.replace("Z", "+00:00"))
+        if expiry <= datetime.now(timezone.utc):
+            entitlement = None
+    if not entitlement or entitlement.get("status") != "active":
+        raise HTTPException(status_code=403, detail="Your account does not currently include Tech180 access.")
+
+    return {"id": str(user["id"]), "email": str(user.get("email") or "")}
 
 
 REQUEST_HEADERS = {
@@ -30,6 +125,7 @@ CONTENT_SELECTORS = "h1,h2,h3,h4,h5,h6,p,a,button,span,li,figcaption,blockquote,
 CONTAINER_SELECTORS = "div,section,article,header,footer,main,nav,aside,form"
 CONTAINER_TAGS = {"div", "section", "article", "header", "footer", "main", "nav", "aside", "form"}
 MAX_SUBPAGES = 40
+MAX_SOURCE_HTML_BYTES = 25 * 1024 * 1024
 RENDER_WAIT_MS = 1800
 COMPUTED_STYLE_SCRIPT = """
 () => {
@@ -271,13 +367,14 @@ COMPUTED_STYLE_SCRIPT = """
 
 
 app = FastAPI(title="Tech180 API", version="0.1.0")
+app.include_router(stripe_webhook_router)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Accept", "Authorization", "Content-Type", "X-Tech180-API-Key"],
 )
 
 
@@ -335,10 +432,32 @@ class ExportResponse(BaseModel):
     path: str
 
 
+@lru_cache(maxsize=512)
+def _hostname_is_public(hostname: str) -> bool:
+    """Reject loopback/private targets so the importer cannot probe our server."""
+    normalized = hostname.rstrip(".").lower()
+    if not normalized or normalized in {"localhost", "localhost.localdomain"}:
+        return False
+    try:
+        addresses = {item[4][0] for item in socket.getaddrinfo(normalized, None, type=socket.SOCK_STREAM)}
+    except socket.gaierror:
+        return False
+    return bool(addresses) and all(ipaddress.ip_address(address).is_global for address in addresses)
+
+
 def _validate_url(url: str) -> str:
     parsed = urlparse(url.strip())
     if parsed.scheme not in {"http", "https"} or not parsed.netloc:
         raise HTTPException(status_code=400, detail="URL must be a valid http/https address.")
+    if parsed.username or parsed.password:
+        raise HTTPException(status_code=400, detail="URLs containing embedded credentials are not allowed.")
+    try:
+        if TECH180_ENV == "production" and parsed.port not in {None, 80, 443}:
+            raise HTTPException(status_code=400, detail="Only standard website ports 80 and 443 are allowed.")
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail="URL contains an invalid port.") from exc
+    if TECH180_ENV == "production" and not _hostname_is_public(parsed.hostname or ""):
+        raise HTTPException(status_code=400, detail="The URL must resolve to a public internet address.")
     return urlunparse(parsed._replace(fragment=""))
 
 
@@ -378,6 +497,9 @@ async def _fetch_html(url: str) -> str:
     content_type = response.headers.get("content-type", "")
     if "html" not in content_type.lower():
         raise HTTPException(status_code=400, detail="URL did not return an HTML page.")
+    _validate_url(str(response.url))
+    if len(response.content) > MAX_SOURCE_HTML_BYTES:
+        raise HTTPException(status_code=413, detail="The source page is too large to import safely.")
     return response.text
 
 
@@ -400,10 +522,12 @@ async def _render_html(url: str, viewport_width: Optional[int]) -> tuple[str, st
 
     try:
         async with async_playwright() as playwright:
-            browser = await playwright.chromium.launch(
-                channel="chrome",
-                headless=True,
-            )
+            # Local Macs use installed Chrome. The production container ships
+            # Chromium, so Cloud Run launches the bundled browser.
+            launch_options = {"headless": True}
+            if TECH180_ENV != "production":
+                launch_options["channel"] = "chrome"
+            browser = await playwright.chromium.launch(**launch_options)
             context = await browser.new_context(
                 user_agent=REQUEST_HEADERS["User-Agent"],
                 locale="en-US",
@@ -415,6 +539,26 @@ async def _render_html(url: str, viewport_width: Optional[int]) -> tuple[str, st
             )
             page = await context.new_page()
             try:
+                async def block_private_network_requests(route) -> None:
+                    request_url = urlparse(route.request.url)
+                    if request_url.scheme in {"data", "blob", "about"}:
+                        await route.continue_()
+                        return
+                    try:
+                        allowed_port = request_url.port in {None, 80, 443}
+                    except ValueError:
+                        allowed_port = False
+                    if (
+                        request_url.scheme in {"http", "https"}
+                        and allowed_port
+                        and _hostname_is_public(request_url.hostname or "")
+                    ):
+                        await route.continue_()
+                    else:
+                        await route.abort("blockedbyclient")
+
+                if TECH180_ENV == "production":
+                    await page.route("**/*", block_private_network_requests)
                 response = await page.goto(url, wait_until="domcontentloaded", timeout=30000)
                 if response and response.status == 403:
                     raise HTTPException(
@@ -431,6 +575,8 @@ async def _render_html(url: str, viewport_width: Optional[int]) -> tuple[str, st
                 await page.wait_for_timeout(RENDER_WAIT_MS)
                 await page.evaluate(COMPUTED_STYLE_SCRIPT)
                 rendered = await page.content()
+                if len(rendered.encode("utf-8")) > MAX_SOURCE_HTML_BYTES:
+                    raise HTTPException(status_code=413, detail="The rendered page is too large to import safely.")
             finally:
                 await context.close()
                 await browser.close()
@@ -634,7 +780,13 @@ def health() -> dict[str, str]:
     return {"status": "ok", "app": "Tech180"}
 
 
-@app.post("/api/import", response_model=ImportResponse)
+@app.get("/api/access")
+async def access_status(user: dict[str, str] = Depends(require_api_access)) -> dict[str, object]:
+    """Give the browser a lightweight way to confirm production access."""
+    return {"authenticated": True, "authorized": True, "tool": "tech180", "user_id": user["id"]}
+
+
+@app.post("/api/import", response_model=ImportResponse, dependencies=[Depends(require_api_access)])
 async def import_page(payload: ImportRequest) -> ImportResponse:
     source_url = _validate_url(payload.url)
     raw_html, render_mode, render_warnings = await _render_html(source_url, payload.viewport_width)
@@ -650,14 +802,17 @@ async def import_page(payload: ImportRequest) -> ImportResponse:
     )
 
 
-@app.post("/api/graduate-css", response_model=GraduateCssResponse)
+@app.post("/api/graduate-css", response_model=GraduateCssResponse, dependencies=[Depends(require_api_access)])
 async def graduate_css(payload: GraduateCssRequest) -> GraduateCssResponse:
     """Rebuild shared CSS classes from the currently edited page."""
     try:
         from playwright.async_api import async_playwright
 
         async with async_playwright() as playwright:
-            browser = await playwright.chromium.launch(channel="chrome", headless=True)
+            launch_options = {"headless": True}
+            if TECH180_ENV != "production":
+                launch_options["channel"] = "chrome"
+            browser = await playwright.chromium.launch(**launch_options)
             context = await browser.new_context(
                 viewport={"width": _normalize_viewport_width(payload.viewport_width), "height": 1200}
             )
@@ -707,7 +862,7 @@ def _create_export_directory() -> tuple[Path, str]:
     raise HTTPException(status_code=500, detail="Tech180 could not create an export folder.")
 
 
-@app.post("/api/export", response_model=ExportResponse)
+@app.post("/api/export", response_model=ExportResponse, dependencies=[Depends(require_api_access)])
 def export_project(payload: ExportRequest) -> ExportResponse:
     required_files = {"index.html", "css/styles.css", "js/script.js"}
     if not required_files.issubset(payload.files):
@@ -754,7 +909,7 @@ def export_project(payload: ExportRequest) -> ExportResponse:
     return ExportResponse(folder_name=folder_name, path=str(export_directory))
 
 
-@app.post("/api/export-assets", response_model=ExportResponse)
+@app.post("/api/export-assets", response_model=ExportResponse, dependencies=[Depends(require_api_access)])
 async def export_project_with_assets(
     files_json: UploadFile = File(...),
     assets: list[UploadFile] = File(default=[]),

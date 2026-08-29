@@ -1,8 +1,39 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import JSZip from "jszip";
 import { Player as GumletPlayer } from "@gumlet/player.js";
+import { createClient } from "@supabase/supabase-js";
 
 const API_BASE = process.env.REACT_APP_API_BASE || "http://localhost:8050";
+const DEVELOPMENT_API_TOKEN = process.env.REACT_APP_TECH180_API_TOKEN || "";
+const SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL || "";
+const SUPABASE_PUBLISHABLE_KEY = process.env.REACT_APP_SUPABASE_PUBLISHABLE_KEY || "";
+const GATEWAY_URL = process.env.REACT_APP_GATEWAY_URL || "https://jisystems.net/app/gateway/?tool=tech180";
+const supabaseClient = SUPABASE_URL && SUPABASE_PUBLISHABLE_KEY
+  ? createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY)
+  : null;
+
+function downloadBrowserFile(blob, filename) {
+  const objectUrl = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = objectUrl;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  window.setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+}
+
+// Only the local development launcher supplies this browser-visible token.
+// Production must replace it with a secure server session from the gateway.
+async function apiFetch(path, options = {}) {
+  const headers = new Headers(options.headers || {});
+  if (DEVELOPMENT_API_TOKEN) headers.set("X-Tech180-API-Key", DEVELOPMENT_API_TOKEN);
+  if (!DEVELOPMENT_API_TOKEN && supabaseClient) {
+    const { data } = await supabaseClient.auth.getSession();
+    if (data.session?.access_token) headers.set("Authorization", `Bearer ${data.session.access_token}`);
+  }
+  return fetch(`${API_BASE}${path}`, { ...options, headers });
+}
 const CONTENT_SELECTOR = "h1,h2,h3,h4,h5,h6,p,a,button,span,li,figcaption,blockquote,img,iframe,video";
 const CONTAINER_SELECTOR = "div,section,article,header,footer,main,nav,aside,form";
 const CONTAINER_TAGS = new Set([
@@ -891,7 +922,9 @@ function App() {
   const localObjectUrlsRef = useRef(new Map());
   const largeVideoFilesRef = useRef(new Map());
   const pageCacheRef = useRef(new Map());
-  const [url, setUrl] = useState("");
+  // Preserve the URL entered on the J.I. Systems tool page. The gateway carries
+  // it forward as ?url=..., so it is ready in Tech180's opening input field.
+  const [url, setUrl] = useState(() => new URLSearchParams(window.location.search).get("url") || "");
   const [page, setPage] = useState(null);
   const [html, setHtml] = useState("");
   const [iframeHtml, setIframeHtml] = useState("");
@@ -921,6 +954,44 @@ function App() {
   const [imageComparison, setImageComparison] = useState(null);
   const [videoComparison, setVideoComparison] = useState(null);
   const [videoOptionChoices, setVideoOptionChoices] = useState({});
+  const productionAuthEnabled = !DEVELOPMENT_API_TOKEN && Boolean(supabaseClient);
+  const [accessState, setAccessState] = useState(productionAuthEnabled ? "checking" : "approved");
+  const [accessMessage, setAccessMessage] = useState("Checking your Tech180 membership…");
+
+  useEffect(() => {
+    if (!productionAuthEnabled) return undefined;
+    let canceled = false;
+
+    async function verifyProductionAccess() {
+      try {
+        const response = await apiFetch("/api/access", { headers: { Accept: "application/json" } });
+        const result = await response.json().catch(() => ({}));
+        if (canceled) return;
+        if (response.ok && result.authorized === true) {
+          setAccessState("approved");
+          return;
+        }
+        if (response.status === 401) {
+          const gateway = new URL(GATEWAY_URL);
+          gateway.searchParams.set("tool", "tech180");
+          const requestedUrl = new URLSearchParams(window.location.search).get("url");
+          if (requestedUrl) gateway.searchParams.set("url", requestedUrl);
+          window.location.replace(gateway.href);
+          return;
+        }
+        setAccessState("denied");
+        setAccessMessage(result.detail || "Your membership does not currently include Tech180 access.");
+      } catch {
+        if (!canceled) {
+          setAccessState("unavailable");
+          setAccessMessage("Tech180 could not reach its secure backend. Please try again shortly.");
+        }
+      }
+    }
+
+    verifyProductionAccess();
+    return () => { canceled = true; };
+  }, [productionAuthEnabled]);
 
   const activeElement = elements.find((element) => element.id === activeId);
   const visibleElements = useMemo(() => {
@@ -1262,7 +1333,7 @@ function App() {
     setHtmlEditError("");
 
     try {
-      const response = await fetch(`${API_BASE}/api/import`, {
+      const response = await apiFetch(`/api/import`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -1318,7 +1389,7 @@ function App() {
       let nextPage = pageCacheRef.current.get(tab.url);
       if (!nextPage) {
         const previewWidth = editorPreviewWidth(previewPaneRef);
-        const response = await fetch(`${API_BASE}/api/import`, {
+        const response = await apiFetch(`/api/import`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ url: tab.url, include_subpages: false, viewport_width: previewWidth }),
@@ -1916,7 +1987,7 @@ function App() {
     setStatus("Scanning the page for matching CSS property/value pairs");
     setCommandHistory((current) => [...current, { type: "html", html, activeId }].slice(-30));
     try {
-      const response = await fetch(`${API_BASE}/api/graduate-css`, {
+      const response = await apiFetch(`/api/graduate-css`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -1993,7 +2064,7 @@ function App() {
           : await (async () => {
               setStatus(`Importing export page ${index + 1} of ${uniquePages.length}`);
               setImportProgress(12 + Math.round((index / uniquePages.length) * 65));
-              const response = await fetch(`${API_BASE}/api/import`, {
+              const response = await apiFetch(`/api/import`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ url: item.url, include_subpages: false }),
@@ -2042,9 +2113,25 @@ function App() {
       setStatus("Saving project folder");
       await nextPaint();
 
-      // Always stream exports. Multi-page sites with captured images can make
-      // the page JSON hundreds of megabytes even when no video was replaced;
-      // sending that through the regular JSON endpoint can exhaust the server.
+      // Hosted users need the files on their own computer, not on Cloud Run's
+      // temporary container disk. Build a ZIP in the browser for production.
+      if (process.env.NODE_ENV === "production") {
+        const archive = new JSZip();
+        Object.entries(files).forEach(([name, contents]) => archive.file(name, contents));
+        exportAssets.forEach(({ file, safeName }) => archive.file(`assets/${safeName}`, file));
+        const blob = await archive.generateAsync(
+          { type: "blob", compression: "DEFLATE", compressionOptions: { level: 6 } },
+          ({ percent }) => setImportProgress(35 + Math.round(percent * 0.65))
+        );
+        const folderName = `tech180-export-${new Date().toISOString().slice(0, 10)}`;
+        downloadBrowserFile(blob, `${folderName}.zip`);
+        setImportProgress(100);
+        setStatus(`${folderName}.zip downloaded`);
+        return;
+      }
+
+      // Local development can write the folder directly to the Mac. Stream
+      // data so large captured pages do not exhaust the Python server.
       const form = new FormData();
       form.append(
         "files_json",
@@ -2052,7 +2139,7 @@ function App() {
         "tech180-files.json"
       );
       exportAssets.forEach(({ file, safeName }) => form.append("assets", file, safeName));
-      const response = await fetch(`${API_BASE}/api/export-assets`, { method: "POST", body: form });
+      const response = await apiFetch(`/api/export-assets`, { method: "POST", body: form });
       const data = await response.json();
       if (!response.ok) {
         throw new Error(apiErrorMessage(data.detail, "Folder export failed."));
@@ -2072,6 +2159,22 @@ function App() {
         setImportProgress(0);
       }, 650);
     }
+  }
+
+  if (accessState !== "approved") {
+    return (
+      <main className="access-screen">
+        <section className="access-screen__card" aria-live="polite">
+          <div className="mark">180</div>
+          <p className="access-screen__eyebrow">J.I. Systems secure workspace</p>
+          <h1>{accessState === "checking" ? "Opening Tech180…" : "Tech180 access required"}</h1>
+          <p>{accessMessage}</p>
+          {accessState !== "checking" && (
+            <a className="access-screen__button" href={GATEWAY_URL}>Return to secure access</a>
+          )}
+        </section>
+      </main>
+    );
   }
 
   return (

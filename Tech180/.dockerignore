@@ -1,0 +1,13 @@
+.git
+.gitignore
+.env
+.env.*
+!.env.example
+!.env.production.example
+frontend
+backend/.venv
+backend/__pycache__
+backend/app/__pycache__
+exports
+*.log
+.DS_Store
