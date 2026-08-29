@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 from functools import lru_cache
 from pathlib import Path
 import ipaddress
+import logging
 import os
 import secrets
 import socket
@@ -31,6 +32,7 @@ TECH180_ENV = os.getenv("TECH180_ENV", "development").strip().lower()
 TECH180_API_TOKEN = os.getenv("TECH180_API_TOKEN", "").strip()
 SUPABASE_URL = os.getenv("SUPABASE_URL", "").strip().rstrip("/")
 SUPABASE_PUBLISHABLE_KEY = os.getenv("SUPABASE_PUBLISHABLE_KEY", "").strip()
+SUPABASE_SECRET_KEY = os.getenv("SUPABASE_SECRET_KEY", "").strip()
 ALLOWED_ORIGINS = [
     origin.strip()
     for origin in os.getenv(
@@ -59,7 +61,7 @@ async def require_api_access(
             raise HTTPException(status_code=401, detail="Valid Tech180 authentication is required.")
         return {"id": "local-development", "email": "local@jisystems.net"}
 
-    if not SUPABASE_URL or not SUPABASE_PUBLISHABLE_KEY:
+    if not SUPABASE_URL or not SUPABASE_PUBLISHABLE_KEY or not SUPABASE_SECRET_KEY:
         raise HTTPException(status_code=503, detail="Production authentication is not configured.")
     if not authorization or not authorization.lower().startswith("bearer "):
         raise HTTPException(status_code=401, detail="Sign in before using Tech180.")
@@ -68,20 +70,28 @@ async def require_api_access(
     if not access_token:
         raise HTTPException(status_code=401, detail="The account session is missing.")
 
-    request_headers = {
+    user_headers = {
         "apikey": SUPABASE_PUBLISHABLE_KEY,
         "Authorization": f"Bearer {access_token}",
     }
+    stage = "user validation"
     try:
         async with httpx.AsyncClient(timeout=10.0) as client:
-            user_response = await client.get(f"{SUPABASE_URL}/auth/v1/user", headers=request_headers)
+            user_response = await client.get(f"{SUPABASE_URL}/auth/v1/user", headers=user_headers)
             if user_response.status_code != 200:
                 raise HTTPException(status_code=401, detail="The account session is invalid or expired.")
             user = user_response.json()
 
+        stage = "entitlement lookup"
+        service_headers = {
+            "apikey": SUPABASE_SECRET_KEY,
+            "Authorization": f"Bearer {SUPABASE_SECRET_KEY}",
+            "Accept": "application/json",
+        }
+        async with httpx.AsyncClient(timeout=10.0) as client:
             entitlement_response = await client.get(
                 f"{SUPABASE_URL}/rest/v1/tool_entitlements",
-                headers={**request_headers, "Accept": "application/json"},
+                headers=service_headers,
                 params={
                     "user_id": f"eq.{user['id']}",
                     "tool_slug": "eq.tech180",
@@ -94,6 +104,11 @@ async def require_api_access(
     except HTTPException:
         raise
     except (httpx.HTTPError, KeyError, ValueError) as exc:
+        logging.getLogger(__name__).warning(
+            "Supabase access check failed during %s (%s)",
+            stage,
+            type(exc).__name__,
+        )
         raise HTTPException(status_code=503, detail="The account service is temporarily unavailable.") from exc
 
     entitlements = entitlement_response.json()
