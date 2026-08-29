@@ -28,7 +28,6 @@ document.querySelectorAll("[data-site-footer]").forEach((mount) => {
                 <li class="footer-nav__item footer-nav__item--separated"><a class="footer-nav__link" href="${footerUrl("index.html#audit")}">Diagnostic</a></li>
                 <li class="footer-nav__item footer-nav__item--separated"><a class="footer-nav__link" href="${footerUrl("index.html#method")}">Process</a></li>
                 <li class="footer-nav__item footer-nav__item--separated"><a class="footer-nav__link" href="${footerUrl("index.html#about")}">About</a></li>
-                <li class="footer-nav__row-break" aria-hidden="true"></li>
                 <li class="footer-nav__item"><a class="footer-nav__link" href="${footerUrl("checkout.html")}">Book</a></li>
                 <li class="footer-nav__item footer-nav__item--separated"><a class="footer-nav__link" href="${footerUrl("tools/index.html")}">Tools</a></li>
                 <li class="footer-nav__item footer-nav__item--separated"><a class="footer-nav__link" href="${footerUrl("memberships/index.html")}">Membership</a></li>

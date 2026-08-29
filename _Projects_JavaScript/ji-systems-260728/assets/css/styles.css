@@ -823,7 +823,7 @@ ul {
   line-height: 1;
 }
 
-.footer-nav__row-break {
+.footer-nav__item:nth-child(4n + 1)::before {
   display: none;
 }
 
@@ -1968,6 +1968,14 @@ body.login-open {
 }
 
 @media (max-width: 47.99rem) {
+  .footer-nav__list {
+    grid-template-columns: repeat(2, auto);
+  }
+
+  .footer-nav__item:nth-child(odd)::before {
+    display: none;
+  }
+
   .site-nav {
     display: none;
   }
