@@ -89,6 +89,51 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+.tech180-page {
+  min-height: 100vh;
+}
+
+.tech180-footer {
+  border-top: 1px solid rgb(255 255 255 / 14%);
+  background: var(--color-deep);
+  color: var(--color-soft);
+  padding: 1rem 1.5rem;
+}
+
+.tech180-footer__inner {
+  display: flex;
+  max-width: 1440px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem 2rem;
+  margin: 0 auto;
+  font-size: 0.82rem;
+}
+
+.tech180-footer__brand {
+  color: var(--color-white);
+  font-weight: 850;
+  text-decoration: none;
+}
+
+.tech180-footer nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.tech180-footer nav a {
+  color: var(--color-soft);
+}
+
+@media (max-width: 700px) {
+  .tech180-footer__inner {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
 button,
 input,
 select,

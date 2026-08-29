@@ -74,7 +74,6 @@ if (gatewayRoot) {
     launchLink.hidden = !options.canLaunch;
     recheckButton.hidden = Boolean(options.canLaunch);
     if (options.canLaunch) launchLink.href = workspaceUrl.href;
-    if (options.autoLaunch) window.location.replace(workspaceUrl.href);
   }
 
   async function checkAccess() {
@@ -90,7 +89,7 @@ if (gatewayRoot) {
           ? `Temporary access validated. ${selectedTool.name} is ready to launch.`
           : "Enter the temporary development credential to validate access.",
         isApproved
-          ? { badge: "Temporary access", canLaunch: true, autoLaunch: true }
+          ? { badge: "Temporary access", canLaunch: true }
           : { badge: "Temporary sign in", showSignIn: true }
       );
       return;
@@ -125,8 +124,7 @@ if (gatewayRoot) {
       if (entitlement?.status === "active" && hasNotExpired) {
         showState("approved", `Access verified. ${selectedTool.name} is ready to launch.`, {
           badge: "Access approved",
-          canLaunch: true,
-          autoLaunch: true
+          canLaunch: true
         });
         return;
       }
@@ -158,8 +156,7 @@ if (gatewayRoot) {
         sessionStorage.setItem(localAccessKey, "approved");
         showState("approved", `Temporary access validated. ${selectedTool.name} is ready to launch.`, {
           badge: "Temporary access",
-          canLaunch: true,
-          autoLaunch: true
+          canLaunch: true
         });
       } else {
         showState("denied", "That temporary email or password is incorrect.", {

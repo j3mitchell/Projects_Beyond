@@ -42,6 +42,23 @@ const CONTAINER_TAGS = new Set([
 const VIDEO_EMBED_HOSTS = ["gumlet.io", "youtube.com", "youtu.be", "vimeo.com", "wistia.com", "wistia.net"];
 const SIDEBAR_PAGE_SIZE = 250;
 
+function Tech180Footer() {
+  return (
+    <footer className="tech180-footer">
+      <div className="tech180-footer__inner">
+        <a className="tech180-footer__brand" href="https://jisystems.net/">J.I. Systems</a>
+        <nav aria-label="Tech180 footer navigation">
+          <a href="https://jisystems.net/tools/">Tools</a>
+          <a href="https://jisystems.net/memberships/">Memberships</a>
+          <a href="https://jisystems.net/privacy.html">Privacy</a>
+          <a href="https://jisystems.net/terms.html">Terms</a>
+        </nav>
+        <span>© 2026 J.I. Systems</span>
+      </div>
+    </footer>
+  );
+}
+
 function editorPreviewWidth(previewPaneRef) {
   const measuredWidth = Math.round(previewPaneRef.current?.clientWidth || 1120);
   return Math.max(640, Math.min(1920, measuredWidth));
@@ -2163,22 +2180,26 @@ function App() {
 
   if (accessState !== "approved") {
     return (
-      <main className="access-screen">
-        <section className="access-screen__card" aria-live="polite">
-          <div className="mark">180</div>
-          <p className="access-screen__eyebrow">J.I. Systems secure workspace</p>
-          <h1>{accessState === "checking" ? "Opening Tech180…" : "Tech180 access required"}</h1>
-          <p>{accessMessage}</p>
-          {accessState !== "checking" && (
-            <a className="access-screen__button" href={GATEWAY_URL}>Return to secure access</a>
-          )}
-        </section>
-      </main>
+      <div className="tech180-page">
+        <main className="access-screen">
+          <section className="access-screen__card" aria-live="polite">
+            <div className="mark">180</div>
+            <p className="access-screen__eyebrow">J.I. Systems secure workspace</p>
+            <h1>{accessState === "checking" ? "Opening Tech180…" : "Tech180 access required"}</h1>
+            <p>{accessMessage}</p>
+            {accessState !== "checking" && (
+              <a className="access-screen__button" href={GATEWAY_URL}>Return to secure access</a>
+            )}
+          </section>
+        </main>
+        <Tech180Footer />
+      </div>
     );
   }
 
   return (
-    <main className="app-shell">
+    <div className="tech180-page">
+      <main className="app-shell">
       <aside className="sidebar">
         <div className="brand-block">
           <div className="mark">180</div>
@@ -2723,7 +2744,9 @@ function App() {
           </aside>
         </div>
       </section>
-    </main>
+      </main>
+      <Tech180Footer />
+    </div>
   );
 }
 
