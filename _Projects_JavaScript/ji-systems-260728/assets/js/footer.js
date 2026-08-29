@@ -33,7 +33,7 @@ document.querySelectorAll("[data-site-footer]").forEach((mount) => {
                 <li class="footer-nav__item footer-nav__item--separated"><a class="footer-nav__link" href="${footerUrl("memberships/index.html")}">Membership</a></li>
                 <li class="footer-nav__item footer-nav__item--legal footer-nav__item--separated"><a class="footer-nav__link" href="${footerUrl("privacy.html")}">Privacy</a></li>
                 <li class="footer-nav__item footer-nav__item--legal footer-nav__item--separated"><a class="footer-nav__link" href="${footerUrl("terms.html")}">Terms</a></li>
-                <li class="footer-nav__item footer-nav__item--legal"><a class="footer-nav__link" href="${footerUrl("refund-policy.html")}">Refunds</a></li>
+                <li class="footer-nav__item footer-nav__item--legal footer-nav__item--separated"><a class="footer-nav__link" href="${footerUrl("refund-policy.html")}">Refunds</a></li>
               </ul>
             </nav>
             <div class="footer-contact">
