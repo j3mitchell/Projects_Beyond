@@ -1,0 +1,13 @@
+/*
+!/backend/
+!/cloudbuild.yaml
+!/.dockerignore
+/backend/*
+!/backend/app/
+!/backend/tests/
+!/backend/requirements.txt
+!/backend/Dockerfile
+/backend/app/*
+!/backend/app/*.py
+/backend/tests/*
+!/backend/tests/*.py

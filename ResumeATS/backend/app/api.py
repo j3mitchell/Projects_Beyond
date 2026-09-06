@@ -1,0 +1,172 @@
+from __future__ import annotations
+
+import os
+from io import BytesIO
+from pathlib import Path
+from tempfile import TemporaryDirectory
+from uuid import uuid4
+from zipfile import BadZipFile, ZipFile
+
+from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import Response
+from pydantic import BaseModel, Field
+from starlette.concurrency import run_in_threadpool
+
+from app import main as legacy
+from app.access import require_access
+from app.contracts import ResumeExtractionResponse
+from app.job_source import extract_job
+from app.parser_pipeline import pipeline
+from app.resume_io import read_resume_text
+
+APP_VERSION = "platform-v1"
+MAX_UPLOAD = 10 * 1024 * 1024
+FORMATS = {"docx", "pdf", "rtf"}
+app = FastAPI(title="ResumeATS API", version=APP_VERSION)
+
+
+@app.middleware("http")
+async def protect_requests(request, call_next):
+    # Authenticate before parsing uploads, including malformed multipart bodies.
+    if request.method != "OPTIONS" and request.url.path != "/health":
+        try:
+            request.state.user = await run_in_threadpool(require_access, request.headers.get("authorization"))
+        except HTTPException as exc:
+            from fastapi.responses import JSONResponse
+            return JSONResponse({"detail": exc.detail}, status_code=exc.status_code)
+    if request.method == "POST":
+        # Bound the complete body before the multipart parser allocates files.
+        from fastapi.responses import JSONResponse
+        body = bytearray()
+        async for chunk in request.stream():
+            body.extend(chunk)
+            if len(body) > MAX_UPLOAD + 65536:
+                return JSONResponse({"detail": "Upload exceeds the 10 MB limit."}, status_code=413)
+        request._body = bytes(body)
+    response = await call_next(request)
+    response.headers["Cache-Control"] = "no-store"
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    return response
+
+
+def _read(raw: bytes, filename: str) -> str:
+    if Path(filename).suffix.lower() == ".docx":
+        try:
+            with ZipFile(BytesIO(raw)) as archive:
+                if sum(item.file_size for item in archive.infolist()) > 30 * 1024 * 1024:
+                    raise HTTPException(413, "The expanded document exceeds the 30 MB limit.")
+        except BadZipFile:
+            raise HTTPException(400, "This DOCX file is damaged or invalid.")
+    try:
+        text = read_resume_text(UploadFile(filename=filename, file=BytesIO(raw)), raw)
+    except RuntimeError as exc:
+        raise HTTPException(503, str(exc)) from exc
+    except Exception as exc:
+        raise HTTPException(400, "Unable to read this document. Try DOCX, text-based PDF, TXT, or RTF.") from exc
+    if not text.strip():
+        raise HTTPException(400, "No text was found. Scanned PDFs require OCR; try a text-based PDF or DOCX.")
+    if len(text) > 100000:
+        raise HTTPException(413, "Resume text exceeds the 100,000 character limit.")
+    return text
+
+
+async def read_upload(resume: UploadFile) -> str:
+    if Path(resume.filename or "").suffix.lower() not in {".docx", ".pdf", ".txt", ".md", ".rtf"}:
+        raise HTTPException(400, "Use a DOCX, PDF, TXT, MD, or RTF resume.")
+    raw = await resume.read(MAX_UPLOAD + 1)
+    if len(raw) > MAX_UPLOAD:
+        raise HTTPException(413, "Resume files must be 10 MB or smaller.")
+    return await run_in_threadpool(_read, raw, resume.filename or "resume.txt")
+
+
+@app.get("/health")
+def health() -> dict:
+    return {"status": "ok", "app": "ResumeATS", "version": APP_VERSION,
+            "parser": pipeline.status(), "input_formats": ["docx", "pdf", "txt", "md", "rtf"]}
+
+
+@app.get("/access")
+def access() -> dict:
+    return {"authenticated": True, "authorized": True, "tool": "resumeats"}
+
+
+@app.post("/extract", response_model=ResumeExtractionResponse)
+async def extract_resume(resume: UploadFile = File(...)) -> ResumeExtractionResponse:
+    text = await read_upload(resume)
+    return await run_in_threadpool(pipeline.parse, text)
+
+
+class GenerateResponse(legacy.GenerateResponse):
+    keywords: list[dict[str, str]] = Field(default_factory=list)
+
+
+@app.post("/generate", response_model=GenerateResponse)
+async def generate_resume(
+    resume: UploadFile = File(...),
+    job_url: str = Form("", max_length=2048),
+    job_description: str = Form("", max_length=30000),
+    output_format: str = Form("all"),
+) -> GenerateResponse:
+    if output_format not in FORMATS | {"all"}:
+        raise HTTPException(400, "Choose DOCX, PDF, RTF, or all formats.")
+    text = await read_upload(resume)
+    if job_description.strip():
+        if len(job_description.strip()) < 100:
+            raise HTTPException(400, "Paste at least 100 characters of the job description.")
+        title, company, description = "Target Role", "", job_description.strip()
+    elif job_url.strip():
+        title, company, description = await run_in_threadpool(extract_job, job_url.strip())
+    else:
+        raise HTTPException(400, "Enter a job URL or paste the job description.")
+    # Keep the applicant's factual content intact. Keyword suggestions belong
+    # beside the resume and must never become invented qualifications.
+    preview = "\n".join(line.rstrip() for line in text.strip().splitlines())
+    keywords = [{"keyword": word, "status": "present" if word in text.lower() else "review"}
+                for word in legacy._extract_top_keywords(description)]
+    return GenerateResponse(job_title=title, company=company, preview=preview,
+                            thumbnail="\n".join(preview.splitlines()[:6]), files={}, keywords=keywords)
+
+
+class ExportRequest(BaseModel):
+    content: str = Field(min_length=1, max_length=100000)
+    job_title: str = Field(default="Resume", max_length=200)
+    output_format: str
+
+
+def render_export(payload: ExportRequest) -> Response:
+    if payload.output_format not in FORMATS:
+        raise HTTPException(400, "Choose DOCX, PDF, or RTF.")
+    if not payload.content.strip():
+        raise HTTPException(400, "The resume preview is empty.")
+    extension = payload.output_format
+    filename = f"{legacy._slugify(payload.job_title)}_{uuid4().hex[:8]}.{extension}"
+    with TemporaryDirectory(prefix="resumeats-") as temp:
+        path = Path(temp) / filename
+        if extension == "docx":
+            legacy._write_docx(payload.content, None, path)
+        elif extension == "pdf":
+            legacy._write_pdf(payload.content, path)
+        else:
+            legacy._write_rtf(payload.content, path)
+        raw = path.read_bytes()
+    media = {"docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+             "pdf": "application/pdf", "rtf": "application/rtf"}[extension]
+    return Response(raw, media_type=media, headers={"Content-Disposition": f'attachment; filename="{filename}"'})
+
+
+@app.post("/export")
+def export_resume(payload: ExportRequest) -> Response:
+    # Bytes are returned in the same request; no cross-instance filesystem or
+    # public download URL is involved, and temporary files are removed first.
+    return render_export(payload)
+
+
+# Keep CORS outside access checks so browsers can read expired-session errors.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=os.getenv("RESUMEATS_ALLOWED_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000").split(","),
+    allow_methods=["GET", "POST"],
+    allow_headers=["Authorization", "Content-Type"],
+    expose_headers=["Content-Disposition"],
+)

@@ -3,12 +3,13 @@
 const gatewayRoot = document.querySelector("[data-access-gateway]");
 
 if (gatewayRoot) {
-  const apiBase = document.querySelector('meta[name="ji-api-base"]')?.content.replace(/\/$/, "");
+  const apiBase = document.querySelector('meta[name="ji-api-base"]')?.content.replace(/\/v1\/?$/, "");
   const supabaseUrl = document.querySelector('meta[name="ji-supabase-url"]')?.content.replace(/\/$/, "");
   const supabaseKey = document.querySelector('meta[name="ji-supabase-publishable-key"]')?.content.trim();
   const params = new URLSearchParams(window.location.search);
   const tool = params.get("tool") || "tech180";
   const toolCatalog = Object.freeze({
+    admin: { name: "Platform Admin", details: "admin/apps/index.html" },
     tech180: { name: "Tech180", details: "tools/tech180/index.html" },
     resumeats: { name: "ResumeATS", details: "tools/index.html#resumeats" },
     coverai: { name: "CoverAI", details: "tools/index.html#coverai" },
@@ -112,6 +113,18 @@ if (gatewayRoot) {
         return;
       }
 
+      const adminReturn = params.get("return") || "";
+      if (adminReturn.startsWith("/admin/")) {
+        window.location.replace(new URL(adminReturn, window.location.origin).href);
+        return;
+      }
+
+      const auditKey = `ji_audited_${sessionData.session.user.id}`;
+      if (!sessionStorage.getItem(auditKey)) {
+        const auditResponse = await fetch(`${apiBase}/v1/auth/session`, {method:"POST", headers:{"Content-Type":"application/json", Authorization:`Bearer ${sessionData.session.access_token}`}, body:JSON.stringify({device_id:navigator.userAgent, session_id:sessionData.session.user.id})});
+        if (auditResponse.ok) sessionStorage.setItem(auditKey, "1");
+      }
+
       const { data: entitlement, error: accessError } = await supabaseClient
         .from("tool_entitlements")
         .select("status, expires_at")
@@ -135,7 +148,7 @@ if (gatewayRoot) {
       });
     } catch (error) {
       console.error("Gateway access check failed", error);
-      showState("unavailable", "The secure access check could not be completed. Tech180 remains locked.", {
+      showState("unavailable", `The secure access check could not be completed. ${selectedTool.name} remains locked.`, {
         badge: "Access unavailable",
         showSignIn: true
       });
@@ -173,11 +186,9 @@ if (gatewayRoot) {
       if (!supabaseClient) throw new Error("Supabase is not configured");
       const returnUrl = new URL(window.location.href);
       returnUrl.hash = "";
-      const { error } = await supabaseClient.auth.signInWithOtp({
-        email,
-        options: { emailRedirectTo: returnUrl.href }
-      });
-      if (error) throw error;
+      const response = await fetch(`${apiBase}/v1/auth/otp`, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({email, redirect_to:returnUrl.href, device_id:navigator.userAgent, session_id:sessionStorage.getItem("ji_session")||(crypto.randomUUID?.()||String(Date.now()))})});
+      const body = await response.json().catch(()=>({}));
+      if (!response.ok) throw new Error(body.detail || "Sign-in link failed.");
       showState("sent", "Check your email for the secure sign-in link, then return here.", { badge: "Email sent" });
     } catch (error) {
       console.error("Gateway sign-in failed", error);

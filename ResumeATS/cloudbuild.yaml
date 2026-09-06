@@ -1,0 +1,41 @@
+substitutions:
+  _REGION: us-east4
+  _SERVICE: ji-resumeats-api
+steps:
+  - name: gcr.io/cloud-builders/docker
+    id: build
+    args: [build, -f, backend/Dockerfile, -t, 'gcr.io/$PROJECT_ID/${_SERVICE}:$BUILD_ID', .]
+  - name: gcr.io/cloud-builders/docker
+    id: verify
+    entrypoint: sh
+    args:
+      - -c
+      - >-
+        docker run --rm --user root -e RESUMEATS_ENV=development
+        -v /workspace/backend/tests:/app/tests
+        'gcr.io/$PROJECT_ID/${_SERVICE}:$BUILD_ID'
+        sh -c 'pip install --no-cache-dir httpx pip-audit && python -m unittest discover -s tests -v && pip-audit -r /app/requirements.txt --no-deps --progress-spinner off'
+  - name: gcr.io/cloud-builders/docker
+    id: push
+    args: [push, 'gcr.io/$PROJECT_ID/${_SERVICE}:$BUILD_ID']
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    id: deploy
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - ${_SERVICE}
+      - --image=gcr.io/$PROJECT_ID/${_SERVICE}:$BUILD_ID
+      - --region=${_REGION}
+      - --allow-unauthenticated
+      - --service-account=ji-resumeats-runtime@$PROJECT_ID.iam.gserviceaccount.com
+      - --memory=1Gi
+      - --cpu=1
+      - --concurrency=8
+      - --min-instances=0
+      - --max-instances=3
+      - --timeout=120
+      - --set-env-vars=^|^RESUMEATS_ENV=production|RESUMEATS_ALLOWED_ORIGINS=https://jisystems.net,https://www.jisystems.net|SUPABASE_URL=https://hecteqqrkjchdhvdkuxs.supabase.co|SUPABASE_PUBLISHABLE_KEY=sb_publishable_8Nc78Pxi99_M3Rs3kuKSHw_H6GBKpaR
+images:
+  - 'gcr.io/$PROJECT_ID/${_SERVICE}:$BUILD_ID'
+timeout: 1800s
