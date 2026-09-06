@@ -22,16 +22,32 @@ function loadJobUrlSuggestions() {
 
 function EditableValue({ label, value, onChange, field, multiline = false, type = 'text', placeholder = '' }) {
   const Input = multiline ? 'textarea' : 'input';
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    if (!multiline || !inputRef.current) return;
+    const element = inputRef.current;
+    element.style.height = 'auto';
+    element.style.height = `${Math.min(Math.max(element.scrollHeight, 36), 240)}px`;
+  }, [multiline, value]);
+
+  function cleanTrailingLines(nextValue) {
+    return nextValue.replace(/[ \t]+$/gm, '').replace(/\n+$/, '');
+  }
+
   return (
     <div className="editable-field" data-field={field || label}>
       <label>
         <span className="variable-label">{label}</span>
         <Input
+          ref={multiline ? inputRef : undefined}
           className="editable-input"
           type={multiline ? undefined : type}
           value={value || ''}
           placeholder={placeholder}
           onChange={(event) => onChange(event.target.value)}
+          onBlur={(event) => onChange(cleanTrailingLines(event.target.value))}
+          rows={multiline ? 1 : undefined}
         />
       </label>
     </div>
@@ -50,22 +66,24 @@ function EditableList({ title, prefix, items, onChange, field }) {
   }
 
   return (
-    <div className="extract-block editable-list" data-field={field || prefix}>
-      <h3>{title}</h3>
-      {values.map((item, index) => (
-        <div className="editable-list-row" key={`${prefix}-${index}`}>
-          <EditableValue
-            label={`[${prefix}${index + 1}]`}
-            value={item}
-            field={`${prefix}${index + 1}`}
-            onChange={(value) => updateItem(index, value)}
-          />
-          <button type="button" className="field-remove" onClick={() => removeItem(index)} aria-label={`Remove ${title} ${index + 1}`}>Remove</button>
-        </div>
-      ))}
-      {!values.length && <p className="muted">Not detected</p>}
-      <button type="button" className="field-add" onClick={() => onChange([...values, ''])}>Add {title.toLowerCase()}</button>
-    </div>
+    <details className="extract-block editable-list collapsible-section" data-field={field || prefix}>
+      <summary>{title}</summary>
+      <div className="collapsible-content">
+        {values.map((item, index) => (
+          <div className="editable-list-row" key={`${prefix}-${index}`}>
+            <EditableValue
+              label={`[${prefix}${index + 1}]`}
+              value={item}
+              field={`${prefix}${index + 1}`}
+              onChange={(value) => updateItem(index, value)}
+            />
+            <button type="button" className="field-remove" onClick={() => removeItem(index)} aria-label={`Remove ${title} ${index + 1}`}>Remove</button>
+          </div>
+        ))}
+        {!values.length && <p className="muted">Not detected</p>}
+        <button type="button" className="field-add" onClick={() => onChange([...values, ''])}>Add {title.toLowerCase()}</button>
+      </div>
+    </details>
   );
 }
 
@@ -361,76 +379,91 @@ export default function App() {
 
           {extraction && (
             <div className="extraction-content">
-              <div className="extract-block contact-block" data-field="contact">
-                <h3>Contact Information</h3>
-                <EditableValue label="[NameF]" field="name_first" value={contact.name_first} onChange={(value) => updateExtraction('name_first', value)} />
-                <EditableValue label="[NameL]" field="name_last" value={contact.name_last} onChange={(value) => updateExtraction('name_last', value)} />
-                <EditableValue label="[Suffix]" field="suffix" value={contact.suffix} onChange={(value) => updateExtraction('suffix', value)} />
-                <EditableValue label="[Phone]" field="phone" value={contact.phone} onChange={(value) => updateExtraction('phone', value)} type="tel" />
-                <div className="contact-location">
-                  <EditableValue label="[City]" field="city" value={contact.city} onChange={(value) => updateExtraction('city', value)} />
-                  <EditableValue label="[State]" field="state" value={contact.state} onChange={(value) => updateExtraction('state', value)} />
+              <details className="extract-block contact-block collapsible-section" data-field="contact">
+                <summary>Contact Information</summary>
+                <div className="collapsible-content">
+                  <EditableValue label="[NameF]" field="name_first" value={contact.name_first} onChange={(value) => updateExtraction('name_first', value)} />
+                  <EditableValue label="[NameL]" field="name_last" value={contact.name_last} onChange={(value) => updateExtraction('name_last', value)} />
+                  <EditableValue label="[Suffix]" field="suffix" value={contact.suffix} onChange={(value) => updateExtraction('suffix', value)} />
+                  <EditableValue label="[Phone]" field="phone" value={contact.phone} onChange={(value) => updateExtraction('phone', value)} type="tel" />
+                  <div className="contact-location">
+                    <EditableValue label="[City]" field="city" value={contact.city} onChange={(value) => updateExtraction('city', value)} />
+                    <EditableValue label="[State]" field="state" value={contact.state} onChange={(value) => updateExtraction('state', value)} />
+                  </div>
+                  <EditableValue label="[Email]" field="email" value={contact.email} onChange={(value) => updateExtraction('email', value)} type="email" />
+                  <EditableValue label="[LinkedIn]" field="linkedin" value={contact.linkedin} onChange={(value) => updateExtraction('linkedin', value)} type="url" />
+                  <EditableValue label="[Site]" field="site" value={contact.site} onChange={(value) => updateExtraction('site', value)} type="url" />
+                  <EditableValue label="[cred]" field="cred" value={contact.cred} onChange={(value) => updateExtraction('cred', value)} multiline />
                 </div>
-                <EditableValue label="[Email]" field="email" value={contact.email} onChange={(value) => updateExtraction('email', value)} type="email" />
-                <EditableValue label="[LinkedIn]" field="linkedin" value={contact.linkedin} onChange={(value) => updateExtraction('linkedin', value)} type="url" />
-                <EditableValue label="[Site]" field="site" value={contact.site} onChange={(value) => updateExtraction('site', value)} type="url" />
-                <EditableValue label="[cred]" field="cred" value={contact.cred} onChange={(value) => updateExtraction('cred', value)} multiline />
-              </div>
+              </details>
 
-              <div className="extract-block" data-field="executive_summary">
-                <h3>Executive Summary</h3>
-                <EditableValue label="[summary]" field="executive_summary" value={executiveSummary} onChange={(value) => updateExtraction('executive_summary', value)} multiline />
-              </div>
+              <details className="extract-block collapsible-section" data-field="executive_summary">
+                <summary>Executive Summary</summary>
+                <div className="collapsible-content">
+                  <EditableValue label="[summary]" field="executive_summary" value={executiveSummary} onChange={(value) => updateExtraction('executive_summary', value)} multiline />
+                </div>
+              </details>
 
               <EditableSection title="Skills" prefix="skill" items={skills} onChange={(values) => updateExtraction('skills', values)} field="skills" />
 
-              <div className="extract-block" data-field="experience">
-                <h3>Experience (Jobs)</h3>
-                {jobs.length ? (
-                  <div className="job-list">
-                    {jobs.map((job, index) => {
-                      const jobNumber = index + 1;
-                      const descriptions = Array.isArray(job.descriptions) ? job.descriptions : [];
+              <details className="extract-block collapsible-section" data-field="experience">
+                <summary>Experience (Jobs)</summary>
+                <div className="collapsible-content">
+                  {jobs.length ? (
+                    <div className="job-list">
+                      {jobs.map((job, index) => {
+                        const jobNumber = index + 1;
+                        const descriptions = Array.isArray(job.descriptions) ? job.descriptions : [];
 
-                      return (
-                        <div className="job-entry editable-job" key={`job-${index}`} data-field={`experience.${index}`}>
-                          <EditableValue label={`[job${jobNumber}]`} field={`job${jobNumber}`} value={job.job} onChange={(value) => updateJob(index, 'job', value)} />
-                          <EditableValue label={`[comp${jobNumber}]`} field={`comp${jobNumber}`} value={job.company} onChange={(value) => updateJob(index, 'company', value)} />
-                          <EditableValue label={`[date${jobNumber}]`} field={`date${jobNumber}`} value={job.date_range} onChange={(value) => updateJob(index, 'date_range', value)} placeholder="mm/yy - mm/yy" />
-                          <div className="job-description-editor">
-                            <span className="section-label">Descriptions</span>
-                            {descriptions.map((description, descriptionIndex) => (
-                              <div className="editable-list-row" key={`job-${index}-description-${descriptionIndex}`}>
-                                <EditableValue
-                                  label={`[desc${descriptionIndex + 1}]`}
-                                  field={`desc${jobNumber}-${descriptionIndex + 1}`}
-                                  value={description}
-                                  onChange={(value) => updateJobDescriptions(index, descriptions.map((item, itemIndex) => itemIndex === descriptionIndex ? value : item))}
-                                  multiline
-                                />
-                                <button type="button" className="field-remove" onClick={() => updateJobDescriptions(index, descriptions.filter((_, itemIndex) => itemIndex !== descriptionIndex))} aria-label={`Remove description ${descriptionIndex + 1} from job ${jobNumber}`}>Remove</button>
+                        return (
+                          <details className="job-entry editable-job" key={`job-${index}`} data-field={`experience.${index}`}>
+                            <summary className="job-summary">
+                              <span><span className="variable-label">[job{jobNumber}]</span> {job.job || 'Untitled role'}</span>
+                              <span><span className="variable-label">[comp{jobNumber}]</span> {job.company || 'Company not detected'}</span>
+                              {job.date_range && <span className="job-summary-date">{job.date_range}</span>}
+                            </summary>
+                            <div className="job-fields">
+                              <EditableValue label={`[job${jobNumber}]`} field={`job${jobNumber}`} value={job.job} onChange={(value) => updateJob(index, 'job', value)} />
+                              <EditableValue label={`[comp${jobNumber}]`} field={`comp${jobNumber}`} value={job.company} onChange={(value) => updateJob(index, 'company', value)} />
+                              <EditableValue label={`[date${jobNumber}]`} field={`date${jobNumber}`} value={job.date_range} onChange={(value) => updateJob(index, 'date_range', value)} placeholder="mm/yy - mm/yy" />
+                              <div className="job-description-editor">
+                                <span className="section-label">Descriptions</span>
+                                {descriptions.map((description, descriptionIndex) => (
+                                  <div className="editable-list-row" key={`job-${index}-description-${descriptionIndex}`}>
+                                    <EditableValue
+                                      label={`[desc${descriptionIndex + 1}]`}
+                                      field={`desc${jobNumber}-${descriptionIndex + 1}`}
+                                      value={description}
+                                      onChange={(value) => updateJobDescriptions(index, descriptions.map((item, itemIndex) => itemIndex === descriptionIndex ? value : item))}
+                                      multiline
+                                    />
+                                    <button type="button" className="field-remove" onClick={() => updateJobDescriptions(index, descriptions.filter((_, itemIndex) => itemIndex !== descriptionIndex))} aria-label={`Remove description ${descriptionIndex + 1} from job ${jobNumber}`}>Remove</button>
+                                  </div>
+                                ))}
+                                {!descriptions.length && <p className="muted">No line items detected</p>}
+                                <button type="button" className="field-add" onClick={() => updateJobDescriptions(index, [...descriptions, ''])}>Add description</button>
                               </div>
-                            ))}
-                            {!descriptions.length && <p className="muted">No line items detected</p>}
-                            <button type="button" className="field-add" onClick={() => updateJobDescriptions(index, [...descriptions, ''])}>Add description</button>
-                          </div>
-                          <button type="button" className="field-remove job-remove" onClick={() => removeJob(index)} aria-label={`Remove job ${jobNumber}`}>Remove job</button>
-                        </div>
-                      );
-                    })}
-                  </div>
-                ) : <p className="muted">Not detected</p>}
-                <button type="button" className="field-add" onClick={addJob}>Add job</button>
-              </div>
+                              <button type="button" className="field-remove job-remove" onClick={() => removeJob(index)} aria-label={`Remove job ${jobNumber}`}>Remove job</button>
+                            </div>
+                          </details>
+                        );
+                      })}
+                    </div>
+                  ) : <p className="muted">Not detected</p>}
+                  <button type="button" className="field-add" onClick={addJob}>Add job</button>
+                </div>
+              </details>
 
               <EditableSection title="Education" prefix="edu" items={education} onChange={(values) => updateExtraction('education', values)} field="education" />
               <EditableSection title="Clearances" prefix="clr" items={clearances} onChange={(values) => updateExtraction('clearances', values)} field="clearances" />
               <EditableSection title="Certifications" prefix="cert" items={certifications} onChange={(values) => updateExtraction('certifications', values)} field="certifications" />
 
-              <div className="extract-block target-title-block" data-field="target_position_title">
-                <h3>Target Position Title</h3>
-                <EditableValue label="[target]" field="target_position_title" value={targetPositionTitle} onChange={(value) => updateExtraction('target_position_title', value)} />
-              </div>
+              <details className="extract-block target-title-block collapsible-section" data-field="target_position_title">
+                <summary>Target Position Title</summary>
+                <div className="collapsible-content">
+                  <EditableValue label="[target]" field="target_position_title" value={targetPositionTitle} onChange={(value) => updateExtraction('target_position_title', value)} />
+                </div>
+              </details>
             </div>
           )}
         </section>

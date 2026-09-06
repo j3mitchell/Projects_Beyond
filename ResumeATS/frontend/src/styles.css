@@ -19,22 +19,22 @@ button:disabled { opacity: .6; }
 .extracting { font-size: .8rem; font-weight: 600; color: #2563eb; background: #eff6ff; padding: .3rem .55rem; border-radius: 999px; }
 .empty-state, .muted { color: #64748b; font-size: .9rem; }
 .extraction-content { display: grid; gap: .75rem; }
-.extract-block { border: 1px solid #e2e8f0; border-radius: 10px; padding: .75rem .85rem; background: #f8fafc; }
+.extract-block { border: 1px solid #e2e8f0; border-radius: 10px; padding: 0; background: #f8fafc; overflow: hidden; }
 .extract-block h3 { margin: 0 0 .45rem; font-size: .84rem; text-transform: uppercase; letter-spacing: .04em; color: #475569; }
 .extract-block p { margin: 0; line-height: 1.45; font-size: .9rem; }
 .contact-block p + p { margin-top: .22rem; }
-.editable-field { display: grid; gap: .3rem; min-width: 0; }
-.editable-field > label { gap: .3rem; }
+.editable-field { display: block; min-width: 0; }
+.editable-field > label { display: grid; grid-template-columns: max-content minmax(0, 1fr); align-items: start; column-gap: .6rem; gap: .3rem .6rem; }
 .editable-input { width: 100%; box-sizing: border-box; background: #fff; }
 .editable-input:focus { border-color: #2563eb; outline: 2px solid rgba(37,99,235,.16); }
-.editable-field textarea.editable-input { min-height: 4.5rem; resize: vertical; }
+.editable-field textarea.editable-input { min-height: 0; max-height: 240px; overflow-y: hidden; resize: vertical; line-height: 1.35; }
 .editable-list-row { display: flex; align-items: flex-end; gap: .45rem; margin-bottom: .5rem; }
 .editable-list-row .editable-field { flex: 1; }
 .field-add, .field-remove { padding: .35rem .55rem; font-size: .78rem; }
 .field-add { margin-top: .35rem; background: #475569; }
 .field-remove { background: #b91c1c; }
 .contact-location { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; }
-.editable-job { display: grid; gap: .5rem; }
+.editable-job { display: block; }
 .job-description-editor { display: grid; gap: .45rem; margin-top: .15rem; padding-left: .75rem; border-left: 2px solid #e2e8f0; }
 .section-label { font-size: .78rem; font-weight: 650; color: #475569; }
 .job-remove { justify-self: start; }
@@ -42,7 +42,7 @@ button:disabled { opacity: .6; }
 .skill-chip { padding: .3rem .5rem; border-radius: 999px; background: #e2e8f0; color: #334155; font-size: .8rem; }
 .extract-list { margin: 0; padding-left: 1.1rem; display: grid; gap: .35rem; font-size: .88rem; line-height: 1.4; }
 .job-list { display: grid; gap: .8rem; }
-.job-entry { padding-bottom: .8rem; border-bottom: 1px solid #e2e8f0; }
+.job-entry { border-bottom: 1px solid #e2e8f0; border-radius: 0; }
 .job-entry:last-child { padding-bottom: 0; border-bottom: 0; }
 .job-heading { display: grid; gap: .2rem; font-size: .9rem; line-height: 1.35; }
 .variable-label { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; color: #2563eb; font-size: .78rem; }
@@ -66,3 +66,16 @@ textarea.preview { min-height: 320px; width: 100%; font-family: ui-monospace, mo
 .access-panel { max-width: 600px; margin: 3rem auto; }
 .panel { min-width: 0; }
 .downloads button { background: #0f766e; font-size: .85rem; }
+.collapsible-section > summary { display: flex; align-items: center; gap: .6rem; padding: .7rem .85rem; cursor: pointer; list-style-position: inside; font-size: .84rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: #475569; }
+.collapsible-section > summary::marker { color: #2563eb; }
+.collapsible-content { display: grid; gap: .55rem; padding: 0 .85rem .85rem; }
+.collapsible-content > .field-add { width: 100%; }
+.job-summary { display: grid !important; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) max-content; gap: .5rem; align-items: center; padding: .65rem .75rem; cursor: pointer; list-style-position: inside; font-size: .84rem; color: #334155; }
+.job-summary > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.job-summary-date { color: #64748b; font-size: .78rem; }
+.job-fields { display: grid; gap: .5rem; padding: 0 .75rem .8rem 1.9rem; }
+.job-fields > .field-remove { justify-self: start; }
+.job-list { gap: 0; }
+.target-title-block { border-left: 4px solid #2563eb; }
+.target-title-block > summary { padding-left: .55rem; }
+@media (max-width: 600px) { .job-summary { grid-template-columns: 1fr; gap: .2rem; } .job-summary-date { padding-left: 1.25rem; } }
