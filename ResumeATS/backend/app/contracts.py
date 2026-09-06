@@ -7,6 +7,7 @@ class ResumeJob(BaseModel):
     number: int
     job: str = ""
     company: str = ""
+    date_range: str = ""
     descriptions: list[str] = Field(default_factory=list)
 
 

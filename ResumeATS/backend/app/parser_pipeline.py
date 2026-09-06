@@ -78,7 +78,7 @@ ACTION_VERBS = set(base.ACTION_VERBS) | {
 }
 
 MONTH_WORD = r"(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:t(?:ember)?)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)"
-DATE_TOKEN = rf"(?:{MONTH_WORD}\s+(?:19|20)\d{{2}}|(?:0?[1-9]|1[0-2])[/.-](?:19|20)\d{{2}}|(?:19|20)\d{{2}})"
+DATE_TOKEN = rf"(?:{MONTH_WORD}\s+(?:19|20)\d{{2}}|(?:0?[1-9]|1[0-2])[/.-](?:\d{{2}}|(?:19|20)\d{{2}})|(?:19|20)\d{{2}})"
 DATE_RANGE_RE = re.compile(
     rf"\b{DATE_TOKEN}\s*(?:[-–—]|to)\s*(?:{DATE_TOKEN}|present|current|now)\b",
     re.I,
@@ -123,6 +123,7 @@ class EntityCandidate:
 class JobBlock:
     title: str
     company: str
+    date_range: str
     descriptions: list[str]
     title_confidence: float
     company_confidence: float
@@ -220,6 +221,15 @@ def _resume_sections(text: str) -> tuple[list[str], dict[str, list[str]]]:
 
 def _has_job_date(value: str) -> bool:
     return bool(DATE_RANGE_RE.search(value))
+
+
+def _job_date_range(value: str) -> str:
+    """Return the first position date range in a stable ``mm/yy - mm/yy`` form."""
+    match = DATE_RANGE_RE.search(value or "")
+    if not match:
+        return ""
+    clean = re.sub(r"\s+", " ", match.group(0)).strip()
+    return re.sub(r"\s*(?:[-–—]|to)\s*", " - ", clean, flags=re.I)
 
 
 def _strip_job_dates(value: str) -> str:
@@ -555,6 +565,7 @@ def _extract_jobs_with_anchors(lines: list[str], anchors: list[int]) -> list[Job
         block = JobBlock(
             title=title.text,
             company=company.text if company else "",
+            date_range=_job_date_range(lines[anchor]),
             descriptions=descriptions[:20],
             title_confidence=title.confidence,
             company_confidence=company.confidence if company else 0.0,
@@ -582,7 +593,7 @@ def _extract_jobs_without_dates(lines: list[str]) -> list[JobBlock]:
         if title and title.kind == "title":
             if current:
                 jobs.append(current)
-            current = JobBlock(title.text, "", [], title.confidence, 0.0)
+            current = JobBlock(title.text, "", "", [], title.confidence, 0.0)
             if contractor:
                 company = classify_company(contractor)
                 if company.kind == "company":
@@ -713,6 +724,7 @@ class ResumeParserPipeline:
                 number=index,
                 job=job.title,
                 company=job.company,
+                date_range=job.date_range,
                 descriptions=job.descriptions,
             )
             for index, job in enumerate(jobs, start=1)

@@ -2,6 +2,7 @@ import unittest
 
 from app.parser_pipeline import (
     _embedded_organization,
+    _job_date_range,
     _location_like,
     _organization_from_context,
     _strict_title_fallback,
@@ -38,6 +39,10 @@ class ResumeParserPipelineTests(unittest.TestCase):
     def test_location_is_not_company(self):
         self.assertTrue(_location_like("Washington, DC"))
         self.assertTrue(_location_like("Remote"))
+
+    def test_position_date_range_supports_two_digit_month_year(self):
+        self.assertEqual(_job_date_range("Example Systems | 06/15 - 08/19"), "06/15 - 08/19")
+        self.assertEqual(_job_date_range("Example Systems | 06/2015 to present"), "06/2015 - present")
 
 
 if __name__ == "__main__":

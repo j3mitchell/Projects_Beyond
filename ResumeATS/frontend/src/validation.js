@@ -59,6 +59,7 @@ export const extractedResumeJobSchema = z.object({
   number: z.number().int().positive(),
   job: z.string().trim().min(1).max(150),
   company: companyNameSchema,
+  date_range: z.string().trim().max(80).default(''),
   descriptions: z.array(descriptionSchema).default([]),
 });
 

@@ -299,6 +299,7 @@ export default function App() {
                       const jobNumber = job.number || index + 1;
                       const jobTitle = job.job || 'Not detected';
                       const company = job.company || 'Not detected';
+                      const dateRange = job.date_range || 'Not detected';
                       const descriptions = job.descriptions || [];
 
                       return (
@@ -306,6 +307,7 @@ export default function App() {
                           <div className="job-heading">
                             <strong><span className="variable-label">[job{jobNumber}]</span> {jobTitle}</strong>
                             <strong><span className="variable-label">[comp{jobNumber}]</span> {company}</strong>
+                            <strong><span className="variable-label">[date{jobNumber}]</span> {dateRange}</strong>
                           </div>
 
                           {descriptions.length ? (

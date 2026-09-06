@@ -66,6 +66,7 @@ class LayoutAwareResumeParserTests(unittest.TestCase):
         self.assertGreaterEqual(len(result.experience), 3)
         self.assertEqual(result.experience[0].job, "Database Consultant")
         self.assertEqual(result.experience[0].company, "Example Consulting Group, LLC")
+        self.assertEqual(result.experience[0].date_range, "06/2015 - current")
         self.assertEqual(result.experience[1].job, "Database Team Lead")
         self.assertIn("Federal Security Operations", result.experience[1].company)
         self.assertIn("Oracle DBA", result.experience[2].job)
