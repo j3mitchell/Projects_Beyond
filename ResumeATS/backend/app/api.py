@@ -64,7 +64,7 @@ def _read(raw: bytes, filename: str) -> str:
     except RuntimeError as exc:
         raise HTTPException(503, str(exc)) from exc
     except Exception as exc:
-        raise HTTPException(400, "Unable to read this document. Try DOCX, PDF, TXT, MD, RTF, HTML, DOC, ODT, JSON, or XML.") from exc
+        raise HTTPException(400, "Unable to read this document. Try DOCX, PDF, TXT, MD, RTF, HTML, DOC, ODT, JSON, XML, PAGES, or ZIP.") from exc
     if not text.strip():
         raise HTTPException(400, "No text was found. Scanned PDFs require OCR; try a text-based PDF or DOCX.")
     if len(text) > 100000:
@@ -74,7 +74,7 @@ def _read(raw: bytes, filename: str) -> str:
 
 async def read_upload(resume: UploadFile) -> str:
     if Path(resume.filename or "").suffix.lower() not in SUPPORTED_INPUT_EXTENSIONS:
-        raise HTTPException(400, "Use a DOCX, PDF, TXT, MD, RTF, HTML, DOC, ODT, JSON, or XML resume.")
+        raise HTTPException(400, "Use a DOCX, PDF, TXT, MD, RTF, HTML, DOC, ODT, JSON, XML, PAGES, or ZIP resume.")
     raw = await resume.read(MAX_UPLOAD + 1)
     if len(raw) > MAX_UPLOAD:
         raise HTTPException(413, "Resume files must be 10 MB or smaller.")
