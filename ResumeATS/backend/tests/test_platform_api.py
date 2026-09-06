@@ -9,7 +9,7 @@ from pypdf import PdfReader
 from striprtf.striprtf import rtf_to_text
 
 from app.api import app
-from app.job_source import public_target, fetch_public_html
+from app.job_source import analyze_job, analyze_job_text, fetch_public_html, public_target
 
 
 class PlatformAPITests(unittest.TestCase):
@@ -60,6 +60,59 @@ class PlatformAPITests(unittest.TestCase):
             self.assertIn('ENDMARKER', text)
             self.assertIn('José', text)
         self.assertEqual(self.client.get('/download/anything.docx').status_code, 404)
+
+    def test_generate_returns_selected_deterministic_analysis(self):
+        analysis = {
+            "mode": "deterministic", "source_url": "", "title": "Target Role", "company": "",
+            "industry": "technology", "summary": "Python cloud database role. " * 8,
+            "raw_text": "Python cloud database role. " * 8, "metadata": {},
+            "skills": [{"name": "Python", "score": 80.0, "evidence": ["python"], "source": "taxonomy"}],
+        }
+        with patch("app.api.analyze_job_text", return_value=analysis):
+            response = self.client.post('/generate', files={'resume': ('resume.txt', 'Jane Example\nSummary\n' + 'Experienced analyst. ' * 20)},
+                                        data={'job_description': 'Python cloud database role. ' * 8, 'job_model': 'deterministic'})
+        self.assertEqual(response.status_code, 200, response.text)
+        self.assertEqual(response.json()['analysis']['mode'], 'deterministic')
+        self.assertEqual(response.json()['analysis']['skills'][0]['name'], 'Python')
+
+    def test_generate_returns_selected_ai_analysis(self):
+        analysis = {
+            "mode": "ai", "source_url": "https://example.com/job", "title": "Platform Engineer", "company": "Example",
+            "industry": "technology", "summary": "AI summary. " * 15, "raw_text": "Cloud platform role. " * 15,
+            "metadata": {"site_name": "Example"},
+            "skills": [{"name": "Kubernetes", "score": 92.0, "evidence": ["container platform"], "source": "ai"}],
+        }
+        with patch("app.api.analyze_job", return_value=analysis):
+            response = self.client.post('/generate', files={'resume': ('resume.txt', 'Jane Example\nSummary\n' + 'Experienced analyst. ' * 20)},
+                                        data={'job_url': 'https://example.com/job', 'job_model': 'ai'})
+        self.assertEqual(response.status_code, 200, response.text)
+        self.assertEqual(response.json()['analysis']['mode'], 'ai')
+
+    def test_ai_without_provider_key_is_explicitly_unavailable(self):
+        with patch.dict(os.environ, {"OPENAI_API_KEY": ""}, clear=False):
+            with self.assertRaises(Exception) as caught:
+                analyze_job_text('Python cloud database role. ' * 8, 'ai')
+        self.assertEqual(caught.exception.status_code, 503)
+
+    def test_ai_analysis_normalizes_provider_json(self):
+        provider = Mock()
+        provider.json.return_value = {"choices": [{"message": {"content": '{"title":"Data Engineer","company":"Example","industry":"technology","summary":"Build data systems.","skills":[{"name":"Python","score":88,"evidence":["Python services"]}]}'}}]}
+        with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key", "OPENAI_MODEL": "test-model"}), patch('app.job_source.requests.post', return_value=provider) as post:
+            analysis = analyze_job_text('Build Python cloud services and data systems. ' * 5, 'ai')
+        self.assertEqual(analysis['mode'], 'ai')
+        self.assertEqual(analysis['skills'][0]['score'], 88.0)
+        self.assertEqual(post.call_args.kwargs['json']['model'], 'test-model')
+
+    def test_deterministic_url_analysis_extracts_taxonomy(self):
+        html = b'''<html><head><title>Cloud Platform Engineer</title><meta property="og:site_name" content="Example"></head>
+        <body><main><h1>Cloud Platform Engineer</h1><p>Build Python services with Docker and Kubernetes for a cloud data platform.</p>
+        <p>Partner with engineering teams and communicate clearly. Python Python Python.</p></main></body></html>'''
+        with patch('app.job_source.fetch_public_html', return_value=html):
+            analysis = analyze_job('https://example.com/job', 'deterministic')
+        self.assertEqual(analysis['mode'], 'deterministic')
+        self.assertEqual(analysis['company'], 'Example')
+        self.assertEqual(analysis['industry'], 'technology')
+        self.assertEqual(analysis['skills'][0]['name'], 'Python')
 
     def test_bad_input(self):
         self.assertEqual(self.client.post('/extract', files={'resume': ('bad.exe', b'no')}).status_code, 400)

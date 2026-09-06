@@ -55,6 +55,14 @@ button:disabled { opacity: .6; }
 textarea { box-sizing: border-box; width: 100%; padding: .6rem .7rem; border: 1px solid #cfd6df; border-radius: 8px; font: inherit; resize: vertical; }
 textarea.preview { min-height: 320px; width: 100%; font-family: ui-monospace, monospace; line-height: 1.5; }
 .keyword-panel { display: flex; flex-wrap: wrap; gap: .4rem; max-height: 112px; overflow: auto; margin-bottom: 1rem; }
+.model-picker { border: 1px solid #e2e8f0; border-radius: 10px; padding: .7rem .8rem; display: grid; gap: .45rem; }
+.model-picker legend { font-size: .84rem; font-weight: 650; color: #475569; padding: 0 .2rem; }
+.model-picker__labels { display: flex; justify-content: space-between; font-size: .8rem; color: #475569; }
+.model-slider { width: 100%; accent-color: #2563eb; padding: 0; border: 0; }
+.model-picker output { font-size: .8rem; color: #2563eb; font-weight: 650; }
+.model-picker .muted { margin: 0; }
+.analysis-panel { border: 1px solid #dbeafe; border-radius: 10px; padding: .65rem .75rem; background: #eff6ff; margin-bottom: 1rem; }
+.analysis-mode { margin: 0 0 .55rem; font-size: .85rem; color: #1e3a8a; }
 .access-panel { max-width: 600px; margin: 3rem auto; }
 .panel { min-width: 0; }
 .downloads button { background: #0f766e; font-size: .85rem; }

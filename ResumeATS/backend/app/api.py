@@ -4,6 +4,7 @@ import os
 from io import BytesIO
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from typing import Literal
 from uuid import uuid4
 from zipfile import BadZipFile, ZipFile
 
@@ -16,7 +17,7 @@ from starlette.concurrency import run_in_threadpool
 from app import main as legacy
 from app.access import require_access
 from app.contracts import ResumeExtractionResponse
-from app.job_source import extract_job
+from app.job_source import analyze_job, analyze_job_text
 from app.parser_pipeline import pipeline
 from app.resume_io import SUPPORTED_INPUT_EXTENSIONS, read_resume_text
 
@@ -98,8 +99,28 @@ async def extract_resume(resume: UploadFile = File(...)) -> ResumeExtractionResp
     return await run_in_threadpool(pipeline.parse, text)
 
 
+class RankedSkill(BaseModel):
+    name: str
+    score: float = Field(ge=0, le=100)
+    evidence: list[str] = Field(default_factory=list)
+    source: str
+
+
+class JobAnalysisResponse(BaseModel):
+    mode: Literal["deterministic", "ai"]
+    source_url: str = ""
+    title: str
+    company: str
+    industry: str
+    summary: str
+    raw_text: str
+    metadata: dict[str, str] = Field(default_factory=dict)
+    skills: list[RankedSkill] = Field(default_factory=list)
+
+
 class GenerateResponse(legacy.GenerateResponse):
     keywords: list[dict[str, str]] = Field(default_factory=list)
+    analysis: JobAnalysisResponse | None = None
 
 
 @app.post("/generate", response_model=GenerateResponse)
@@ -108,25 +129,33 @@ async def generate_resume(
     job_url: str = Form("", max_length=2048),
     job_description: str = Form("", max_length=30000),
     output_format: str = Form("all"),
+    job_model: str = Form("deterministic"),
 ) -> GenerateResponse:
     if output_format not in FORMATS | {"all"}:
         raise HTTPException(400, "Choose DOCX, PDF, RTF, or all formats.")
+    if job_model not in {"deterministic", "ai"}:
+        raise HTTPException(400, "Choose Deterministic or AI job analysis.")
     text = await read_upload(resume)
     if job_description.strip():
-        if len(job_description.strip()) < 100:
-            raise HTTPException(400, "Paste at least 100 characters of the job description.")
-        title, company, description = "Target Role", "", job_description.strip()
+        analysis = await run_in_threadpool(analyze_job_text, job_description.strip(), job_model)
     elif job_url.strip():
-        title, company, description = await run_in_threadpool(extract_job, job_url.strip())
+        analysis = await run_in_threadpool(analyze_job, job_url.strip(), job_model)
     else:
         raise HTTPException(400, "Enter a job URL or paste the job description.")
+    title = analysis["title"]
+    company = analysis["company"]
+    description = analysis["summary"]
     # Keep the applicant's factual content intact. Keyword suggestions belong
     # beside the resume and must never become invented qualifications.
     preview = "\n".join(line.rstrip() for line in text.strip().splitlines())
-    keywords = [{"keyword": word, "status": "present" if word in text.lower() else "review"}
-                for word in legacy._extract_top_keywords(description)]
+    suggested = [skill["name"] for skill in analysis.get("skills", []) if skill.get("name")]
+    if not suggested:
+        suggested = legacy._extract_top_keywords(description)
+    keywords = [{"keyword": word, "status": "present" if word.lower() in text.lower() else "review"}
+                for word in suggested]
     return GenerateResponse(job_title=title, company=company, preview=preview,
-                            thumbnail="\n".join(preview.splitlines()[:6]), files={}, keywords=keywords)
+                            thumbnail="\n".join(preview.splitlines()[:6]), files={}, keywords=keywords,
+                            analysis=analysis)
 
 
 class ExportRequest(BaseModel):

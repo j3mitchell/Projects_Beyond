@@ -80,6 +80,7 @@ export default function App() {
   const [jobUrl, setJobUrl] = useState('');
   const [jobDescription, setJobDescription] = useState('');
   const [jobUrlSuggestions, setJobUrlSuggestions] = useState(loadJobUrlSuggestions);
+  const [jobModel, setJobModel] = useState('deterministic');
   const [outputFormat, setOutputFormat] = useState('all');
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -213,6 +214,7 @@ export default function App() {
       jobUrl,
       jobDescription,
       outputFormat,
+      jobModel,
     });
 
     if (!validation.success) {
@@ -229,6 +231,7 @@ export default function App() {
       form.append('job_url', validated.jobUrl);
       form.append('job_description', validated.jobDescription);
       form.append('output_format', validated.outputFormat);
+      form.append('job_model', validated.jobModel);
 
       const resp = await apiFetch('/generate', { method: 'POST', body: form });
 
@@ -312,6 +315,23 @@ export default function App() {
             <textarea value={jobDescription} onChange={(e) => setJobDescription(e.target.value)}
               maxLength={30000} rows={4} placeholder="Use this if the job page requires a login or blocks access." />
           </label>
+
+          <fieldset className="model-picker">
+            <legend>Job URL analysis</legend>
+            <div className="model-picker__labels"><span>Deterministic</span><span>AI</span></div>
+            <input
+              className="model-slider"
+              type="range"
+              min="0"
+              max="1"
+              step="1"
+              value={jobModel === 'ai' ? 1 : 0}
+              onChange={(event) => setJobModel(event.target.value === '1' ? 'ai' : 'deterministic')}
+              aria-label="Choose job URL analysis model"
+            />
+            <output>{jobModel === 'ai' ? 'AI structured extraction' : 'Deterministic taxonomy ranking'}</output>
+            <p className="muted">AI mode uses the server provider when configured.</p>
+          </fieldset>
 
           <label>
             Output
@@ -423,6 +443,12 @@ export default function App() {
           <>
             <p className="meta">Role: <strong>{data.job_title}</strong> · Company: <strong>{data.company}</strong></p>
             <p className="muted">Your original facts are preserved. Add suggested keywords only when they accurately describe your experience.</p>
+            {data.analysis && <div className="analysis-panel" aria-label="Job analysis results">
+              <p className="analysis-mode">Model: <strong>{data.analysis.mode === 'ai' ? 'AI' : 'Deterministic'}</strong> · Industry: <strong>{data.analysis.industry || 'General'}</strong></p>
+              {data.analysis.skills.length > 0 && <div className="keyword-panel" aria-label="Ranked job skills">
+                {data.analysis.skills.map((skill) => <span className="skill-chip" key={`${skill.name}-${skill.source}`}>{skill.name} · {Math.round(skill.score)}</span>)}
+              </div>}
+            </div>}
             {data.keywords.length > 0 && <div className="keyword-panel" aria-label="Job keyword review">
               {data.keywords.map(({ keyword, status }) => <span className="skill-chip" key={keyword}>{keyword} · {status === 'present' ? 'in resume' : 'review'}</span>)}
             </div>}

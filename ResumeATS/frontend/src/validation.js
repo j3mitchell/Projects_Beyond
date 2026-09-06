@@ -91,6 +91,22 @@ export const generateResponseSchema = z.object({
   thumbnail: z.string(),
   files: z.record(z.string()),
   keywords: z.array(z.object({ keyword: z.string(), status: z.enum(['present', 'review']) })).default([]),
+  analysis: z.object({
+    mode: z.enum(['deterministic', 'ai']),
+    source_url: z.string().default(''),
+    title: z.string(),
+    company: z.string(),
+    industry: z.string(),
+    summary: z.string(),
+    raw_text: z.string(),
+    metadata: z.record(z.string()).default({}),
+    skills: z.array(z.object({
+      name: z.string(),
+      score: z.number(),
+      evidence: z.array(z.string()).default([]),
+      source: z.string(),
+    })).default([]),
+  }).nullable().default(null),
 });
 
 export const generationFormSchema = z.object({
@@ -98,6 +114,7 @@ export const generationFormSchema = z.object({
   jobUrl: z.string().trim().max(2048),
   jobDescription: z.string().trim().max(30000),
   outputFormat: outputFormatSchema,
+  jobModel: z.enum(['deterministic', 'ai']).default('deterministic'),
 }).refine((value) => value.jobDescription.length >= 100 || (!value.jobDescription && jobUrlSchema.safeParse(value.jobUrl).success),
   'Enter a valid job URL or paste at least 100 characters of the job description.');
 
