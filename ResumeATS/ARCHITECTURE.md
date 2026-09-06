@@ -14,7 +14,7 @@ ResumeATS uses a stable API entrypoint and an explicit parsing pipeline. Version
 
 ## Parsing pipeline
 
-1. **Ingest** — read DOCX/RTF/text while preserving document order.
+1. **Ingest** — read DOCX, legacy DOC, ODT, PDF, RTF, HTML, JSON, XML, Pages packages, ZIP archives, and text while preserving document order where the source format exposes it.
 2. **Normalize** — normalize whitespace and bullet representation.
 3. **Section detection** — identify summary, skills, experience, and education sections.
 4. **Entity classification** — classify job titles, organizations, descriptions, and locations.

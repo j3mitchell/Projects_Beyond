@@ -289,7 +289,7 @@ export default function App() {
         <form onSubmit={handleSubmit} className="form">
           <label>
             Resume file
-            <input type="file" accept=".docx,.pdf,.txt,.md,.rtf" disabled={loading} onChange={handleResumeChange} />
+            <input type="file" accept=".docx,.pdf,.txt,.md,.rtf,.html,.htm,.doc,.odt,.json,.xml,.pages,.zip" disabled={loading} onChange={handleResumeChange} />
           </label>
 
           <label>

@@ -18,7 +18,7 @@ from app.access import require_access
 from app.contracts import ResumeExtractionResponse
 from app.job_source import extract_job
 from app.parser_pipeline import pipeline
-from app.resume_io import read_resume_text
+from app.resume_io import SUPPORTED_INPUT_EXTENSIONS, read_resume_text
 
 APP_VERSION = "platform-v1"
 MAX_UPLOAD = 10 * 1024 * 1024
@@ -51,19 +51,20 @@ async def protect_requests(request, call_next):
 
 
 def _read(raw: bytes, filename: str) -> str:
-    if Path(filename).suffix.lower() == ".docx":
+    if Path(filename).suffix.lower() in {".docx", ".odt", ".pages", ".zip"}:
         try:
             with ZipFile(BytesIO(raw)) as archive:
                 if sum(item.file_size for item in archive.infolist()) > 30 * 1024 * 1024:
                     raise HTTPException(413, "The expanded document exceeds the 30 MB limit.")
         except BadZipFile:
-            raise HTTPException(400, "This DOCX file is damaged or invalid.")
+            extension = Path(filename).suffix.lower().lstrip(".").upper()
+            raise HTTPException(400, f"This {extension} file is damaged or invalid.")
     try:
         text = read_resume_text(UploadFile(filename=filename, file=BytesIO(raw)), raw)
     except RuntimeError as exc:
         raise HTTPException(503, str(exc)) from exc
     except Exception as exc:
-        raise HTTPException(400, "Unable to read this document. Try DOCX, text-based PDF, TXT, or RTF.") from exc
+        raise HTTPException(400, "Unable to read this document. Try DOCX, PDF, TXT, MD, RTF, HTML, DOC, ODT, JSON, or XML.") from exc
     if not text.strip():
         raise HTTPException(400, "No text was found. Scanned PDFs require OCR; try a text-based PDF or DOCX.")
     if len(text) > 100000:
@@ -72,8 +73,8 @@ def _read(raw: bytes, filename: str) -> str:
 
 
 async def read_upload(resume: UploadFile) -> str:
-    if Path(resume.filename or "").suffix.lower() not in {".docx", ".pdf", ".txt", ".md", ".rtf"}:
-        raise HTTPException(400, "Use a DOCX, PDF, TXT, MD, or RTF resume.")
+    if Path(resume.filename or "").suffix.lower() not in SUPPORTED_INPUT_EXTENSIONS:
+        raise HTTPException(400, "Use a DOCX, PDF, TXT, MD, RTF, HTML, DOC, ODT, JSON, or XML resume.")
     raw = await resume.read(MAX_UPLOAD + 1)
     if len(raw) > MAX_UPLOAD:
         raise HTTPException(413, "Resume files must be 10 MB or smaller.")
@@ -83,7 +84,7 @@ async def read_upload(resume: UploadFile) -> str:
 @app.get("/health")
 def health() -> dict:
     return {"status": "ok", "app": "ResumeATS", "version": APP_VERSION,
-            "parser": pipeline.status(), "input_formats": ["docx", "pdf", "txt", "md", "rtf"]}
+            "parser": pipeline.status(), "input_formats": [extension[1:] for extension in SUPPORTED_INPUT_EXTENSIONS]}
 
 
 @app.get("/access")

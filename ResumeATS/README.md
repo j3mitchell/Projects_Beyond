@@ -11,7 +11,7 @@ source facts, and lets the user edit the complete preview before exporting.
 
 ## Features
 - Web dashboard with upload form.
-- Reads DOCX, text PDF, TXT, MD, and RTF resumes.
+- Reads DOCX, legacy DOC, ODT, text PDF, TXT, MD, RTF, HTML, JSON, XML, Pages packages, and ZIP archives containing readable resume files.
 - Shows extracted sections and job-alignment keywords for review.
 - Keeps the full preview editable; DOCX, PDF, and RTF exports are generated
   from the current edited value in the same request.

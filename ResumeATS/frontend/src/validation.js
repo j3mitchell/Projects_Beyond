@@ -18,7 +18,7 @@ const ACTION_VERBS = new Set([
 ]);
 
 const HTTP_URL_RE = /^https?:\/\//i;
-const RESUME_EXT_RE = /\.(docx|pdf|txt|md|rtf)$/i;
+const RESUME_EXT_RE = /\.(docx|pdf|txt|md|rtf|html?|doc|odt|json|xml|pages|zip)$/i;
 
 export const jobUrlSchema = z
   .string()
@@ -32,7 +32,7 @@ export const outputFormatSchema = z.enum(['all', 'docx', 'pdf', 'rtf']);
 export const resumeFileSchema = z
   .any()
   .refine((file) => file && typeof file.name === 'string', 'Resume file is required.')
-  .refine((file) => RESUME_EXT_RE.test(file?.name || ''), 'Resume must be DOCX, PDF, TXT, MD, or RTF.')
+  .refine((file) => RESUME_EXT_RE.test(file?.name || ''), 'Resume must be DOCX, PDF, TXT, MD, RTF, HTML, DOC, ODT, JSON, XML, PAGES, or ZIP.')
   .refine((file) => file?.size <= 10 * 1024 * 1024, 'Resume files must be 10 MB or smaller.');
 
 export const jobTitleSchema = z.string().trim().max(80).refine((value) => {
