@@ -84,6 +84,18 @@ DATE_RANGE_RE = re.compile(
     re.I,
 )
 
+EMAIL_RE = re.compile(r"(?<![A-Za-z0-9._%+-])[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}(?![A-Za-z0-9._%+-])")
+PHONE_RE = re.compile(
+    r"(?<!\d)(?:\+?1[\s.-]*)?(?:\(\s*\d{3}\s*\)|\d{3})[\s.-]*\d{3}[\s.-]*\d{4}(?!\d)"
+)
+LINKEDIN_RE = re.compile(r"(?i)(?:(?:https?://)?(?:www\.)?linkedin\.com/in/[A-Za-z0-9][^\s|<>()]*)")
+URL_RE = re.compile(r"(?i)https?://[^\s|<>()]+")
+BARE_SITE_RE = re.compile(r"(?i)(?<![@\w])(?:www\.)?(?:github\.com|gitlab\.com)/[^\s|<>()]+")
+LOCATION_RE = re.compile(
+    r"^(?P<city>[A-Za-z][A-Za-z .'-]{1,50}?),\s*(?P<state>[A-Za-z]{2})(?:\s+\d{5}(?:-\d{4})?)?$"
+)
+NAME_SUFFIX_RE = re.compile(r"(?i),?\s*(Jr\.?|Sr\.?|II|III|IV|V|Esq\.?|CPA|MD|Ph\.?D\.?)$")
+
 TITLE_LABEL_RE = re.compile(r"^(?:title|position|role)\s*:\s*(.+)$", re.I)
 COMPANY_LABEL_RE = re.compile(r"^(?:employer|company|organization|agency)\s*:\s*(.+)$", re.I)
 ORG_CONTEXT_LABEL_RE = re.compile(
@@ -630,6 +642,113 @@ def _extract_summary(lines: list[str]) -> str:
     return " ".join(_strip_bullet(line) for line in lines[:8] if _strip_bullet(line)).strip()
 
 
+def _clean_contact_value(value: str) -> str:
+    return value.strip().strip(".,;:()[]<>")
+
+
+def _clean_phone_value(value: str) -> str:
+    return value.strip().strip(".,;:[]<>")
+
+
+def _contact_fragments(lines: list[str]) -> list[str]:
+    fragments: list[str] = []
+    for line in lines[:20]:
+        clean = _strip_bullet(line)
+        if not clean:
+            continue
+        fragments.append(clean)
+        fragments.extend(part.strip() for part in re.split(r"\s+[|·•]\s+", clean) if part.strip())
+    return fragments
+
+
+def _looks_like_name(value: str) -> bool:
+    clean = _clean_contact_value(re.sub(r"^(?:name|full name)\s*:\s*", "", value, flags=re.I))
+    clean = NAME_SUFFIX_RE.sub("", clean).strip(" ,")
+    words = clean.split()
+    if not 2 <= len(words) <= 5 or any(any(character.isdigit() for character in word) for word in words):
+        return False
+    if _single_section_name(clean) or EMAIL_RE.search(clean) or PHONE_RE.search(clean) or "," in clean:
+        return False
+    return all(re.fullmatch(r"[A-Za-z][A-Za-z.'-]*", word) for word in words)
+
+
+def _name_parts(value: str) -> dict[str, str]:
+    clean = re.sub(r"^(?:name|full name)\s*:\s*", "", value, flags=re.I).strip().strip("[]<>")
+    suffix_match = NAME_SUFFIX_RE.search(clean)
+    suffix = suffix_match.group(1) if suffix_match else ""
+    if suffix_match:
+        clean = clean[:suffix_match.start()].strip(" ,")
+    words = clean.split()
+    if not _looks_like_name(clean) or len(words) < 2:
+        return {"name": "", "name_first": "", "name_last": "", "suffix": ""}
+    return {
+        "name": clean,
+        "name_first": words[0],
+        "name_last": words[-1],
+        "suffix": suffix,
+    }
+
+
+def _normalize_link(value: str) -> str:
+    clean = _clean_contact_value(value)
+    if clean and not re.match(r"(?i)^https?://", clean):
+        return f"https://{clean}"
+    return clean
+
+
+def _extract_contact(preamble: list[str]) -> dict[str, str]:
+    fragments = _contact_fragments(preamble)
+    contact = {"name": "", "name_first": "", "name_last": "", "suffix": "", "phone": "", "city": "", "state": "", "email": "", "linkedin": "", "site": ""}
+
+    for fragment in fragments:
+        email = EMAIL_RE.search(fragment)
+        if email and not contact["email"]:
+            contact["email"] = email.group(0)
+
+        phone = PHONE_RE.search(fragment)
+        if phone and not contact["phone"]:
+            contact["phone"] = _clean_phone_value(phone.group(0))
+
+        linked = LINKEDIN_RE.search(fragment)
+        if linked and not contact["linkedin"]:
+            contact["linkedin"] = _normalize_link(linked.group(0))
+
+        location = LOCATION_RE.match(_clean_contact_value(fragment))
+        if location and location.group("state").upper() in STATE_CODES and not contact["city"]:
+            contact["city"] = location.group("city").strip()
+            contact["state"] = location.group("state").upper()
+
+        if not contact["site"]:
+            site = next((candidate for candidate in URL_RE.findall(fragment)
+                         if "linkedin.com/" not in candidate.lower()), "")
+            if not site:
+                site = next((candidate for candidate in BARE_SITE_RE.findall(fragment)
+                             if "linkedin.com/" not in candidate.lower()), "")
+            if site:
+                contact["site"] = _normalize_link(site)
+
+    for fragment in fragments:
+        if not contact["name"] and _looks_like_name(fragment):
+            contact.update(_name_parts(fragment))
+            break
+    return contact
+
+
+def _extract_credentials(lines: list[str]) -> str:
+    """Collect professional credential lines for the single ``[cred]`` field."""
+    values: list[str] = []
+    seen: set[str] = set()
+    for line in lines[:30]:
+        clean = _strip_bullet(line)
+        if not clean or not CERTIFICATION_RE.search(clean):
+            continue
+        key = clean.lower()
+        if key not in seen:
+            seen.add(key)
+            values.append(clean)
+    return " | ".join(values[:8])
+
+
 def _extract_skills(lines: list[str]) -> list[str]:
     skills: list[str] = []
     seen: set[str] = set()
@@ -731,6 +850,8 @@ class ResumeParserPipeline:
         ]
 
         return ResumeExtractionResponse(
+            **_extract_contact(preamble),
+            cred=_extract_credentials(preamble + sections["certifications"]),
             target_position_title=_target_title(preamble, jobs),
             executive_summary=_extract_summary(sections["executive_summary"]),
             skills=_extract_skills(sections["skills"]),

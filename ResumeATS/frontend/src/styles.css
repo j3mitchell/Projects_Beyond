@@ -22,6 +22,7 @@ button:disabled { opacity: .6; }
 .extract-block { border: 1px solid #e2e8f0; border-radius: 10px; padding: .75rem .85rem; background: #f8fafc; }
 .extract-block h3 { margin: 0 0 .45rem; font-size: .84rem; text-transform: uppercase; letter-spacing: .04em; color: #475569; }
 .extract-block p { margin: 0; line-height: 1.45; font-size: .9rem; }
+.contact-block p + p { margin-top: .22rem; }
 .skill-list { display: flex; flex-wrap: wrap; gap: .4rem; }
 .skill-chip { padding: .3rem .5rem; border-radius: 999px; background: #e2e8f0; color: #334155; font-size: .8rem; }
 .extract-list { margin: 0; padding-left: 1.1rem; display: grid; gap: .35rem; font-size: .88rem; line-height: 1.4; }

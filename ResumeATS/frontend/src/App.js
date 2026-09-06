@@ -80,6 +80,7 @@ export default function App() {
   }, []);
 
   const executiveSummary = extraction?.executive_summary || '';
+  const contact = extraction || {};
   const skills = extraction?.skills || [];
   const jobs = extraction?.experience || [];
   const education = extraction?.education || [];
@@ -275,6 +276,19 @@ export default function App() {
 
           {extraction && (
             <div className="extraction-content">
+              <div className="extract-block contact-block">
+                <h3>Contact Information</h3>
+                <p><span className="variable-label">[NameF]</span> {contact.name_first || 'Not detected'}</p>
+                <p><span className="variable-label">[NameL]</span> {contact.name_last || 'Not detected'}</p>
+                <p><span className="variable-label">[Suffix]</span> {contact.suffix || 'Not detected'}</p>
+                <p><span className="variable-label">[Phone]</span> {contact.phone || 'Not detected'}</p>
+                <p><span className="variable-label">[City]</span> {contact.city || 'Not detected'}, <span className="variable-label">[State]</span> {contact.state || 'Not detected'}</p>
+                <p><span className="variable-label">[Email]</span> {contact.email || 'Not detected'}</p>
+                <p><span className="variable-label">[LinkedIn]</span> {contact.linkedin || 'Not detected'}</p>
+                <p><span className="variable-label">[Site]</span> {contact.site || 'Not detected'}</p>
+                <p><span className="variable-label">[cred]</span> {contact.cred || 'Not detected'}</p>
+              </div>
+
               <div className="extract-block">
                 <h3>Executive Summary</h3>
                 <p>{executiveSummary || 'Not detected'}</p>

@@ -64,6 +64,17 @@ export const extractedResumeJobSchema = z.object({
 });
 
 export const resumeExtractionSchema = z.object({
+  name: z.string().trim().max(150).default(''),
+  name_first: z.string().trim().max(80).default(''),
+  name_last: z.string().trim().max(80).default(''),
+  suffix: z.string().trim().max(20).default(''),
+  phone: z.string().trim().max(60).default(''),
+  city: z.string().trim().max(100).default(''),
+  state: z.string().trim().max(60).default(''),
+  email: z.string().trim().max(254).default(''),
+  linkedin: z.string().trim().max(500).default(''),
+  site: z.string().trim().max(500).default(''),
+  cred: z.string().trim().max(2000).default(''),
   target_position_title: z.string().trim().max(150),
   executive_summary: z.string().trim().max(5000),
   skills: z.array(z.string().trim().min(1).max(120)),

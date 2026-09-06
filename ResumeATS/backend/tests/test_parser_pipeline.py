@@ -6,6 +6,7 @@ from app.parser_pipeline import (
     _location_like,
     _organization_from_context,
     _strict_title_fallback,
+    pipeline,
 )
 
 
@@ -43,6 +44,25 @@ class ResumeParserPipelineTests(unittest.TestCase):
     def test_position_date_range_supports_two_digit_month_year(self):
         self.assertEqual(_job_date_range("Example Systems | 06/15 - 08/19"), "06/15 - 08/19")
         self.assertEqual(_job_date_range("Example Systems | 06/2015 to present"), "06/2015 - present")
+
+    def test_contact_header_fields_are_extracted(self):
+        result = pipeline.parse(
+            "John Q. Public, Jr. | (202) 555-0147 | Washington, DC | john.public@example.com\n"
+            "https://www.linkedin.com/in/john-public | https://github.com/jpublic\n"
+            "SUMMARY:\nSenior database engineer.\n"
+            "CERTIFICATIONS:\nPMP | CISSP\n"
+        )
+        self.assertEqual(result.name, "John Q. Public")
+        self.assertEqual(result.name_first, "John")
+        self.assertEqual(result.name_last, "Public")
+        self.assertEqual(result.suffix, "Jr.")
+        self.assertEqual(result.phone, "(202) 555-0147")
+        self.assertEqual(result.city, "Washington")
+        self.assertEqual(result.state, "DC")
+        self.assertEqual(result.email, "john.public@example.com")
+        self.assertEqual(result.linkedin, "https://www.linkedin.com/in/john-public")
+        self.assertEqual(result.site, "https://github.com/jpublic")
+        self.assertEqual(result.cred, "PMP | CISSP")
 
 
 if __name__ == "__main__":
