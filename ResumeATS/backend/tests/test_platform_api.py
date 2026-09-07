@@ -143,6 +143,18 @@ class PlatformAPITests(unittest.TestCase):
         self.assertIn(b'job description', raw)
         response.read.assert_called_once_with(2 * 1024 * 1024 + 1, decode_content=True)
 
+    def test_icims_iframe_and_jobposting_metadata_are_extracted(self):
+        wrapper = b'''<html><body><noscript><iframe id="noscript_icims_content_iframe" src="/jobs/4180/software-developer/job?in_iframe=1"></iframe></noscript></body></html>'''
+        frame = b'''<html><head><title>iCIMS Careers Portal</title>
+        <script type="application/ld+json">{"@type":"JobPosting","title":"Software Developer","hiringOrganization":{"name":"Cayuse Holdings"},"description":"Build and test software applications with JavaScript, SQL, secure coding, and CI/CD practices. "}</script></head>
+        <body><div class="iCIMS_JobContent"><h1 class="iCIMS_Header">Software Developer</h1><p>Build and test software applications with JavaScript, SQL, secure coding, and CI/CD practices. """</p></div></body></html>'''
+        with patch('app.job_source.fetch_public_html', side_effect=[wrapper, frame]) as fetch:
+            analysis = analyze_job('https://careers.example.com/jobs/4180/software-developer/job', 'deterministic')
+        self.assertEqual(fetch.call_count, 2)
+        self.assertEqual(analysis['title'], 'Software Developer')
+        self.assertEqual(analysis['company'], 'Cayuse Holdings')
+        self.assertIn('JavaScript', [skill['name'] for skill in analysis['skills']])
+
     def test_bad_input(self):
         self.assertEqual(self.client.post('/extract', files={'resume': ('bad.exe', b'no')}).status_code, 400)
         self.assertEqual(self.client.post('/extract', files={'resume': ('bad.docx', b'no')}).status_code, 400)

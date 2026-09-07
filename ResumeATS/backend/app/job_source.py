@@ -94,7 +94,7 @@ def fetch_public_html(url: str) -> bytes:
     raise HTTPException(400, "This job page redirects too many times. Paste the job description instead.")
 
 
-def _page_fields(raw: bytes, source_url: str = "") -> dict:
+def _page_fields(raw: bytes, source_url: str = "", iframe_depth: int = 0) -> dict:
     soup = BeautifulSoup(raw, "html.parser")
     metadata: dict[str, str] = {}
     for key, selector, attribute in (
@@ -108,23 +108,63 @@ def _page_fields(raw: bytes, source_url: str = "") -> dict:
         value = element.get(attribute, "").strip() if element else ""
         if value:
             metadata[key] = value[:1000]
+    embedded_url = ""
+    iframe = soup.find("iframe", id="noscript_icims_content_iframe") or soup.find("iframe", src=re.compile(r"(?:[?&])in_iframe=1\b", re.I))
+    if iframe and iframe.get("src"):
+        embedded_url = urljoin(source_url, iframe["src"])
+
+    structured: dict[str, object] = {}
+    for script in soup.find_all("script", type="application/ld+json"):
+        try:
+            payload = json.loads(script.string or script.get_text())
+        except (TypeError, json.JSONDecodeError):
+            continue
+        candidates = payload if isinstance(payload, list) else payload.get("@graph", []) if isinstance(payload, dict) else []
+        if isinstance(payload, dict) and payload.get("@type"):
+            candidates = [payload, *candidates]
+        for candidate in candidates if isinstance(candidates, list) else []:
+            if not isinstance(candidate, dict):
+                continue
+            types = candidate.get("@type", [])
+            types = types if isinstance(types, list) else [types]
+            if "JobPosting" in types:
+                structured = candidate
+                break
+        if structured:
+            break
+
+    structured_title = str(structured.get("title", "")).strip()
+    structured_company = structured.get("hiringOrganization", {})
+    if isinstance(structured_company, dict):
+        structured_company = str(structured_company.get("name", "")).strip()
+    else:
+        structured_company = str(structured_company or "").strip()
+    structured_description = str(structured.get("description", "")).strip()
+    if structured_title:
+        metadata["structured_title"] = structured_title[:200]
+    if structured_company:
+        metadata["structured_company"] = structured_company[:200]
+    if embedded_url and iframe_depth < 2 and embedded_url != source_url:
+        return _page_fields(fetch_public_html(embedded_url), source_url, iframe_depth + 1)
+
     page_title = soup.title.get_text(" ", strip=True) if soup.title else ""
     heading = soup.find("h1", class_=lambda value: value and "listing-company" in value)
     heading_text = heading.get_text(" ", strip=True) if heading else ""
 
-    title = "Job Opportunity"
-    company = ""
-    for identity in (metadata.get("og_title", ""), page_title, heading_text):
-        match = re.search(r"^Job:\s*(?P<title>.+?)\s+at\s+(?P<company>.+?)$", identity, re.IGNORECASE)
-        if match:
-            title = match.group("title").strip()
-            company = match.group("company").strip()
-            break
-        match = re.match(r"^(?P<title>[^|]+?),\s*(?P<company>[^|]+?)\s*\|", identity)
-        if match:
-            title = match.group("title").strip()
-            company = match.group("company").strip()
-            break
+    title = structured_title or "Job Opportunity"
+    company = structured_company
+    if not structured_title:
+        for identity in (metadata.get("og_title", ""), page_title, heading_text):
+            match = re.search(r"^Job:\s*(?P<title>.+?)\s+at\s+(?P<company>.+?)$", identity, re.IGNORECASE)
+            if match:
+                title = match.group("title").strip()
+                company = match.group("company").strip()
+                break
+            match = re.match(r"^(?P<title>[^|]+?),\s*(?P<company>[^|]+?)\s*\|", identity)
+            if match:
+                title = match.group("title").strip()
+                company = match.group("company").strip()
+                break
 
     for element in soup(["script", "style", "nav", "footer", "header", "noscript"]):
         element.decompose()
@@ -134,7 +174,12 @@ def _page_fields(raw: bytes, source_url: str = "") -> dict:
         if heading_text and heading_text.lower() not in {"get exploring!", "job opportunity"}:
             title = heading_text
     company = company or metadata.get("site_name", "")
-    description = (soup.find("main") or soup).get_text(" ", strip=True)[:MAX_ANALYSIS_TEXT]
+    content_root = soup.find("main") or soup.select_one(".iCIMS_JobContent") or soup
+    description = content_root.get_text(" ", strip=True)[:MAX_ANALYSIS_TEXT]
+    if structured_description:
+        structured_text = BeautifulSoup(f"<div>{structured_description}</div>", "html.parser").get_text(" ", strip=True)
+        if len(structured_text) >= 100:
+            description = structured_text[:MAX_ANALYSIS_TEXT]
     if len(description) < 100:
         raise HTTPException(400, "No readable job description was found. Paste it instead.")
     return {"source_url": source_url, "title": title or "Job Opportunity", "company": company,
