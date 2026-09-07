@@ -66,6 +66,11 @@ textarea.preview { min-height: 320px; width: 100%; font-family: ui-monospace, mo
 .model-picker .muted { margin: 0; }
 .analysis-panel { border: 1px solid #dbeafe; border-radius: 10px; padding: .65rem .75rem; background: #eff6ff; margin-bottom: 1rem; }
 .analysis-mode { margin: 0 0 .55rem; font-size: .85rem; color: #1e3a8a; }
+.target-job-preview { display: grid; gap: .55rem; margin: 0 0 1rem; padding: .85rem; border: 1px solid #e2e8f0; border-radius: 10px; background: #f8fafc; }
+.target-job-preview__header { display: flex; align-items: center; justify-content: space-between; gap: .6rem; }
+.target-job-preview__header h3 { margin: 0; font-size: .84rem; text-transform: uppercase; letter-spacing: .04em; color: #475569; }
+.target-job-preview__mode { color: #2563eb; font-size: .74rem; font-weight: 700; }
+.target-job-skills { display: grid; gap: .35rem; padding-top: .15rem; border-top: 1px solid #e2e8f0; }
 .access-panel { max-width: 600px; margin: 3rem auto; }
 .panel { min-width: 0; }
 .downloads button { background: #0f766e; font-size: .85rem; }

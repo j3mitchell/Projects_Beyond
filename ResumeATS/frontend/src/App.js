@@ -309,7 +309,7 @@ export default function App() {
 
         <form onSubmit={handleSubmit} className="form">
           <label>
-            Resume file
+            Resume file (optional for job extraction)
             <input type="file" accept=".docx,.pdf,.txt,.md,.rtf,.html,.htm,.doc,.odt,.json,.xml,.pages,.zip" disabled={loading} onChange={handleResumeChange} />
           </label>
 
@@ -361,7 +361,7 @@ export default function App() {
             </select>
           </label>
 
-          <button disabled={loading || extracting || (!resume && !jobUrl.trim() && !jobDescription.trim())}>{loading ? 'Preparing…' : 'Analyze job'}</button>
+          <button disabled={loading || extracting || (!resume && !jobUrl.trim() && !jobDescription.trim())}>{loading ? 'Preparing…' : resume ? 'Prepare resume' : 'Analyze job'}</button>
           {error && <p className="error">{error}</p>}
         </form>
 
@@ -473,7 +473,7 @@ export default function App() {
             <p className="meta">Role: <strong>{data.job_title}</strong> · Company: <strong>{data.company}</strong></p>
             {data.analysis && <TargetJobPreview analysis={data.analysis} />}
             {resume && <p className="muted">Your original facts are preserved. Add suggested keywords only when they accurately describe your experience.</p>}
-            {data.keywords.length > 0 && <div className="keyword-panel" aria-label="Job keyword review">
+            {resume && data.keywords.length > 0 && <div className="keyword-panel" aria-label="Job keyword review">
               {data.keywords.map(({ keyword, status }) => <span className="skill-chip" key={keyword}>{keyword} · {status === 'present' ? 'in resume' : 'review'}</span>)}
             </div>}
             {data.preview ? <label>Editable resume preview
