@@ -594,7 +594,7 @@ def _normalise_ai_result(content: object, page: dict) -> dict:
             "pay": _normalise_pay_term(text_field("pay"))}
 
 
-def _ai_analyze(page: dict) -> dict:
+def _openai_analyze(page: dict) -> dict:
     api_key = os.getenv("OPENAI_API_KEY", "").strip()
     if not api_key:
         raise HTTPException(503, "AI job analysis is not configured. Set OPENAI_API_KEY on the backend or choose Deterministic.")
@@ -632,6 +632,165 @@ def _ai_analyze(page: dict) -> dict:
     except (requests.RequestException, KeyError, IndexError, TypeError, ValueError) as exc:
         raise HTTPException(502, "The AI provider could not analyze this job page.") from exc
     return _normalise_ai_result(content, page)
+
+
+def _affinda_field(data: dict, name: str):
+    field = data.get(name)
+    if not isinstance(field, dict):
+        return field
+    parsed = field.get("parsed")
+    if parsed not in (None, ""):
+        return parsed
+    return field.get("raw", "")
+
+
+def _affinda_text(value: object) -> str:
+    if isinstance(value, dict):
+        for key in ("name", "label", "value", "text", "title"):
+            if value.get(key):
+                return _compact_text(value[key])
+        parts = [
+            _compact_text(value.get(key))
+            for key in ("city", "locality", "addressLocality", "state", "region", "addressRegion", "country")
+            if value.get(key)
+        ]
+        if parts:
+            return ", ".join(parts)
+        return ""
+    return _compact_text(value)
+
+
+def _affinda_pay(value: object) -> str:
+    if not isinstance(value, dict):
+        return _normalise_pay_term(_affinda_text(value))
+    def amount(raw: object) -> str:
+        try:
+            return _format_amount(float(raw))
+        except (TypeError, ValueError):
+            normalized = _normalise_pay_amount(raw)
+            return normalized.lstrip("$€£")
+
+    minimum = amount(value.get("minimum"))
+    maximum = amount(value.get("maximum"))
+    single = amount(value.get("value"))
+    currency = _compact_text(value.get("currency")).upper()
+    symbol = {"USD": "$", "CAD": "C$", "AUD": "A$", "GBP": "£", "EUR": "€"}.get(currency, "")
+    if minimum and maximum:
+        amount = f"{symbol}{minimum}–{symbol}{maximum}"
+    elif single:
+        amount = f"{symbol}{single}"
+    else:
+        return ""
+    unit = _compact_text(value.get("unit") or value.get("unitText"))
+    frequency = re.search(r"hour|hr|week|month|year|yr", unit, re.I)
+    term = frequency.group(0).lower() if frequency else "yr" if minimum and maximum else ""
+    return f"{amount} / {term}" if term else amount
+
+
+def _affinda_analyze(page: dict) -> dict:
+    api_key = os.getenv("AFFINDA_API_KEY", "").strip()
+    workspace = os.getenv("AFFINDA_WORKSPACE", "").strip()
+    document_type = os.getenv("AFFINDA_DOCUMENT_TYPE", "").strip()
+    if not api_key or not workspace or not document_type:
+        raise HTTPException(
+            503,
+            "Paid AI is not configured. Set AFFINDA_API_KEY, AFFINDA_WORKSPACE, and AFFINDA_DOCUMENT_TYPE on the backend.",
+        )
+    base_url = os.getenv("AFFINDA_BASE_URL", "https://api.affinda.com").rstrip("/")
+    source_text = "\n".join(
+        value for value in (page.get("title", ""), page.get("company", ""), page.get("raw_text", "")) if value
+    )[:MAX_ANALYSIS_TEXT]
+    payload = {
+        "workspace": workspace,
+        "documentType": document_type,
+        "wait": "true",
+        "deleteAfterParse": "true",
+        "language": "en",
+    }
+    try:
+        response = requests.post(
+            f"{base_url}/v3/documents",
+            headers={"Authorization": f"Bearer {api_key}"},
+            files={"file": ("job.txt", source_text.encode("utf-8"), "text/plain")},
+            data=payload,
+            timeout=45,
+        )
+        response.raise_for_status()
+        body = response.json()
+        data = body.get("data", body) if isinstance(body, dict) else {}
+        if not isinstance(data, dict):
+            raise ValueError("Affinda response data was not an object")
+    except (requests.RequestException, KeyError, TypeError, ValueError) as exc:
+        raise HTTPException(502, "The paid AI provider could not analyze this job page.") from exc
+
+    skills: list[dict] = []
+    raw_skills = data.get("skills", [])
+    if isinstance(raw_skills, list):
+        for item in raw_skills[:20]:
+            if not isinstance(item, dict):
+                continue
+            parsed = item.get("parsed")
+            name = _affinda_text(parsed or item.get("raw"))
+            if not name:
+                continue
+            try:
+                confidence = float(item.get("confidence", 0.5))
+            except (TypeError, ValueError):
+                confidence = 0.5
+            score = max(0.0, min(100.0, confidence * 100 if confidence <= 1 else confidence))
+            skills.append({"name": name[:120], "score": score, "evidence": [_affinda_text(item.get("raw"))] if item.get("raw") else [], "source": "affinda"})
+    skills.sort(key=lambda item: (-item["score"], item["name"]))
+
+    vendor_qualifications = []
+    for field_name in ("educationLevel", "educationAccreditation"):
+        value = _affinda_text(_affinda_field(data, field_name))
+        if value:
+            vendor_qualifications.append(value)
+    certifications = data.get("certifications", [])
+    if isinstance(certifications, list):
+        vendor_qualifications.extend(_affinda_text(_affinda_field({"value": item}, "value")) for item in certifications)
+    years = _affinda_field(data, "yearsExperience")
+    if isinstance(years, dict):
+        minimum_years = years.get("minimum")
+        if minimum_years not in (None, ""):
+            vendor_qualifications.append(f"{minimum_years:g}+ years experience" if isinstance(minimum_years, (int, float)) else f"{minimum_years}+ years experience")
+
+    metadata = dict(page.get("metadata", {}))
+    metadata["ai_provider"] = "affinda"
+    title_data = _affinda_field(data, "jobTitle")
+    title = _affinda_text(title_data) or page.get("title") or "Job Opportunity"
+    company = _affinda_text(_affinda_field(data, "organizationName")) or page.get("company", "")
+    location = _affinda_text(_affinda_field(data, "location")) or page.get("location", "")
+    job_type = _affinda_text(_affinda_field(data, "jobType")) or page.get("type", "")
+    qualification_list = _short_list(vendor_qualifications) or _short_list(page.get("qual", []))
+    minimum_skills = _short_list(page.get("skills_min", []))
+    if not minimum_skills:
+        minimum_skills = _short_list([skill["name"] for skill in skills])
+    preferred_skills = _short_list(page.get("skills_max", []))
+    return {
+        "mode": "ai", "source_url": page.get("source_url", ""), "title": title[:200],
+        "company": company[:200], "industry": _infer_industry(page.get("raw_text", "")),
+        "description": _under_word_limit(page.get("description") or page.get("summary", ""), 6),
+        "summary": page.get("summary", "")[:MAX_ANALYSIS_TEXT], "raw_text": page.get("raw_text", "")[:MAX_ANALYSIS_TEXT],
+        "metadata": metadata, "skills": skills, "location": location[:200], "type": job_type[:50],
+        "work": _under_word_limit(page.get("work", ""), 6), "task": _under_word_limit(page.get("task", ""), 6),
+        "qual": qualification_list, "skills_min": minimum_skills, "skills_max": preferred_skills,
+        "pay": _affinda_pay(_affinda_field(data, "expectedRemuneration")),
+    }
+
+
+def _ai_analyze(page: dict) -> dict:
+    # Affinda is the paid production provider. Keep the OpenAI-compatible
+    # adapter available for local development and migration testing until the
+    # Affinda workspace/document type is configured.
+    if os.getenv("AFFINDA_API_KEY", "").strip():
+        return _affinda_analyze(page)
+    if not os.getenv("OPENAI_API_KEY", "").strip():
+        raise HTTPException(
+            503,
+            "Paid AI is not configured. Set Affinda credentials on the backend or choose Deterministic.",
+        )
+    return _openai_analyze(page)
 
 
 def analyze_job_text(description: str, mode: str = "deterministic") -> dict:

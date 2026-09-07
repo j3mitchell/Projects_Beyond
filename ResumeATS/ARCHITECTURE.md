@@ -12,6 +12,12 @@ ResumeATS uses a stable API entrypoint and an explicit parsing pipeline. Version
 - `backend/app/main.py` — legacy resume-generation helpers retained behind the API boundary
 - `frontend/src/validation.js` — Zod frontend contract validation
 
+Job analysis tiers are explicit: Deterministic is the free, explainable path;
+AI is the paid-member path. Production access reads the user's membership tier
+from Supabase before allowing AI requests. Affinda is selected automatically
+when its credentials are configured; the OpenAI-compatible adapter remains a
+migration fallback.
+
 ## Parsing pipeline
 
 1. **Ingest** — read DOCX, legacy DOC, ODT, PDF, RTF, HTML, JSON, XML, Pages packages, ZIP archives, and text while preserving document order where the source format exposes it.

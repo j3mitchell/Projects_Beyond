@@ -13,11 +13,12 @@ source facts, and lets the user edit the complete preview before exporting.
 - Web dashboard with upload form.
 - Reads DOCX, legacy DOC, ODT, text PDF, TXT, MD, RTF, HTML, JSON, XML, Pages packages, and ZIP archives containing readable resume files.
 - Shows extracted sections and job-alignment keywords for review.
-- Job URL analysis can be switched with the slider: Deterministic mode uses
-  bounded scraping, rules/regex, taxonomy matching, and explainable skill
-  ranking; AI mode extracts page text and metadata, then returns inferred
-  industry, work location/type, short work/task summaries, qualifications,
-  minimum and preferred skills, pay, and ranked skills as structured JSON.
+- Job URL analysis can be switched with the slider: the free Deterministic
+  model uses bounded scraping, rules/regex, taxonomy matching, and explainable
+  skill ranking; the paid AI model extracts page text and metadata, then
+  returns inferred industry, work location/type, short work/task summaries,
+  qualifications, minimum and preferred skills, pay, and ranked skills as
+  structured JSON.
 - Deterministic extraction includes the server-rendered Paylocity job detail
   template, including its title, company, location, description, requirements,
   and `K`-suffixed pay ranges.
@@ -31,11 +32,15 @@ source facts, and lets the user edit the complete preview before exporting.
 - Production requests require a signed-in Supabase user with a `resumeats`
   entitlement. Job-page fetching blocks private networks and oversized pages.
 
-AI mode runs only from the Cloud Run backend. Configure `OPENAI_API_KEY` and,
-optionally, `OPENAI_MODEL` or `OPENAI_BASE_URL` on that service; without a key,
-the API returns a clear configuration error and Deterministic mode remains
-available. Supabase is used for access and entitlements, not as the scraping or
-AI runtime.
+AI mode runs only from the Cloud Run backend and is restricted server-side to
+paid membership plans (`spark`, `surge`, and `apex` by default). Configure
+`AFFINDA_API_KEY`, `AFFINDA_WORKSPACE`, and `AFFINDA_DOCUMENT_TYPE` to use the
+paid Affinda job parser. Until those values are present, the existing
+OpenAI-compatible adapter remains available for migration testing through
+`OPENAI_API_KEY`, `OPENAI_MODEL`, and `OPENAI_BASE_URL`. Without a provider
+configuration, the API returns a clear error and the free Deterministic model
+remains available. Supabase is used for access and entitlements, not as the
+scraping or AI runtime.
 
 ## Run locally
 

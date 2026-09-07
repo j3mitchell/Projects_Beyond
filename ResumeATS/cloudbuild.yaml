@@ -35,7 +35,7 @@ steps:
       - --min-instances=0
       - --max-instances=3
       - --timeout=120
-      - --set-env-vars=^|^RESUMEATS_ENV=production|RESUMEATS_ALLOWED_ORIGINS=https://jisystems.net,https://www.jisystems.net|SUPABASE_URL=https://hecteqqrkjchdhvdkuxs.supabase.co|SUPABASE_PUBLISHABLE_KEY=sb_publishable_8Nc78Pxi99_M3Rs3kuKSHw_H6GBKpaR
+      - --set-env-vars=^|^RESUMEATS_ENV=production|RESUMEATS_PAID_PLANS=spark,surge,apex|RESUMEATS_ALLOWED_ORIGINS=https://jisystems.net,https://www.jisystems.net|SUPABASE_URL=https://hecteqqrkjchdhvdkuxs.supabase.co|SUPABASE_PUBLISHABLE_KEY=sb_publishable_8Nc78Pxi99_M3Rs3kuKSHw_H6GBKpaR
 images:
   - 'gcr.io/$PROJECT_ID/${_SERVICE}:$BUILD_ID'
 timeout: 1800s

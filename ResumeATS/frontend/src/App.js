@@ -189,6 +189,7 @@ export default function App() {
   const [downloading, setDownloading] = useState('');
   const [access, setAccess] = useState(hosted ? 'checking' : 'ready');
   const [accessError, setAccessError] = useState('');
+  const [paidMember, setPaidMember] = useState(!hosted);
   const extractionRequest = useRef(0);
 
   useEffect(() => {
@@ -196,8 +197,14 @@ export default function App() {
     let mounted = true;
     async function check() {
       try {
-        await apiFetch('/access');
-        if (mounted) { setAccess('ready'); setAccessError(''); }
+        const response = await apiFetch('/access');
+        const details = await response.json();
+        if (mounted) {
+          setAccess('ready');
+          setAccessError('');
+          setPaidMember(Boolean(details.paid_member));
+          if (!details.paid_member) setJobModel('deterministic');
+        }
       } catch (err) {
         if (mounted) { setAccess('locked'); setAccessError(err.message); }
       }
@@ -380,7 +387,7 @@ export default function App() {
 
           <fieldset className="model-picker">
             <legend>Job URL analysis</legend>
-            <div className="model-picker__labels"><span>Deterministic</span><span>AI</span></div>
+            <div className="model-picker__labels"><span>Free · Deterministic</span><span>Paid · AI</span></div>
             <input
               className="model-slider"
               type="range"
@@ -388,11 +395,12 @@ export default function App() {
               max="1"
               step="1"
               value={jobModel === 'ai' ? 1 : 0}
+              disabled={!paidMember}
               onChange={(event) => setJobModel(event.target.value === '1' ? 'ai' : 'deterministic')}
               aria-label="Choose job URL analysis model"
             />
-            <output>{jobModel === 'ai' ? 'AI structured extraction' : 'Deterministic taxonomy ranking'}</output>
-            <p className="muted">AI mode uses the server provider when configured.</p>
+            <output>{jobModel === 'ai' ? 'Paid AI structured extraction' : 'Free deterministic taxonomy ranking'}</output>
+            <p className="muted">{paidMember ? 'AI mode uses the configured paid provider.' : <><strong>AI extraction is for paid members.</strong> <a href="https://jisystems.net/memberships/">View memberships</a></>}</p>
           </fieldset>
 
           <label>

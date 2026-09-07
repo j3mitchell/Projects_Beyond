@@ -32,11 +32,34 @@ class PlatformAPITests(unittest.TestCase):
         with patch.dict(os.environ, env), patch("app.access.requests.get") as get:
             for row, status in [({"status": "active"}, 200), ({"status": "revoked"}, 403),
                                 ({"status": "active", "expires_at": "2020-01-01T00:00:00Z"}, 403)]:
-                get.side_effect = [Mock(status_code=200, json=lambda: {"id": "user-a"}), Mock(json=lambda: [row])]
+                get.side_effect = [Mock(status_code=200, json=lambda: {"id": "user-a"}), Mock(status_code=200, json=lambda: [row]), Mock(status_code=200, json=lambda: [])]
                 self.assertEqual(self.client.get("/access", headers={"Authorization": "Bearer token"}).status_code, status)
-                self.assertEqual(get.call_args.kwargs['params']['tool_slug'], 'eq.resumeats')
+                self.assertEqual(get.call_args_list[1].kwargs['params']['tool_slug'], 'eq.resumeats')
             get.side_effect = [Mock(status_code=401)]
             self.assertEqual(self.client.get('/access', headers={'Authorization': 'Bearer invalid'}).status_code, 401)
+
+    def test_access_reports_paid_membership_tier(self):
+        env = {"RESUMEATS_ENV": "production", "SUPABASE_URL": "https://example.supabase.co", "SUPABASE_PUBLISHABLE_KEY": "public"}
+        responses = [
+            Mock(status_code=200, json=lambda: {"id": "user-a"}),
+            Mock(status_code=200, json=lambda: [{"status": "active"}]),
+            Mock(status_code=200, json=lambda: [{"plan_slug": "spark", "status": "active"}]),
+        ]
+        with patch.dict(os.environ, env), patch("app.access.requests.get", side_effect=responses):
+            response = self.client.get("/access", headers={"Authorization": "Bearer token"})
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.json()["paid_member"])
+        self.assertEqual(response.json()["plan_slug"], "spark")
+
+    def test_free_members_cannot_use_paid_ai_model(self):
+        analysis = {"mode": "ai", "source_url": "", "title": "Role", "company": "", "industry": "technology",
+                    "summary": "Summary", "raw_text": "Python cloud role. " * 10, "metadata": {}, "skills": []}
+        with patch.dict(os.environ, {"RESUMEATS_ENV": "production"}), \
+             patch("app.api.analyze_job_text", return_value=analysis), \
+             patch("app.api.require_access", return_value={"id": "user-a", "plan_slug": "origin", "paid_member": False}):
+            response = self.client.post('/generate', data={'job_description': 'Python cloud role. ' * 10, 'job_model': 'ai'})
+        self.assertEqual(response.status_code, 403)
+        self.assertIn("paid members", response.json()["detail"])
 
     def test_complete_preview_and_edited_downloads(self):
         original = 'Jane Example\nProfessional Summary\n' + ('Managed PostgreSQL database systems and automation.\n' * 70)
@@ -123,6 +146,30 @@ class PlatformAPITests(unittest.TestCase):
         self.assertEqual(analysis['skills_min'], ['Python'])
         self.assertEqual(analysis['skills_max'], ['Kubernetes'])
         self.assertEqual(post.call_args.kwargs['json']['model'], 'test-model')
+
+    def test_affinda_is_used_for_paid_ai_when_configured(self):
+        provider = Mock(status_code=200)
+        provider.json.return_value = {
+            "data": {
+                "jobTitle": {"parsed": {"name": "Data Engineer"}},
+                "organizationName": {"parsed": "Example"},
+                "location": {"parsed": "Austin, TX"},
+                "jobType": {"parsed": "Full Time"},
+                "expectedRemuneration": {"parsed": {"minimum": 100000, "maximum": 120000, "currency": "USD", "unit": "Annually"}},
+                "educationLevel": {"parsed": "Bachelor's degree"},
+                "certifications": [{"parsed": "Security+"}],
+                "skills": [{"parsed": {"name": "Python"}, "confidence": 0.92, "raw": "Python"}],
+            }
+        }
+        env = {"AFFINDA_API_KEY": "aff-test", "AFFINDA_WORKSPACE": "workspace", "AFFINDA_DOCUMENT_TYPE": "job-type"}
+        with patch.dict(os.environ, env, clear=False), patch('app.job_source.requests.post', return_value=provider) as post:
+            analysis = analyze_job_text('The Work\nBuild data systems for secure customers.\nRequirements\nBachelor degree.\nMinimum Skills\nPython.\n' + ('Support reliable data platforms. ' * 5), 'ai')
+        self.assertEqual(analysis['metadata']['ai_provider'], 'affinda')
+        self.assertEqual(analysis['title'], 'Data Engineer')
+        self.assertEqual(analysis['company'], 'Example')
+        self.assertEqual(analysis['pay'], '$100,000–$120,000 / yr')
+        self.assertEqual(analysis['skills'][0]['name'], 'Python')
+        self.assertEqual(post.call_args.args[0], 'https://api.affinda.com/v3/documents')
 
     def test_deterministic_url_analysis_extracts_taxonomy(self):
         html = b'''<html><head><title>Cloud Platform Engineer | Example</title><meta property="og:site_name" content="Example">

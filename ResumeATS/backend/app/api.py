@@ -8,7 +8,7 @@ from typing import Literal
 from uuid import uuid4
 from zipfile import BadZipFile, ZipFile
 
-from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 from pydantic import BaseModel, Field
@@ -89,8 +89,17 @@ def health() -> dict:
 
 
 @app.get("/access")
-def access() -> dict:
-    return {"authenticated": True, "authorized": True, "tool": "resumeats"}
+def access(request: Request) -> dict:
+    user = getattr(request.state, "user", {})
+    return {
+        "authenticated": True,
+        "authorized": True,
+        "tool": "resumeats",
+        "plan_slug": user.get("plan_slug", "origin"),
+        "paid_member": bool(user.get("paid_member")),
+        "free_model": "deterministic",
+        "paid_model": "ai",
+    }
 
 
 @app.post("/extract", response_model=ResumeExtractionResponse)
@@ -134,6 +143,7 @@ class GenerateResponse(legacy.GenerateResponse):
 
 @app.post("/generate", response_model=GenerateResponse)
 async def generate_resume(
+    request: Request,
     resume: UploadFile | None = File(None),
     job_url: str = Form("", max_length=2048),
     job_description: str = Form("", max_length=30000),
@@ -144,6 +154,12 @@ async def generate_resume(
         raise HTTPException(400, "Choose DOCX, PDF, RTF, or all formats.")
     if job_model not in {"deterministic", "ai"}:
         raise HTTPException(400, "Choose Deterministic or AI job analysis.")
+    if (
+        job_model == "ai"
+        and os.getenv("RESUMEATS_ENV", "development") == "production"
+        and not getattr(request.state, "user", {}).get("paid_member")
+    ):
+        raise HTTPException(403, "AI job analysis is available to paid members. Choose Deterministic or upgrade your membership.")
     text = await read_upload(resume) if resume is not None else ""
     if job_description.strip():
         analysis = await run_in_threadpool(analyze_job_text, job_description.strip(), job_model)
