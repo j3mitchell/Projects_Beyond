@@ -369,7 +369,6 @@ export default function App() {
     <main className="app-shell">
       <header className="app-header">
         <div className="app-brand">
-          <a className="platform-link" href="https://jisystems.net/">← J.I. Systems</a>
           <p className="eyebrow">ResumeATS</p>
           <h1>Resume ATS Optimizer</h1>
           <p className="subhead">Sign in through the J.I. Systems platform to open your resume workspace.</p>
@@ -392,7 +391,6 @@ export default function App() {
     <main className="app-shell">
       <header className="app-header">
         <div className="app-brand">
-          {hosted && <a className="platform-link" href="https://jisystems.net/tools/">← J.I. Systems tools</a>}
           <p className="eyebrow">ResumeATS</p>
           <h1>Resume ATS Optimizer</h1>
           <p className="subhead">Review your resume against a target job, edit the full preview, and download polished versions.</p>

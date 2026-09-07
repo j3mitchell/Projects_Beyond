@@ -166,7 +166,6 @@ a { color: var(--accent); }
   margin: 0 auto .75rem;
 }
 .app-brand { min-width: 0; }
-.platform-link { display: inline-block; margin-bottom: .5rem; font-size: .85rem; }
 .eyebrow,
 .section-kicker {
   margin: 0 0 .35rem;
