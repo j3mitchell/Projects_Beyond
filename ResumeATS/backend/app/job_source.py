@@ -221,7 +221,7 @@ def _unique_list(value: object, limit: int = 30) -> list[str]:
     result: list[str] = []
     seen: set[str] = set()
     for candidate in candidates:
-        clean = _compact_text(candidate).strip("•▪‣- ")
+        clean = re.sub(r"^(?:[-–—•▪‣*]\s*)+", "", _compact_text(candidate)).strip()
         key = clean.casefold()
         if clean and key not in seen:
             result.append(clean[:1000])
@@ -395,16 +395,16 @@ def _extract_job_fields(structured: dict[str, object], structured_text: str, raw
         lines = raw_lines if len(raw_lines) > 1 else [_compact_text(part) for part in re.split(r"(?<=[.!?])\s+", raw_text) if _compact_text(part)]
 
     work_lines = _section_lines(lines, ("the work",), ("responsibilities", "qualifications", "pay range", "working conditions"))
-    work = _under_word_limit(next((line for line in work_lines if not _is_heading_or_label(line)), ""))
+    work = _under_word_limit(next((line for line in work_lines if not _is_heading_or_label(line)), ""), maximum=6)
     overview_lines = _section_lines(lines, ("overview",), ("responsibilities", "qualifications", "pay range", "working conditions"))
     description_source = next((line for line in overview_lines
                                 if not _is_heading_or_label(line)
                                 and "employment in this role is conditional" not in line.casefold()), "")
     if not description_source:
         description_source = work or next((line for line in lines if not _is_heading_or_label(line)), "")
-    description = _under_word_limit(description_source)
+    description = _under_word_limit(description_source, maximum=6)
     task_lines = _section_lines(lines, ("key responsibilities", "responsibilities"), ("qualifications", "minimum skills", "preferred qualifications", "pay range"))
-    task = _under_word_limit(next((line for line in task_lines if not _is_heading_or_label(line) and not line.casefold().startswith("other duties")), ""))
+    task = _under_word_limit(next((line for line in task_lines if not _is_heading_or_label(line) and not line.casefold().startswith("other duties")), ""), maximum=6)
     qualifications = _section_items(
         lines, ("qualifications here s what you need", "qualifications"),
         ("minimum skills", "preferred qualifications", "our commitment", "benefits", "working conditions", "pay range"),
@@ -499,14 +499,14 @@ def _normalise_ai_result(content: object, page: dict) -> dict:
             "title": str(content.get("title") or page.get("title") or "Job Opportunity")[:200],
             "company": str(content.get("company") or page.get("company") or "")[:200],
             "industry": str(content.get("industry") or page.get("industry") or "general")[:100],
-            "description": text_field("description", maximum=9),
+            "description": text_field("description", maximum=6),
             "summary": str(content.get("summary") or page.get("summary") or "")[:MAX_ANALYSIS_TEXT],
             "raw_text": page.get("raw_text", "")[:MAX_ANALYSIS_TEXT],
             "metadata": page.get("metadata", {}), "skills": skills,
             "location": text_field("location"),
             "type": text_field("type"),
-            "work": text_field("work", maximum=9),
-            "task": text_field("task", maximum=9),
+            "work": text_field("work", maximum=6),
+            "task": text_field("task", maximum=6),
             "qual": list_field("qual"),
             "skills_min": list_field("skills_min"),
             "skills_max": list_field("skills_max"),
@@ -535,7 +535,7 @@ def _ai_analyze(page: dict) -> dict:
     }
     prompt = ("Analyze this job page. Infer the most likely industry and rank the required or preferred skills by relevance. "
               "Return only the requested JSON fields. Use type only as On-Site, Hybrid, Remote, or an empty string. "
-              "Keep description, work, and task under 10 words each. Keep every qual, skills_min, and skills_max list item under 7 words. "
+              "Keep description, work, and task under 7 words each. Keep every qual, skills_min, and skills_max list item under 7 words. "
               "Put general qualifications and credentials in qual; put absolute minimum requirements in skills_min and preferred skills or credentials in skills_max. "
               "Set numeric pay to two amounts plus a term such as / yr; use Commission, Intern, or an empty string when applicable. Score each ranked skill from 0 to 100 and include short evidence phrases.\n\n"
               f"Page metadata: {json.dumps(page.get('metadata', {}), ensure_ascii=False)}\n"

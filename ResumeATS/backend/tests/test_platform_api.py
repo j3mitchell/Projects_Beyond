@@ -166,9 +166,9 @@ class PlatformAPITests(unittest.TestCase):
         self.assertIn('JavaScript', [skill['name'] for skill in analysis['skills']])
         self.assertEqual(analysis['location'], 'Arlington, VA')
         self.assertEqual(analysis['type'], 'Remote')
-        self.assertLess(len(analysis['description'].split()), 10)
-        self.assertLess(len(analysis['work'].split()), 10)
-        self.assertLess(len(analysis['task'].split()), 10)
+        self.assertLess(len(analysis['description'].split()), 7)
+        self.assertLess(len(analysis['work'].split()), 7)
+        self.assertLess(len(analysis['task'].split()), 7)
         for field in ('qual', 'skills_min', 'skills_max'):
             for item in analysis[field]:
                 self.assertLess(len(item.split()), 7)
@@ -176,7 +176,7 @@ class PlatformAPITests(unittest.TestCase):
         self.assertEqual(analysis['skills_min'], ['JavaScript and SQL.'])
         self.assertEqual(analysis['skills_max'], ['Kubernetes experience.'])
         self.assertEqual(analysis['pay'], '$110,000–$160,000 / yr')
-        self.assertEqual(analysis['description'], 'Build and test software applications for customers.')
+        self.assertEqual(analysis['description'], 'Build and test software applications for…')
 
     def test_text_analysis_returns_job_labels(self):
         text = """The Work
@@ -185,11 +185,11 @@ class PlatformAPITests(unittest.TestCase):
         Key Responsibilities
         Design and ship reliable APIs.
         Qualifications
-        Bachelor's degree in Computer Science.
+        - Bachelor's degree in Computer Science.
         Minimum Skills:
-        Python and SQL.
+        - Python and SQL.
         Preferred Qualifications:
-        Kubernetes certification.
+        - Kubernetes certification.
         Pay Range: $100,000 - $120,000 per year.
         """
         analysis = analyze_job_text(text, 'deterministic')
@@ -203,6 +203,7 @@ class PlatformAPITests(unittest.TestCase):
         for field in ('qual', 'skills_min', 'skills_max'):
             for item in analysis[field]:
                 self.assertLess(len(item.split()), 7)
+                self.assertFalse(item.startswith('-'))
 
     def test_bad_input(self):
         self.assertEqual(self.client.post('/extract', files={'resume': ('bad.exe', b'no')}).status_code, 400)

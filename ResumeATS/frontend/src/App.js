@@ -152,7 +152,7 @@ function TargetJobPreview({ analysis }) {
       <PreviewValue label="[type]" field="target.type" value={analysis.type} />
       <PreviewValue label="[work]" field="target.work" value={analysis.work} />
       <PreviewValue label="[task]" field="target.task" value={analysis.task} />
-      <PreviewLabeledList label="[qual]" field="target.qualifications" items={analysis.qual} />
+      <PreviewLabeledList label="[qual]" field="target.qualifications" items={analysis.qual} itemPrefix="sMin" />
       <PreviewLabeledList label="[skMin]" field="target.skMin" items={analysis.skills_min} itemPrefix="skMin" />
       <PreviewLabeledList label="[skMax]" field="target.skMax" items={analysis.skills_max} itemPrefix="skMax" />
       <CompensationValue value={analysis.pay} />
