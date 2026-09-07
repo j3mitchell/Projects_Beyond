@@ -225,9 +225,18 @@ a { color: var(--accent); }
   margin-bottom: .42rem;
   font: 700 .9rem/1 "IBM Plex Sans", "Segoe UI", sans-serif;
 }
-.status-panel .progress-track { height: 12px; }
-.status-panel .progress-fill {
+.progress-track {
+  width: 100%;
+  height: 12px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #d7d9de;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 999px;
   background: linear-gradient(90deg, #4e79c7 0%, #2f5fae 100%);
+  transition: width 220ms ease;
 }
 .panel-section-heading { margin-bottom: .55rem; }
 .panel-section-heading h2 {
