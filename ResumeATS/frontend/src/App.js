@@ -366,11 +366,25 @@ export default function App() {
   }
 
   if (access !== 'ready') return (
-    <main className="access-panel panel">
-      <a href="https://jisystems.net/">J.I. Systems</a>
-      <h1>ResumeATS</h1>
-      <p role="status">{access === 'checking' ? 'Checking your platform access…' : accessError}</p>
-      {access === 'locked' && <a href={gatewayUrl}>Sign in or check access</a>}
+    <main className="app-shell">
+      <header className="app-header">
+        <div className="app-brand">
+          <a className="platform-link" href="https://jisystems.net/">← J.I. Systems</a>
+          <p className="eyebrow">ResumeATS</p>
+          <h1>Resume ATS Optimizer</h1>
+          <p className="subhead">Sign in through the J.I. Systems platform to open your resume workspace.</p>
+        </div>
+      </header>
+      <section className="status-panel" role="status" aria-live="polite">
+        <div className="status-panel__row"><strong>System status: {statusText}</strong><strong>{statusProgress}%</strong></div>
+        <div className="progress-track" aria-label="ResumeATS process status">
+          <div className="progress-fill" style={{ width: `${statusProgress}%` }} />
+        </div>
+      </section>
+      <section className="access-panel panel">
+        <p role="status">{access === 'checking' ? 'Checking your platform access…' : accessError}</p>
+        {access === 'locked' && <a href={gatewayUrl}>Sign in or check access</a>}
+      </section>
     </main>
   );
 
