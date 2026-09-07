@@ -90,6 +90,10 @@ details[open] > summary .expansion-open { display: inline; }
 .job-list { gap: 0; }
 .preview-list { margin-top: 0; margin-bottom: 0; }
 .preview-list-content { min-width: 0; }
+.skills-view-choice { display: flex; align-items: center; justify-content: flex-end; gap: .35rem; margin-bottom: .45rem; }
+.skills-view-label { color: #64748b; font-size: .76rem; font-weight: 650; }
+.skills-view-choice button { padding: .25rem .5rem; border: 1px solid #cbd5e1; background: #fff; color: #475569; font-size: .74rem; }
+.skills-view-choice button.is-selected { border-color: #2563eb; background: #2563eb; color: #fff; }
 .preview-job-details { display: grid; gap: .5rem; padding: 0 .75rem .8rem 1.9rem; }
 .preview-job-descriptions { margin-top: .1rem; }
 .target-title-block { border-left: 4px solid #2563eb; }

@@ -73,19 +73,29 @@ function PreviewList({ title, prefix, items, field }) {
 }
 
 function PreviewSkills({ items }) {
+  const [view, setView] = useState('chips');
   const values = Array.isArray(items) ? items : [];
   const hasItems = values.some(hasValue);
   return (
     <details className="extract-block preview-list-block collapsible-section" data-field="skills">
       <summary><span>Skills</span><ExpansionIndicator /></summary>
       <div className="collapsible-content preview-list-content">
-        {hasItems ? (
-          <div className="skill-list preview-skill-list">
-            {values.map((item, index) => (
-              hasValue(item) && <span className="skill-chip" key={`skill-${index}`}>{item}</span>
-            ))}
-          </div>
-        ) : <p className="muted">Not detected</p>}
+        <div className="skills-view-choice" role="group" aria-label="Skills view">
+          <span className="skills-view-label">View</span>
+          <button type="button" className={view === 'chips' ? 'is-selected' : ''} aria-pressed={view === 'chips'} onClick={() => setView('chips')}>Chips</button>
+          <button type="button" className={view === 'list' ? 'is-selected' : ''} aria-pressed={view === 'list'} onClick={() => setView('list')}>List</button>
+        </div>
+        {!hasItems && <p className="muted">Not detected</p>}
+        {hasItems && view === 'chips' && <div className="skill-list preview-skill-list">
+          {values.map((item, index) => (
+            hasValue(item) && <span className="skill-chip" key={`skill-${index}`}>{item}</span>
+          ))}
+        </div>}
+        {hasItems && view === 'list' && <ul className="extract-list preview-list">
+          {values.map((item, index) => (
+            hasValue(item) && <li key={`skill-list-${index}`}><span className="variable-label">[skill{index + 1}]</span> {item}</li>
+          ))}
+        </ul>}
       </div>
     </details>
   );
