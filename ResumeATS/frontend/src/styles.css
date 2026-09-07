@@ -151,7 +151,7 @@ a { color: var(--accent); }
 }
 .app-shell {
   min-height: 100vh;
-  padding: 1rem;
+  padding: .5rem;
   color: var(--ink);
   background:
     repeating-linear-gradient(102deg, rgba(255, 255, 255, .18) 0 1px, rgba(0, 0, 0, .02) 1px 3px),
@@ -362,7 +362,7 @@ button:disabled { opacity: .52; cursor: not-allowed; }
   .shell { grid-template-columns: 1fr; }
 }
 @media (max-width: 720px) {
-  .app-shell { padding: .75rem; }
+  .app-shell { padding: .35rem; }
   .app-header { flex-direction: column; }
   .header-actions { justify-content: flex-start; }
   .shell { margin: 0; padding: 0; }
