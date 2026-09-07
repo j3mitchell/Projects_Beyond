@@ -18,9 +18,10 @@ source facts, and lets the user edit the complete preview before exporting.
   ranking; AI mode extracts page text and metadata, then returns inferred
   industry, work location/type, short work/task summaries, qualifications,
   minimum and preferred skills, pay, and ranked skills as structured JSON.
-- The target-job preview keeps `[descr1]` under ten words, limits list items to
-  six words, labels minimum and preferred skills as `[skMin01]` and `[skMax01]`,
-  and renders numeric compensation as two amounts plus a term.
+- The target-job preview keeps `[desc]` under ten words, uses `[loc]` for the
+  location, limits list items to six words, and labels skill groups `[skMin]`
+  and `[skMax]` with `[skMin01]` and `[skMax01]` items. Numeric compensation
+  remains formatted as two amounts plus a term.
 - Keeps the full preview editable; DOCX, PDF, and RTF exports are generated
   from the current edited value in the same request.
 - Production requests require a signed-in Supabase user with a `resumeats`

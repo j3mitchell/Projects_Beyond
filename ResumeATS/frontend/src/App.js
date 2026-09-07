@@ -148,15 +148,15 @@ function TargetJobPreview({ analysis }) {
         <span className="target-job-preview__mode">{analysis.mode === 'ai' ? 'AI' : 'Deterministic'}</span>
       </div>
       <PreviewValue label="[title]" field="target.title" value={analysis.title} emphasized />
-      <PreviewValue label="[location]" field="target.location" value={analysis.location} />
+      <PreviewValue label="[loc]" field="target.loc" value={analysis.location} />
       <PreviewValue label="[type]" field="target.type" value={analysis.type} />
       <PreviewValue label="[work]" field="target.work" value={analysis.work} />
       <PreviewValue label="[task]" field="target.task" value={analysis.task} />
       <PreviewLabeledList label="[qual]" field="target.qualifications" items={analysis.qual} />
-      <PreviewLabeledList label="[skillsMin]" field="target.skills_min" items={analysis.skills_min} itemPrefix="skMin" />
-      <PreviewLabeledList label="[skillsMax]" field="target.skills_max" items={analysis.skills_max} itemPrefix="skMax" />
+      <PreviewLabeledList label="[skMin]" field="target.skMin" items={analysis.skills_min} itemPrefix="skMin" />
+      <PreviewLabeledList label="[skMax]" field="target.skMax" items={analysis.skills_max} itemPrefix="skMax" />
       <CompensationValue value={analysis.pay} />
-      <PreviewValue label="[descr1]" field="target.description" value={description} multiline />
+      <PreviewValue label="[desc]" field="target.desc" value={description} multiline />
       {skills.length > 0 && <details className="target-job-skills collapsible-section" open={analysis.skills_min?.length === 0 && analysis.skills_max?.length === 0}>
         <summary><span>Ranked skills</span><ExpansionIndicator /></summary>
         <div className="collapsible-content">
