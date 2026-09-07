@@ -224,6 +224,26 @@ export default function App() {
   const certifications = extraction?.certifications || [];
   const targetPositionTitle = extraction?.target_position_title || '';
   const targetAnalysis = jobAnalysis || data?.analysis || null;
+  const statusText = access === 'checking'
+    ? 'Checking access…'
+    : access === 'locked'
+      ? 'Access required'
+      : extractError || error
+        ? 'Needs attention'
+        : extracting
+          ? 'Extracting resume…'
+          : loading
+            ? 'Preparing preview…'
+            : 'Ready';
+  const statusProgress = access !== 'ready'
+    ? access === 'checking' ? 20 : 0
+    : extractError || error
+      ? 0
+      : extracting
+        ? 58
+        : loading
+          ? 84
+          : 100;
 
   function rememberJobUrl(rawUrl) {
     const url = rawUrl.trim();
@@ -355,11 +375,34 @@ export default function App() {
   );
 
   return (
-    <main className="shell">
+    <main className="app-shell">
+      <header className="app-header">
+        <div className="app-brand">
+          {hosted && <a className="platform-link" href="https://jisystems.net/tools/">← J.I. Systems tools</a>}
+          <p className="eyebrow">ResumeATS</p>
+          <h1>Resume ATS Optimizer</h1>
+          <p className="subhead">Review your resume against a target job, edit the full preview, and download polished versions.</p>
+        </div>
+        <div className="header-actions">
+          {hosted && <a className="button button-link" href="https://jisystems.net/tools/">J.I. Systems</a>}
+          {hosted && <a className="button button-link" href="https://jisystems.net/memberships/">Memberships</a>}
+        </div>
+      </header>
+
+      <section className="status-panel" role="status" aria-live="polite">
+        <div className="status-panel__row"><strong>System status: {statusText}</strong><strong>{statusProgress}%</strong></div>
+        <div className="progress-track" aria-label="ResumeATS process status">
+          <div className="progress-fill" style={{ width: `${statusProgress}%` }} />
+        </div>
+      </section>
+
+      <div className="shell">
       <section className="panel left-panel">
-        {hosted && <a href="https://jisystems.net/tools/">← J.I. Systems tools</a>}
-        <h1>Resume ATS Optimizer</h1>
-        <p>Review your resume against a job description, edit the full preview, and download DOCX, PDF, or RTF.</p>
+        <div className="panel-section-heading">
+          <p className="section-kicker">Resume workspace</p>
+          <h2>Build a targeted resume</h2>
+          <p>Upload a resume, add a job URL, then review the extracted fields and preview.</p>
+        </div>
 
         <form onSubmit={handleSubmit} className="form">
           <label>
@@ -521,7 +564,10 @@ export default function App() {
       </section>
 
       <section className="panel">
-        <h2>Preview</h2>
+        <div className="panel-section-heading panel-section-heading--preview">
+          <p className="section-kicker">Output workspace</p>
+          <h2>Preview</h2>
+        </div>
         {!data && !targetAnalysis && <p>No generated resume yet.</p>}
         {data && <p className="meta">Role: <strong>{data.job_title}</strong> · Company: <strong>{data.company}</strong></p>}
         {targetAnalysis && <TargetJobPreview analysis={targetAnalysis} />}
@@ -545,6 +591,7 @@ export default function App() {
           </>
         )}
       </section>
+      </div>
     </main>
   );
 }
