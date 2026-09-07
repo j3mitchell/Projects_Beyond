@@ -178,6 +178,31 @@ class PlatformAPITests(unittest.TestCase):
         self.assertEqual(analysis['pay'], '$110,000–$160,000 / yr')
         self.assertEqual(analysis['description'], 'Build and test software applications for…')
 
+    def test_paylocity_job_template_extracts_fields(self):
+        html = b'''<html><head><title>Red Drum Holdings - Database Engineers</title></head><body>
+        <div id="LayoutLogoName">Red Drum Holdings</div>
+        <div class="job-preview" role="main"><div class="job-preview-header">
+          <span class="job-preview-title"><span>Database Engineers</span></span>
+          <div class="preview-location">Annapolis Junction, MD</div>
+        </div><div class="job-preview-details">
+          <div class="job-listing-header">Description</div><div><p>We solve complex data challenges and develop secure solutions.</p></div>
+          <div class="job-listing-header">Requirements</div><div>
+            <p>Requirements for database engineers include: Oracle database, database design and modeling, My SQL, and others.</p>
+            <p>Education Requirements: Bachelor's degree in computer science or related discipline.</p>
+            <p>A Current TS clearance plus Polygraph is required for all openings.</p>
+            <p>Pay Range: 185K-275K.</p>
+          </div></div></div></body></html>'''
+        with patch('app.job_source.fetch_public_html', return_value=html):
+            analysis = analyze_job('https://recruiting.paylocity.com/recruiting/jobs/Details/2567762/Red-Drum-Holdings/Database-Engineers', 'deterministic')
+        self.assertEqual(analysis['title'], 'Database Engineers')
+        self.assertEqual(analysis['company'], 'Red Drum Holdings')
+        self.assertEqual(analysis['location'], 'Annapolis Junction, MD')
+        self.assertEqual(analysis['description'], 'We solve complex data challenges and…')
+        self.assertEqual(analysis['work'], 'We solve complex data challenges and…')
+        self.assertIn('Oracle database', analysis['skills_min'])
+        self.assertIn('database design and modeling', analysis['skills_min'])
+        self.assertEqual(analysis['pay'], '$185,000–$275,000 / yr')
+
     def test_text_analysis_returns_job_labels(self):
         text = """The Work
         Build secure cloud services for customers.
@@ -199,7 +224,7 @@ class PlatformAPITests(unittest.TestCase):
         self.assertEqual(analysis['qual'], ["Bachelor's degree in Computer Science."])
         self.assertEqual(analysis['skills_min'], ['Python and SQL.'])
         self.assertEqual(analysis['skills_max'], ['Kubernetes certification.'])
-        self.assertEqual(analysis['pay'], '$100,000 - $120,000 per year')
+        self.assertEqual(analysis['pay'], '$100,000–$120,000 per year')
         for field in ('qual', 'skills_min', 'skills_max'):
             for item in analysis[field]:
                 self.assertLess(len(item.split()), 7)

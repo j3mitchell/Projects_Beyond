@@ -58,7 +58,7 @@ WORK_TYPE_LABELS = {
 }
 
 JOB_SECTION_ENDINGS = (
-    "responsibilities", "qualifications", "minimum skills", "preferred qualifications",
+    "responsibilities", "requirements", "qualifications", "minimum skills", "preferred qualifications",
     "our commitment", "benefits", "working conditions", "pay range", "salary", "compensation",
 )
 
@@ -111,8 +111,42 @@ def fetch_public_html(url: str) -> bytes:
     raise HTTPException(400, "This job page redirects too many times. Paste the job description instead.")
 
 
+def _paylocity_page_fields(soup: BeautifulSoup) -> dict[str, str]:
+    """Extract the stable public fields used by Paylocity's job detail template."""
+    title_node = soup.select_one(".job-preview-title")
+    company_node = soup.select_one("#LayoutLogoName")
+    location_node = soup.select_one(".preview-location")
+    details = soup.select_one(".job-preview-details")
+    if not title_node and not details:
+        return {}
+
+    sections: list[str] = []
+    current_heading = ""
+    current_lines: list[str] = []
+    if details:
+        for child in details.find_all(recursive=False):
+            classes = child.get("class", [])
+            if "job-listing-header" in classes:
+                if current_heading and current_lines:
+                    sections.extend([current_heading, *current_lines])
+                current_heading = _compact_text(child.get_text(" ", strip=True))
+                current_lines = []
+            elif current_heading:
+                current_lines.extend(_compact_text(value) for value in child.stripped_strings if _compact_text(value))
+        if current_heading and current_lines:
+            sections.extend([current_heading, *current_lines])
+
+    return {
+        "title": _compact_text(title_node.get_text(" ", strip=True)) if title_node else "",
+        "company": _compact_text(company_node.get_text(" ", strip=True)) if company_node else "",
+        "location": _compact_text(location_node.get_text(" ", strip=True)) if location_node else "",
+        "structured_text": "\n".join(sections),
+    }
+
+
 def _page_fields(raw: bytes, source_url: str = "", iframe_depth: int = 0) -> dict:
     soup = BeautifulSoup(raw, "html.parser")
+    paylocity = _paylocity_page_fields(soup)
     metadata: dict[str, str] = {}
     for key, selector, attribute in (
         ("site_name", {"property": "og:site_name"}, "content"),
@@ -168,8 +202,10 @@ def _page_fields(raw: bytes, source_url: str = "", iframe_depth: int = 0) -> dic
     heading = soup.find("h1", class_=lambda value: value and "listing-company" in value)
     heading_text = heading.get_text(" ", strip=True) if heading else ""
 
-    title = structured_title or "Job Opportunity"
+    title = structured_title or paylocity.get("title") or "Job Opportunity"
     company = structured_company
+    if not company:
+        company = paylocity.get("company", "")
     if not structured_title:
         for identity in (metadata.get("og_title", ""), page_title, heading_text):
             match = re.search(r"^Job:\s*(?P<title>.+?)\s+at\s+(?P<company>.+?)$", identity, re.IGNORECASE)
@@ -193,11 +229,15 @@ def _page_fields(raw: bytes, source_url: str = "", iframe_depth: int = 0) -> dic
     company = company or metadata.get("site_name", "")
     content_root = soup.find("main") or soup.select_one(".iCIMS_JobContent") or soup
     description = content_root.get_text(" ", strip=True)[:MAX_ANALYSIS_TEXT]
-    structured_text = ""
+    structured_text = paylocity.get("structured_text", "")
     if structured_description:
         structured_text = BeautifulSoup(f"<div>{structured_description}</div>", "html.parser").get_text("\n", strip=True)
         if len(structured_text) >= 100:
             description = structured_text[:MAX_ANALYSIS_TEXT]
+    elif len(structured_text) >= 100:
+        description = structured_text[:MAX_ANALYSIS_TEXT]
+    if paylocity.get("location"):
+        metadata["paylocity_location"] = paylocity["location"][:200]
     if len(description) < 100:
         raise HTTPException(400, "No readable job description was found. Paste it instead.")
     job_fields = _extract_job_fields(structured, structured_text, description, metadata)
@@ -274,7 +314,8 @@ def _is_heading_or_label(value: str) -> bool:
     clean = _compact_text(value)
     heading = _normalised_heading(clean)
     known = {
-        "overview", "the work", "responsibilities", "key responsibilities", "qualifications",
+        "overview", "description", "the work", "responsibilities", "key responsibilities", "requirements", "qualifications",
+        "education requirements",
         "qualifications here s what you need", "minimum skills", "preferred qualifications",
         "our commitment to you overview of benefits", "working conditions", "pay range",
     }
@@ -290,6 +331,17 @@ def _section_items(lines: list[str], starts: tuple[str, ...], ends: tuple[str, .
             continue
         items.append(clean)
     return _short_list(items)
+
+
+def _requirement_skill_items(lines: list[str]) -> list[str]:
+    for line in _section_lines(lines, ("requirements",), ("benefits", "pay range", "working conditions")):
+        match = re.search(r"requirements\s+for\s+.+?\s+include\s*:\s*(.+)", line, re.I)
+        if not match:
+            continue
+        candidates = [part.strip(" .") for part in re.split(r",\s*", match.group(1))]
+        candidates = [part for part in candidates if part and not re.fullmatch(r"and others?", part, re.I)]
+        return _short_list(candidates)
+    return []
 
 
 def _structured_location(value: object) -> str:
@@ -339,6 +391,22 @@ def _format_amount(value: object) -> str:
     return f"{number:,.0f}" if number.is_integer() else f"{number:,.2f}".rstrip("0").rstrip(".")
 
 
+def _normalise_pay_amount(value: object) -> str:
+    clean = _compact_text(value)
+    match = re.search(r"(?:(?P<currency>USD|CAD|AUD|GBP|EUR)\s*)?(?P<symbol>[$€£])?\s*(?P<number>\d[\d,]*(?:\.\d+)?)\s*(?P<suffix>[kKmM])?", clean, re.I)
+    if not match:
+        return clean
+    try:
+        number = float(match.group("number").replace(",", ""))
+    except (TypeError, ValueError):
+        return clean
+    suffix = (match.group("suffix") or "").casefold()
+    number *= 1000 if suffix == "k" else 1_000_000 if suffix == "m" else 1
+    currency = (match.group("currency") or "").upper()
+    symbol = match.group("symbol") or {"USD": "$", "CAD": "C$", "AUD": "A$", "GBP": "£", "EUR": "€"}.get(currency, "$")
+    return f"{symbol}{_format_amount(number)}"
+
+
 def _extract_pay(structured: dict[str, object], text: str) -> str:
     salary = structured.get("baseSalary") or structured.get("estimatedSalary")
     if isinstance(salary, list):
@@ -374,12 +442,18 @@ def _extract_pay(structured: dict[str, object], text: str) -> str:
                 frequency_label = "yr"
             return f"{result} / {frequency_label}" if frequency_label else result
 
+    amount = r"(?:(?:USD|CAD|AUD|GBP|EUR)\s*)?[$€£]?\s*\d[\d,]*(?:\.\d+)?\s*[kKmM]?"
     pay_match = re.search(
-        r"(?:pay\s+range|salary|compensation)\s*[:\-]?\s*((?:USD|CAD|AUD|GBP|EUR)?\s*[$€£]?\s*\d[\d,]*(?:\.\d+)?"
-        r"(?:\s*(?:-|–|—|to)\s*(?:(?:USD|CAD|AUD|GBP|EUR)\s*)?[$€£]?\s*\d[\d,]*(?:\.\d+)?)?"
-        r"(?:\s*(?:/|per)\s*(?:hour|hr|week|month|year|yr))?)", text, re.I)
+        rf"(?:pay\s+range|salary|compensation)\s*[:\-]?\s*(?P<first>{amount})"
+        rf"(?:\s*(?:-|–|—|to)\s*(?P<second>{amount}))?"
+        rf"(?P<term>\s*(?:/|per)\s*(?:hour|hr|week|month|year|yr))?", text, re.I)
     if pay_match:
-        return _normalise_pay_term(pay_match.group(1))
+        first = _normalise_pay_amount(pay_match.group("first"))
+        second = _normalise_pay_amount(pay_match.group("second")) if pay_match.group("second") else ""
+        term = _compact_text(pay_match.group("term"))
+        if second:
+            return _normalise_pay_term(f"{first}–{second}{f' {term}' if term else ''}")
+        return _normalise_pay_term(f"{first}{f' {term}' if term else ''}")
     if re.search(r"\bcommission[- ]based\b|\bcommission\b", text, re.I):
         return "Commission"
     if re.search(r"\bintern(?:ship)?\b", text, re.I):
@@ -394,26 +468,33 @@ def _extract_job_fields(structured: dict[str, object], structured_text: str, raw
         raw_lines = [_compact_text(line) for line in raw_text.splitlines() if _compact_text(line)]
         lines = raw_lines if len(raw_lines) > 1 else [_compact_text(part) for part in re.split(r"(?<=[.!?])\s+", raw_text) if _compact_text(part)]
 
-    work_lines = _section_lines(lines, ("the work",), ("responsibilities", "qualifications", "pay range", "working conditions"))
-    work = _under_word_limit(next((line for line in work_lines if not _is_heading_or_label(line)), ""), maximum=6)
-    overview_lines = _section_lines(lines, ("overview",), ("responsibilities", "qualifications", "pay range", "working conditions"))
+    work_lines = _section_lines(lines, ("the work",), ("responsibilities", "requirements", "qualifications", "pay range", "working conditions"))
+    work_source = next((line for line in work_lines if not _is_heading_or_label(line)), "")
+    overview_lines = _section_lines(lines, ("overview", "description"), ("responsibilities", "requirements", "qualifications", "pay range", "working conditions"))
     description_source = next((line for line in overview_lines
                                 if not _is_heading_or_label(line)
                                 and "employment in this role is conditional" not in line.casefold()), "")
     if not description_source:
-        description_source = work or next((line for line in lines if not _is_heading_or_label(line)), "")
+        description_source = work_source or next((line for line in lines if not _is_heading_or_label(line)), "")
+    if not work_source:
+        work_source = description_source
+    work = _under_word_limit(work_source, maximum=6)
     description = _under_word_limit(description_source, maximum=6)
     task_lines = _section_lines(lines, ("key responsibilities", "responsibilities"), ("qualifications", "minimum skills", "preferred qualifications", "pay range"))
     task = _under_word_limit(next((line for line in task_lines if not _is_heading_or_label(line) and not line.casefold().startswith("other duties")), ""), maximum=6)
     qualifications = _section_items(
-        lines, ("qualifications here s what you need", "qualifications"),
+        lines, ("requirements", "qualifications here s what you need", "qualifications"),
         ("minimum skills", "preferred qualifications", "our commitment", "benefits", "working conditions", "pay range"),
-        ("intended to provide a general overview", "however, due to", "candidates should demonstrate"),
+        ("intended to provide a general overview", "however, due to", "candidates should demonstrate", "requirements for"),
     )
     minimum_skills = _section_items(lines, ("minimum skills",), ("preferred qualifications", "our commitment", "benefits", "working conditions", "pay range"))
+    if not minimum_skills:
+        minimum_skills = _requirement_skill_items(lines)
     preferred_skills = _section_items(lines, ("preferred qualifications",), ("our commitment", "benefits", "working conditions", "pay range"))
 
     location = _structured_location(structured.get("jobLocation"))
+    if not location:
+        location = _compact_text(metadata.get("paylocity_location", ""))
     if not location:
         og_title = metadata.get("og_title", "")
         location_match = re.search(r"\bin\s+(.+?)\s*\|", og_title, re.I)

@@ -18,6 +18,9 @@ source facts, and lets the user edit the complete preview before exporting.
   ranking; AI mode extracts page text and metadata, then returns inferred
   industry, work location/type, short work/task summaries, qualifications,
   minimum and preferred skills, pay, and ranked skills as structured JSON.
+- Deterministic extraction includes the server-rendered Paylocity job detail
+  template, including its title, company, location, description, requirements,
+  and `K`-suffixed pay ranges.
 - The target-job preview keeps `[desc]`, `[work]`, and `[task]` under seven
   words, uses `[loc]` for the location, labels qualification items as
   `[sMin01]`, and limits every list item to six words. Skill groups use
