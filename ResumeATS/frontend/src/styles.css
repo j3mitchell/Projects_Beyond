@@ -73,6 +73,7 @@ textarea.preview { min-height: 320px; width: 100%; font-family: ui-monospace, mo
 .target-job-preview__header h3 { margin: 0; font-size: .84rem; text-transform: uppercase; letter-spacing: .04em; color: #475569; }
 .target-job-preview__mode { color: #2563eb; font-size: .74rem; font-weight: 700; }
 .target-job-skills { display: block; padding-top: .15rem; border-top: 1px solid #e2e8f0; }
+.target-job-preview .extract-list { list-style: none; padding-left: 0; }
 .preview-value--emphasized { font-weight: 700; color: #1f2937; }
 .pay-value { display: inline-flex; align-items: baseline; gap: .35rem; flex-wrap: wrap; }
 .pay-value strong { color: #1f2937; }
