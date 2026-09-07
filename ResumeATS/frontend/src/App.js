@@ -72,6 +72,25 @@ function PreviewList({ title, prefix, items, field }) {
   );
 }
 
+function PreviewSkills({ items }) {
+  const values = Array.isArray(items) ? items : [];
+  const hasItems = values.some(hasValue);
+  return (
+    <details className="extract-block preview-list-block collapsible-section" data-field="skills">
+      <summary><span>Skills</span><ExpansionIndicator /></summary>
+      <div className="collapsible-content preview-list-content">
+        {hasItems ? (
+          <div className="skill-list preview-skill-list">
+            {values.map((item, index) => (
+              hasValue(item) && <span className="skill-chip" key={`skill-${index}`}>{item}</span>
+            ))}
+          </div>
+        ) : <p className="muted">Not detected</p>}
+      </div>
+    </details>
+  );
+}
+
 export default function App() {
   const [resume, setResume] = useState(null);
   const [jobUrl, setJobUrl] = useState('');
@@ -349,7 +368,7 @@ export default function App() {
                 </div>
               </details>}
 
-              <PreviewList title="Skills" prefix="skill" items={skills} field="skills" />
+              <PreviewSkills items={skills} />
 
               <details className="extract-block collapsible-section" data-field="experience">
                 <summary><span>Experience (Jobs)</span><ExpansionIndicator /></summary>
