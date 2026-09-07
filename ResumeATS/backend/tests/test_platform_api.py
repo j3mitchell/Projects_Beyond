@@ -225,6 +225,37 @@ class PlatformAPITests(unittest.TestCase):
         self.assertEqual(analysis['pay'], '$110,000–$160,000 / yr')
         self.assertEqual(analysis['description'], 'Build and test software applications for…')
 
+    def test_html_escaped_jobposting_uses_visible_page_details(self):
+        posting = {
+            "@type": "JobPosting", "title": "Data Center Database Engineer",
+            "hiringOrganization": {"name": "Peraton"},
+            "jobLocation": {"address": {"addressLocality": "", "addressRegion": "AL", "addressCountry": ""}},
+            "jobLocationType": None,
+            "baseSalary": {"currency": "USD", "value": {"minValue": "", "maxValue": "", "unitText": ""}},
+            "description": "&lt;p&gt;Basic Qualifications:&amp;nbsp;&lt;/p&gt;"
+            "&lt;ul&gt;&lt;li&gt;Active Top Secret/ Sensitive Compartmented Information (TS/SCI) clearance.&lt;/li&gt;"
+            "&lt;li&gt;Minimum of 8 years relevant experience with a Bachelor’s degree.&lt;/li&gt;&lt;/ul&gt;"
+            "&lt;p&gt;Desired Qualifications:&amp;nbsp;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Knowledge in Java/JDK&lt;/li&gt;&lt;/ul&gt;"
+            "&lt;p&gt;Peraton is seeking an experienced database engineer.&lt;/p&gt;"
+            "&lt;p&gt;Responsibilities:&amp;nbsp;&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Design and maintain database systems.&lt;/li&gt;&lt;/ul&gt;"
+        }
+        html = b'<html><head><script type="application/ld+json">' + json.dumps(posting).encode() + b'''</script></head>
+        <body><main><h1>Data Center Database Engineer</h1>
+        <p>Location: Huntsville , Alabama</p><p>Telecommute: No remote/telework allowed</p>
+        <p>Details Target Salary Range: $104,000 - $166,000.</p>
+        </main></body></html>'''
+        with patch('app.job_source.fetch_public_html', return_value=html):
+            analysis = analyze_job('https://careers.example.com/jobs/data-center-database-engineer', 'deterministic')
+        self.assertEqual(analysis['location'], 'Huntsville, Alabama')
+        self.assertEqual(analysis['type'], 'On-Site')
+        self.assertEqual(analysis['pay'], '$104,000–$166,000 / yr')
+        self.assertTrue(analysis['description'])
+        self.assertTrue(analysis['task'])
+        self.assertIn('Active Top Secret/ Sensitive Compartmented Information…', analysis['qual'])
+        self.assertIn('Active Top Secret/ Sensitive Compartmented Information…', analysis['skills_min'])
+        self.assertIn('Knowledge in Java/JDK', analysis['skills_max'])
+        self.assertTrue(analysis['skills_min'])
+
     def test_paylocity_job_template_extracts_fields(self):
         html = b'''<html><head><title>Red Drum Holdings - Database Engineers</title></head><body>
         <div id="LayoutLogoName">Red Drum Holdings</div>

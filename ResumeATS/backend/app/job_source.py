@@ -6,6 +6,7 @@ import json
 import os
 import re
 import socket
+from html import unescape
 from urllib.parse import urljoin, urlsplit
 
 import requests
@@ -32,7 +33,15 @@ INDUSTRY_TAXONOMY = {
 SKILL_TAXONOMY = {
     "Python": ("python",),
     "JavaScript": ("javascript", "js", "node.js", "nodejs"),
+    "Java": ("java", "java/jdk"),
     "SQL": ("sql", "postgresql", "mysql", "database"),
+    "Oracle": ("oracle",),
+    "ETL": ("etl",),
+    "Database Design": ("database design", "database modeling", "relational database architecture"),
+    "Data Migration": ("data migration", "data mapping", "data mining", "data transformation"),
+    "Unit Testing": ("unit testing", "software unit testing"),
+    "Technical Documentation": ("engineering documentation", "technical documentation"),
+    "Troubleshooting": ("troubleshooting", "trouble-shooting"),
     "Cloud": ("cloud", "aws", "azure", "gcp", "google cloud"),
     "Docker": ("docker", "containerization", "containers"),
     "Kubernetes": ("kubernetes", "k8s"),
@@ -231,7 +240,10 @@ def _page_fields(raw: bytes, source_url: str = "", iframe_depth: int = 0) -> dic
     description = content_root.get_text(" ", strip=True)[:MAX_ANALYSIS_TEXT]
     structured_text = paylocity.get("structured_text", "")
     if structured_description:
-        structured_text = BeautifulSoup(f"<div>{structured_description}</div>", "html.parser").get_text("\n", strip=True)
+        # Several career platforms HTML-escape the JSON-LD description. Decode
+        # it before parsing, otherwise the section headings and list items are
+        # returned as one literal HTML line.
+        structured_text = BeautifulSoup(f"<div>{unescape(structured_description)}</div>", "html.parser").get_text("\n", strip=True)
         if len(structured_text) >= 100:
             description = structured_text[:MAX_ANALYSIS_TEXT]
     elif len(structured_text) >= 100:
@@ -240,13 +252,17 @@ def _page_fields(raw: bytes, source_url: str = "", iframe_depth: int = 0) -> dic
         metadata["paylocity_location"] = paylocity["location"][:200]
     if len(description) < 100:
         raise HTTPException(400, "No readable job description was found. Paste it instead.")
-    job_fields = _extract_job_fields(structured, structured_text, description, metadata)
+    # Keep visible page text available for fields that vendors omit from
+    # JSON-LD, especially salary and workplace details.
+    visible_text = content_root.get_text(" ", strip=True)[:MAX_ANALYSIS_TEXT]
+    field_text = "\n".join(value for value in (structured_text, visible_text) if value)
+    job_fields = _extract_job_fields(structured, structured_text, field_text, metadata)
     return {"source_url": source_url, "title": title or "Job Opportunity", "company": company,
-            "summary": description, "raw_text": description, "metadata": metadata, **job_fields}
+            "summary": description, "raw_text": field_text[:MAX_ANALYSIS_TEXT], "metadata": metadata, **job_fields}
 
 
 def _compact_text(value: object) -> str:
-    raw = str(value or "")
+    raw = unescape(str(value or ""))
     clean = BeautifulSoup(raw, "html.parser").get_text(" ", strip=True) if "<" in raw and ">" in raw else raw
     return re.sub(r"\s+", " ", clean).strip()
 
@@ -314,8 +330,9 @@ def _is_heading_or_label(value: str) -> bool:
     clean = _compact_text(value)
     heading = _normalised_heading(clean)
     known = {
-        "overview", "description", "the work", "responsibilities", "key responsibilities", "requirements", "qualifications",
-        "education requirements",
+        "overview", "description", "the work", "about the role", "about peraton", "responsibilities", "key responsibilities",
+        "requirements", "qualifications", "basic qualifications", "desired qualifications", "security clearance", "details",
+        "education requirements", "category", "clearance", "location", "telecommute",
         "qualifications here s what you need", "minimum skills", "preferred qualifications",
         "our commitment to you overview of benefits", "working conditions", "pay range",
     }
@@ -377,7 +394,7 @@ def _work_type(structured: dict[str, object], text: str) -> str:
     lowered = text.casefold()
     for pattern, label in ((r"\bfully remote\b|\bremote position\b|\bwork from home\b", "Remote"),
                            (r"\bhybrid\b", "Hybrid"),
-                           (r"\bon[- ]?site\b|\bonsite\b|\bin[- ]office\b", "On-Site")):
+                           (r"\bon[- ]?site\b|\bonsite\b|\bin[- ]office\b|\bno remote(?:/|\s|-)?telework\b|\bno telework\b", "On-Site")):
         if re.search(pattern, lowered):
             return label
     return ""
@@ -444,7 +461,7 @@ def _extract_pay(structured: dict[str, object], text: str) -> str:
 
     amount = r"(?:(?:USD|CAD|AUD|GBP|EUR)\s*)?[$€£]?\s*\d[\d,]*(?:\.\d+)?\s*[kKmM]?"
     pay_match = re.search(
-        rf"(?:pay\s+range|salary|compensation)\s*[:\-]?\s*(?P<first>{amount})"
+        rf"(?:pay\s+range|(?:target\s+)?salary(?:\s+range)?|compensation)\s*[:\-]?\s*(?P<first>{amount})"
         rf"(?:\s*(?:-|–|—|to)\s*(?P<second>{amount}))?"
         rf"(?P<term>\s*(?:/|per)\s*(?:hour|hr|week|month|year|yr))?", text, re.I)
     if pay_match:
@@ -468,9 +485,14 @@ def _extract_job_fields(structured: dict[str, object], structured_text: str, raw
         raw_lines = [_compact_text(line) for line in raw_text.splitlines() if _compact_text(line)]
         lines = raw_lines if len(raw_lines) > 1 else [_compact_text(part) for part in re.split(r"(?<=[.!?])\s+", raw_text) if _compact_text(part)]
 
-    work_lines = _section_lines(lines, ("the work",), ("responsibilities", "requirements", "qualifications", "pay range", "working conditions"))
-    work_source = next((line for line in work_lines if not _is_heading_or_label(line)), "")
-    overview_lines = _section_lines(lines, ("overview", "description"), ("responsibilities", "requirements", "qualifications", "pay range", "working conditions"))
+    work_lines = _section_lines(lines, ("the work", "about the role"), ("responsibilities", "requirements", "qualifications", "pay range", "working conditions", "details"))
+    work_source = next((line for line in work_lines if not _is_heading_or_label(line) and len(line.split()) > 2), "")
+    if not work_source:
+        # Some JSON-LD descriptions omit the "About The Role" heading while
+        # retaining the role paragraph. Prefer that paragraph over a
+        # qualification bullet when building the short overview fields.
+        work_source = next((line for line in lines if re.search(r"\b(?:is seeking|candidate must|successful candidate will)\b", line, re.I)), "")
+    overview_lines = _section_lines(lines, ("overview", "description", "about the role"), ("responsibilities", "requirements", "qualifications", "pay range", "working conditions", "details"))
     description_source = next((line for line in overview_lines
                                 if not _is_heading_or_label(line)
                                 and "employment in this role is conditional" not in line.casefold()), "")
@@ -480,19 +502,37 @@ def _extract_job_fields(structured: dict[str, object], structured_text: str, raw
         work_source = description_source
     work = _under_word_limit(work_source, maximum=6)
     description = _under_word_limit(description_source, maximum=6)
-    task_lines = _section_lines(lines, ("key responsibilities", "responsibilities"), ("qualifications", "minimum skills", "preferred qualifications", "pay range"))
+    task_lines = _section_lines(lines, ("key responsibilities", "responsibilities"), ("qualifications", "minimum skills", "preferred qualifications", "pay range", "details"))
     task = _under_word_limit(next((line for line in task_lines if not _is_heading_or_label(line) and not line.casefold().startswith("other duties")), ""), maximum=6)
     qualifications = _section_items(
-        lines, ("requirements", "qualifications here s what you need", "qualifications"),
-        ("minimum skills", "preferred qualifications", "our commitment", "benefits", "working conditions", "pay range"),
+        lines, ("requirements", "qualifications here s what you need", "qualifications", "basic qualifications"),
+        ("minimum skills", "preferred qualifications", "desired qualifications", "security clearance", "our commitment", "benefits", "working conditions", "pay range", "details"),
         ("intended to provide a general overview", "however, due to", "candidates should demonstrate", "requirements for"),
     )
     minimum_skills = _section_items(lines, ("minimum skills",), ("preferred qualifications", "our commitment", "benefits", "working conditions", "pay range"))
     if not minimum_skills:
         minimum_skills = _requirement_skill_items(lines)
-    preferred_skills = _section_items(lines, ("preferred qualifications",), ("our commitment", "benefits", "working conditions", "pay range"))
+    if not minimum_skills:
+        basic_items = [
+            _compact_text(line)
+            for line in _section_lines(
+                lines,
+                ("basic qualifications",),
+                ("desired qualifications", "security clearance", "our commitment", "benefits", "working conditions", "pay range", "details"),
+            )
+            if _compact_text(line) and not _is_heading_or_label(line)
+        ]
+        minimum_skills = _short_list([
+            item for item in basic_items
+            if re.search(r"\b(?:strong knowledge|experience with|experience in|software unit testing|trouble|communication|team environment|self[- ]starter|database development|data migration|clearance|degree|years relevant experience)\b", item, re.I)
+        ])
+    preferred_skills = _section_items(lines, ("preferred qualifications", "desired qualifications"), ("security clearance", "responsibilities", "our commitment", "benefits", "working conditions", "pay range", "details"))
 
     location = _structured_location(structured.get("jobLocation"))
+    # Some vendors publish only a region abbreviation in JSON-LD while the
+    # visible job header has the complete city and state.
+    if location and re.fullmatch(r"[A-Z]{2}", location):
+        location = ""
     if not location:
         location = _compact_text(metadata.get("paylocity_location", ""))
     if not location:
@@ -501,7 +541,15 @@ def _extract_job_fields(structured: dict[str, object], structured_text: str, raw
         if location_match:
             location = _compact_text(location_match.group(1))
     if not location:
-        location_match = re.search(r"\b(?:location|located in|based in)\s*[:\-]?\s*([A-Z][^.!?]{2,80})", raw_text)
+        location_match = re.search(
+            r"\blocation\s*:\s*([A-Za-z .'-]+?)\s*,\s*([A-Za-z .'-]+?)(?=\s+(?:telecommute|category|clearance)\b|$)",
+            raw_text,
+            re.I,
+        )
+        if location_match:
+            location = f"{_compact_text(location_match.group(1))}, {_compact_text(location_match.group(2))}"[:200]
+    if not location:
+        location_match = re.search(r"\b(?:located in|based in)\s*[:\-]?\s*([A-Z][^.!?]{2,80})", raw_text)
         if location_match:
             location = _compact_text(location_match.group(1)).rstrip(" ,;")
 
