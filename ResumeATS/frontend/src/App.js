@@ -72,6 +72,19 @@ function PreviewList({ title, prefix, items, field }) {
   );
 }
 
+function PreviewLabeledList({ label, items, field }) {
+  const values = Array.isArray(items) ? items.filter(hasValue) : [];
+  if (!values.length) return null;
+  return (
+    <div className="preview-field preview-field-list" data-field={field || label}>
+      <span className="variable-label">{label}</span>
+      <ul className="extract-list">
+        {values.map((item, index) => <li key={`${field || label}-${index}`}>{item}</li>)}
+      </ul>
+    </div>
+  );
+}
+
 function PreviewSkills({ items }) {
   const [view, setView] = useState('chips');
   const values = Array.isArray(items) ? items : [];
@@ -111,18 +124,26 @@ function TargetJobPreview({ analysis }) {
         <h3>Target Job Extraction</h3>
         <span className="target-job-preview__mode">{analysis.mode === 'ai' ? 'AI' : 'Deterministic'}</span>
       </div>
-      <PreviewValue label="[job]" field="target.job" value={analysis.title} />
-      <PreviewValue label="[comp]" field="target.company" value={analysis.company} />
-      <PreviewValue label="[industry]" field="target.industry" value={analysis.industry} />
+      <PreviewValue label="[title]" field="target.title" value={analysis.title} />
+      <PreviewValue label="[location]" field="target.location" value={analysis.location} />
+      <PreviewValue label="[type]" field="target.type" value={analysis.type} />
+      <PreviewValue label="[work]" field="target.work" value={analysis.work} />
+      <PreviewValue label="[task]" field="target.task" value={analysis.task} />
+      <PreviewLabeledList label="[qual]" field="target.qualifications" items={analysis.qual} />
+      <PreviewLabeledList label="[skillsMin]" field="target.skills_min" items={analysis.skills_min} />
+      <PreviewLabeledList label="[skillsMax]" field="target.skills_max" items={analysis.skills_max} />
+      <PreviewValue label="[pay]" field="target.pay" value={analysis.pay} />
       <PreviewValue label="[desc1]" field="target.description" value={description} multiline />
-      {skills.length > 0 && <div className="target-job-skills">
-        <span className="section-label">Skills</span>
-        <ul className="extract-list">
-          {skills.map((skill, index) => (
-            <li key={`${skill.name}-${index}`}><span className="variable-label">[skill{index + 1}]</span> {skill.name}</li>
-          ))}
-        </ul>
-      </div>}
+      {skills.length > 0 && <details className="target-job-skills collapsible-section" open={analysis.skills_min?.length === 0 && analysis.skills_max?.length === 0}>
+        <summary><span>Ranked skills</span><ExpansionIndicator /></summary>
+        <div className="collapsible-content">
+          <ul className="extract-list">
+            {skills.map((skill, index) => (
+              <li key={`${skill.name}-${index}`}><span className="variable-label">[skill{index + 1}]</span> {skill.name}</li>
+            ))}
+          </ul>
+        </div>
+      </details>}
     </section>
   );
 }

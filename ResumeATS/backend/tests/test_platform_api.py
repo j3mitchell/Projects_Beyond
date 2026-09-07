@@ -1,3 +1,4 @@
+import json
 import os
 import unittest
 from io import BytesIO
@@ -112,11 +113,14 @@ class PlatformAPITests(unittest.TestCase):
 
     def test_ai_analysis_normalizes_provider_json(self):
         provider = Mock()
-        provider.json.return_value = {"choices": [{"message": {"content": '{"title":"Data Engineer","company":"Example","industry":"technology","summary":"Build data systems.","skills":[{"name":"Python","score":88,"evidence":["Python services"]}]}'}}]}
+        provider.json.return_value = {"choices": [{"message": {"content": '{"title":"Data Engineer","company":"Example","industry":"technology","location":"Austin, TX","type":"Hybrid","work":"Build data systems","task":"Lead data platform delivery","qual":["Bachelor degree"],"skills_min":["Python"],"skills_max":["Kubernetes"],"pay":"$120,000–$140,000","summary":"Build data systems.","skills":[{"name":"Python","score":88,"evidence":["Python services"]}]}'}}]}
         with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key", "OPENAI_MODEL": "test-model"}), patch('app.job_source.requests.post', return_value=provider) as post:
             analysis = analyze_job_text('Build Python cloud services and data systems. ' * 5, 'ai')
         self.assertEqual(analysis['mode'], 'ai')
         self.assertEqual(analysis['skills'][0]['score'], 88.0)
+        self.assertEqual(analysis['type'], 'Hybrid')
+        self.assertEqual(analysis['skills_min'], ['Python'])
+        self.assertEqual(analysis['skills_max'], ['Kubernetes'])
         self.assertEqual(post.call_args.kwargs['json']['model'], 'test-model')
 
     def test_deterministic_url_analysis_extracts_taxonomy(self):
@@ -145,15 +149,50 @@ class PlatformAPITests(unittest.TestCase):
 
     def test_icims_iframe_and_jobposting_metadata_are_extracted(self):
         wrapper = b'''<html><body><noscript><iframe id="noscript_icims_content_iframe" src="/jobs/4180/software-developer/job?in_iframe=1"></iframe></noscript></body></html>'''
-        frame = b'''<html><head><title>iCIMS Careers Portal</title>
-        <script type="application/ld+json">{"@type":"JobPosting","title":"Software Developer","hiringOrganization":{"name":"Cayuse Holdings"},"description":"Build and test software applications with JavaScript, SQL, secure coding, and CI/CD practices. "}</script></head>
-        <body><div class="iCIMS_JobContent"><h1 class="iCIMS_Header">Software Developer</h1><p>Build and test software applications with JavaScript, SQL, secure coding, and CI/CD practices. """</p></div></body></html>'''
+        posting = {
+            "@type": "JobPosting", "title": "Software Developer", "hiringOrganization": {"name": "Cayuse Holdings"},
+            "jobLocationType": "TELECOMMUTE", "jobLocation": [{"address": {"addressLocality": "Arlington", "addressRegion": "VA", "addressCountry": "US"}}],
+            "baseSalary": {"minValue": 110000, "maxValue": 160000, "currency": "USD"},
+            "description": "<h2>The Work</h2><p>Build and test software applications for customers.</p><h2>Responsibilities</h2><p><strong>Key Responsibilities</strong></p><ul><li>Design and ship reliable software.</li></ul><h2>Qualifications</h2><ul><li>Bachelor's degree or equivalent experience.</li><li>Active security clearance.</li></ul><p><strong>Minimum Skills:</strong></p><ul><li>JavaScript and SQL.</li></ul><p><strong>Preferred Qualifications:</strong></p><ul><li>Kubernetes experience.</li></ul>"
+        }
+        frame = b'<html><head><title>iCIMS Careers Portal</title><script type="application/ld+json">' + json.dumps(posting).encode() + b'''</script></head>
+        <body><div class="iCIMS_JobContent"><h1 class="iCIMS_Header">Software Developer</h1><p>Build and test software applications with JavaScript, SQL, secure coding, and CI/CD practices. </p></div></body></html>'''
         with patch('app.job_source.fetch_public_html', side_effect=[wrapper, frame]) as fetch:
             analysis = analyze_job('https://careers.example.com/jobs/4180/software-developer/job', 'deterministic')
         self.assertEqual(fetch.call_count, 2)
         self.assertEqual(analysis['title'], 'Software Developer')
         self.assertEqual(analysis['company'], 'Cayuse Holdings')
         self.assertIn('JavaScript', [skill['name'] for skill in analysis['skills']])
+        self.assertEqual(analysis['location'], 'Arlington, VA')
+        self.assertEqual(analysis['type'], 'Remote')
+        self.assertLess(len(analysis['work'].split()), 10)
+        self.assertLess(len(analysis['task'].split()), 10)
+        self.assertIn("Bachelor's degree or equivalent experience.", analysis['qual'])
+        self.assertEqual(analysis['skills_min'], ['JavaScript and SQL.'])
+        self.assertEqual(analysis['skills_max'], ['Kubernetes experience.'])
+        self.assertEqual(analysis['pay'], '$110,000–$160,000')
+
+    def test_text_analysis_returns_job_labels(self):
+        text = """The Work
+        Build secure cloud services for customers.
+        Responsibilities
+        Key Responsibilities
+        Design and ship reliable APIs.
+        Qualifications
+        Bachelor's degree in Computer Science.
+        Minimum Skills:
+        Python and SQL.
+        Preferred Qualifications:
+        Kubernetes certification.
+        Pay Range: $100,000 - $120,000 per year.
+        """
+        analysis = analyze_job_text(text, 'deterministic')
+        self.assertEqual(analysis['work'], 'Build secure cloud services for customers.')
+        self.assertEqual(analysis['task'], 'Design and ship reliable APIs.')
+        self.assertEqual(analysis['qual'], ["Bachelor's degree in Computer Science."])
+        self.assertEqual(analysis['skills_min'], ['Python and SQL.'])
+        self.assertEqual(analysis['skills_max'], ['Kubernetes certification.'])
+        self.assertEqual(analysis['pay'], '$100,000 - $120,000 per year')
 
     def test_bad_input(self):
         self.assertEqual(self.client.post('/extract', files={'resume': ('bad.exe', b'no')}).status_code, 400)

@@ -30,6 +30,8 @@ button:disabled { opacity: .6; }
 .editable-input:focus { border-color: #2563eb; outline: 2px solid rgba(37,99,235,.16); }
 .editable-field textarea.editable-input { min-height: 0; max-height: 240px; overflow-y: hidden; resize: vertical; line-height: 1.35; }
 .preview-field { display: grid; grid-template-columns: max-content minmax(0, 1fr); align-items: start; column-gap: .6rem; gap: .3rem .6rem; min-width: 0; padding: .1rem 0; }
+.preview-field-list { align-items: start; }
+.preview-field-list .extract-list { min-width: 0; }
 .preview-value { min-width: 0; color: #334155; line-height: 1.35; overflow-wrap: anywhere; }
 .editable-list-row { display: flex; align-items: flex-end; gap: .45rem; margin-bottom: .5rem; }
 .editable-list-row .editable-field { flex: 1; }
@@ -70,7 +72,7 @@ textarea.preview { min-height: 320px; width: 100%; font-family: ui-monospace, mo
 .target-job-preview__header { display: flex; align-items: center; justify-content: space-between; gap: .6rem; }
 .target-job-preview__header h3 { margin: 0; font-size: .84rem; text-transform: uppercase; letter-spacing: .04em; color: #475569; }
 .target-job-preview__mode { color: #2563eb; font-size: .74rem; font-weight: 700; }
-.target-job-skills { display: grid; gap: .35rem; padding-top: .15rem; border-top: 1px solid #e2e8f0; }
+.target-job-skills { display: block; padding-top: .15rem; border-top: 1px solid #e2e8f0; }
 .access-panel { max-width: 600px; margin: 3rem auto; }
 .panel { min-width: 0; }
 .downloads button { background: #0f766e; font-size: .85rem; }

@@ -112,6 +112,14 @@ class JobAnalysisResponse(BaseModel):
     title: str
     company: str
     industry: str
+    location: str = ""
+    type: str = ""
+    work: str = ""
+    task: str = ""
+    qual: list[str] = Field(default_factory=list)
+    skills_min: list[str] = Field(default_factory=list)
+    skills_max: list[str] = Field(default_factory=list)
+    pay: str = ""
     summary: str
     raw_text: str
     metadata: dict[str, str] = Field(default_factory=dict)

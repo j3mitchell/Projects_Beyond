@@ -16,7 +16,8 @@ source facts, and lets the user edit the complete preview before exporting.
 - Job URL analysis can be switched with the slider: Deterministic mode uses
   bounded scraping, rules/regex, taxonomy matching, and explainable skill
   ranking; AI mode extracts page text and metadata, then returns inferred
-  industry and ranked skills as structured JSON.
+  industry, work location/type, short work/task summaries, qualifications,
+  minimum and preferred skills, pay, and ranked skills as structured JSON.
 - Keeps the full preview editable; DOCX, PDF, and RTF exports are generated
   from the current edited value in the same request.
 - Production requests require a signed-in Supabase user with a `resumeats`

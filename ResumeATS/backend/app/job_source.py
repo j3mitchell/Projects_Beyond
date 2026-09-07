@@ -45,6 +45,23 @@ SKILL_TAXONOMY = {
     "Risk Management": ("risk management", "risk assessment", "compliance", "controls"),
 }
 
+WORK_TYPE_LABELS = {
+    "remote": "Remote",
+    "telecommute": "Remote",
+    "telecommuting": "Remote",
+    "work from home": "Remote",
+    "hybrid": "Hybrid",
+    "on site": "On-Site",
+    "onsite": "On-Site",
+    "on-site": "On-Site",
+    "in office": "On-Site",
+}
+
+JOB_SECTION_ENDINGS = (
+    "responsibilities", "qualifications", "minimum skills", "preferred qualifications",
+    "our commitment", "benefits", "working conditions", "pay range", "salary", "compensation",
+)
+
 
 def public_target(url: str):
     try:
@@ -176,14 +193,220 @@ def _page_fields(raw: bytes, source_url: str = "", iframe_depth: int = 0) -> dic
     company = company or metadata.get("site_name", "")
     content_root = soup.find("main") or soup.select_one(".iCIMS_JobContent") or soup
     description = content_root.get_text(" ", strip=True)[:MAX_ANALYSIS_TEXT]
+    structured_text = ""
     if structured_description:
-        structured_text = BeautifulSoup(f"<div>{structured_description}</div>", "html.parser").get_text(" ", strip=True)
+        structured_text = BeautifulSoup(f"<div>{structured_description}</div>", "html.parser").get_text("\n", strip=True)
         if len(structured_text) >= 100:
             description = structured_text[:MAX_ANALYSIS_TEXT]
     if len(description) < 100:
         raise HTTPException(400, "No readable job description was found. Paste it instead.")
+    job_fields = _extract_job_fields(structured, structured_text, description, metadata)
     return {"source_url": source_url, "title": title or "Job Opportunity", "company": company,
-            "summary": description, "raw_text": description, "metadata": metadata}
+            "summary": description, "raw_text": description, "metadata": metadata, **job_fields}
+
+
+def _compact_text(value: object) -> str:
+    raw = str(value or "")
+    clean = BeautifulSoup(raw, "html.parser").get_text(" ", strip=True) if "<" in raw and ">" in raw else raw
+    return re.sub(r"\s+", " ", clean).strip()
+
+
+def _unique_list(value: object, limit: int = 30) -> list[str]:
+    if isinstance(value, str):
+        candidates = re.split(r"\s*\n\s*|\s*[•▪‣]\s*|\s*;\s*", value)
+    elif isinstance(value, (list, tuple, set)):
+        candidates = list(value)
+    else:
+        candidates = []
+    result: list[str] = []
+    seen: set[str] = set()
+    for candidate in candidates:
+        clean = _compact_text(candidate).strip("•▪‣- ")
+        key = clean.casefold()
+        if clean and key not in seen:
+            result.append(clean[:1000])
+            seen.add(key)
+        if len(result) >= limit:
+            break
+    return result
+
+
+def _under_word_limit(value: object, maximum: int = 9) -> str:
+    clean = _compact_text(value)
+    words = clean.split()
+    if len(words) <= maximum:
+        return clean
+    return " ".join(words[:maximum]).rstrip(" ,;:") + "…"
+
+
+def _normalised_heading(value: str) -> str:
+    return re.sub(r"[^a-z0-9]+", " ", value.casefold()).strip()
+
+
+def _heading_matches(value: str, patterns: tuple[str, ...]) -> bool:
+    heading = _normalised_heading(value)
+    return any(heading == pattern or heading.startswith(pattern + " ") for pattern in patterns)
+
+
+def _section_lines(lines: list[str], starts: tuple[str, ...], ends: tuple[str, ...] = JOB_SECTION_ENDINGS) -> list[str]:
+    start = next((index for index, line in enumerate(lines) if _heading_matches(line, starts)), None)
+    if start is None:
+        return []
+    finish = next((index for index in range(start + 1, len(lines)) if _heading_matches(lines[index], ends)), len(lines))
+    return lines[start + 1:finish]
+
+
+def _is_heading_or_label(value: str) -> bool:
+    clean = _compact_text(value)
+    heading = _normalised_heading(clean)
+    known = {
+        "overview", "the work", "responsibilities", "key responsibilities", "qualifications",
+        "qualifications here s what you need", "minimum skills", "preferred qualifications",
+        "our commitment to you overview of benefits", "working conditions", "pay range",
+    }
+    return heading in known or (clean.endswith(":") and len(clean.split()) <= 8)
+
+
+def _section_items(lines: list[str], starts: tuple[str, ...], ends: tuple[str, ...], skip: tuple[str, ...] = ()) -> list[str]:
+    items = []
+    for line in _section_lines(lines, starts, ends):
+        clean = _compact_text(line)
+        lowered = clean.casefold()
+        if not clean or _is_heading_or_label(clean) or any(phrase in lowered for phrase in skip):
+            continue
+        items.append(clean)
+    return _unique_list(items)
+
+
+def _structured_location(value: object) -> str:
+    entries = value if isinstance(value, list) else [value]
+    for entry in entries:
+        if not isinstance(entry, dict):
+            continue
+        address = entry.get("address", entry)
+        if not isinstance(address, dict):
+            continue
+        parts = []
+        for key in ("addressLocality", "addressRegion"):
+            part = _compact_text(address.get(key))
+            if part and part.casefold() != "unavailable":
+                parts.append(part)
+        country = _compact_text(address.get("addressCountry"))
+        if country and country.casefold() not in {"unavailable", "us", "usa", "united states", "united states of america"}:
+            parts.append(country)
+        if parts:
+            return ", ".join(parts)[:200]
+    return ""
+
+
+def _work_type(structured: dict[str, object], text: str) -> str:
+    for key in ("jobLocationType", "workplaceType"):
+        value = structured.get(key)
+        values = value if isinstance(value, list) else [value]
+        for item in values:
+            lowered = _compact_text(item).casefold().replace("_", " ")
+            for alias, label in WORK_TYPE_LABELS.items():
+                if alias in lowered:
+                    return label
+    lowered = text.casefold()
+    for pattern, label in ((r"\bfully remote\b|\bremote position\b|\bwork from home\b", "Remote"),
+                           (r"\bhybrid\b", "Hybrid"),
+                           (r"\bon[- ]?site\b|\bonsite\b|\bin[- ]office\b", "On-Site")):
+        if re.search(pattern, lowered):
+            return label
+    return ""
+
+
+def _format_amount(value: object) -> str:
+    try:
+        number = float(value)
+    except (TypeError, ValueError):
+        return ""
+    return f"{number:,.0f}" if number.is_integer() else f"{number:,.2f}".rstrip("0").rstrip(".")
+
+
+def _extract_pay(structured: dict[str, object], text: str) -> str:
+    salary = structured.get("baseSalary") or structured.get("estimatedSalary")
+    if isinstance(salary, list):
+        salary = salary[0] if salary else {}
+    if isinstance(salary, dict):
+        value = salary.get("value", salary)
+        if isinstance(value, dict):
+            minimum = _format_amount(value.get("minValue"))
+            maximum = _format_amount(value.get("maxValue"))
+            single = _format_amount(value.get("value"))
+        else:
+            minimum = maximum = ""
+            single = _format_amount(value)
+        currency = _compact_text(salary.get("currency") or structured.get("salaryCurrency"))
+        symbol = {"USD": "$", "CAD": "C$", "AUD": "A$", "GBP": "£", "EUR": "€"}.get(currency.upper(), "") if currency else ""
+        if minimum and maximum:
+            result = f"{symbol}{minimum}–{symbol}{maximum}"
+        elif single:
+            result = f"{symbol}{single}"
+        else:
+            result = ""
+        if result:
+            if currency and currency.upper() not in {"USD"}:
+                result += f" {currency.upper()}"
+            frequency = re.search(r"(?:/|per)\s*(hour|hr|week|month|year|yr)", text, re.I)
+            if frequency:
+                result += f" / {frequency.group(1).lower()}"
+            return result
+
+    pay_match = re.search(
+        r"(?:pay\s+range|salary|compensation)\s*[:\-]?\s*((?:USD|CAD|AUD|GBP|EUR)?\s*[$€£]?\s*\d[\d,]*(?:\.\d+)?"
+        r"(?:\s*(?:-|–|—|to)\s*(?:(?:USD|CAD|AUD|GBP|EUR)\s*)?[$€£]?\s*\d[\d,]*(?:\.\d+)?)?"
+        r"(?:\s*(?:/|per)\s*(?:hour|hr|week|month|year|yr))?)", text, re.I)
+    if pay_match:
+        return _compact_text(pay_match.group(1))
+    if re.search(r"\bcommission[- ]based\b|\bcommission\b", text, re.I):
+        return "Commission"
+    if re.search(r"\bintern(?:ship)?\b", text, re.I):
+        return "Intern (unpaid)" if re.search(r"\bunpaid\b", text, re.I) else "Intern"
+    return ""
+
+
+def _extract_job_fields(structured: dict[str, object], structured_text: str, raw_text: str, metadata: dict[str, str]) -> dict[str, object]:
+    lines = [_compact_text(line) for line in (structured_text.splitlines() if structured_text else [])]
+    lines = [line for line in lines if line]
+    if not lines:
+        raw_lines = [_compact_text(line) for line in raw_text.splitlines() if _compact_text(line)]
+        lines = raw_lines if len(raw_lines) > 1 else [_compact_text(part) for part in re.split(r"(?<=[.!?])\s+", raw_text) if _compact_text(part)]
+
+    work_lines = _section_lines(lines, ("the work",), ("responsibilities", "qualifications", "pay range", "working conditions"))
+    work = _under_word_limit(next((line for line in work_lines if not _is_heading_or_label(line)), ""))
+    task_lines = _section_lines(lines, ("key responsibilities", "responsibilities"), ("qualifications", "minimum skills", "preferred qualifications", "pay range"))
+    task = _under_word_limit(next((line for line in task_lines if not _is_heading_or_label(line) and not line.casefold().startswith("other duties")), ""))
+    qualifications = _section_items(
+        lines, ("qualifications here s what you need", "qualifications"),
+        ("minimum skills", "preferred qualifications", "our commitment", "benefits", "working conditions", "pay range"),
+        ("intended to provide a general overview", "however, due to", "candidates should demonstrate"),
+    )
+    minimum_skills = _section_items(lines, ("minimum skills",), ("preferred qualifications", "our commitment", "benefits", "working conditions", "pay range"))
+    preferred_skills = _section_items(lines, ("preferred qualifications",), ("our commitment", "benefits", "working conditions", "pay range"))
+
+    location = _structured_location(structured.get("jobLocation"))
+    if not location:
+        og_title = metadata.get("og_title", "")
+        location_match = re.search(r"\bin\s+(.+?)\s*\|", og_title, re.I)
+        if location_match:
+            location = _compact_text(location_match.group(1))
+    if not location:
+        location_match = re.search(r"\b(?:location|located in|based in)\s*[:\-]?\s*([A-Z][^.!?]{2,80})", raw_text)
+        if location_match:
+            location = _compact_text(location_match.group(1)).rstrip(" ,;")
+
+    return {
+        "location": location,
+        "type": _work_type(structured, raw_text),
+        "work": work,
+        "task": task,
+        "qual": qualifications,
+        "skills_min": minimum_skills,
+        "skills_max": preferred_skills,
+        "pay": _extract_pay(structured, raw_text),
+    }
 
 
 def _match_terms(text: str, terms: tuple[str, ...]) -> list[str]:
@@ -233,13 +456,32 @@ def _normalise_ai_result(content: object, page: dict) -> dict:
             evidence = item.get("evidence", [])
             skills.append({"name": str(item["name"]).strip()[:120], "score": max(0.0, min(100.0, score)),
                            "evidence": [str(value)[:300] for value in evidence if value][:5] if isinstance(evidence, list) else [], "source": "ai"})
+    def text_field(name: str, fallback: str = "", maximum: int | None = None) -> str:
+        value = _compact_text(content.get(name))
+        if not value:
+            value = _compact_text(page.get(name) or fallback)
+        return _under_word_limit(value, maximum) if maximum else value[:MAX_ANALYSIS_TEXT]
+
+    def list_field(name: str) -> list[str]:
+        value = content.get(name)
+        result = _unique_list(value)
+        return result or _unique_list(page.get(name, []))
+
     return {"mode": "ai", "source_url": page.get("source_url", ""),
             "title": str(content.get("title") or page.get("title") or "Job Opportunity")[:200],
             "company": str(content.get("company") or page.get("company") or "")[:200],
-            "industry": str(content.get("industry") or "general")[:100],
+            "industry": str(content.get("industry") or page.get("industry") or "general")[:100],
             "summary": str(content.get("summary") or page.get("summary") or "")[:MAX_ANALYSIS_TEXT],
             "raw_text": page.get("raw_text", "")[:MAX_ANALYSIS_TEXT],
-            "metadata": page.get("metadata", {}), "skills": skills}
+            "metadata": page.get("metadata", {}), "skills": skills,
+            "location": text_field("location"),
+            "type": text_field("type"),
+            "work": text_field("work", maximum=9),
+            "task": text_field("task", maximum=9),
+            "qual": list_field("qual"),
+            "skills_min": list_field("skills_min"),
+            "skills_max": list_field("skills_max"),
+            "pay": text_field("pay")}
 
 
 def _ai_analyze(page: dict) -> dict:
@@ -252,11 +494,21 @@ def _ai_analyze(page: dict) -> dict:
         "type": "object", "additionalProperties": False,
         "properties": {
             "title": {"type": "string"}, "company": {"type": "string"}, "industry": {"type": "string"},
-            "summary": {"type": "string"}, "skills": {"type": "array", "items": {"type": "object", "additionalProperties": False, "properties": {"name": {"type": "string"}, "score": {"type": "number"}, "evidence": {"type": "array", "items": {"type": "string"}}}, "required": ["name", "score", "evidence"]}},
-        }, "required": ["title", "company", "industry", "summary", "skills"],
+            "summary": {"type": "string"}, "location": {"type": "string"},
+            "type": {"type": "string", "enum": ["", "On-Site", "Hybrid", "Remote"]},
+            "work": {"type": "string"}, "task": {"type": "string"},
+            "qual": {"type": "array", "items": {"type": "string"}},
+            "skills_min": {"type": "array", "items": {"type": "string"}},
+            "skills_max": {"type": "array", "items": {"type": "string"}},
+            "pay": {"type": "string"},
+            "skills": {"type": "array", "items": {"type": "object", "additionalProperties": False, "properties": {"name": {"type": "string"}, "score": {"type": "number"}, "evidence": {"type": "array", "items": {"type": "string"}}}, "required": ["name", "score", "evidence"]}},
+        }, "required": ["title", "company", "industry", "summary", "location", "type", "work", "task", "qual", "skills_min", "skills_max", "pay", "skills"],
     }
     prompt = ("Analyze this job page. Infer the most likely industry and rank the required or preferred skills by relevance. "
-              "Return only the requested JSON fields; score each skill from 0 to 100 and include short evidence phrases.\n\n"
+              "Return only the requested JSON fields. Use type only as On-Site, Hybrid, Remote, or an empty string. "
+              "Keep work and task under 10 words each. Put general qualifications and credentials in qual; "
+              "put absolute minimum requirements in skills_min and preferred skills or credentials in skills_max. "
+              "Set pay to the amount/range, Commission, Intern, or an empty string. Score each ranked skill from 0 to 100 and include short evidence phrases.\n\n"
               f"Page metadata: {json.dumps(page.get('metadata', {}), ensure_ascii=False)}\n"
               f"Page text:\n{page.get('raw_text', '')[:MAX_ANALYSIS_TEXT]}")
     payload = {"model": model, "temperature": 0.1,
@@ -275,8 +527,10 @@ def _ai_analyze(page: dict) -> dict:
 def analyze_job_text(description: str, mode: str = "deterministic") -> dict:
     if len(description.strip()) < 100:
         raise HTTPException(400, "Paste at least 100 characters of the job description.")
-    page = {"source_url": "", "title": "Target Role", "company": "", "summary": description.strip()[:MAX_ANALYSIS_TEXT],
-            "raw_text": description.strip()[:MAX_ANALYSIS_TEXT], "metadata": {}}
+    clean_description = description.strip()[:MAX_ANALYSIS_TEXT]
+    page = {"source_url": "", "title": "Target Role", "company": "", "summary": clean_description,
+            "raw_text": clean_description, "metadata": {}}
+    page.update(_extract_job_fields({}, "", clean_description, {}))
     if mode == "ai":
         return _ai_analyze(page)
     if mode != "deterministic":
