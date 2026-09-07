@@ -20,7 +20,30 @@ function loadJobUrlSuggestions() {
   }
 }
 
-function EditableValue({ label, value, onChange, field, multiline = false, type = 'text', placeholder = '' }) {
+function hasValue(value) {
+  return typeof value === 'string' ? value.trim().length > 0 : Boolean(value);
+}
+
+function hasJobValue(job) {
+  return hasValue(job?.job) || hasValue(job?.company) || hasValue(job?.date_range)
+    || (Array.isArray(job?.descriptions) && job.descriptions.some(hasValue));
+}
+
+function previewText(value, maxLength = 76) {
+  const clean = String(value || '').replace(/\s+/g, ' ').trim();
+  return clean.length > maxLength ? `${clean.slice(0, maxLength).trimEnd()}…` : clean;
+}
+
+function ExpansionIndicator() {
+  return (
+    <span className="expansion-indicator" aria-hidden="true">
+      <span className="expansion-closed">Expand</span>
+      <span className="expansion-open">Collapse</span>
+    </span>
+  );
+}
+
+function EditableValue({ label, value, onChange, onBlurValue, field, multiline = false, type = 'text', placeholder = '' }) {
   const Input = multiline ? 'textarea' : 'input';
   const inputRef = useRef(null);
 
@@ -29,7 +52,7 @@ function EditableValue({ label, value, onChange, field, multiline = false, type 
     const element = inputRef.current;
     element.style.height = 'auto';
     const contentHeight = element.scrollHeight;
-    element.style.height = `${Math.min(Math.max(contentHeight, 36), 240)}px`;
+    element.style.height = `${Math.min(Math.max(contentHeight, 27), 240)}px`;
     element.style.overflowY = contentHeight > 240 ? 'auto' : 'hidden';
   }, [multiline, value]);
 
@@ -48,7 +71,11 @@ function EditableValue({ label, value, onChange, field, multiline = false, type 
           value={value || ''}
           placeholder={placeholder}
           onChange={(event) => onChange(event.target.value)}
-          onBlur={(event) => onChange(cleanTrailingLines(event.target.value))}
+          onBlur={(event) => {
+            const cleaned = cleanTrailingLines(event.target.value);
+            onChange(cleaned);
+            onBlurValue?.(cleaned);
+          }}
           rows={multiline ? 1 : undefined}
         />
       </label>
@@ -58,6 +85,7 @@ function EditableValue({ label, value, onChange, field, multiline = false, type 
 
 function EditableList({ title, prefix, items, onChange, field }) {
   const values = Array.isArray(items) ? items : [];
+  const [draftIndex, setDraftIndex] = useState(null);
 
   function updateItem(index, value) {
     onChange(values.map((item, itemIndex) => itemIndex === index ? value : item));
@@ -69,21 +97,30 @@ function EditableList({ title, prefix, items, onChange, field }) {
 
   return (
     <details className="extract-block editable-list collapsible-section" data-field={field || prefix}>
-      <summary>{title}</summary>
+      <summary><span>{title}</span><ExpansionIndicator /></summary>
       <div className="collapsible-content">
-        {values.map((item, index) => (
+        {values.map((item, index) => {
+          if (!hasValue(item) && index !== draftIndex) return null;
+          return (
           <div className="editable-list-row" key={`${prefix}-${index}`}>
             <EditableValue
               label={`[${prefix}${index + 1}]`}
               value={item}
               field={`${prefix}${index + 1}`}
-              onChange={(value) => updateItem(index, value)}
+              onChange={(value) => {
+                updateItem(index, value);
+                if (hasValue(value)) setDraftIndex(null);
+              }}
+              onBlurValue={(value) => {
+                if (!hasValue(value)) setDraftIndex(null);
+              }}
             />
             <button type="button" className="field-remove" onClick={() => removeItem(index)} aria-label={`Remove ${title} ${index + 1}`}>Remove</button>
           </div>
-        ))}
-        {!values.length && <p className="muted">Not detected</p>}
-        <button type="button" className="field-add" onClick={() => onChange([...values, ''])}>Add {title.toLowerCase()}</button>
+          );
+        })}
+        {!values.some(hasValue) && draftIndex === null && <p className="muted">Not detected</p>}
+        <button type="button" className="field-add" onClick={() => { setDraftIndex(values.length); onChange([...values, '']); }}>Add {title.toLowerCase()}</button>
       </div>
     </details>
   );
@@ -114,6 +151,8 @@ export default function App() {
   const [access, setAccess] = useState(hosted ? 'checking' : 'ready');
   const [accessError, setAccessError] = useState('');
   const extractionRequest = useRef(0);
+  const [draftJobIndex, setDraftJobIndex] = useState(null);
+  const [draftDescriptionIndexes, setDraftDescriptionIndexes] = useState({});
 
   useEffect(() => {
     if (!hosted) return undefined;
@@ -159,15 +198,35 @@ export default function App() {
 
   function updateJobDescriptions(index, descriptions) {
     updateJob(index, 'descriptions', descriptions);
+    if (descriptions.some(hasValue)) {
+      setDraftJobIndex(null);
+      setDraftDescriptionIndexes((current) => {
+        const next = { ...current };
+        delete next[index];
+        return next;
+      });
+    }
   }
 
   function removeJob(index) {
     updateExtraction('experience', jobs
       .filter((_, jobIndex) => jobIndex !== index)
       .map((job, jobIndex) => ({ ...job, number: jobIndex + 1 })));
+    setDraftJobIndex(null);
+    setDraftDescriptionIndexes((current) => {
+      const next = {};
+      Object.entries(current).forEach(([key, value]) => {
+        const numericKey = Number(key);
+        if (numericKey < index) next[numericKey] = value;
+        if (numericKey > index) next[numericKey - 1] = value;
+      });
+      return next;
+    });
   }
 
   function addJob() {
+    setDraftJobIndex(jobs.length);
+    setDraftDescriptionIndexes((current) => ({ ...current, [jobs.length]: 0 }));
     updateExtraction('experience', [
       ...jobs,
       { number: jobs.length + 1, job: '', company: '', date_range: '', descriptions: [''] },
@@ -194,6 +253,8 @@ export default function App() {
     setData(null);
     setPreview('');
     setExtracting(false);
+    setDraftJobIndex(null);
+    setDraftDescriptionIndexes({});
 
     if (!file) return;
 
@@ -382,68 +443,85 @@ export default function App() {
           {extraction && (
             <div className="extraction-content">
               <details className="extract-block contact-block collapsible-section" data-field="contact">
-                <summary>Contact Information</summary>
+                <summary><span>Contact Information</span><ExpansionIndicator /></summary>
                 <div className="collapsible-content">
-                  <EditableValue label="[NameF]" field="name_first" value={contact.name_first} onChange={(value) => updateExtraction('name_first', value)} />
-                  <EditableValue label="[NameL]" field="name_last" value={contact.name_last} onChange={(value) => updateExtraction('name_last', value)} />
-                  <EditableValue label="[Suffix]" field="suffix" value={contact.suffix} onChange={(value) => updateExtraction('suffix', value)} />
-                  <EditableValue label="[Phone]" field="phone" value={contact.phone} onChange={(value) => updateExtraction('phone', value)} type="tel" />
-                  <div className="contact-location">
-                    <EditableValue label="[City]" field="city" value={contact.city} onChange={(value) => updateExtraction('city', value)} />
-                    <EditableValue label="[State]" field="state" value={contact.state} onChange={(value) => updateExtraction('state', value)} />
-                  </div>
-                  <EditableValue label="[Email]" field="email" value={contact.email} onChange={(value) => updateExtraction('email', value)} type="email" />
-                  <EditableValue label="[LinkedIn]" field="linkedin" value={contact.linkedin} onChange={(value) => updateExtraction('linkedin', value)} type="url" />
-                  <EditableValue label="[Site]" field="site" value={contact.site} onChange={(value) => updateExtraction('site', value)} type="url" />
-                  <EditableValue label="[cred]" field="cred" value={contact.cred} onChange={(value) => updateExtraction('cred', value)} multiline />
+                  {hasValue(contact.name_first) && <EditableValue label="[NameF]" field="name_first" value={contact.name_first} onChange={(value) => updateExtraction('name_first', value)} />}
+                  {hasValue(contact.name_last) && <EditableValue label="[NameL]" field="name_last" value={contact.name_last} onChange={(value) => updateExtraction('name_last', value)} />}
+                  {hasValue(contact.suffix) && <EditableValue label="[Suffix]" field="suffix" value={contact.suffix} onChange={(value) => updateExtraction('suffix', value)} />}
+                  {hasValue(contact.phone) && <EditableValue label="[Phone]" field="phone" value={contact.phone} onChange={(value) => updateExtraction('phone', value)} type="tel" />}
+                  {(hasValue(contact.city) || hasValue(contact.state)) && <div className="contact-location">
+                    {hasValue(contact.city) && <EditableValue label="[City]" field="city" value={contact.city} onChange={(value) => updateExtraction('city', value)} />}
+                    {hasValue(contact.state) && <EditableValue label="[State]" field="state" value={contact.state} onChange={(value) => updateExtraction('state', value)} />}
+                  </div>}
+                  {hasValue(contact.email) && <EditableValue label="[Email]" field="email" value={contact.email} onChange={(value) => updateExtraction('email', value)} type="email" />}
+                  {hasValue(contact.linkedin) && <EditableValue label="[LinkedIn]" field="linkedin" value={contact.linkedin} onChange={(value) => updateExtraction('linkedin', value)} type="url" />}
+                  {hasValue(contact.site) && <EditableValue label="[Site]" field="site" value={contact.site} onChange={(value) => updateExtraction('site', value)} type="url" />}
+                  {hasValue(contact.cred) && <EditableValue label="[cred]" field="cred" value={contact.cred} onChange={(value) => updateExtraction('cred', value)} multiline />}
                 </div>
               </details>
 
-              <details className="extract-block collapsible-section" data-field="executive_summary">
-                <summary>Executive Summary</summary>
+              {hasValue(executiveSummary) && <details className="extract-block collapsible-section" data-field="executive_summary">
+                <summary><span>Executive Summary</span><ExpansionIndicator /></summary>
                 <div className="collapsible-content">
                   <EditableValue label="[summary]" field="executive_summary" value={executiveSummary} onChange={(value) => updateExtraction('executive_summary', value)} multiline />
                 </div>
-              </details>
+              </details>}
 
               <EditableSection title="Skills" prefix="skill" items={skills} onChange={(values) => updateExtraction('skills', values)} field="skills" />
 
               <details className="extract-block collapsible-section" data-field="experience">
-                <summary>Experience (Jobs)</summary>
+                <summary><span>Experience (Jobs)</span><ExpansionIndicator /></summary>
                 <div className="collapsible-content">
-                  {jobs.length ? (
+                  {jobs.some(hasJobValue) || draftJobIndex !== null ? (
                     <div className="job-list">
                       {jobs.map((job, index) => {
                         const jobNumber = index + 1;
                         const descriptions = Array.isArray(job.descriptions) ? job.descriptions : [];
+                        const isDraftJob = index === draftJobIndex;
+                        if (!hasJobValue(job) && !isDraftJob) return null;
+                        const draftDescriptionIndex = draftDescriptionIndexes[index];
 
                         return (
                           <details className="job-entry editable-job" key={`job-${index}`} data-field={`experience.${index}`}>
                             <summary className="job-summary">
-                              <span><span className="variable-label">[job{jobNumber}]</span> {job.job || 'Untitled role'}</span>
-                              <span><span className="variable-label">[comp{jobNumber}]</span> {job.company || 'Company not detected'}</span>
-                              {job.date_range && <span className="job-summary-date">{job.date_range}</span>}
+                              <div className="job-summary-main">
+                                {hasValue(job.job) && <div className="job-summary-role"><span className="variable-label">[job{jobNumber}]</span> <strong>{job.job}</strong></div>}
+                                {hasValue(job.company) && <div className="job-summary-company"><span className="variable-label">[comp{jobNumber}]</span> <strong>{job.company}</strong></div>}
+                                {hasValue(job.date_range) && <div className="job-summary-date"><span className="variable-label">[date{jobNumber}]</span> {job.date_range}</div>}
+                                {!hasJobValue(job) && <div className="job-summary-role"><span className="variable-label">[job{jobNumber}]</span> <strong>New job</strong></div>}
+                              </div>
+                              {descriptions.some(hasValue) && <ul className="job-summary-descriptions">
+                                {descriptions.map((description, descriptionIndex) => hasValue(description) && (
+                                  <li key={`summary-${index}-${descriptionIndex}`}><span className="variable-label">[desc{descriptionIndex + 1}]</span> {previewText(description)}</li>
+                                ))}
+                              </ul>}
+                              <ExpansionIndicator />
                             </summary>
                             <div className="job-fields">
-                              <EditableValue label={`[job${jobNumber}]`} field={`job${jobNumber}`} value={job.job} onChange={(value) => updateJob(index, 'job', value)} />
-                              <EditableValue label={`[comp${jobNumber}]`} field={`comp${jobNumber}`} value={job.company} onChange={(value) => updateJob(index, 'company', value)} />
-                              <EditableValue label={`[date${jobNumber}]`} field={`date${jobNumber}`} value={job.date_range} onChange={(value) => updateJob(index, 'date_range', value)} placeholder="mm/yy - mm/yy" />
+                              {(isDraftJob || hasValue(job.job)) && <EditableValue label={`[job${jobNumber}]`} field={`job${jobNumber}`} value={job.job} onChange={(value) => { updateJob(index, 'job', value); if (hasValue(value)) setDraftJobIndex(null); }} onBlurValue={(value) => { if (!hasValue(value) && !hasJobValue(job)) setDraftJobIndex(null); }} />}
+                              {(isDraftJob || hasValue(job.company)) && <EditableValue label={`[comp${jobNumber}]`} field={`comp${jobNumber}`} value={job.company} onChange={(value) => { updateJob(index, 'company', value); if (hasValue(value)) setDraftJobIndex(null); }} onBlurValue={(value) => { if (!hasValue(value) && !hasJobValue(job)) setDraftJobIndex(null); }} />}
+                              {(isDraftJob || hasValue(job.date_range)) && <EditableValue label={`[date${jobNumber}]`} field={`date${jobNumber}`} value={job.date_range} onChange={(value) => { updateJob(index, 'date_range', value); if (hasValue(value)) setDraftJobIndex(null); }} placeholder="mm/yy - mm/yy" onBlurValue={(value) => { if (!hasValue(value) && !hasJobValue(job)) setDraftJobIndex(null); }} />}
                               <div className="job-description-editor">
                                 <span className="section-label">Descriptions</span>
-                                {descriptions.map((description, descriptionIndex) => (
-                                  <div className="editable-list-row" key={`job-${index}-description-${descriptionIndex}`}>
-                                    <EditableValue
-                                      label={`[desc${descriptionIndex + 1}]`}
-                                      field={`desc${jobNumber}-${descriptionIndex + 1}`}
-                                      value={description}
-                                      onChange={(value) => updateJobDescriptions(index, descriptions.map((item, itemIndex) => itemIndex === descriptionIndex ? value : item))}
-                                      multiline
-                                    />
-                                    <button type="button" className="field-remove" onClick={() => updateJobDescriptions(index, descriptions.filter((_, itemIndex) => itemIndex !== descriptionIndex))} aria-label={`Remove description ${descriptionIndex + 1} from job ${jobNumber}`}>Remove</button>
-                                  </div>
-                                ))}
-                                {!descriptions.length && <p className="muted">No line items detected</p>}
-                                <button type="button" className="field-add" onClick={() => updateJobDescriptions(index, [...descriptions, ''])}>Add description</button>
+                                {descriptions.map((description, descriptionIndex) => {
+                                  const isDraftDescription = descriptionIndex === draftDescriptionIndex;
+                                  if (!hasValue(description) && !isDraftDescription) return null;
+                                  return (
+                                    <div className="editable-list-row" key={`job-${index}-description-${descriptionIndex}`}>
+                                      <EditableValue
+                                        label={`[desc${descriptionIndex + 1}]`}
+                                        field={`desc${jobNumber}-${descriptionIndex + 1}`}
+                                        value={description}
+                                        onChange={(value) => updateJobDescriptions(index, descriptions.map((item, itemIndex) => itemIndex === descriptionIndex ? value : item))}
+                                        onBlurValue={(value) => { if (!hasValue(value)) setDraftDescriptionIndexes((current) => { const next = { ...current }; delete next[index]; return next; }); }}
+                                        multiline
+                                      />
+                                      <button type="button" className="field-remove" onClick={() => updateJobDescriptions(index, descriptions.filter((_, itemIndex) => itemIndex !== descriptionIndex))} aria-label={`Remove description ${descriptionIndex + 1} from job ${jobNumber}`}>Remove</button>
+                                    </div>
+                                  );
+                                })}
+                                {!descriptions.some(hasValue) && draftDescriptionIndex === undefined && <p className="muted">No line items detected</p>}
+                                <button type="button" className="field-add" onClick={() => { setDraftDescriptionIndexes((current) => ({ ...current, [index]: descriptions.length })); updateJob(index, 'descriptions', [...descriptions, '']); }}>Add description</button>
                               </div>
                               <button type="button" className="field-remove job-remove" onClick={() => removeJob(index)} aria-label={`Remove job ${jobNumber}`}>Remove job</button>
                             </div>
@@ -460,12 +538,12 @@ export default function App() {
               <EditableSection title="Clearances" prefix="clr" items={clearances} onChange={(values) => updateExtraction('clearances', values)} field="clearances" />
               <EditableSection title="Certifications" prefix="cert" items={certifications} onChange={(values) => updateExtraction('certifications', values)} field="certifications" />
 
-              <details className="extract-block target-title-block collapsible-section" data-field="target_position_title">
-                <summary>Target Position Title</summary>
+              {hasValue(targetPositionTitle) && <details className="extract-block target-title-block collapsible-section" data-field="target_position_title">
+                <summary><span>Target Position Title</span><ExpansionIndicator /></summary>
                 <div className="collapsible-content">
                   <EditableValue label="[target]" field="target_position_title" value={targetPositionTitle} onChange={(value) => updateExtraction('target_position_title', value)} />
                 </div>
-              </details>
+              </details>}
             </div>
           )}
         </section>
