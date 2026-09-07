@@ -75,6 +75,22 @@ class PlatformAPITests(unittest.TestCase):
         self.assertEqual(response.json()['analysis']['mode'], 'deterministic')
         self.assertEqual(response.json()['analysis']['skills'][0]['name'], 'Python')
 
+    def test_generate_allows_job_url_without_resume(self):
+        analysis = {
+            "mode": "deterministic", "source_url": "https://example.com/job", "title": "Cloud Platform Engineer", "company": "Example",
+            "industry": "technology", "summary": "Build Python cloud services and data systems. " * 5,
+            "raw_text": "Build Python cloud services and data systems. " * 5, "metadata": {},
+            "skills": [{"name": "Python", "score": 80.0, "evidence": ["python"], "source": "taxonomy"}],
+        }
+        with patch("app.api.analyze_job", return_value=analysis):
+            response = self.client.post('/generate', data={'job_url': 'https://example.com/job', 'job_model': 'deterministic'})
+        self.assertEqual(response.status_code, 200, response.text)
+        payload = response.json()
+        self.assertEqual(payload['job_title'], 'Cloud Platform Engineer')
+        self.assertEqual(payload['company'], 'Example')
+        self.assertEqual(payload['preview'], '')
+        self.assertEqual(payload['analysis']['skills'][0]['name'], 'Python')
+
     def test_generate_returns_selected_ai_analysis(self):
         analysis = {
             "mode": "ai", "source_url": "https://example.com/job", "title": "Platform Engineer", "company": "Example",

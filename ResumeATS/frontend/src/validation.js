@@ -110,7 +110,7 @@ export const generateResponseSchema = z.object({
 });
 
 export const generationFormSchema = z.object({
-  resume: resumeFileSchema,
+  resume: resumeFileSchema.optional().nullable(),
   jobUrl: z.string().trim().max(2048),
   jobDescription: z.string().trim().max(30000),
   outputFormat: outputFormatSchema,

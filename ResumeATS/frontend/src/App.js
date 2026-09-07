@@ -101,6 +101,32 @@ function PreviewSkills({ items }) {
   );
 }
 
+function TargetJobPreview({ analysis }) {
+  if (!analysis) return null;
+  const skills = Array.isArray(analysis.skills) ? analysis.skills.filter((skill) => hasValue(skill?.name)) : [];
+  const description = analysis.summary || analysis.raw_text;
+  return (
+    <section className="target-job-preview" aria-label="Target job extraction">
+      <div className="target-job-preview__header">
+        <h3>Target Job Extraction</h3>
+        <span className="target-job-preview__mode">{analysis.mode === 'ai' ? 'AI' : 'Deterministic'}</span>
+      </div>
+      <PreviewValue label="[job]" field="target.job" value={analysis.title} />
+      <PreviewValue label="[comp]" field="target.company" value={analysis.company} />
+      <PreviewValue label="[industry]" field="target.industry" value={analysis.industry} />
+      <PreviewValue label="[desc1]" field="target.description" value={description} multiline />
+      {skills.length > 0 && <div className="target-job-skills">
+        <span className="section-label">Skills</span>
+        <ul className="extract-list">
+          {skills.map((skill, index) => (
+            <li key={`${skill.name}-${index}`}><span className="variable-label">[skill{index + 1}]</span> {skill.name}</li>
+          ))}
+        </ul>
+      </div>}
+    </section>
+  );
+}
+
 export default function App() {
   const [resume, setResume] = useState(null);
   const [jobUrl, setJobUrl] = useState('');
@@ -219,7 +245,7 @@ export default function App() {
     setError('');
     try {
       const form = new FormData();
-      form.append('resume', validated.resume);
+      if (validated.resume) form.append('resume', validated.resume);
       form.append('job_url', validated.jobUrl);
       form.append('job_description', validated.jobDescription);
       form.append('output_format', validated.outputFormat);
@@ -335,7 +361,7 @@ export default function App() {
             </select>
           </label>
 
-          <button disabled={loading || extracting || !resume}>{loading ? 'Preparing…' : 'Prepare resume'}</button>
+          <button disabled={loading || extracting || (!resume && !jobUrl.trim() && !jobDescription.trim())}>{loading ? 'Preparing…' : 'Analyze job'}</button>
           {error && <p className="error">{error}</p>}
         </form>
 
@@ -445,26 +471,21 @@ export default function App() {
         {data && (
           <>
             <p className="meta">Role: <strong>{data.job_title}</strong> · Company: <strong>{data.company}</strong></p>
-            <p className="muted">Your original facts are preserved. Add suggested keywords only when they accurately describe your experience.</p>
-            {data.analysis && <div className="analysis-panel" aria-label="Job analysis results">
-              <p className="analysis-mode">Model: <strong>{data.analysis.mode === 'ai' ? 'AI' : 'Deterministic'}</strong> · Industry: <strong>{data.analysis.industry || 'General'}</strong></p>
-              {data.analysis.skills.length > 0 && <div className="keyword-panel" aria-label="Ranked job skills">
-                {data.analysis.skills.map((skill) => <span className="skill-chip" key={`${skill.name}-${skill.source}`}>{skill.name} · {Math.round(skill.score)}</span>)}
-              </div>}
-            </div>}
+            {data.analysis && <TargetJobPreview analysis={data.analysis} />}
+            {resume && <p className="muted">Your original facts are preserved. Add suggested keywords only when they accurately describe your experience.</p>}
             {data.keywords.length > 0 && <div className="keyword-panel" aria-label="Job keyword review">
               {data.keywords.map(({ keyword, status }) => <span className="skill-chip" key={keyword}>{keyword} · {status === 'present' ? 'in resume' : 'review'}</span>)}
             </div>}
-            <label>Editable resume preview
+            {data.preview ? <label>Editable resume preview
               <textarea className="preview" value={preview} maxLength={100000} onChange={(e) => setPreview(e.target.value)} />
-            </label>
-            <div className="downloads">
+            </label> : <p className="muted">No resume uploaded. The target job extraction is shown above.</p>}
+            {data.preview && <div className="downloads">
               {(outputFormat === 'all' ? ['docx', 'pdf', 'rtf'] : [outputFormat]).map((ext) => (
                 <button key={ext} type="button" disabled={Boolean(downloading) || !preview.trim()} onClick={() => download(ext)}>
                   {downloading === ext ? 'Preparing…' : `Download ${ext.toUpperCase()}`}
                 </button>
               ))}
-            </div>
+            </div>}
           </>
         )}
       </section>

@@ -125,7 +125,7 @@ class GenerateResponse(legacy.GenerateResponse):
 
 @app.post("/generate", response_model=GenerateResponse)
 async def generate_resume(
-    resume: UploadFile = File(...),
+    resume: UploadFile | None = File(None),
     job_url: str = Form("", max_length=2048),
     job_description: str = Form("", max_length=30000),
     output_format: str = Form("all"),
@@ -135,7 +135,7 @@ async def generate_resume(
         raise HTTPException(400, "Choose DOCX, PDF, RTF, or all formats.")
     if job_model not in {"deterministic", "ai"}:
         raise HTTPException(400, "Choose Deterministic or AI job analysis.")
-    text = await read_upload(resume)
+    text = await read_upload(resume) if resume is not None else ""
     if job_description.strip():
         analysis = await run_in_threadpool(analyze_job_text, job_description.strip(), job_model)
     elif job_url.strip():
