@@ -184,6 +184,7 @@ export default function App() {
   const [extraction, setExtraction] = useState(null);
   const [extracting, setExtracting] = useState(false);
   const [extractError, setExtractError] = useState('');
+  const [jobAnalysis, setJobAnalysis] = useState(null);
 
   const [preview, setPreview] = useState('');
   const [downloading, setDownloading] = useState('');
@@ -222,6 +223,7 @@ export default function App() {
   const clearances = extraction?.clearances || [];
   const certifications = extraction?.certifications || [];
   const targetPositionTitle = extraction?.target_position_title || '';
+  const targetAnalysis = jobAnalysis || data?.analysis || null;
 
   function rememberJobUrl(rawUrl) {
     const url = rawUrl.trim();
@@ -313,6 +315,7 @@ export default function App() {
       rememberJobUrl(validated.jobUrl);
       setJobUrl(validated.jobUrl);
       setData(responseValidation.data);
+      setJobAnalysis(responseValidation.data.analysis);
       setPreview(responseValidation.data.preview);
     } catch (err) {
       setError(`Generation failed: ${err.message}`);
@@ -519,11 +522,12 @@ export default function App() {
 
       <section className="panel">
         <h2>Preview</h2>
-        {!data && <p>No generated resume yet.</p>}
+        {!data && !targetAnalysis && <p>No generated resume yet.</p>}
+        {data && <p className="meta">Role: <strong>{data.job_title}</strong> · Company: <strong>{data.company}</strong></p>}
+        {targetAnalysis && <TargetJobPreview analysis={targetAnalysis} />}
+        {!data && targetAnalysis && <p className="muted">No resume uploaded. The target job extraction is shown above.</p>}
         {data && (
           <>
-            <p className="meta">Role: <strong>{data.job_title}</strong> · Company: <strong>{data.company}</strong></p>
-            {data.analysis && <TargetJobPreview analysis={data.analysis} />}
             {resume && <p className="muted">Your original facts are preserved. Add suggested keywords only when they accurately describe your experience.</p>}
             {resume && data.keywords.length > 0 && <div className="keyword-panel" aria-label="Job keyword review">
               {data.keywords.map(({ keyword, status }) => <span className="skill-chip" key={keyword}>{keyword} · {status === 'present' ? 'in resume' : 'review'}</span>)}
