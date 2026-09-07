@@ -97,6 +97,7 @@ export const generateResponseSchema = z.object({
     title: z.string(),
     company: z.string(),
     industry: z.string(),
+    description: z.string().default(''),
     location: z.string().default(''),
     type: z.string().default(''),
     work: z.string().default(''),

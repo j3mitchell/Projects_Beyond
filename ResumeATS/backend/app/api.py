@@ -112,6 +112,7 @@ class JobAnalysisResponse(BaseModel):
     title: str
     company: str
     industry: str
+    description: str = ""
     location: str = ""
     type: str = ""
     work: str = ""

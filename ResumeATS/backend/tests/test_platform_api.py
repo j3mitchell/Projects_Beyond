@@ -113,12 +113,13 @@ class PlatformAPITests(unittest.TestCase):
 
     def test_ai_analysis_normalizes_provider_json(self):
         provider = Mock()
-        provider.json.return_value = {"choices": [{"message": {"content": '{"title":"Data Engineer","company":"Example","industry":"technology","location":"Austin, TX","type":"Hybrid","work":"Build data systems","task":"Lead data platform delivery","qual":["Bachelor degree"],"skills_min":["Python"],"skills_max":["Kubernetes"],"pay":"$120,000–$140,000","summary":"Build data systems.","skills":[{"name":"Python","score":88,"evidence":["Python services"]}]}'}}]}
+        provider.json.return_value = {"choices": [{"message": {"content": '{"title":"Data Engineer","company":"Example","industry":"technology","description":"Build data systems for customers","location":"Austin, TX","type":"Hybrid","work":"Build data systems","task":"Lead data platform delivery","qual":["Bachelor degree"],"skills_min":["Python"],"skills_max":["Kubernetes"],"pay":"$120,000–$140,000 / yr","summary":"Build data systems.","skills":[{"name":"Python","score":88,"evidence":["Python services"]}]}'}}]}
         with patch.dict(os.environ, {"OPENAI_API_KEY": "test-key", "OPENAI_MODEL": "test-model"}), patch('app.job_source.requests.post', return_value=provider) as post:
             analysis = analyze_job_text('Build Python cloud services and data systems. ' * 5, 'ai')
         self.assertEqual(analysis['mode'], 'ai')
         self.assertEqual(analysis['skills'][0]['score'], 88.0)
         self.assertEqual(analysis['type'], 'Hybrid')
+        self.assertEqual(analysis['description'], 'Build data systems for customers')
         self.assertEqual(analysis['skills_min'], ['Python'])
         self.assertEqual(analysis['skills_max'], ['Kubernetes'])
         self.assertEqual(post.call_args.kwargs['json']['model'], 'test-model')
@@ -165,12 +166,17 @@ class PlatformAPITests(unittest.TestCase):
         self.assertIn('JavaScript', [skill['name'] for skill in analysis['skills']])
         self.assertEqual(analysis['location'], 'Arlington, VA')
         self.assertEqual(analysis['type'], 'Remote')
+        self.assertLess(len(analysis['description'].split()), 10)
         self.assertLess(len(analysis['work'].split()), 10)
         self.assertLess(len(analysis['task'].split()), 10)
+        for field in ('qual', 'skills_min', 'skills_max'):
+            for item in analysis[field]:
+                self.assertLess(len(item.split()), 7)
         self.assertIn("Bachelor's degree or equivalent experience.", analysis['qual'])
         self.assertEqual(analysis['skills_min'], ['JavaScript and SQL.'])
         self.assertEqual(analysis['skills_max'], ['Kubernetes experience.'])
-        self.assertEqual(analysis['pay'], '$110,000–$160,000')
+        self.assertEqual(analysis['pay'], '$110,000–$160,000 / yr')
+        self.assertEqual(analysis['description'], 'Build and test software applications for customers.')
 
     def test_text_analysis_returns_job_labels(self):
         text = """The Work
@@ -187,12 +193,16 @@ class PlatformAPITests(unittest.TestCase):
         Pay Range: $100,000 - $120,000 per year.
         """
         analysis = analyze_job_text(text, 'deterministic')
+        self.assertEqual(analysis['description'], 'Build secure cloud services for customers.')
         self.assertEqual(analysis['work'], 'Build secure cloud services for customers.')
         self.assertEqual(analysis['task'], 'Design and ship reliable APIs.')
         self.assertEqual(analysis['qual'], ["Bachelor's degree in Computer Science."])
         self.assertEqual(analysis['skills_min'], ['Python and SQL.'])
         self.assertEqual(analysis['skills_max'], ['Kubernetes certification.'])
         self.assertEqual(analysis['pay'], '$100,000 - $120,000 per year')
+        for field in ('qual', 'skills_min', 'skills_max'):
+            for item in analysis[field]:
+                self.assertLess(len(item.split()), 7)
 
     def test_bad_input(self):
         self.assertEqual(self.client.post('/extract', files={'resume': ('bad.exe', b'no')}).status_code, 400)

@@ -50,7 +50,7 @@ button:disabled { opacity: .6; }
 .job-entry { border-bottom: 1px solid #e2e8f0; border-radius: 0; }
 .job-entry:last-child { padding-bottom: 0; border-bottom: 0; }
 .job-heading { display: grid; gap: .2rem; font-size: .9rem; line-height: 1.35; }
-.variable-label { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; color: #2563eb; font-size: .78rem; }
+.variable-label { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; color: #2563eb; font-size: .78rem; font-weight: 700; }
 .job-description-list { margin: .45rem 0 0; padding-left: 1.8rem; display: grid; gap: .2rem; color: #475569; font-size: .84rem; line-height: 1.35; }
 .job-no-description { margin-top: .4rem !important; padding-left: 1rem; }
 .target-title-block { border-left: 4px solid #2563eb; }
@@ -73,6 +73,10 @@ textarea.preview { min-height: 320px; width: 100%; font-family: ui-monospace, mo
 .target-job-preview__header h3 { margin: 0; font-size: .84rem; text-transform: uppercase; letter-spacing: .04em; color: #475569; }
 .target-job-preview__mode { color: #2563eb; font-size: .74rem; font-weight: 700; }
 .target-job-skills { display: block; padding-top: .15rem; border-top: 1px solid #e2e8f0; }
+.preview-value--emphasized { font-weight: 700; color: #1f2937; }
+.pay-value { display: inline-flex; align-items: baseline; gap: .35rem; flex-wrap: wrap; }
+.pay-value strong { color: #1f2937; }
+.pay-term { color: #475569; }
 .access-panel { max-width: 600px; margin: 3rem auto; }
 .panel { min-width: 0; }
 .downloads button { background: #0f766e; font-size: .85rem; }
