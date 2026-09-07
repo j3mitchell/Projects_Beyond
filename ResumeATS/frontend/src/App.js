@@ -28,11 +28,13 @@ function EditableValue({ label, value, onChange, field, multiline = false, type 
     if (!multiline || !inputRef.current) return;
     const element = inputRef.current;
     element.style.height = 'auto';
-    element.style.height = `${Math.min(Math.max(element.scrollHeight, 36), 240)}px`;
+    const contentHeight = element.scrollHeight;
+    element.style.height = `${Math.min(Math.max(contentHeight, 36), 240)}px`;
+    element.style.overflowY = contentHeight > 240 ? 'auto' : 'hidden';
   }, [multiline, value]);
 
   function cleanTrailingLines(nextValue) {
-    return nextValue.replace(/[ \t]+$/gm, '').replace(/\n+$/, '');
+    return nextValue.replace(/\r\n?/g, '\n').replace(/[ \t]+$/gm, '').replace(/\n+$/, '');
   }
 
   return (
