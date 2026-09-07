@@ -104,15 +104,28 @@ class PlatformAPITests(unittest.TestCase):
         self.assertEqual(post.call_args.kwargs['json']['model'], 'test-model')
 
     def test_deterministic_url_analysis_extracts_taxonomy(self):
-        html = b'''<html><head><title>Cloud Platform Engineer</title><meta property="og:site_name" content="Example"></head>
+        html = b'''<html><head><title>Cloud Platform Engineer | Example</title><meta property="og:site_name" content="Example">
+        <meta property="og:title" content="Job: Cloud Platform Engineer at Example"></head>
         <body><main><h1>Cloud Platform Engineer</h1><p>Build Python services with Docker and Kubernetes for a cloud data platform.</p>
         <p>Partner with engineering teams and communicate clearly. Python Python Python.</p></main></body></html>'''
         with patch('app.job_source.fetch_public_html', return_value=html):
             analysis = analyze_job('https://example.com/job', 'deterministic')
         self.assertEqual(analysis['mode'], 'deterministic')
+        self.assertEqual(analysis['title'], 'Cloud Platform Engineer')
         self.assertEqual(analysis['company'], 'Example')
         self.assertEqual(analysis['industry'], 'technology')
         self.assertEqual(analysis['skills'][0]['name'], 'Python')
+
+    def test_fetch_public_html_requests_decoded_content(self):
+        response = Mock(status=200, headers={})
+        response.read.return_value = b'<html><main>' + (b'job description ' * 20) + b'</main></html>'
+        pool = Mock()
+        pool.urlopen.return_value = response
+        with patch('app.job_source.urllib3.HTTPSConnectionPool', return_value=pool), \
+             patch('app.job_source.socket.getaddrinfo', return_value=[(0, 0, 0, '', ('93.184.216.34', 443))]):
+            raw = fetch_public_html('https://example.com/job')
+        self.assertIn(b'job description', raw)
+        response.read.assert_called_once_with(2 * 1024 * 1024 + 1, decode_content=True)
 
     def test_bad_input(self):
         self.assertEqual(self.client.post('/extract', files={'resume': ('bad.exe', b'no')}).status_code, 400)

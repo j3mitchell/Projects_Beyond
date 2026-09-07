@@ -11,6 +11,7 @@ from urllib.parse import urljoin, urlsplit
 import requests
 import urllib3
 from bs4 import BeautifulSoup
+import certifi
 from fastapi import HTTPException
 
 MAX_PAGE_BYTES = 2 * 1024 * 1024
@@ -65,7 +66,8 @@ def public_target(url: str):
 def fetch_public_html(url: str) -> bytes:
     for _ in range(5):
         parsed, port, address = public_target(url)
-        options = {"host": address, "port": port, "timeout": urllib3.Timeout(connect=5, read=10), "retries": False}
+        options = {"host": address, "port": port, "timeout": urllib3.Timeout(connect=5, read=10), "retries": False,
+                   "ca_certs": certifi.where()}
         pool = (urllib3.HTTPSConnectionPool(**options, server_hostname=parsed.hostname, assert_hostname=parsed.hostname)
                 if parsed.scheme == "https" else urllib3.HTTPConnectionPool(**options))
         response = None
@@ -79,7 +81,7 @@ def fetch_public_html(url: str) -> bytes:
                 continue
             if response.status != 200:
                 raise HTTPException(400, "This job site blocked the request. Paste the job description instead.")
-            raw = response.read(MAX_PAGE_BYTES + 1, decode_content=False)
+            raw = response.read(MAX_PAGE_BYTES + 1, decode_content=True)
             if len(raw) > MAX_PAGE_BYTES:
                 raise HTTPException(400, "The job page is too large. Paste the job description instead.")
             return raw
@@ -97,6 +99,8 @@ def _page_fields(raw: bytes, source_url: str = "") -> dict:
     metadata: dict[str, str] = {}
     for key, selector, attribute in (
         ("site_name", {"property": "og:site_name"}, "content"),
+        ("og_title", {"property": "og:title"}, "content"),
+        ("og_description", {"property": "og:description"}, "content"),
         ("description", {"name": "description"}, "content"),
         ("canonical", {"rel": "canonical"}, "href"),
     ):
@@ -104,11 +108,32 @@ def _page_fields(raw: bytes, source_url: str = "") -> dict:
         value = element.get(attribute, "").strip() if element else ""
         if value:
             metadata[key] = value[:1000]
+    page_title = soup.title.get_text(" ", strip=True) if soup.title else ""
+    heading = soup.find("h1", class_=lambda value: value and "listing-company" in value)
+    heading_text = heading.get_text(" ", strip=True) if heading else ""
+
+    title = "Job Opportunity"
+    company = ""
+    for identity in (metadata.get("og_title", ""), page_title, heading_text):
+        match = re.search(r"^Job:\s*(?P<title>.+?)\s+at\s+(?P<company>.+?)$", identity, re.IGNORECASE)
+        if match:
+            title = match.group("title").strip()
+            company = match.group("company").strip()
+            break
+        match = re.match(r"^(?P<title>[^|]+?),\s*(?P<company>[^|]+?)\s*\|", identity)
+        if match:
+            title = match.group("title").strip()
+            company = match.group("company").strip()
+            break
+
     for element in soup(["script", "style", "nav", "footer", "header", "noscript"]):
         element.decompose()
-    heading = soup.find("h1") or soup.title
-    title = heading.get_text(" ", strip=True)[:200] if heading else "Job Opportunity"
-    company = metadata.get("site_name", "")[:200]
+    if title == "Job Opportunity":
+        heading = soup.find("h1") or soup.title
+        heading_text = heading.get_text(" ", strip=True) if heading else ""
+        if heading_text and heading_text.lower() not in {"get exploring!", "job opportunity"}:
+            title = heading_text
+    company = company or metadata.get("site_name", "")
     description = (soup.find("main") or soup).get_text(" ", strip=True)[:MAX_ANALYSIS_TEXT]
     if len(description) < 100:
         raise HTTPException(400, "No readable job description was found. Paste it instead.")
