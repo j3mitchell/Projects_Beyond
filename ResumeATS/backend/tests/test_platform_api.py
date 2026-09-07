@@ -281,6 +281,29 @@ class PlatformAPITests(unittest.TestCase):
         self.assertIn('database design and modeling', analysis['skills_min'])
         self.assertEqual(analysis['pay'], '$185,000–$275,000 / yr')
 
+    def test_generic_semantic_job_markup_extracts_sections(self):
+        html = b'''<html><head><title>Data Platform Engineer</title></head><body>
+        <article><h1>Data Platform Engineer</h1><p class="employer">Northstar Systems</p>
+        <p class="location">Austin, TX</p><h2>About this role</h2>
+        <p>Build reliable data services for customers.</p><h2>Responsibilities</h2>
+        <ul><li>Design and operate data pipelines.</li></ul><h2>Required Qualifications</h2>
+        <ul><li>Bachelor's degree in computer science.</li><li>Three years experience.</li></ul>
+        <h2>Preferred Skills</h2><ul><li>Python and SQL.</li></ul>
+        <p>Salary Range: $120,000 - $140,000 per year.</p><p>Work Location: Hybrid.</p>
+        </article></body></html>'''
+        with patch('app.job_source.fetch_public_html', return_value=html):
+            analysis = analyze_job('https://jobs.example.com/data-platform-engineer', 'deterministic')
+        self.assertEqual(analysis['title'], 'Data Platform Engineer')
+        self.assertEqual(analysis['company'], 'Northstar Systems')
+        self.assertEqual(analysis['location'], 'Austin, TX')
+        self.assertEqual(analysis['type'], 'Hybrid')
+        self.assertEqual(analysis['description'], 'Build reliable data services for customers.')
+        self.assertEqual(analysis['task'], 'Design and operate data pipelines.')
+        self.assertTrue(analysis['qual'])
+        self.assertTrue(analysis['skills_min'])
+        self.assertEqual(analysis['skills_max'], ['Python and SQL.'])
+        self.assertEqual(analysis['pay'], '$120,000–$140,000 per year')
+
     def test_text_analysis_returns_job_labels(self):
         text = """The Work
         Build secure cloud services for customers.
