@@ -394,6 +394,9 @@ export default function App() {
           <p className="eyebrow">ResumeATS</p>
           <h1>Resume ATS Optimizer</h1>
           <p className="subhead">Review your resume against a target job, edit the full preview, and download polished versions.</p>
+          <hr className="brand-rule" />
+          <p className="promise-title">Build ATS optimized resumes</p>
+          <p className="promise-copy">Use AI to customize your resume for the position you target.</p>
         </div>
         <div className="header-actions">
           {hosted && <a className="button button-link" href="https://jisystems.net/tools/">J.I. Systems</a>}
