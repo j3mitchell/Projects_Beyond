@@ -332,6 +332,16 @@ button:disabled { opacity: .52; cursor: not-allowed; }
 .job-summary-date, .muted, .empty-state { color: var(--muted); }
 .extracting { color: #274a86; background: #e9f1ff; }
 .error { color: var(--danger); }
+.capture-notice,
+.browser-capture-hint {
+  margin: .35rem 0 0;
+  padding: .55rem .7rem;
+  border: 1px solid #bfd1ef;
+  border-radius: 8px;
+  background: #eef4ff;
+  color: #274a86;
+  font-size: .86rem;
+}
 
 .model-picker { background: rgba(247, 250, 249, .9); }
 .model-picker legend { color: #425660; font-family: "IBM Plex Sans", "Segoe UI", sans-serif; }

@@ -34,6 +34,15 @@ function previewText(value, maxLength = 76) {
   return clean.length > maxLength ? `${clean.slice(0, maxLength).trimEnd()}…` : clean;
 }
 
+function needsBrowserCapture(analysis) {
+  if (!analysis || analysis.mode !== 'deterministic') return false;
+  const fields = [analysis.title, analysis.location, analysis.type, analysis.work, analysis.task, analysis.pay]
+    .filter(hasValue).length;
+  const skillCount = (Array.isArray(analysis.skills) ? analysis.skills : [])
+    .filter((skill) => hasValue(skill?.name)).length;
+  return fields < 3 || skillCount < 2;
+}
+
 function ExpansionIndicator() {
   return (
     <span className="expansion-indicator" aria-hidden="true">
@@ -157,6 +166,11 @@ function TargetJobPreview({ analysis }) {
       <PreviewLabeledList label="[skMax]" field="target.skMax" items={analysis.skills_max} itemPrefix="skMax" />
       <CompensationValue value={analysis.pay} />
       <PreviewValue label="[desc]" field="target.desc" value={description} multiline />
+      {needsBrowserCapture(analysis) && (
+        <p className="browser-capture-hint" role="status">
+          Deterministic extraction was incomplete. On the job page, choose the ResumeATS Capture extension; it will send the visible listing to Paste Job Description and analyze it automatically.
+        </p>
+      )}
       {skills.length > 0 && <details className="target-job-skills collapsible-section" open={analysis.skills_min?.length === 0 && analysis.skills_max?.length === 0}>
         <summary><span>Ranked skills</span><ExpansionIndicator /></summary>
         <div className="collapsible-content">
@@ -185,6 +199,7 @@ export default function App() {
   const [extracting, setExtracting] = useState(false);
   const [extractError, setExtractError] = useState('');
   const [jobAnalysis, setJobAnalysis] = useState(null);
+  const [captureNotice, setCaptureNotice] = useState('');
 
   const [preview, setPreview] = useState('');
   const [downloading, setDownloading] = useState('');
@@ -192,6 +207,7 @@ export default function App() {
   const [accessError, setAccessError] = useState('');
   const [paidMember, setPaidMember] = useState(!hosted);
   const extractionRequest = useRef(0);
+  const receivedCaptureIds = useRef(new Set());
 
   useEffect(() => {
     if (!hosted) return undefined;
@@ -297,13 +313,11 @@ export default function App() {
     }
   }
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-
+  async function generateJob({ jobUrlValue = jobUrl, jobDescriptionValue = jobDescription, captureSourceUrl = '' } = {}) {
     const validation = generationFormSchema.safeParse({
       resume,
-      jobUrl,
-      jobDescription,
+      jobUrl: jobUrlValue,
+      jobDescription: jobDescriptionValue,
       outputFormat,
       jobModel,
     });
@@ -316,6 +330,7 @@ export default function App() {
     const validated = validation.data;
     setLoading(true);
     setError('');
+    setCaptureNotice(captureSourceUrl ? 'Browser page captured. Analyzing the pasted job description…' : '');
     try {
       const form = new FormData();
       if (validated.resume) form.append('resume', validated.resume);
@@ -337,12 +352,49 @@ export default function App() {
       setData(responseValidation.data);
       setJobAnalysis(responseValidation.data.analysis);
       setPreview(responseValidation.data.preview);
+      if (captureSourceUrl) {
+        rememberJobUrl(captureSourceUrl);
+        setJobUrl(captureSourceUrl);
+        setCaptureNotice('Browser capture analyzed through Paste Job Description.');
+      }
     } catch (err) {
       setError(`Generation failed: ${err.message}`);
     } finally {
       setLoading(false);
     }
   }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    await generateJob();
+  }
+
+  async function handleCapturedJob(payload) {
+    const text = String(payload?.text || '').trim();
+    if (!text || loading) return;
+    setJobDescription(text);
+    setJobUrl(String(payload?.sourceUrl || '').trim());
+    setCaptureNotice('Browser page captured. Analyzing the pasted job description…');
+    await generateJob({ jobUrlValue: '', jobDescriptionValue: text, captureSourceUrl: payload?.sourceUrl || '' });
+  }
+
+  useEffect(() => {
+    function receiveCapture(event) {
+      if (event.source !== window || event.origin !== window.location.origin) return;
+      if (event.data?.type !== 'resumeats:job-capture') return;
+      const payload = event.data.payload || {};
+      const captureId = String(payload.id || `${payload.sourceUrl || ''}:${payload.capturedAt || ''}`);
+      if (!hasValue(payload.text) || receivedCaptureIds.current.has(captureId)) return;
+      receivedCaptureIds.current.add(captureId);
+      void handleCapturedJob(payload);
+    }
+
+    window.addEventListener('message', receiveCapture);
+    if (access === 'ready' && !loading) {
+      window.postMessage({ type: 'resumeats:job-capture:request' }, window.location.origin);
+    }
+    return () => window.removeEventListener('message', receiveCapture);
+  }, [access, resume, outputFormat, jobModel, loading]);
 
   async function download(format) {
     setDownloading(format);
@@ -472,6 +524,7 @@ export default function App() {
           </label>
 
           <button disabled={loading || extracting || (!resume && !jobUrl.trim() && !jobDescription.trim())}>{loading ? 'Preparing…' : resume ? 'Prepare resume' : 'Analyze job'}</button>
+          {captureNotice && <p className="capture-notice" role="status">{captureNotice}</p>}
           {error && <p className="error">{error}</p>}
         </form>
 

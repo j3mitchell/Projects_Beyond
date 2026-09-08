@@ -42,6 +42,14 @@ configuration, the API returns a clear error and the free Deterministic model
 remains available. Supabase is used for access and entitlements, not as the
 scraping or AI runtime.
 
+## Browser capture fallback
+
+When a job page is rendered dynamically or blocks server fetching, install the
+Chrome extension in [`browser-extension`](browser-extension/README.md). Click
+**ResumeATS Capture** on the job page after an incomplete deterministic result;
+the extension reads the visible DOM, opens ResumeATS, and submits the text
+through the existing Paste Job Description handler.
+
 ## Run locally
 
 ```bash

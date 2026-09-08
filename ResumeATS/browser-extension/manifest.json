@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "ResumeATS Capture",
+  "description": "Capture visible job-page text and send it to ResumeATS for analysis.",
+  "version": "1.0.0",
+  "permissions": ["activeTab", "scripting", "storage", "tabs"],
+  "host_permissions": [
+    "https://jisystems.net/*",
+    "http://localhost:3000/*",
+    "http://127.0.0.1:3000/*"
+  ],
+  "action": {
+    "default_title": "Capture visible job page for ResumeATS"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://jisystems.net/app/resumeats/*",
+        "http://localhost:3000/*",
+        "http://127.0.0.1:3000/*"
+      ],
+      "js": ["resumeats-bridge.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
