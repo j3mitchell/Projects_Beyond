@@ -35,20 +35,29 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
-// Shared contact links can use https://jisystems.net/?contact=1. The page
-// remains the canonical home route while the visitor is taken to the footer
-// email link and the browser's mail handler is invited to open it.
+// Shared contact links can use https://jisystems.net/?contact=1..5. The page
+// remains the canonical home route while the selected footer destination is
+// focused and opened.
 function handleContactDeepLink() {
   const params = new URLSearchParams(window.location.search);
-  if (params.get("contact") !== "1") return;
+  const contactKey = params.get("contact");
+  const selectors = {
+    "1": '.footer-contact__link[data-contact-destination="1"]',
+    "2": '.footer-contact__link[data-contact-destination="2"]',
+    "3": '.footer-contact__link[data-contact-destination="3"]',
+    "4": '.footer-contact__link[data-contact-destination="4"]',
+    "5": '.footer-contact__link[data-contact-destination="5"]',
+  };
+  const selector = selectors[contactKey];
+  if (!selector) return;
 
   const contactSection = document.querySelector("#contact");
-  const emailLink = document.querySelector('.footer-contact__link[href^="mailto:info@jisystems.net"]');
-  if (!emailLink) return;
+  const contactLink = document.querySelector(selector);
+  if (!contactLink) return;
 
   contactSection?.scrollIntoView({ behavior: "smooth", block: "start" });
-  emailLink.focus({ preventScroll: true });
-  window.setTimeout(() => emailLink.click(), 250);
+  contactLink.focus({ preventScroll: true });
+  window.setTimeout(() => contactLink.click(), 250);
 }
 
 handleContactDeepLink();
