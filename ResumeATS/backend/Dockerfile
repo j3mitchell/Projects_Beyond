@@ -1,4 +1,4 @@
-FROM python:3.12-slim
+FROM mcr.microsoft.com/playwright/python:v1.49.1-noble
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 RESUMEATS_ENV=production
 WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends antiword fonts-dejavu-core && rm -rf /var/lib/apt/lists/*

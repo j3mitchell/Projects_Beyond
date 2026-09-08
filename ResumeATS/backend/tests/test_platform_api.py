@@ -5,6 +5,7 @@ from io import BytesIO
 from unittest.mock import Mock, patch
 
 from docx import Document
+from fastapi import HTTPException
 from fastapi.testclient import TestClient
 from pypdf import PdfReader
 from striprtf.striprtf import rtf_to_text
@@ -183,6 +184,20 @@ class PlatformAPITests(unittest.TestCase):
         self.assertEqual(analysis['company'], 'Example')
         self.assertEqual(analysis['industry'], 'technology')
         self.assertEqual(analysis['skills'][0]['name'], 'Python')
+
+    def test_url_analysis_renders_browser_after_unreadable_fetch(self):
+        rendered = b'''<html><head><title>Rendered Data Engineer | Example</title></head>
+        <body><main><h1>Rendered Data Engineer</h1>
+        <p>Build Python services for a secure data platform with SQL.</p>
+        <h2>Required Qualifications</h2><ul><li>Bachelor's degree or equivalent experience.</li></ul>
+        </main></body></html>'''
+        unreadable = HTTPException(400, "No readable job description was found. Paste it instead.")
+        with patch('app.job_source.fetch_public_html', side_effect=unreadable), \
+             patch('app.job_source.render_public_html', return_value=rendered) as render:
+            analysis = analyze_job('https://example.com/job', 'deterministic')
+        render.assert_called_once_with('https://example.com/job')
+        self.assertEqual(analysis['title'], 'Rendered Data Engineer')
+        self.assertEqual(analysis['metadata']['render_mode'], 'browser-fallback')
 
     def test_fetch_public_html_requests_decoded_content(self):
         response = Mock(status=200, headers={})

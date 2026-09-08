@@ -3,11 +3,12 @@ from __future__ import annotations
 
 import ipaddress
 import json
+import logging
 import os
 import re
 import socket
 from html import unescape
-from urllib.parse import urljoin, urlsplit
+from urllib.parse import urljoin, urlsplit, urlparse
 
 import requests
 import urllib3
@@ -17,6 +18,18 @@ from fastapi import HTTPException
 
 MAX_PAGE_BYTES = 2 * 1024 * 1024
 MAX_ANALYSIS_TEXT = 30000
+MAX_RENDERED_PAGE_BYTES = 8 * 1024 * 1024
+RENDER_WAIT_MS = 1800
+
+REQUEST_HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/125.0.0.0 Safari/537.36"
+    ),
+    "Accept-Language": "en-US,en;q=0.9",
+    "Upgrade-Insecure-Requests": "1",
+}
 
 # Deterministic mode is intentionally small, explicit, and explainable. Each
 # alias is matched against extracted page text and contributes to the ranking.
@@ -121,6 +134,95 @@ def fetch_public_html(url: str) -> bytes:
                 response.close()
             pool.close()
     raise HTTPException(400, "This job page redirects too many times. Paste the job description instead.")
+
+
+def render_public_html(url: str) -> bytes:
+    """Render a JavaScript-heavy job page in the backend's headless browser.
+
+    The browser runs on the API service, so the user's browser never needs an
+    extension and never has to cross the same-origin boundary to read the job
+    site's DOM.  Public-network routing is enforced for every subresource.
+    """
+    try:
+        from playwright.sync_api import TimeoutError as PlaywrightTimeoutError
+        from playwright.sync_api import sync_playwright
+    except ImportError as exc:
+        raise RuntimeError("Browser rendering is not installed") from exc
+
+    environment = os.getenv("RESUMEATS_ENV", "development").strip().lower()
+    try:
+        with sync_playwright() as playwright:
+            launch_options = {"headless": True}
+            # Local development can use the installed Chrome; the production
+            # image ships the pinned Playwright Chromium runtime.
+            if environment != "production":
+                launch_options["channel"] = "chrome"
+            browser = playwright.chromium.launch(**launch_options)
+            context = browser.new_context(
+                user_agent=REQUEST_HEADERS["User-Agent"],
+                locale="en-US",
+                viewport={"width": 1280, "height": 1200},
+                extra_http_headers={
+                    "Accept-Language": REQUEST_HEADERS["Accept-Language"],
+                    "Upgrade-Insecure-Requests": REQUEST_HEADERS["Upgrade-Insecure-Requests"],
+                },
+            )
+            page = context.new_page()
+
+            def block_private_network_requests(route) -> None:
+                request_url = urlparse(route.request.url)
+                if request_url.scheme in {"data", "blob", "about"}:
+                    route.continue_()
+                    return
+                try:
+                    allowed_port = request_url.port in {None, 80, 443}
+                except ValueError:
+                    allowed_port = False
+                if (
+                    request_url.scheme in {"http", "https"}
+                    and allowed_port
+                    and _is_public_hostname(request_url.hostname or "")
+                ):
+                    route.continue_()
+                else:
+                    route.abort("blockedbyclient")
+
+            try:
+                if environment == "production":
+                    page.route("**/*", block_private_network_requests)
+                response = page.goto(url, wait_until="domcontentloaded", timeout=30000)
+                if response and response.status >= 400:
+                    raise RuntimeError(f"Rendered job page returned HTTP {response.status}")
+                try:
+                    page.wait_for_load_state("networkidle", timeout=6000)
+                except PlaywrightTimeoutError:
+                    logging.getLogger(__name__).info("Job page kept loading; capturing rendered state")
+                page.wait_for_timeout(RENDER_WAIT_MS)
+                rendered = page.content()
+                if len(rendered.encode("utf-8")) > MAX_RENDERED_PAGE_BYTES:
+                    raise RuntimeError("Rendered job page is too large")
+                return rendered.encode("utf-8")
+            finally:
+                context.close()
+                browser.close()
+    except HTTPException:
+        raise
+    except Exception as exc:
+        raise RuntimeError(f"Browser rendering failed: {type(exc).__name__}") from exc
+
+
+def _is_public_hostname(hostname: str) -> bool:
+    """Return whether a hostname resolves only to public IP addresses."""
+    if not hostname or hostname.rstrip(".").lower() in {"localhost", "localhost.localdomain"}:
+        return False
+    try:
+        addresses = {item[4][0] for item in socket.getaddrinfo(hostname, None, type=socket.SOCK_STREAM)}
+    except OSError:
+        return False
+    try:
+        return bool(addresses) and all(ipaddress.ip_address(address).is_global for address in addresses)
+    except ValueError:
+        return False
 
 
 def _dom_text_lines(root: BeautifulSoup) -> list[str]:
@@ -912,7 +1014,29 @@ def analyze_job_text(description: str, mode: str = "deterministic") -> dict:
 def analyze_job(url: str, mode: str = "deterministic") -> dict:
     if mode not in {"deterministic", "ai"}:
         raise HTTPException(400, "Choose Deterministic or AI job analysis.")
-    page = _page_fields(fetch_public_html(url), url)
+    try:
+        page = _page_fields(fetch_public_html(url), url)
+    except HTTPException as original_error:
+        detail = str(original_error.detail)
+        # Most modern recruiting platforms build the posting with client-side
+        # JavaScript. Retry those extraction failures in a server-side browser
+        # so the user does not need to copy the page or install an extension.
+        browser_fallback_errors = (
+            "No readable job description",
+            "job site blocked the request",
+            "Unable to load this job page",
+            "job page redirects too many times",
+        )
+        if original_error.status_code != 400 or not any(message in detail for message in browser_fallback_errors):
+            raise
+        try:
+            rendered = render_public_html(url)
+            page = _page_fields(rendered, url)
+            page.setdefault("metadata", {})["render_mode"] = "browser-fallback"
+        except Exception:
+            # Keep the deterministic error users already understand when the
+            # optional browser runtime also cannot access the source page.
+            raise original_error
     if mode == "ai":
         return _ai_analyze(page)
     page.update({"mode": "deterministic", "industry": _infer_industry(page["raw_text"]), "skills": _rank_taxonomy_skills(page["raw_text"])})

@@ -11,3 +11,4 @@ spacy==3.8.16
 pypdf==6.17.0
 urllib3==2.7.0
 starlette==1.6.0
+playwright==1.49.1
