@@ -34,3 +34,21 @@ document.addEventListener("keydown", (event) => {
     setMenuOpen(false);
   }
 });
+
+// Shared contact links can use https://jisystems.net/?contact=1. The page
+// remains the canonical home route while the visitor is taken to the footer
+// email link and the browser's mail handler is invited to open it.
+function handleContactDeepLink() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("contact") !== "1") return;
+
+  const contactSection = document.querySelector("#contact");
+  const emailLink = document.querySelector('.footer-contact__link[href^="mailto:info@jisystems.net"]');
+  if (!emailLink) return;
+
+  contactSection?.scrollIntoView({ behavior: "smooth", block: "start" });
+  emailLink.focus({ preventScroll: true });
+  window.setTimeout(() => emailLink.click(), 250);
+}
+
+handleContactDeepLink();
