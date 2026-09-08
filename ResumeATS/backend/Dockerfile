@@ -1,7 +1,7 @@
 FROM mcr.microsoft.com/playwright/python:v1.49.1-noble
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 RESUMEATS_ENV=production
 WORKDIR /app
-RUN apt-get update && apt-get install -y --no-install-recommends antiword fonts-dejavu-core && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends antiword fonts-dejavu-core python3.12-venv && rm -rf /var/lib/apt/lists/*
 COPY backend/requirements.txt ./requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt && python -m spacy download en_core_web_sm
 COPY backend/app ./app
