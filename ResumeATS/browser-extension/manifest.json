@@ -5,9 +5,8 @@
   "version": "1.0.0",
   "permissions": ["activeTab", "scripting", "storage", "tabs"],
   "host_permissions": [
-    "https://jisystems.net/*",
-    "http://localhost:3000/*",
-    "http://127.0.0.1:3000/*"
+    "https://*/*",
+    "http://*/*"
   ],
   "action": {
     "default_title": "Capture visible job page for ResumeATS"

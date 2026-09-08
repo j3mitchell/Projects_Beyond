@@ -255,11 +255,12 @@ export default function App() {
     ? access === 'checking' ? 20 : 0
     : extractError || error
       ? 0
-      : extracting
-        ? 58
-        : loading
-          ? 84
-          : 100;
+        : extracting
+          ? 58
+          : loading
+            ? 84
+            : 100;
+  const browserCaptureNeeded = /No readable job description|Paste it instead/i.test(error);
 
   function rememberJobUrl(rawUrl) {
     const url = rawUrl.trim();
@@ -378,13 +379,32 @@ export default function App() {
     await generateJob({ jobUrlValue: '', jobDescriptionValue: text, captureSourceUrl: payload?.sourceUrl || '' });
   }
 
+  function requestBrowserCapture() {
+    const sourceUrl = jobUrl.trim();
+    if (!/^https?:\/\//i.test(sourceUrl)) {
+      setError('Enter a valid job URL before requesting browser capture.');
+      return;
+    }
+    setCaptureNotice('Requesting browser capture. The job page will open briefly…');
+    window.postMessage({
+      type: 'resumeats:job-capture:start',
+      payload: { sourceUrl },
+    }, window.location.origin);
+  }
+
   useEffect(() => {
     function receiveCapture(event) {
       if (event.source !== window || event.origin !== window.location.origin) return;
+      if (event.data?.type === 'resumeats:job-capture:status') {
+        const status = event.data.payload || {};
+        if (status.ok) setCaptureNotice('Job page captured. Analyzing the pasted job description…');
+        else setCaptureNotice(status.error || 'Browser capture could not read that page.');
+        return;
+      }
       if (event.data?.type !== 'resumeats:job-capture') return;
       const payload = event.data.payload || {};
       const captureId = String(payload.id || `${payload.sourceUrl || ''}:${payload.capturedAt || ''}`);
-      if (!hasValue(payload.text) || receivedCaptureIds.current.has(captureId)) return;
+      if (!hasValue(payload.text) || loading || receivedCaptureIds.current.has(captureId)) return;
       receivedCaptureIds.current.add(captureId);
       void handleCapturedJob(payload);
     }
@@ -524,6 +544,14 @@ export default function App() {
           </label>
 
           <button disabled={loading || extracting || (!resume && !jobUrl.trim() && !jobDescription.trim())}>{loading ? 'Preparing…' : resume ? 'Prepare resume' : 'Analyze job'}</button>
+          {browserCaptureNeeded && jobUrl.trim() && !jobDescription.trim() && (
+            <section className="browser-capture-panel" aria-label="Browser capture fallback">
+              <strong>Server extraction was incomplete.</strong>
+              <p>Use the ResumeATS Capture extension to read the visible job page and submit it here automatically.</p>
+              <button type="button" onClick={requestBrowserCapture} disabled={loading}>Capture visible job page</button>
+              <p className="muted">Install the unpacked extension from <code>ResumeATS/browser-extension</code> first.</p>
+            </section>
+          )}
           {captureNotice && <p className="capture-notice" role="status">{captureNotice}</p>}
           {error && <p className="error">{error}</p>}
         </form>

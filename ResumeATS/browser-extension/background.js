@@ -64,31 +64,93 @@ async function openResumeATS() {
   if (receiver?.id) {
     await chrome.tabs.update(receiver.id, { active: true });
     if (receiver.windowId) await chrome.windows.update(receiver.windowId, { focused: true });
-    return;
+    return receiver;
   }
-  await chrome.tabs.create({ url: RESUMEATS_URLS[0] });
+  return chrome.tabs.create({ url: RESUMEATS_URLS[0] });
+}
+
+function delay(milliseconds) {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
+}
+
+async function captureTab(tabId) {
+  const results = await chrome.scripting.executeScript({ target: { tabId }, func: captureVisiblePage });
+  const capture = results?.[0]?.result;
+  if (!capture?.text) throw new Error('No visible text was found on this page.');
+  return {
+    ...capture,
+    id: crypto.randomUUID(),
+    capturedAt: Date.now(),
+  };
+}
+
+async function storeCapture(capture) {
+  await chrome.storage.session.set({ [CAPTURE_KEY]: capture });
+}
+
+async function notifyResumeATS(tab) {
+  if (!tab?.id) return;
+  try {
+    await chrome.tabs.sendMessage(tab.id, { type: 'resumeats:deliver-capture' });
+  } catch {
+    // A new tab may not have loaded its bridge yet; the app requests on load.
+  }
+}
+
+async function waitForTabComplete(tabId) {
+  const current = await chrome.tabs.get(tabId);
+  if (current.status === 'complete') return;
+  await new Promise((resolve, reject) => {
+    const timeout = setTimeout(() => {
+      chrome.tabs.onUpdated.removeListener(onUpdated);
+      reject(new Error('The job page did not finish loading.'));
+    }, 20000);
+    function onUpdated(updatedId, changeInfo) {
+      if (updatedId !== tabId || changeInfo.status !== 'complete') return;
+      clearTimeout(timeout);
+      chrome.tabs.onUpdated.removeListener(onUpdated);
+      resolve();
+    }
+    chrome.tabs.onUpdated.addListener(onUpdated);
+  });
+}
+
+async function captureUrl(url) {
+  const tab = await chrome.tabs.create({ url, active: true });
+  if (!tab.id) throw new Error('Could not open the job page.');
+  await waitForTabComplete(tab.id);
+  await delay(1500);
+  const capture = await captureTab(tab.id);
+  await storeCapture(capture);
+  const receiver = await openResumeATS();
+  await notifyResumeATS(receiver);
+  return { ok: true };
 }
 
 chrome.action.onClicked.addListener(async (tab) => {
   if (!tab.id || !tab.url || tab.url.startsWith('chrome://')) return;
   try {
-    const results = await chrome.scripting.executeScript({ target: { tabId: tab.id }, func: captureVisiblePage });
-    const capture = results?.[0]?.result;
-    if (!capture?.text) throw new Error('No visible text was found on this page.');
-    await chrome.storage.session.set({
-      [CAPTURE_KEY]: {
-        ...capture,
-        id: crypto.randomUUID(),
-        capturedAt: Date.now(),
-      },
-    });
-    await openResumeATS();
+    const capture = await captureTab(tab.id);
+    await storeCapture(capture);
+    const receiver = await openResumeATS();
+    await notifyResumeATS(receiver);
   } catch (error) {
     console.warn('ResumeATS capture failed:', error);
   }
 });
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message?.type === 'resumeats:capture-url') {
+    const url = String(message.url || '').trim();
+    if (!/^https?:\/\//i.test(url)) {
+      sendResponse({ ok: false, error: 'Enter a valid http(s) job URL.' });
+      return undefined;
+    }
+    captureUrl(url)
+      .then((result) => sendResponse(result))
+      .catch((error) => sendResponse({ ok: false, error: error.message || 'Browser capture failed.' }));
+    return true;
+  }
   if (message?.type !== 'resumeats:get-capture') return undefined;
   chrome.storage.session.get(CAPTURE_KEY)
     .then(async (result) => {
