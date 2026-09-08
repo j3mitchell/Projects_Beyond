@@ -116,8 +116,21 @@ async function waitForTabComplete(tabId) {
 }
 
 async function captureUrl(url) {
-  const tab = await chrome.tabs.create({ url, active: true });
+  const tabs = await chrome.tabs.query({});
+  const existing = tabs.find((tab) => {
+    if (!tab.id || !tab.url || isResumeATSUrl(tab.url)) return false;
+    try {
+      const requested = new URL(url);
+      const current = new URL(tab.url);
+      return requested.href === current.href
+        || (requested.origin === current.origin && requested.pathname === current.pathname);
+    } catch {
+      return false;
+    }
+  });
+  const tab = existing || await chrome.tabs.create({ url, active: true });
   if (!tab.id) throw new Error('Could not open the job page.');
+  await chrome.tabs.update(tab.id, { active: true });
   await waitForTabComplete(tab.id);
   await delay(1500);
   const capture = await captureTab(tab.id);

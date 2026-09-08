@@ -352,7 +352,6 @@ button:disabled { opacity: .52; cursor: not-allowed; }
   font-size: .86rem;
 }
 .browser-capture-panel p { margin: .35rem 0; }
-.browser-capture-panel button { margin-top: .2rem; }
 .browser-capture-panel code { font-family: "IBM Plex Mono", "SFMono-Regular", monospace; }
 
 .model-picker { background: rgba(247, 250, 249, .9); }

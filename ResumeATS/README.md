@@ -46,10 +46,9 @@ scraping or AI runtime.
 
 When a job page is rendered dynamically or blocks server fetching, install the
 Chrome extension in [`browser-extension`](browser-extension/README.md). After
-an incomplete deterministic result, click **Capture visible job page** in
-ResumeATS; the extension opens the submitted URL, reads its visible DOM,
-returns to ResumeATS, and submits the text through the existing Paste Job
-Description handler.
+an incomplete deterministic result, ResumeATS asks the extension to open the
+submitted URL, read its visible DOM, return to ResumeATS, and submit the text
+through the existing Paste Job Description handler.
 
 ## Run locally
 
