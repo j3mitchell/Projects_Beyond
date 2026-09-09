@@ -210,8 +210,12 @@ class PlatformAPITests(unittest.TestCase):
             "PrimaryLocation": "United States",
             "WorkplaceType": "REMOTE",
             "ExternalDescriptionStr": "<p>Build applied science systems for robotics.</p>",
-            "ExternalResponsibilitiesStr": "<h2>Key Responsibilities</h2><ul><li>Lead model development and deployment.</li></ul>",
-            "ExternalQualificationsStr": "<h2>Minimum Qualifications</h2><ul><li>Python and machine learning experience.</li></ul><p>Hiring Range: $150,000 to $200,000 per year.</p>",
+            "ExternalResponsibilitiesStr": "<h2>Key Responsibilities</h2><ul><li>Lead model development and deployment.</li></ul><h2>Minimum Qualifications</h2><ul>"
+            "<li>Python and machine learning experience.</li><li>Robotics systems experience.</li><li>Computer vision experience.</li>"
+            "<li>Sensor fusion experience.</li><li>Technical leadership experience.</li><li>Production deployment experience.</li></ul>"
+            "<h2>Preferred Qualifications</h2><ul><li>PyTorch framework experience.</li><li>C++ programming experience.</li>"
+            "<li>ROS platform experience.</li><li>Research publication experience.</li><li>Multimodal AI experience.</li><li>Real-time systems experience.</li></ul>",
+            "ExternalQualificationsStr": "<p>Disclaimer: details.</p><p>Hiring Range: $150,000 to $200,000 per year.</p><h2>Benefits</h2><ul><li>Medical and dental coverage.</li></ul>",
         }]}
         response = Mock(status_code=200, content=json.dumps(payload).encode())
         response.json.return_value = payload
@@ -226,6 +230,9 @@ class PlatformAPITests(unittest.TestCase):
         self.assertEqual(analysis['pay'], '$150,000–$200,000 per year')
         self.assertTrue(analysis['task'])
         self.assertTrue(analysis['qual'])
+        self.assertGreater(len(analysis['skills_min']), 5)
+        self.assertGreater(len(analysis['skills_max']), 5)
+        self.assertFalse(any('benefit' in item.casefold() or 'medical' in item.casefold() for item in analysis['skills_max']))
         get.assert_called_once()
         self.assertIn('recruitingCEJobRequisitionDetails', get.call_args.args[0])
 

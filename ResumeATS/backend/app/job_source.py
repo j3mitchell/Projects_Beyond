@@ -94,7 +94,22 @@ JOB_SECTION_ENDINGS = (
     "our commitment", "benefits", "working conditions", "pay range", "salary", "compensation",
     "required qualifications", "minimum qualifications", "preferred skills", "required skills", "what you'll bring",
     "what you bring", "details", "security clearance", "application statements", "benefits statement", "eeo",
-    "similar roles", "essential functions", "duties",
+    "similar roles", "essential functions", "duties", "success profile", "disclaimer", "about us", "about oracle",
+    "range and benefit information", "oracle us offers", "how to apply", "application", "equal opportunity",
+)
+NON_JOB_SECTION_ENDINGS = (
+    "success profile", "disclaimer", "about us", "about oracle", "range and benefit information",
+    "oracle us offers", "how to apply", "application", "equal opportunity", "eeo",
+)
+
+NON_PERTINENT_ITEM_RE = re.compile(
+    r"^(?:about\s+(?:us|oracle|the company)|disclaimer\b|range and benefit information\b|"
+    r"oracle\s+us\s+offers\b|benefits?\b|eeo\b|equal opportunity\b|application(?: statements)?\b|"
+    r"the role will generally accept applications\b|candidates are typically placed\b|"
+    r"(?:us|u\.s\.)\s*:\s*hiring range\b|medical,? dental|short[- ]term disability|"
+    r"life insurance|paid (?:time off|sick|parental) leave|adoption assistance|financial planning|"
+    r"voluntary benefits|401\s*\(k\)|pre[- ]tax commuter|health care and dependent care)",
+    re.I,
 )
 
 
@@ -581,7 +596,8 @@ def _section_lines(lines: list[str], starts: tuple[str, ...], ends: tuple[str, .
     start = next((index for index, line in enumerate(lines) if _heading_matches(line, starts)), None)
     if start is None:
         return []
-    finish = next((index for index in range(start + 1, len(lines)) if _heading_matches(lines[index], ends)), len(lines))
+    effective_ends = tuple(dict.fromkeys((*ends, *NON_JOB_SECTION_ENDINGS)))
+    finish = next((index for index in range(start + 1, len(lines)) if _heading_matches(lines[index], effective_ends)), len(lines))
     return lines[start + 1:finish]
 
 
@@ -616,10 +632,16 @@ def _section_items(lines: list[str], starts: tuple[str, ...], ends: tuple[str, .
     for line in _section_lines(lines, starts, ends):
         clean = _compact_text(line)
         lowered = clean.casefold()
-        if not clean or _is_heading_or_label(clean) or any(phrase in lowered for phrase in skip):
+        if not clean or _is_heading_or_label(clean) or NON_PERTINENT_ITEM_RE.search(clean) or any(phrase in lowered for phrase in skip):
             continue
         items.append(clean)
     return _short_list(items)
+
+
+def _relevant_list(value: object, maximum: int = 12) -> list[str]:
+    """Keep concise requirements while excluding employer boilerplate."""
+    items = [item for item in _unique_list(value) if not NON_PERTINENT_ITEM_RE.search(item)]
+    return _short_list(items)[:maximum]
 
 
 def _requirement_skill_items(lines: list[str]) -> list[str]:
@@ -806,10 +828,17 @@ def _extract_job_fields(structured: dict[str, object], structured_text: str, raw
             )
             if _compact_text(line) and not _is_heading_or_label(line)
         ]
-        minimum_skills = _short_list([
+        inferred_minimum = _short_list([
             item for item in basic_items
             if re.search(r"\b(?:strong knowledge|experience with|experience in|software unit testing|trouble|communication|team environment|self[- ]starter|database development|data migration|clearance|degree|years relevant experience)\b", item, re.I)
         ])
+        # Degree, tenure, clearance, and leadership requirements are still
+        # hard minimum gates when a posting has no separate "Minimum Skills"
+        # heading. Preserve them in the minimum bucket instead of returning
+        # an undersized or unrelated list.
+        minimum_skills = inferred_minimum or _short_list(basic_items)
+        if len(minimum_skills) < 6 and basic_items:
+            minimum_skills = _short_list([*minimum_skills, *basic_items])
     preferred_skills = _section_items(lines, ("preferred qualifications", "preferred skills", "desired qualifications"), ("security clearance", "responsibilities", "our commitment", "benefits", "working conditions", "pay range", "salary", "compensation", "location", "work location", "details"))
 
     location = _structured_location(structured.get("jobLocation"))
@@ -843,9 +872,9 @@ def _extract_job_fields(structured: dict[str, object], structured_text: str, raw
         "description": description,
         "work": work,
         "task": task,
-        "qual": qualifications,
-        "skills_min": minimum_skills,
-        "skills_max": preferred_skills,
+        "qual": _relevant_list(qualifications),
+        "skills_min": _relevant_list(minimum_skills),
+        "skills_max": _relevant_list(preferred_skills),
         "pay": _extract_pay(structured, raw_text),
     }
 
@@ -905,8 +934,8 @@ def _normalise_ai_result(content: object, page: dict) -> dict:
 
     def list_field(name: str) -> list[str]:
         value = content.get(name)
-        result = _short_list(value)
-        return result or _short_list(page.get(name, []))
+        result = _relevant_list(value)
+        return result or _relevant_list(page.get(name, []))
 
     return {"mode": "ai", "source_url": page.get("source_url", ""),
             "title": str(content.get("title") or page.get("title") or "Job Opportunity")[:200],
@@ -1094,11 +1123,11 @@ def _affinda_analyze(page: dict) -> dict:
     company = _affinda_text(_affinda_field(data, "organizationName")) or page.get("company", "")
     location = _affinda_text(_affinda_field(data, "location")) or page.get("location", "")
     job_type = _affinda_text(_affinda_field(data, "jobType")) or page.get("type", "")
-    qualification_list = _short_list(vendor_qualifications) or _short_list(page.get("qual", []))
-    minimum_skills = _short_list(page.get("skills_min", []))
+    qualification_list = _relevant_list(vendor_qualifications) or _relevant_list(page.get("qual", []))
+    minimum_skills = _relevant_list(page.get("skills_min", []))
     if not minimum_skills:
-        minimum_skills = _short_list([skill["name"] for skill in skills])
-    preferred_skills = _short_list(page.get("skills_max", []))
+        minimum_skills = _relevant_list([skill["name"] for skill in skills])
+    preferred_skills = _relevant_list(page.get("skills_max", []))
     return {
         "mode": "ai", "source_url": page.get("source_url", ""), "title": title[:200],
         "company": company[:200], "industry": _infer_industry(page.get("raw_text", "")),
