@@ -8,7 +8,7 @@ import os
 import re
 import socket
 from html import unescape
-from urllib.parse import urljoin, urlsplit, urlparse
+from urllib.parse import quote, urljoin, urlsplit, urlparse
 
 import requests
 import urllib3
@@ -65,6 +65,16 @@ SKILL_TAXONOMY = {
     "Leadership": ("leadership", "people management", "team lead", "mentoring"),
     "Communication": ("communication", "stakeholder management", "presentation", "written communication"),
     "Risk Management": ("risk management", "risk assessment", "compliance", "controls"),
+    "Machine Learning": ("machine learning", "ml model", "ml frameworks"),
+    "Artificial Intelligence": ("artificial intelligence", "embodied ai", "multimodal ai"),
+    "Computer Vision": ("computer vision", "perception", "scene understanding", "object detection"),
+    "Robotics": ("robotics", "robot apis", "robot sdk"),
+    "Reinforcement Learning": ("reinforcement learning", "action-conditioned planning"),
+    "Sensor Fusion": ("sensor fusion", "multi-sensor fusion", "multimodal systems"),
+    "PyTorch": ("pytorch",),
+    "C++": ("c++",),
+    "ROS": ("ros", "robot operating system"),
+    "Data Science": ("data science",),
 }
 
 WORK_TYPE_LABELS = {
@@ -223,6 +233,115 @@ def _is_public_hostname(hostname: str) -> bool:
         return bool(addresses) and all(ipaddress.ip_address(address).is_global for address in addresses)
     except ValueError:
         return False
+
+
+def _oracle_hcm_page(raw: bytes, source_url: str) -> dict | None:
+    """Extract a job from an Oracle Recruiting Cloud app shell.
+
+    Oracle career pages are client-rendered and their initial HTML contains
+    only a ``base`` tag and social metadata.  The base tag publishes the
+    tenant API and site number, so the fallback remains data-driven for any
+    Oracle tenant rather than relying on a company-specific URL or parser.
+    """
+    try:
+        soup = BeautifulSoup(raw, "html.parser")
+        base = soup.find("base", attrs={"data-apibaseurl": True})
+        parsed_source = urlsplit(source_url)
+        job_match = re.search(r"/job/([^/?#]+)", parsed_source.path, re.I)
+        if not base or not job_match:
+            return None
+        api_base = _compact_text(base.get("data-apibaseurl", "")).rstrip("/")
+        api_parts = urlsplit(api_base)
+        site_number = _compact_text(base.get("data-sitenumber", ""))
+        job_id = job_match.group(1)
+        if (
+            api_parts.scheme not in {"http", "https"}
+            or not api_parts.hostname
+            or api_parts.username
+            or api_parts.password
+            or api_parts.port not in {None, 80, 443}
+            or not re.fullmatch(r"[A-Za-z0-9_.-]{1,120}", site_number)
+            or not re.fullmatch(r"[A-Za-z0-9_.-]{1,120}", job_id)
+            or not _is_public_hostname(api_parts.hostname)
+        ):
+            return None
+        endpoint = (
+            f"{api_base}/hcmRestApi/resources/latest/"
+            "recruitingCEJobRequisitionDetails?expand=all&onlyData=true&finder=ById;"
+            f"Id=%22{quote(job_id, safe='')}%22,siteNumber={quote(site_number, safe='')}"
+        )
+        response = requests.get(
+            endpoint,
+            headers={**REQUEST_HEADERS, "Accept": "application/json"},
+            timeout=(5, 15),
+        )
+        if response.status_code != 200 or len(response.content) > MAX_RENDERED_PAGE_BYTES:
+            return None
+        payload = response.json()
+        items = payload.get("items", []) if isinstance(payload, dict) else []
+        item = items[0] if isinstance(items, list) and items and isinstance(items[0], dict) else None
+        if not item:
+            return None
+
+        def field(*names: str) -> str:
+            for name in names:
+                value = _compact_text(item.get(name, ""))
+                if value:
+                    return value
+            return ""
+
+        title = field("Title", "OtherRequisitionTitle") or _compact_text(
+            soup.find("meta", attrs={"property": "og:title"}).get("content", "")
+            if soup.find("meta", attrs={"property": "og:title"}) else ""
+        )
+        company = field("Organization", "LegalEmployer", "OrganizationName", "LegalEmployerName")
+        if not company:
+            company_meta = soup.find("meta", attrs={"property": "og:site_name"})
+            company = _compact_text(company_meta.get("content", "") if company_meta else "")
+        overview = item.get("ExternalDescriptionStr") or item.get("ShortDescriptionStr") or ""
+        responsibilities = item.get("ExternalResponsibilitiesStr") or ""
+        qualifications = item.get("ExternalQualificationsStr") or ""
+        if not title or not any(_compact_text(value) for value in (overview, responsibilities, qualifications)):
+            return None
+
+        # Feed the existing structured extraction path.  This keeps Oracle
+        # output on the same taxonomy, word limits, pay normalization, and
+        # field labels as every other job source.
+        combined_description = (
+            f"<h2>Overview</h2>{overview}"
+            f"<h2>Responsibilities</h2>{responsibilities}"
+            f"<h2>Qualifications</h2>{qualifications}"
+        )
+        primary_location = field("PrimaryLocation")
+        job_type = field("WorkplaceType", "WorkplaceTypeCode")
+        job_location = {"@type": "Place", "address": {"addressLocality": primary_location}}
+        posting = {
+            "@context": "https://schema.org",
+            "@type": "JobPosting",
+            "title": title,
+            "hiringOrganization": {"@type": "Organization", "name": company},
+            "description": combined_description,
+            "jobLocation": job_location,
+            "jobLocationType": job_type,
+        }
+        # Oracle stores salary in the qualifications HTML.  Let the existing
+        # text parser read it there, while preserving any future structured
+        # salary values if the API begins returning them.
+        html = (
+            "<html><head>"
+            f"<title>{_compact_text(title)}</title>"
+            f"<script type=\"application/ld+json\">{json.dumps(posting).replace('</', '<\\/')}</script>"
+            "</head><body></body></html>"
+        ).encode("utf-8")
+        page = _page_fields(html, source_url)
+        page.setdefault("metadata", {})["render_mode"] = "oracle-hcm-api"
+        page["metadata"]["api_endpoint"] = endpoint[:1000]
+        if job_type:
+            page["metadata"]["oracle_workplace_type"] = job_type[:200]
+        return page
+    except (KeyError, TypeError, ValueError, requests.RequestException, json.JSONDecodeError) as exc:
+        logging.getLogger(__name__).info("Oracle job API fallback unavailable: %s", type(exc).__name__)
+        return None
 
 
 def _dom_text_lines(root: BeautifulSoup) -> list[str]:
@@ -479,7 +598,17 @@ def _is_heading_or_label(value: str) -> bool:
         "our commitment to you overview of benefits", "working conditions", "pay range",
     }
     known_normalized = {_normalised_heading(item) for item in known}
-    return heading in known_normalized or (clean.endswith(":") and len(clean.split()) <= 8)
+    words = clean.split()
+    heading_words = [word for word in words if word.casefold() not in {"a", "an", "and", "for", "in", "of", "on", "or", "the", "to", "with"}]
+    title_case_words = sum(1 for word in heading_words if word[:1].isupper())
+    looks_like_heading = (
+        1 < len(words) <= 8
+        and not re.search(r"[.!?]$", clean)
+        and not re.search(r"[/]", clean)
+        and heading_words
+        and title_case_words / len(heading_words) >= 0.8
+    )
+    return heading in known_normalized or (clean.endswith(":") and len(words) <= 8) or looks_like_heading
 
 
 def _section_items(lines: list[str], starts: tuple[str, ...], ends: tuple[str, ...], skip: tuple[str, ...] = ()) -> list[str]:
@@ -604,7 +733,7 @@ def _extract_pay(structured: dict[str, object], text: str) -> str:
 
     amount = r"(?:(?:USD|CAD|AUD|GBP|EUR)\s*)?[$€£]?\s*\d[\d,]*(?:\.\d+)?\s*[kKmM]?"
     pay_match = re.search(
-        rf"(?:pay\s+range|(?:target\s+)?salary(?:\s+range)?|compensation)\s*[:\-]?\s*(?P<first>{amount})"
+        rf"(?:pay\s+range|(?:target\s+)?salary(?:\s+range)?|compensation|hiring\s+range(?:\s+in\s+[A-Za-z]+)?)\s*[:\-]?\s*(?:from\s*[:\-]?\s*)?(?P<first>{amount})"
         rf"(?:\s*(?:-|–|—|to)\s*(?P<second>{amount}))?"
         rf"(?P<term>\s*(?:/|per)\s*(?:hour|hr|week|month|year|yr))?", text, re.I)
     if pay_match:
@@ -1014,8 +1143,13 @@ def analyze_job_text(description: str, mode: str = "deterministic") -> dict:
 def analyze_job(url: str, mode: str = "deterministic") -> dict:
     if mode not in {"deterministic", "ai"}:
         raise HTTPException(400, "Choose Deterministic or AI job analysis.")
+    raw = None
     try:
-        page = _page_fields(fetch_public_html(url), url)
+        raw = fetch_public_html(url)
+        # Oracle Recruiting Cloud exposes its tenant API in the shell's base
+        # tag. Use it before browser rendering so those pages resolve quickly
+        # and with the complete posting instead of the empty app shell.
+        page = _oracle_hcm_page(raw, url) or _page_fields(raw, url)
     except HTTPException as original_error:
         detail = str(original_error.detail)
         # Most modern recruiting platforms build the posting with client-side
@@ -1031,8 +1165,9 @@ def analyze_job(url: str, mode: str = "deterministic") -> dict:
             raise
         try:
             rendered = render_public_html(url)
-            page = _page_fields(rendered, url)
-            page.setdefault("metadata", {})["render_mode"] = "browser-fallback"
+            page = _oracle_hcm_page(rendered, url) or _page_fields(rendered, url)
+            if page.get("metadata", {}).get("render_mode") != "oracle-hcm-api":
+                page.setdefault("metadata", {})["render_mode"] = "browser-fallback"
         except Exception:
             # Keep the deterministic error users already understand when the
             # optional browser runtime also cannot access the source page.

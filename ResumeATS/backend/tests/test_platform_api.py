@@ -199,6 +199,36 @@ class PlatformAPITests(unittest.TestCase):
         self.assertEqual(analysis['title'], 'Rendered Data Engineer')
         self.assertEqual(analysis['metadata']['render_mode'], 'browser-fallback')
 
+    def test_oracle_app_shell_uses_public_tenant_api(self):
+        shell = b'''<html><head><base href="/en/sites/jobsearch"
+        data-apibaseurl="https://jobs.example.oraclecloud.com:443"
+        data-sitenumber="CX_45001"><meta property="og:site_name" content="Oracle">
+        <meta property="og:title" content="Applied Scientist"></head><body><div class="app"></div></body></html>'''
+        payload = {"items": [{
+            "Title": "Applied Scientist",
+            "Organization": "Oracle",
+            "PrimaryLocation": "United States",
+            "WorkplaceType": "REMOTE",
+            "ExternalDescriptionStr": "<p>Build applied science systems for robotics.</p>",
+            "ExternalResponsibilitiesStr": "<h2>Key Responsibilities</h2><ul><li>Lead model development and deployment.</li></ul>",
+            "ExternalQualificationsStr": "<h2>Minimum Qualifications</h2><ul><li>Python and machine learning experience.</li></ul><p>Hiring Range: $150,000 to $200,000 per year.</p>",
+        }]}
+        response = Mock(status_code=200, content=json.dumps(payload).encode())
+        response.json.return_value = payload
+        with patch('app.job_source.fetch_public_html', return_value=shell), \
+             patch('app.job_source.requests.get', return_value=response) as get, \
+             patch('app.job_source._is_public_hostname', return_value=True):
+            analysis = analyze_job('https://careers.example.com/en/sites/jobsearch/job/338681/', 'deterministic')
+        self.assertEqual(analysis['title'], 'Applied Scientist')
+        self.assertEqual(analysis['company'], 'Oracle')
+        self.assertEqual(analysis['metadata']['render_mode'], 'oracle-hcm-api')
+        self.assertEqual(analysis['type'], 'Remote')
+        self.assertEqual(analysis['pay'], '$150,000–$200,000 per year')
+        self.assertTrue(analysis['task'])
+        self.assertTrue(analysis['qual'])
+        get.assert_called_once()
+        self.assertIn('recruitingCEJobRequisitionDetails', get.call_args.args[0])
+
     def test_fetch_public_html_requests_decoded_content(self):
         response = Mock(status=200, headers={})
         response.read.return_value = b'<html><main>' + (b'job description ' * 20) + b'</main></html>'
