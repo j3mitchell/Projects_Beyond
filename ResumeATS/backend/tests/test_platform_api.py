@@ -333,6 +333,51 @@ class PlatformAPITests(unittest.TestCase):
         self.assertIn('database design and modeling', analysis['skills_min'])
         self.assertEqual(analysis['pay'], '$185,000–$275,000 / yr')
 
+    def test_peopleadmin_posting_filters_portal_sections(self):
+        html = b'''<html><head>
+        <title>Prince George's Community College Employment Opportunities | Data Analyst</title>
+        <meta property="og:title" content="Data Analyst (Institutional Research)">
+        </head><body><div id="content"><h2>Data Analyst (Institutional Research)</h2>
+        <div id="form_view"><div id="form_tab_1" class="form_tab">
+          <div class="form_container"><div class="builder_title">Position Information</div><table>
+            <tr><th>Position Title</th><td>Data Analyst (Institutional Research)</td></tr>
+            <tr><th>Position Type</th><td>Staff</td></tr>
+            <tr><th>Hiring Salary Range</th><td>$71,897 - $102,804 annually</td></tr>
+            <tr><th>Job Description Summary</th><td>Under general supervision, the Data Analyst supports institutional reporting, business intelligence, and forecasting for the college.</td></tr>
+            <tr><th>Minimum Qualifications</th><td><ul>
+              <li>Bachelor's degree in social science or related field.</li>
+              <li>Two years of full-time experience in data analysis.</li>
+              <li>Two years of higher education experience preferred.</li>
+              <li>Master's degree in a related field preferred.</li>
+            </ul></td></tr>
+            <tr><th>Criteria</th><td><div><strong>ESSENTIAL DUTIES</strong></div><ul>
+              <li>Prepare mandated institutional reports.</li><li>Design and test complex reports.</li>
+            </ul><div><strong>KNOWLEDGE, SKILLS AND ABILITIES</strong></div><ul>
+              <li>Knowledge of relational database systems.</li><li>Knowledge of statistical software.</li>
+              <li>Experience with enterprise reporting systems.</li><li>Experience with dashboards and Power BI.</li>
+              <li>Knowledge of data schemas.</li><li>Ability to communicate clearly.</li>
+            </ul></td></tr>
+            <tr><th>Job Requirements</th><td><div><strong>PHYSICAL REQUIREMENTS</strong></div><div>Office equipment use.</div><div><strong>OTHER REQUIREMENTS</strong></div><ul><li>Background investigation.</li></ul></td></tr>
+          </table></div>
+          <div class="form_container"><div class="builder_title">Posting Detail Information</div><table><tr><th>Special Instructions</th><td>Benefits and application status details.</td></tr></table></div>
+        </div><h2>Posting Specific Questions</h2><div>Toggle navigation Do you have a bachelor's degree? Yes No</div></div></div></body></html>'''
+        with patch('app.job_source.fetch_public_html', return_value=html):
+            analysis = analyze_job('https://pgcc.peopleadmin.com/postings/13783', 'deterministic')
+        self.assertEqual(analysis['title'], 'Data Analyst (Institutional Research)')
+        self.assertEqual(analysis['company'], "Prince George's Community College")
+        self.assertEqual(analysis['work'], 'Under general supervision, the Data Analyst…')
+        self.assertEqual(analysis['task'], 'Prepare mandated institutional reports.')
+        self.assertEqual(analysis['pay'], '$71,897–$102,804 / yr')
+        self.assertEqual(len(analysis['qual']), 4)
+        self.assertGreater(len(analysis['skills_min']), 5)
+        self.assertGreater(len(analysis['skills_max']), 5)
+        for field in ('qual', 'skills_min', 'skills_max'):
+            values = ' '.join(analysis[field]).casefold()
+            self.assertNotIn('toggle navigation', values)
+            self.assertNotIn('benefit', values)
+            self.assertNotIn('accommodation', values)
+            self.assertFalse(any(item.strip().casefold() in {'yes', 'no'} for item in analysis[field]))
+
     def test_generic_semantic_job_markup_extracts_sections(self):
         html = b'''<html><head><title>Data Platform Engineer</title></head><body>
         <article><h1>Data Platform Engineer</h1><p class="employer">Northstar Systems</p>

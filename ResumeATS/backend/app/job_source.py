@@ -94,7 +94,9 @@ JOB_SECTION_ENDINGS = (
     "our commitment", "benefits", "working conditions", "pay range", "salary", "compensation",
     "required qualifications", "minimum qualifications", "preferred skills", "required skills", "what you'll bring",
     "what you bring", "details", "security clearance", "application statements", "benefits statement", "eeo",
-    "similar roles", "essential functions", "duties", "success profile", "disclaimer", "about us", "about oracle",
+    "similar roles", "essential functions", "essential duties", "duties", "criteria", "job requirements", "physical requirements",
+    "other requirements", "accommodations", "posting detail information", "posting specific questions",
+    "applicant documents", "success profile", "disclaimer", "about us", "about oracle",
     "range and benefit information", "oracle us offers", "how to apply", "application", "equal opportunity",
 )
 NON_JOB_SECTION_ENDINGS = (
@@ -365,6 +367,8 @@ def _dom_text_lines(root: BeautifulSoup) -> list[str]:
     seen: set[str] = set()
     block_tags = {"h1", "h2", "h3", "h4", "h5", "h6", "p", "li", "dt", "dd", "pre"}
     for node in root.find_all([*block_tags, "div", "span"]):
+        if node.find_parent("table"):
+            continue
         if node.find_parent(["script", "style", "nav", "footer", "header", "noscript"]):
             continue
         classes = " ".join(node.get("class", [])) if isinstance(node.get("class"), list) else str(node.get("class", ""))
@@ -385,16 +389,22 @@ def _dom_text_lines(root: BeautifulSoup) -> list[str]:
 def _dom_job_fields(soup: BeautifulSoup) -> dict[str, str | BeautifulSoup]:
     """Collect common job-page signals using semantic HTML and generic hints."""
     root = (
-        soup.find("main")
+        soup.select_one("#form_tab_1 .form_container")
+        or soup.select_one("#form_tab_1")
+        or soup.select_one("[id*='job-posting'], [id*='posting-content'], [class*='job-posting'], [class*='posting-content']")
+        or soup.find("main")
         or soup.find("article")
         or soup.find(attrs={"role": "main"})
         or soup.select_one('[class*="job-description"], [class*="job-content"], [class*="job-detail"], [class*="job-details"]')
         or soup
     )
-    title_node = soup.select_one(
+    title_node = next((node for node in soup.select(
         '[itemprop="title"], [data-job-title], [data-testid*="job-title"], '
-        '[class*="job"][class*="title"], [class*="position"][class*="title"], h1'
-    )
+        '[class*="job"][class*="title"], [class*="position"][class*="title"], h1, h2, h3'
+    ) if (text := _compact_text(node.get_text(" ", strip=True))) and _normalised_heading(text) not in {
+        "job vacancy announcement", "posting detail information", "posting specific questions",
+        "applicant documents", "position information", "job opportunity", "toggle navigation",
+    }), None)
     company_node = soup.select_one(
         '[itemprop="hiringOrganization"] [itemprop="name"], [itemprop="hiringOrganization"], '
         '[data-company], [data-employer], [class*="company"], [class*="employer"], [id*="company"], [id*="employer"]'
@@ -404,6 +414,37 @@ def _dom_job_fields(soup: BeautifulSoup) -> dict[str, str | BeautifulSoup]:
         '[data-location], [class*="location"], [id*="location"]'
     )
     lines = _dom_text_lines(root)
+    # Table-based recruiting portals (including PeopleAdmin) put the field
+    # labels in <th> cells and the posting content in <td> cells. Preserve
+    # those boundaries while ignoring the separate application/question tabs.
+    for row in root.find_all("tr"):
+        heading_node = row.find("th")
+        value_node = row.find("td")
+        heading = _compact_text(heading_node.get_text(" ", strip=True)) if heading_node else ""
+        if not heading or not value_node:
+            continue
+        lines.append(heading)
+        item_nodes = value_node.find_all("li")
+        if item_nodes:
+            # Preserve section headings embedded in a table cell (for
+            # example, "ESSENTIAL DUTIES" and "KNOWLEDGE, SKILLS AND
+            # ABILITIES") and list items, while dropping the cell's prose
+            # intro and any nested application boilerplate.
+            for node in value_node.find_all(["strong", "li"]):
+                if node.name == "li":
+                    value = _compact_text(node.get_text(" ", strip=True))
+                else:
+                    value = _compact_text(node.get_text(" ", strip=True)).rstrip(":")
+                    normalized = _normalised_heading(value)
+                    if not value or (value != value.upper() and normalized not in {
+                        "criteria", "essential duties", "knowledge skills and abilities", "physical requirements",
+                        "other requirements", "accommodations",
+                    }):
+                        continue
+                if value and value.casefold() not in {existing.casefold() for existing in lines}:
+                    lines.append(value)
+        else:
+            lines.extend(_compact_text(line) for line in value_node.get_text("\n", strip=True).splitlines() if _compact_text(line))
     return {
         "title": _compact_text(title_node.get_text(" ", strip=True)) if title_node else "",
         "company": _compact_text(company_node.get_text(" ", strip=True)) if company_node else "",
@@ -475,7 +516,7 @@ def _page_fields(raw: bytes, source_url: str = "", iframe_depth: int = 0) -> dic
 
     page_title = soup.title.get_text(" ", strip=True) if soup.title else ""
 
-    title = structured_title or str(dom_fields.get("title") or "") or "Job Opportunity"
+    title = structured_title or str(dom_fields.get("title") or "") or metadata.get("og_title", "") or "Job Opportunity"
     company = structured_company
     if not company:
         company = str(dom_fields.get("company") or "")
@@ -495,6 +536,10 @@ def _page_fields(raw: bytes, source_url: str = "", iframe_depth: int = 0) -> dic
             prefix_match = re.match(r"^(?P<company>[^|–—-]+?)\s+[–—-]\s+", page_title)
             if prefix_match:
                 company = _compact_text(prefix_match.group("company"))
+        if not company and page_title:
+            portal_match = re.match(r"^(?P<company>.+?)\s+Employment Opportunities\s*\|", page_title, re.I)
+            if portal_match:
+                company = _compact_text(portal_match.group("company"))
 
     for element in soup(["script", "style", "nav", "footer", "header", "noscript"]):
         element.decompose()
@@ -611,7 +656,10 @@ def _is_heading_or_label(value: str) -> bool:
         "minimum qualifications", "desired qualifications", "preferred skills", "required skills", "what you'll bring",
         "what you bring", "security clearance", "details", "education requirements", "category", "clearance", "location",
         "telecommute", "qualifications here s what you need", "minimum skills", "must have", "preferred qualifications",
-        "our commitment to you overview of benefits", "working conditions", "pay range",
+        "our commitment to you overview of benefits", "working conditions", "pay range", "position information",
+        "salary range", "hiring salary range", "criteria", "essential duties", "knowledge", "skills", "abilities",
+        "knowledge skills and abilities", "job requirements", "physical requirements", "other requirements",
+        "accommodations", "posting detail information", "posting specific questions", "applicant documents",
     }
     known_normalized = {_normalised_heading(item) for item in known}
     words = clean.split()
@@ -653,6 +701,22 @@ def _requirement_skill_items(lines: list[str]) -> list[str]:
         candidates = [part for part in candidates if part and not re.fullmatch(r"and others?", part, re.I)]
         return _short_list(candidates)
     return []
+
+
+def _knowledge_skill_items(lines: list[str]) -> list[str]:
+    """Read a posting's combined knowledge/skills/abilities section."""
+    section = _section_lines(
+        lines,
+        ("knowledge skills and abilities", "knowledge, skills and abilities"),
+        ("job requirements", "physical requirements", "other requirements", "accommodations", "posting detail information",
+         "posting specific questions", "applicant documents", "benefits", "pay range", "salary", "compensation", "details"),
+    )
+    if not section:
+        return []
+    return _short_list([
+        line for line in section
+        if line and not _is_heading_or_label(line) and not NON_PERTINENT_ITEM_RE.search(line)
+    ])
 
 
 def _structured_location(value: object) -> str:
@@ -755,7 +819,7 @@ def _extract_pay(structured: dict[str, object], text: str) -> str:
 
     amount = r"(?:(?:USD|CAD|AUD|GBP|EUR)\s*)?[$€£]?\s*\d[\d,]*(?:\.\d+)?\s*[kKmM]?"
     pay_match = re.search(
-        rf"(?:pay\s+range|(?:target\s+)?salary(?:\s+range)?|compensation|hiring\s+range(?:\s+in\s+[A-Za-z]+)?)\s*[:\-]?\s*(?:from\s*[:\-]?\s*)?(?P<first>{amount})"
+        rf"(?:pay\s+range|(?:target\s+)?salary(?:\s+range)?|compensation|hiring\s+salary\s+range|hiring\s+range(?:\s+in\s+[A-Za-z]+)?)\s*[:\-]?\s*(?:from\s*[:\-]?\s*)?(?P<first>{amount})"
         rf"(?:\s*(?:-|–|—|to)\s*(?P<second>{amount}))?"
         rf"(?P<term>\s*(?:/|per)\s*(?:hour|hr|week|month|year|yr))?", text, re.I)
     if pay_match:
@@ -765,7 +829,7 @@ def _extract_pay(structured: dict[str, object], text: str) -> str:
         if second:
             return _normalise_pay_term(f"{first}–{second}{f' {term}' if term else ''}")
         return _normalise_pay_term(f"{first}{f' {term}' if term else ''}")
-    if re.search(r"\bcommission[- ]based\b|\bcommission\b", text, re.I):
+    if re.search(r"\bcommission[- ]based\b|\bcommission[- ]only\b|\bpaid\s+on\s+commission\b|\bcommission\s+structure\b", text, re.I):
         return "Commission"
     if re.search(r"\bintern(?:ship)?\b", text, re.I):
         return "Intern (unpaid)" if re.search(r"\bunpaid\b", text, re.I) else "Intern"
@@ -781,7 +845,7 @@ def _extract_job_fields(structured: dict[str, object], structured_text: str, raw
 
     work_lines = _section_lines(
         lines,
-        ("the work", "about the role", "about this role", "overview", "job summary", "position summary"),
+        ("the work", "about the role", "about this role", "overview", "job summary", "position summary", "job description summary"),
         ("responsibilities", "requirements", "qualifications", "pay range", "working conditions", "details"),
     )
     work_source = next((line for line in work_lines if not _is_heading_or_label(line) and len(line.split()) > 2), "")
@@ -792,7 +856,7 @@ def _extract_job_fields(structured: dict[str, object], structured_text: str, raw
         work_source = next((line for line in lines if re.search(r"\b(?:is seeking|candidate must|successful candidate will)\b", line, re.I)), "")
     overview_lines = _section_lines(
         lines,
-        ("overview", "description", "the work", "about the role", "about this role", "job summary", "position summary"),
+        ("overview", "description", "the work", "about the role", "about this role", "job summary", "position summary", "job description summary"),
         ("responsibilities", "requirements", "qualifications", "pay range", "working conditions", "details"),
     )
     description_source = next((line for line in overview_lines
@@ -806,25 +870,26 @@ def _extract_job_fields(structured: dict[str, object], structured_text: str, raw
     description = _under_word_limit(description_source, maximum=6)
     task_lines = _section_lines(
         lines,
-        ("key responsibilities", "responsibilities", "what you'll do", "your impact", "duties", "essential functions"),
-        ("requirements", "qualifications", "minimum skills", "preferred qualifications", "preferred skills", "pay range", "details"),
+        ("key responsibilities", "responsibilities", "what you'll do", "your impact", "duties", "essential functions", "essential duties"),
+        ("requirements", "qualifications", "minimum skills", "preferred qualifications", "preferred skills", "job requirements", "pay range", "details"),
     )
     task = _under_word_limit(next((line for line in task_lines if not _is_heading_or_label(line) and not line.casefold().startswith("other duties")), ""), maximum=6)
     qualifications = _section_items(
         lines, ("requirements", "qualifications here s what you need", "qualifications", "basic qualifications", "required qualifications", "minimum qualifications", "what you'll bring", "what you bring"),
-        ("minimum skills", "required skills", "preferred qualifications", "preferred skills", "desired qualifications", "security clearance", "our commitment", "benefits", "working conditions", "pay range", "salary", "compensation", "location", "work location", "details"),
+        ("minimum skills", "required skills", "preferred qualifications", "preferred skills", "desired qualifications", "criteria", "job requirements", "security clearance", "our commitment", "benefits", "working conditions", "pay range", "salary", "compensation", "location", "work location", "details"),
         ("intended to provide a general overview", "however, due to", "candidates should demonstrate", "requirements for"),
     )
-    minimum_skills = _section_items(lines, ("minimum skills", "required skills", "must have"), ("preferred qualifications", "preferred skills", "desired qualifications", "our commitment", "benefits", "working conditions", "pay range", "salary", "compensation", "location", "work location", "details"))
+    minimum_skills = _section_items(lines, ("minimum skills", "required skills", "must have"), ("preferred qualifications", "preferred skills", "desired qualifications", "criteria", "job requirements", "our commitment", "benefits", "working conditions", "pay range", "salary", "compensation", "location", "work location", "details"))
     if not minimum_skills:
         minimum_skills = _requirement_skill_items(lines)
+    knowledge_skills = _knowledge_skill_items(lines)
     if not minimum_skills:
         basic_items = [
             _compact_text(line)
             for line in _section_lines(
                 lines,
                 ("basic qualifications", "required qualifications", "minimum qualifications"),
-                ("desired qualifications", "preferred qualifications", "preferred skills", "security clearance", "our commitment", "benefits", "working conditions", "pay range", "salary", "compensation", "location", "work location", "details"),
+                ("desired qualifications", "preferred qualifications", "preferred skills", "criteria", "job requirements", "security clearance", "our commitment", "benefits", "working conditions", "pay range", "salary", "compensation", "location", "work location", "details"),
             )
             if _compact_text(line) and not _is_heading_or_label(line)
         ]
@@ -839,7 +904,11 @@ def _extract_job_fields(structured: dict[str, object], structured_text: str, raw
         minimum_skills = inferred_minimum or _short_list(basic_items)
         if len(minimum_skills) < 6 and basic_items:
             minimum_skills = _short_list([*minimum_skills, *basic_items])
-    preferred_skills = _section_items(lines, ("preferred qualifications", "preferred skills", "desired qualifications"), ("security clearance", "responsibilities", "our commitment", "benefits", "working conditions", "pay range", "salary", "compensation", "location", "work location", "details"))
+    if len(minimum_skills) < 6 and knowledge_skills:
+        minimum_skills = _short_list([*minimum_skills, *knowledge_skills])
+    preferred_skills = _section_items(lines, ("preferred qualifications", "preferred skills", "desired qualifications"), ("security clearance", "responsibilities", "criteria", "job requirements", "our commitment", "benefits", "working conditions", "pay range", "salary", "compensation", "location", "work location", "details"))
+    if not preferred_skills and knowledge_skills:
+        preferred_skills = _short_list(knowledge_skills)
 
     location = _structured_location(structured.get("jobLocation"))
     # Some vendors publish only a region abbreviation in JSON-LD while the
