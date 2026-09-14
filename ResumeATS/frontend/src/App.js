@@ -96,8 +96,17 @@ function credentialEvidenceStatus(requirement, evidence) {
   return 'missing';
 }
 
+function hasSpecificCredentialRequirement(requirement) {
+  return /(?:bachelor|b\.?\s*s\.?|b\.?\s*a\.?|undergraduate|master|m\.?\s*s\.?|m\.?\s*a\.?|graduate|associate|a\.?\s*s\.?|doctorate|doctoral|ph\.?\s*d\.?|clearance|top secret|ts[-\s/]?sci|public trust|secret)\b/i.test(String(requirement || ''));
+}
+
 function matchesRequirementEvidence(evidence, requirement) {
-  return credentialEvidenceStatus(requirement, evidence) !== 'missing' || matchesSearchText(evidence, requirement);
+  const status = credentialEvidenceStatus(requirement, evidence);
+  if (status !== 'missing') return true;
+  // Degree levels and clearances are structured signals. Do not let a broad
+  // partial-word match (for example, "degree" or "science") turn a missing
+  // Master's requirement into a match for a Bachelor's entry.
+  return !hasSpecificCredentialRequirement(requirement) && matchesSearchText(evidence, requirement);
 }
 
 function uniqueValues(values) {
