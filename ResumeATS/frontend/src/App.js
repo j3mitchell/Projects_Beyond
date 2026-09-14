@@ -1017,6 +1017,11 @@ export default function App() {
             Resume file (optional for job extraction)
             <input type="file" accept=".docx,.pdf,.txt,.md,.rtf,.html,.htm,.doc,.odt,.json,.xml,.pages,.zip" disabled={loading || extracting} onChange={handleResumeChange} />
           </label>
+          <div className="form-action">
+            <button type="button" disabled={loading || extracting || !resume} onClick={handleImportResume}>
+              {extracting ? 'Importing…' : 'Import resume'}
+            </button>
+          </div>
 
           <label>
             Job URL
@@ -1038,6 +1043,11 @@ export default function App() {
             <textarea value={jobDescription} onChange={(e) => setJobDescription(e.target.value)}
               maxLength={30000} rows={4} placeholder="Use this if the job page requires a login or blocks access." />
           </label>
+          <div className="form-action">
+            <button type="button" disabled={loading || extracting || (!jobUrl.trim() && !jobDescription.trim())} onClick={analyzeJob}>
+              {loadingAction === 'analyze' ? 'Analyzing…' : 'Analyze job'}
+            </button>
+          </div>
 
           <fieldset className="model-picker">
             <legend>Job URL analysis</legend>
@@ -1066,16 +1076,9 @@ export default function App() {
               <option value="rtf">RTF</option>
             </select>
           </label>
-
-          <div className="form-actions" role="group" aria-label="ResumeATS actions">
-            <button type="button" disabled={loading || extracting || (!jobUrl.trim() && !jobDescription.trim())} onClick={analyzeJob}>
-              {loadingAction === 'analyze' ? 'Analyzing…' : 'Analyze job'}
-            </button>
+          <div className="form-action">
             <button type="button" disabled={loading || extracting || !resume || (!jobUrl.trim() && !jobDescription.trim())} onClick={prepareResume}>
               {loadingAction === 'prepare' ? 'Preparing…' : 'Prepare resume'}
-            </button>
-            <button type="button" disabled={loading || extracting || !resume} onClick={handleImportResume}>
-              {extracting ? 'Importing…' : 'Import resume'}
             </button>
           </div>
           {browserCaptureNeeded && jobUrl.trim() && !jobDescription.trim() && (
