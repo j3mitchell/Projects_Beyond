@@ -79,6 +79,13 @@ button:disabled { opacity: .6; }
 textarea { box-sizing: border-box; width: 100%; padding: .6rem .7rem; border: 1px solid #cfd6df; border-radius: 8px; font: inherit; resize: vertical; }
 textarea.preview { min-height: 320px; width: 100%; font-family: ui-monospace, monospace; line-height: 1.5; }
 .keyword-panel { display: flex; flex-wrap: wrap; gap: .4rem; max-height: 112px; overflow: auto; margin-bottom: 1rem; }
+.related-skills-panel { margin-top: 1rem; border-top: 1px solid #e2e8f0; padding-top: .15rem; }
+.related-skills-panel > summary { font-weight: 700; }
+.related-skills-groups { display: grid; gap: .75rem; }
+.related-skills-group { min-width: 0; }
+.related-skills-group .skills-view-label { display: block; margin-bottom: .25rem; }
+.related-skill-priority { color: #64748b; font-size: .76rem; margin-left: .35rem; }
+.related-keyword-dictionary { margin-top: .75rem; border-top: 1px solid #e2e8f0; padding-top: .4rem; }
 .model-picker { border: 1px solid #e2e8f0; border-radius: 10px; padding: .7rem .8rem; display: grid; gap: .45rem; }
 .model-picker legend { font-size: .84rem; font-weight: 650; color: #475569; padding: 0 .2rem; }
 .model-picker__labels { display: flex; justify-content: space-between; font-size: .8rem; color: #475569; }
