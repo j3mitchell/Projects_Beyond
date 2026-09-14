@@ -40,7 +40,7 @@ const INDICATOR_STOP_WORDS = new Set([
   'experience', 'including', 'preferred', 'required', 'requirements', 'qualification', 'qualifications',
 ]);
 
-const CREDENTIAL_TERM_RE = /\b(?:cpa|p\.?e\.?|rn|pmp|j\.?d\.?|m\.?d\.?|cissp|cism|cisa|ccna|ccnp|security\+|network\+|a\+|ocp|oca|mba|ph\.?d\.?|doctorate|bachelor|master|associate|license|licensed|certif(?:ied|ication)|clearance|public trust|ts\/?sci)\b/i;
+const CREDENTIAL_TERM_RE = /\b(?:cpa|p\.?e\.?|rn|pmp|j\.?d\.?|m\.?d\.?|cissp|cism|cisa|ccna|ccnp|security\+|network\+|a\+|ocp|oca|mba|ph\.?d\.?|doctorate|bachelor|master|associate|license|licensed|certif(?:ied|ication)|clearance|public trust|polygraph|top secret|secret|ts[-\s/]?sci)\b/i;
 
 function searchText(value) {
   return String(value || '')
@@ -65,6 +65,39 @@ function matchesSearchText(haystack, needle) {
   if (!terms.length) return false;
   const matched = terms.filter((term) => hay.includes(term));
   return matched.length >= Math.max(1, Math.ceil(terms.length * 0.6));
+}
+
+function credentialEvidenceStatus(requirement, evidence) {
+  const requirementText = String(requirement || '').toLowerCase();
+  const evidenceText = String(evidence || '').toLowerCase();
+  if (!requirementText || !evidenceText) return 'missing';
+
+  const degreeGroups = [
+    [/(?:bachelor|b\.?\s*s\.?|b\.?\s*a\.?|undergraduate)/, /(?:bachelor|b\.?\s*s\.?|b\.?\s*a\.?|undergraduate)/],
+    [/(?:master|m\.?\s*s\.?|m\.?\s*a\.?|graduate)/, /(?:master|m\.?\s*s\.?|m\.?\s*a\.?|graduate)/],
+    [/(?:associate|a\.?\s*s\.?)/, /(?:associate|a\.?\s*s\.?)/],
+    [/(?:doctorate|doctoral|ph\.?\s*d\.?)/, /(?:doctorate|doctoral|ph\.?\s*d\.?)/],
+  ];
+  for (const [requirementPattern, evidencePattern] of degreeGroups) {
+    if (requirementPattern.test(requirementText)) {
+      return evidencePattern.test(evidenceText) ? 'good' : 'missing';
+    }
+  }
+
+  if (/(?:clearance|top secret|ts[-\s/]?sci|public trust|secret)\b/.test(requirementText)) {
+    const hasClearance = /(?:clearance|top secret|ts[-\s/]?sci|public trust|secret)\b/.test(evidenceText);
+    if (!hasClearance) return 'missing';
+    if (/polygraph/.test(requirementText) && !/polygraph/.test(evidenceText)) return 'review';
+    if (/(?:current|active|valid|unexpired)/.test(requirementText) && /(?:inactive|expired|lapsed)/.test(evidenceText)) return 'review';
+    return 'good';
+  }
+
+  if (matchesSearchText(evidenceText, requirementText)) return 'good';
+  return 'missing';
+}
+
+function matchesRequirementEvidence(evidence, requirement) {
+  return credentialEvidenceStatus(requirement, evidence) !== 'missing' || matchesSearchText(evidence, requirement);
 }
 
 function uniqueValues(values) {
@@ -209,8 +242,8 @@ function buildResumeIndicators(extraction, targetAnalysis, fileName) {
         subitems: [{ text: 'No minimum requirement lines available from the target job', tone: 'pending' }],
       });
     } else {
-      const matched = requirements.filter((requirement) => matchesSearchText(corpus, requirement));
-      const missing = requirements.filter((requirement) => !matchesSearchText(corpus, requirement));
+      const matched = requirements.filter((requirement) => matchesRequirementEvidence(corpus, requirement));
+      const missing = requirements.filter((requirement) => !matchesRequirementEvidence(corpus, requirement));
       indicators.push({
         label: 'Hard requirements',
         score: Math.round((matched.length / requirements.length) * 100),
@@ -319,14 +352,22 @@ function buildResumeIndicators(extraction, targetAnalysis, fileName) {
     ]).filter((item) => CREDENTIAL_TERM_RE.test(item))
     : [];
   if (requiredCredentials.length) {
-    const matched = requiredCredentials.filter((requirement) => matchesSearchText(credentialCorpus, requirement));
+    const credentialStates = requiredCredentials.map((requirement) => ({
+      requirement,
+      state: credentialEvidenceStatus(requirement, credentialCorpus),
+    }));
+    const matched = credentialStates.filter(({ state }) => state !== 'missing');
+    const weightedMatches = credentialStates.reduce((sum, { state }) => sum + (state === 'good' ? 1 : state === 'review' ? 0.5 : 0), 0);
+    const review = credentialStates.filter(({ state }) => state === 'review');
+    const missing = credentialStates.filter(({ state }) => state === 'missing');
     indicators.push({
       label: 'Credentials',
-      score: Math.round((matched.length / requiredCredentials.length) * 100),
-      detail: `${matched.length}/${requiredCredentials.length} credential or degree requirements have matching resume evidence${credentialEntries.length ? ` · Detected: ${credentialEntries.slice(0, 3).join(', ')}` : ''}.`,
+      score: Math.round((weightedMatches / requiredCredentials.length) * 100),
+      detail: `${matched.length}/${requiredCredentials.length} credential or degree requirements have resume evidence${review.length ? ` · ${review.length} require status review` : ''}${missing.length ? ` · ${missing.length} not detected` : ''}${credentialEntries.length ? ` · Detected: ${credentialEntries.slice(0, 3).join(', ')}` : ''}.`,
       subitems: [
-        ...matched.slice(0, 6).map((requirement) => ({ text: `Matched: ${previewText(requirement)}`, tone: 'good' })),
-        ...requiredCredentials.filter((requirement) => !matched.includes(requirement)).slice(0, 6).map((requirement) => ({ text: `Review: ${previewText(requirement)}`, tone: 'needs' })),
+        ...credentialStates.filter(({ state }) => state === 'good').slice(0, 6).map(({ requirement }) => ({ text: `Matched: ${previewText(requirement)}`, tone: 'good' })),
+        ...credentialStates.filter(({ state }) => state === 'review').slice(0, 6).map(({ requirement }) => ({ text: `Status review: ${previewText(requirement)}`, tone: 'review' })),
+        ...credentialStates.filter(({ state }) => state === 'missing').slice(0, 6).map(({ requirement }) => ({ text: `Review: ${previewText(requirement)}`, tone: 'needs' })),
       ],
     });
   } else if (credentialEntries.length) {
