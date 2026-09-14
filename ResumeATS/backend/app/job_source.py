@@ -75,6 +75,40 @@ SKILL_TAXONOMY = {
     "C++": ("c++",),
     "ROS": ("ros", "robot operating system"),
     "Data Science": ("data science",),
+    # Instructional, media, and academic terms are common ATS signals on
+    # higher-education postings. Keep these explicit so deterministic mode
+    # can expose the posting's actual vocabulary instead of returning only
+    # broad cross-industry skills such as Communication.
+    "Television Production": ("television production", "television"),
+    "Video Production": ("video production", "video"),
+    "Film Production": ("film production",),
+    "Mass Communication": ("mass communication",),
+    "Audio Production": ("audio production",),
+    "Emerging Media": ("emerging media",),
+    "Teaching": ("teaching", "teach", "instructor"),
+    "Classroom Instruction": ("classroom instruction", "effective instruction"),
+    "Instructional Technology": ("instructional technology", "instructional software"),
+    "Learning Management Systems": ("learning management system", "learning management systems", "lms"),
+    "Videoconferencing": ("videoconferencing", "video conferencing"),
+    "Curriculum Design": ("curriculum design", "curriculum content", "course syllabus"),
+    "Course Content": ("course content",),
+    "Student Engagement": ("student engagement", "engage learners"),
+    "Student-Centered Learning": ("student-centered", "student centered"),
+    "Assessment": ("assessment tools", "assessments", "student learning outcomes"),
+    "Critical Thinking": ("critical thinking",),
+    "Conflict Management": ("conflict management",),
+    "Research": ("research skills",),
+    "Time Management": ("time management",),
+    "Planning": ("planning", "plan and", "organize and plan"),
+    "Organization": ("organization", "organizational"),
+    "Teamwork": ("team", "teamwork"),
+    "Problem Solving": ("problem-solving", "problem solving"),
+    "Analytical Skills": ("analytical ability", "analytical skills"),
+    "Professional Development": ("professional development",),
+    "Academic Advising": ("academic advising", "advising students"),
+    "Online Learning": ("online", "online modalities"),
+    "Remote Instruction": ("remote instruction",),
+    "Hybrid Instruction": ("hybrid instruction",),
 }
 
 WORK_TYPE_LABELS = {
@@ -653,7 +687,11 @@ def _heading_matches(value: str, patterns: tuple[str, ...]) -> bool:
     heading = _normalised_heading(value)
     return any(
         heading == _normalised_heading(pattern)
-        or heading.startswith(_normalised_heading(pattern) + " ")
+        # "Must have" is also a frequent sentence opening (for example,
+        # "Must have the use of sensory skills..."). Treat it as a section
+        # only when it is the complete heading, otherwise physical or portal
+        # text can become a false minimum-skills section.
+        or (_normalised_heading(pattern) != "must have" and heading.startswith(_normalised_heading(pattern) + " "))
         for pattern in patterns
     )
 
@@ -680,7 +718,7 @@ def _is_heading_or_label(value: str) -> bool:
         "our commitment to you overview of benefits", "working conditions", "pay range", "position information",
         "highly desirable",
         "salary range", "hiring salary range", "criteria", "essential duties", "knowledge", "skills", "abilities",
-        "knowledge skills and abilities", "job requirements", "physical requirements", "other requirements",
+        "knowledge skills and abilities", "knowledge skills abilities", "job requirements", "physical requirements", "other requirements",
         "accommodations", "posting detail information", "posting specific questions", "applicant documents",
     }
     known_normalized = {_normalised_heading(item) for item in known}
@@ -729,8 +767,8 @@ def _knowledge_skill_items(lines: list[str]) -> list[str]:
     """Read a posting's combined knowledge/skills/abilities section."""
     section = _section_lines(
         lines,
-        ("knowledge skills and abilities", "knowledge, skills and abilities"),
-        ("job requirements", "physical requirements", "other requirements", "accommodations", "posting detail information",
+        ("knowledge skills and abilities", "knowledge, skills and abilities", "knowledge skills abilities", "knowledge, skills & abilities"),
+        ("criteria", "essential duties", "responsibilities", "job requirements", "physical requirements", "other requirements", "accommodations", "posting detail information",
          "posting specific questions", "applicant documents", "benefits", "pay range", "salary", "compensation", "details"),
     )
     if not section:
@@ -898,9 +936,14 @@ def _extract_job_fields(structured: dict[str, object], structured_text: str, raw
     task = _under_word_limit(next((line for line in task_lines if not _is_heading_or_label(line) and not line.casefold().startswith("other duties")), ""), maximum=6)
     qualifications = _section_items(
         lines, ("requirements", "qualifications here s what you need", "qualifications", "basic qualifications", "required qualifications", "minimum qualifications", "what you'll bring", "what you bring"),
-        ("minimum skills", "required skills", "preferred qualifications", "preferred skills", "desired qualifications", "highly desirable", "responsibilities", "criteria", "job requirements", "security clearance", "our commitment", "benefits", "working conditions", "pay range", "salary", "compensation", "location", "work location", "details"),
+        ("minimum skills", "required skills", "preferred qualifications", "preferred skills", "desired qualifications", "highly desirable", "knowledge skills and abilities", "knowledge skills abilities", "responsibilities", "criteria", "job requirements", "security clearance", "our commitment", "benefits", "working conditions", "pay range", "salary", "compensation", "location", "work location", "details"),
         ("intended to provide a general overview", "however, due to", "candidates should demonstrate", "requirements for"),
     )
+    minimum_section_present = bool(_section_lines(
+        lines,
+        ("minimum skills", "required skills", "must have"),
+        ("preferred qualifications", "preferred skills", "desired qualifications", "criteria", "job requirements", "our commitment", "benefits", "working conditions", "pay range", "salary", "compensation", "location", "work location", "details"),
+    ))
     minimum_skills = _section_items(lines, ("minimum skills", "required skills", "must have"), ("preferred qualifications", "preferred skills", "desired qualifications", "criteria", "job requirements", "our commitment", "benefits", "working conditions", "pay range", "salary", "compensation", "location", "work location", "details"))
     if not minimum_skills:
         minimum_skills = _requirement_skill_items(lines)
@@ -911,7 +954,7 @@ def _extract_job_fields(structured: dict[str, object], structured_text: str, raw
             for line in _section_lines(
                 lines,
                 ("basic qualifications", "required qualifications", "minimum qualifications"),
-                ("desired qualifications", "preferred qualifications", "preferred skills", "criteria", "job requirements", "security clearance", "our commitment", "benefits", "working conditions", "pay range", "salary", "compensation", "location", "work location", "details"),
+                ("desired qualifications", "preferred qualifications", "preferred skills", "knowledge skills and abilities", "knowledge skills abilities", "criteria", "job requirements", "security clearance", "our commitment", "benefits", "working conditions", "pay range", "salary", "compensation", "location", "work location", "details"),
             )
             if _compact_text(line) and not _is_heading_or_label(line)
         ]
@@ -926,11 +969,25 @@ def _extract_job_fields(structured: dict[str, object], structured_text: str, raw
         minimum_skills = inferred_minimum or _short_list(basic_items)
         if len(minimum_skills) < 6 and basic_items:
             minimum_skills = _short_list([*minimum_skills, *basic_items])
-    if len(minimum_skills) < 6 and knowledge_skills:
+    # PeopleAdmin embeds its knowledge/skills/abilities list inside the
+    # Minimum Qualifications cell instead of publishing a separate heading.
+    # Treat those lines as minimum skills so they are not lost or mislabeled
+    # as preferred terms.
+    if knowledge_skills and not minimum_section_present:
         minimum_skills = _short_list([*minimum_skills, *knowledge_skills])
-    preferred_skills = _section_items(lines, ("preferred qualifications", "preferred skills", "desired qualifications", "highly desirable"), ("security clearance", "responsibilities", "criteria", "job requirements", "our commitment", "benefits", "working conditions", "pay range", "salary", "compensation", "location", "work location", "details"))
-    if not preferred_skills and knowledge_skills:
-        preferred_skills = _short_list(knowledge_skills)
+    elif len(minimum_skills) < 6 and knowledge_skills:
+        minimum_skills = _short_list([*minimum_skills, *knowledge_skills])
+    preferred_section_present = bool(_section_lines(
+        lines,
+        ("preferred qualifications", "preferred skills", "desired qualifications", "highly desirable"),
+        ("knowledge skills and abilities", "knowledge skills abilities", "security clearance", "responsibilities", "criteria", "job requirements", "our commitment", "benefits", "working conditions", "pay range", "salary", "compensation", "location", "work location", "details"),
+    ))
+    preferred_skills = _section_items(lines, ("preferred qualifications", "preferred skills", "desired qualifications", "highly desirable"), ("knowledge skills and abilities", "knowledge skills abilities", "security clearance", "responsibilities", "criteria", "job requirements", "our commitment", "benefits", "working conditions", "pay range", "salary", "compensation", "location", "work location", "details"))
+    preference_items = [item for item in qualifications if re.search(r"\bpreference\b", item, re.I)]
+    if preference_items:
+        preferred_skills = _short_list([*preference_items, *preferred_skills])
+    if not preferred_section_present and knowledge_skills:
+        preferred_skills = _short_list([*preferred_skills, *knowledge_skills])
 
     location = _structured_location(structured.get("jobLocation"))
     # Some vendors publish only a region abbreviation in JSON-LD while the
@@ -984,7 +1041,11 @@ def _rank_taxonomy_skills(text: str) -> list[dict]:
         if occurrences:
             ranked.append({"name": name, "score": float(min(100, occurrences * 20)), "evidence": matches, "source": "taxonomy"})
     ranked.sort(key=lambda item: (-item["score"], item["name"]))
-    return ranked[:20]
+    # Deterministic mode is the free ATS keyword view. Keep enough ranked
+    # terms to represent a specialized posting (where the first twenty can
+    # otherwise be consumed by generic words such as communication and
+    # planning) while the UI keeps the list inside a collapsible section.
+    return ranked[:40]
 
 
 def _infer_industry(text: str) -> str:

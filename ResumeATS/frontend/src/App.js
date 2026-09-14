@@ -640,6 +640,7 @@ function TargetJobPreview({ analysis }) {
         <span className="target-job-preview__mode">{analysis.mode === 'ai' ? 'AI' : 'Deterministic'}</span>
       </div>
       <PreviewValue label="[title]" field="target.title" value={analysis.title} emphasized />
+      <PreviewValue label="[company]" field="target.company" value={analysis.company} />
       <PreviewValue label="[loc]" field="target.loc" value={analysis.location} />
       <PreviewValue label="[type]" field="target.type" value={analysis.type} />
       <PreviewValue label="[work]" field="target.work" value={analysis.work} />

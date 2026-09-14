@@ -408,7 +408,7 @@ class PlatformAPITests(unittest.TestCase):
             </ul></td></tr>
             <tr><th>Criteria</th><td><div><strong>ESSENTIAL DUTIES</strong></div><ul>
               <li>Prepare mandated institutional reports.</li><li>Design and test complex reports.</li>
-            </ul><div><strong>KNOWLEDGE, SKILLS AND ABILITIES</strong></div><ul>
+            </ul><div><strong>KNOWLEDGE, SKILLS &amp; ABILITIES</strong></div><ul>
               <li>Knowledge of relational database systems.</li><li>Knowledge of statistical software.</li>
               <li>Experience with enterprise reporting systems.</li><li>Experience with dashboards and Power BI.</li>
               <li>Knowledge of data schemas.</li><li>Ability to communicate clearly.</li>
@@ -427,6 +427,8 @@ class PlatformAPITests(unittest.TestCase):
         self.assertEqual(len(analysis['qual']), 4)
         self.assertGreater(len(analysis['skills_min']), 5)
         self.assertGreater(len(analysis['skills_max']), 5)
+        self.assertNotIn('knowledge skills', ' '.join(analysis['qual']).casefold())
+        self.assertIn('relational database', ' '.join(analysis['skills_max']).casefold())
         for field in ('qual', 'skills_min', 'skills_max'):
             values = ' '.join(analysis[field]).casefold()
             self.assertNotIn('toggle navigation', values)
