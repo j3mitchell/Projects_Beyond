@@ -117,13 +117,13 @@ function CompensationValue({ value }) {
   );
 }
 
-function PreviewSkills({ items }) {
+function PreviewSkills({ items, title = 'Skills', field = 'skills', itemPrefix = 'skill' }) {
   const [view, setView] = useState('chips');
   const values = Array.isArray(items) ? items : [];
   const hasItems = values.some(hasValue);
   return (
-    <details className="extract-block preview-list-block collapsible-section" data-field="skills">
-      <summary><span>Skills</span><ExpansionIndicator /></summary>
+    <details className="extract-block preview-list-block collapsible-section" data-field={field}>
+      <summary><span>{title}</span><ExpansionIndicator /></summary>
       <div className="collapsible-content preview-list-content">
         <div className="skills-view-choice" role="group" aria-label="Skills view">
           <span className="skills-view-label">View</span>
@@ -138,7 +138,7 @@ function PreviewSkills({ items }) {
         </div>}
         {hasItems && view === 'list' && <ul className="extract-list preview-list">
           {values.map((item, index) => (
-            hasValue(item) && <li key={`skill-list-${index}`}><span className="variable-label">[skill{index + 1}]</span> {item}</li>
+            hasValue(item) && <li key={`${itemPrefix}-list-${index}`}><span className="variable-label">[{itemPrefix}{index + 1}]</span> {item}</li>
           ))}
         </ul>}
       </div>
@@ -241,6 +241,12 @@ export default function App() {
   const certifications = extraction?.certifications || [];
   const targetPositionTitle = extraction?.target_position_title || '';
   const targetAnalysis = jobAnalysis || data?.analysis || null;
+  const atsKeywords = Array.isArray(targetAnalysis?.skills)
+    ? targetAnalysis.skills.map((skill) => skill?.name).filter(hasValue)
+    : [];
+  const fallbackKeywords = Array.isArray(data?.keywords)
+    ? data.keywords.map((item) => item?.keyword).filter(hasValue)
+    : [];
   const statusText = access === 'checking'
     ? 'Checking access…'
     : access === 'locked'
@@ -675,9 +681,6 @@ export default function App() {
         {data && (
           <>
             {resume && <p className="muted">Your original facts are preserved. Add suggested keywords only when they accurately describe your experience.</p>}
-            {resume && data.keywords.length > 0 && <div className="keyword-panel" aria-label="Job keyword review">
-              {data.keywords.map(({ keyword, status }) => <span className="skill-chip" key={keyword}>{keyword} · {status === 'present' ? 'in resume' : 'review'}</span>)}
-            </div>}
             {data.preview ? <label>Editable resume preview
               <textarea className="preview" value={preview} maxLength={100000} onChange={(e) => setPreview(e.target.value)} />
             </label> : <p className="muted">No resume uploaded. The target job extraction is shown above.</p>}
@@ -690,6 +693,12 @@ export default function App() {
             </div>}
           </>
         )}
+        {targetAnalysis && <PreviewSkills
+          title="ATS Keywords"
+          field="ats-keywords"
+          itemPrefix="keyword"
+          items={atsKeywords.length ? atsKeywords : fallbackKeywords}
+        />}
       </section>
       </div>
     </main>
