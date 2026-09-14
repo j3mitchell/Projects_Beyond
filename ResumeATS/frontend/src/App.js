@@ -111,6 +111,13 @@ function uniqueValues(values) {
   });
 }
 
+function educationText(value) {
+  if (typeof value === 'string') return value;
+  return [value?.level, value?.school, value?.major, value?.minor, value?.status, value?.date]
+    .filter(hasValue)
+    .join(' ');
+}
+
 function resumeSearchCorpus(extraction) {
   const jobs = Array.isArray(extraction?.experience) ? extraction.experience : [];
   return [
@@ -119,7 +126,7 @@ function resumeSearchCorpus(extraction) {
     extraction?.executive_summary,
     extraction?.cred,
     ...(Array.isArray(extraction?.skills) ? extraction.skills : []),
-    ...(Array.isArray(extraction?.education) ? extraction.education : []),
+    ...(Array.isArray(extraction?.education) ? extraction.education.map(educationText) : []),
     ...(Array.isArray(extraction?.clearances) ? extraction.clearances : []),
     ...(Array.isArray(extraction?.certifications) ? extraction.certifications : []),
     ...jobs.flatMap((job) => [job?.job, job?.company, job?.date_range, ...(Array.isArray(job?.descriptions) ? job.descriptions : [])]),
@@ -344,7 +351,7 @@ function buildResumeIndicators(extraction, targetAnalysis, fileName) {
     ...certifications,
     ...clearances,
   ]);
-  const credentialCorpus = [...credentialEntries, ...education].join(' ');
+  const credentialCorpus = [...credentialEntries, ...education.map(educationText)].join(' ');
   const requiredCredentials = targetAnalysis
     ? uniqueValues([
       ...(Array.isArray(targetAnalysis.qual) ? targetAnalysis.qual : []),
@@ -477,6 +484,37 @@ function PreviewList({ title, prefix, items, field }) {
             ))}
           </ul>
         ) : <p className="muted">Not detected</p>}
+      </div>
+    </details>
+  );
+}
+
+function PreviewEducation({ items }) {
+  const values = Array.isArray(items) ? items : [];
+  return (
+    <details className="extract-block preview-list-block collapsible-section" data-field="education">
+      <summary><span>Education</span><ExpansionIndicator /></summary>
+      <div className="collapsible-content preview-list-content">
+        {values.length ? <div className="education-list">
+          {values.map((item, index) => {
+            const education = typeof item === 'string' ? { school: item } : (item || {});
+            const number = String(index + 1).padStart(2, '0');
+            const heading = education.level || education.school || `Education ${index + 1}`;
+            return (
+              <article className="education-entry" key={`education-${index}`}>
+                <div className="education-entry__heading"><span className="variable-label">[edu{number}]</span><strong>{heading}</strong></div>
+                <div className="education-entry__fields">
+                  <PreviewValue label={`[level${number}]`} field={`education.${index}.level`} value={education.level} />
+                  <PreviewValue label={`[school${number}]`} field={`education.${index}.school`} value={education.school} />
+                  <PreviewValue label={`[major${number}]`} field={`education.${index}.major`} value={education.major} />
+                  <PreviewValue label={`[minor${number}]`} field={`education.${index}.minor`} value={education.minor} />
+                  <PreviewValue label={`[status${number}]`} field={`education.${index}.status`} value={education.status} />
+                  <PreviewValue label={`[date${number}]`} field={`education.${index}.date`} value={education.date} />
+                </div>
+              </article>
+            );
+          })}
+        </div> : <p className="muted">Not detected</p>}
       </div>
     </details>
   );
@@ -1057,7 +1095,7 @@ export default function App() {
                 </div>
               </details>
 
-              <PreviewList title="Education" prefix="edu" items={education} field="education" />
+              <PreviewEducation items={education} />
               <PreviewList title="Clearances" prefix="clr" items={clearances} field="clearances" />
               <PreviewList title="Certifications" prefix="cert" items={certifications} field="certifications" />
 

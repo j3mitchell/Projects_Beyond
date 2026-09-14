@@ -64,6 +64,23 @@ class ResumeParserPipelineTests(unittest.TestCase):
         self.assertEqual(result.site, "https://github.com/jpublic")
         self.assertEqual(result.cred, "PMP | CISSP")
 
+    def test_education_is_split_into_ats_fields(self):
+        result = pipeline.parse(
+            "EDUCATION:\n"
+            "University of Maryland (UMUC) | Bachelor of Science (BAS): Web Technology Development\n"
+            "Minor: Information Systems Management (CMIS) | Degree: 12/2023\n"
+            "State University | Master of Science: Data Analytics | Expected 2027\n"
+        )
+        self.assertEqual(len(result.education), 2)
+        self.assertEqual(result.education[0].level, "Bachelor of Science (BAS)")
+        self.assertEqual(result.education[0].school, "University of Maryland (UMUC)")
+        self.assertEqual(result.education[0].major, "Web Technology Development")
+        self.assertEqual(result.education[0].minor, "Information Systems Management (CMIS)")
+        self.assertEqual(result.education[0].status, "finished")
+        self.assertEqual(result.education[0].date, "2023")
+        self.assertEqual(result.education[1].status, "in progress")
+        self.assertEqual(result.education[1].date, "2027")
+
 
 if __name__ == "__main__":
     unittest.main()

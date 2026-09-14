@@ -11,6 +11,15 @@ class ResumeJob(BaseModel):
     descriptions: list[str] = Field(default_factory=list)
 
 
+class ResumeEducation(BaseModel):
+    level: str = ""
+    school: str = ""
+    major: str = ""
+    minor: str = ""
+    status: str = ""
+    date: str = ""
+
+
 class ResumeExtractionResponse(BaseModel):
     name: str = ""
     name_first: str = ""
@@ -27,6 +36,6 @@ class ResumeExtractionResponse(BaseModel):
     executive_summary: str = ""
     skills: list[str] = Field(default_factory=list)
     experience: list[ResumeJob] = Field(default_factory=list)
-    education: list[str] = Field(default_factory=list)
+    education: list[ResumeEducation] = Field(default_factory=list)
     clearances: list[str] = Field(default_factory=list)
     certifications: list[str] = Field(default_factory=list)

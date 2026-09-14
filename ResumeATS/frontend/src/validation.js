@@ -55,6 +55,15 @@ export const companyNameSchema = z.string().trim().max(120);
 export const descriptionSchema = z.string().trim().min(1).max(1000);
 export const extractedSectionItemSchema = z.string().trim().min(1).max(500);
 
+export const extractedEducationSchema = z.object({
+  level: z.string().trim().max(150).default(''),
+  school: z.string().trim().max(200).default(''),
+  major: z.string().trim().max(200).default(''),
+  minor: z.string().trim().max(200).default(''),
+  status: z.enum(['in progress', 'finished', '']).default(''),
+  date: z.string().regex(/^\d{4}$/).or(z.literal('')).default(''),
+});
+
 export const extractedResumeJobSchema = z.object({
   number: z.number().int().positive(),
   job: z.string().trim().min(1).max(150),
@@ -79,7 +88,7 @@ export const resumeExtractionSchema = z.object({
   executive_summary: z.string().trim().max(5000),
   skills: z.array(z.string().trim().min(1).max(120)),
   experience: z.array(extractedResumeJobSchema),
-  education: z.array(extractedSectionItemSchema).default([]),
+  education: z.array(z.union([extractedEducationSchema, extractedSectionItemSchema])).default([]),
   clearances: z.array(extractedSectionItemSchema).default([]),
   certifications: z.array(extractedSectionItemSchema).default([]),
 });

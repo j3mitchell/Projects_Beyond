@@ -2,11 +2,12 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
+from datetime import datetime
 from typing import Literal
 
 from app import main as base
 from app.classifier import classifier
-from app.contracts import ResumeExtractionResponse, ResumeJob
+from app.contracts import ResumeEducation, ResumeExtractionResponse, ResumeJob
 from app.organization_aliases import ORGANIZATION_ALIASES
 
 PARSER_VERSION = "pipeline-v4-record-boundaries"
@@ -770,23 +771,127 @@ def _extract_skills(lines: list[str]) -> list[str]:
     return skills[:40]
 
 
-def _extract_education(lines: list[str]) -> list[str]:
-    items: list[str] = []
-    current: list[str] = []
+DEGREE_LEVEL_RE = re.compile(
+    r"\b(?P<level>"
+    r"(?:associate|bachelor|master)(?:'s)?(?:\s+of\s+(?:arts|science|fine arts|applied science|business administration|engineering|education|technology))?(?:\s+degree)?"
+    r"|(?:doctorate|doctoral|ph\.?\s*d\.?|mba|m\.?\s*b\.?\s*a\.?|j\.?\s*d\.?|m\.?\s*d\.?|b\.?\s*s\.?|b\.?\s*a\.?|m\.?\s*s\.?|m\.?\s*a\.?|a\.?\s*s\.?)"
+    r")\b",
+    re.I,
+)
+EDUCATION_SCHOOL_RE = re.compile(r"\b(?:university|college|institute|school)\b", re.I)
+EDUCATION_MAJOR_RE = re.compile(r"\b(?:major|field\s+of\s+study|concentration)\s*[:\-]\s*([^|;]+)", re.I)
+EDUCATION_MINOR_RE = re.compile(r"\bminor\s*[:\-]\s*([^|;]+)", re.I)
+EDUCATION_IN_PROGRESS_RE = re.compile(
+    r"\b(?:in\s+progress|in-progress|pursuing|candidate|expected|anticipated|currently\s+enrolled|ongoing)\b",
+    re.I,
+)
+EDUCATION_FINISHED_RE = re.compile(r"\b(?:completed|graduated|awarded|earned)\b", re.I)
+EDUCATION_YEAR_RE = re.compile(r"\b(?:19|20)\d{2}\b")
 
+
+def _education_has_level(value: str) -> bool:
+    return bool(DEGREE_LEVEL_RE.search(value or ""))
+
+
+def _clean_education_value(value: str) -> str:
+    clean = _strip_bullet(value)
+    clean = re.sub(r"\b(?:major|field\s+of\s+study|concentration|minor|degree|school|status|date)\s*[:\-]\s*", "", clean, flags=re.I)
+    clean = re.sub(r"\s*[\[(]?(?:19|20)\d{2}[\])]?(?=\s*(?:$|\||;))", "", clean)
+    clean = re.sub(r"\s+", " ", clean).strip(" |,;:-–—")
+    return clean
+
+
+def _education_status(value: str, date: str) -> str:
+    if EDUCATION_IN_PROGRESS_RE.search(value or ""):
+        return "in progress"
+    if EDUCATION_FINISHED_RE.search(value or ""):
+        return "finished"
+    if date:
+        return "in progress" if int(date) > datetime.now().year else "finished"
+    return "finished"
+
+
+def _education_entry(lines: list[str]) -> ResumeEducation:
+    text = " | ".join(line for line in lines if line).strip()
+    parts = [part.strip() for part in re.split(r"\s*\|\s*", text) if part.strip()]
+    degree_match = DEGREE_LEVEL_RE.search(text)
+    level = ""
+    if degree_match:
+        level = degree_match.group("level").strip()
+        abbreviation = re.match(r"\s*(\([^)]{1,30}\))", text[degree_match.end():])
+        if abbreviation:
+            level = f"{level} {abbreviation.group(1)}"
+
+    school = ""
+    for part in parts:
+        if EDUCATION_SCHOOL_RE.search(part) and not DEGREE_LEVEL_RE.search(part):
+            school = _clean_education_value(part)
+            break
+    if not school and degree_match:
+        prefix = text[:degree_match.start()].strip(" |,:;-–—")
+        if prefix:
+            school = _clean_education_value(prefix)
+    if not school:
+        school_part = next((part for part in parts if EDUCATION_SCHOOL_RE.search(part)), "")
+        school = _clean_education_value(school_part)
+
+    minor_match = EDUCATION_MINOR_RE.search(text)
+    minor = _clean_education_value(minor_match.group(1)) if minor_match else ""
+    major_match = EDUCATION_MAJOR_RE.search(text)
+    major = _clean_education_value(major_match.group(1)) if major_match else ""
+
+    if degree_match:
+        level_end = degree_match.end()
+        abbreviation = re.match(r"\s*(\([^)]{1,30}\))", text[level_end:])
+        if abbreviation:
+            level_end += abbreviation.end()
+        if " in " in level.lower():
+            level, in_major = re.split(r"\s+in\s+", level, maxsplit=1, flags=re.I)
+            major = major or _clean_education_value(in_major)
+        remainder = text[level_end:]
+        if not major:
+            for candidate in re.split(r"\s*\|\s*|\s*;\s*", remainder):
+                candidate = candidate.strip(" :,-–—")
+                if not candidate or re.match(r"^(?:minor|degree|status|date)\s*[:\-]", candidate, re.I):
+                    continue
+                if re.fullmatch(r"(?:19|20)\d{2}", candidate):
+                    continue
+                candidate = re.sub(r"^in\s+", "", candidate, flags=re.I)
+                major = _clean_education_value(candidate)
+                if major:
+                    break
+
+    date_matches = EDUCATION_YEAR_RE.findall(text)
+    date = date_matches[-1] if date_matches else ""
+    return ResumeEducation(
+        level=_clean_education_value(level),
+        school=school,
+        major=major,
+        minor=minor,
+        status=_education_status(text, date),
+        date=date,
+    )
+
+
+def _extract_education(lines: list[str]) -> list[ResumeEducation]:
+    entries: list[list[str]] = []
+    current: list[str] = []
     for line in lines[:30]:
         clean = _strip_bullet(line)
         if not clean:
             continue
-        is_institution = bool(re.search(r"\b(?:university|college|institute|school)\b", clean, re.I))
-        if is_institution and current:
-            items.append(" | ".join(current))
+        is_institution = bool(EDUCATION_SCHOOL_RE.search(clean))
+        if is_institution and current and _education_has_level(" | ".join(current)) \
+                and any(EDUCATION_SCHOOL_RE.search(item) for item in current):
+            entries.append(current)
             current = [clean]
         else:
             current.append(clean)
     if current:
-        items.append(" | ".join(current))
-    return [item for item in items if item][:12]
+        entries.append(current)
+    return [entry for entry in (_education_entry(lines) for lines in entries) if any(
+        getattr(entry, field) for field in ("level", "school", "major", "minor", "status", "date")
+    )][:12]
 
 
 def _extract_simple_items(lines: list[str], matcher: re.Pattern[str] | None = None) -> list[str]:
