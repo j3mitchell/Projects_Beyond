@@ -38,6 +38,24 @@ button:disabled { opacity: .6; }
 .extracting { font-size: .8rem; font-weight: 600; color: #2563eb; background: #eff6ff; padding: .3rem .55rem; border-radius: 999px; }
 .empty-state, .muted { color: #64748b; font-size: .9rem; }
 .extraction-content { display: grid; gap: .75rem; }
+.resume-indicators { display: grid; gap: .65rem; border: 1px solid #e2e8f0; border-radius: 10px; padding: .8rem; background: #f8fafc; }
+.resume-indicators__header h3 { margin: 0 0 .2rem; font-size: .9rem; text-transform: uppercase; letter-spacing: .04em; color: #475569; }
+.resume-indicators__header p { margin: 0; line-height: 1.4; }
+.resume-indicators__grid { display: grid; gap: .5rem; }
+.resume-indicator { border: 1px solid #e2e8f0; border-radius: 8px; padding: .6rem .7rem; background: #fff; }
+.resume-indicator__heading { display: grid; grid-template-columns: max-content minmax(0, 1fr) max-content; align-items: center; gap: .5rem; }
+.resume-indicator__icon { display: inline-grid; place-items: center; width: 1.25rem; height: 1.25rem; border-radius: 50%; font-size: .82rem; font-weight: 800; }
+.resume-indicator h4 { margin: 0; color: #1f2937; font-size: .88rem; }
+.resume-indicator__status { color: #64748b; font-size: .76rem; font-weight: 700; text-align: right; white-space: nowrap; }
+.resume-indicator p { margin: .35rem 0 0; color: #475569; font-size: .82rem; line-height: 1.4; }
+.resume-indicator--good { border-color: #b7ddcc; }
+.resume-indicator--good .resume-indicator__icon { background: #dcf5e7; color: #147a45; }
+.resume-indicator--review { border-color: #e5d5a8; }
+.resume-indicator--review .resume-indicator__icon { background: #fff3c9; color: #946b08; }
+.resume-indicator--needs { border-color: #ecc6c6; }
+.resume-indicator--needs .resume-indicator__icon { background: #fde5e5; color: #ad3030; }
+.resume-indicator--pending { border-color: #cdd8e8; }
+.resume-indicator--pending .resume-indicator__icon { background: #e9f1ff; color: #274a86; }
 .extract-block { border: 1px solid #e2e8f0; border-radius: 10px; padding: 0; background: #f8fafc; overflow: hidden; }
 .extract-block h3 { margin: 0 0 .45rem; font-size: .84rem; text-transform: uppercase; letter-spacing: .04em; color: #475569; }
 .extract-block p { margin: 0; line-height: 1.45; font-size: .9rem; }

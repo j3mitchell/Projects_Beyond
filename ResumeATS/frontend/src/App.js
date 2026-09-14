@@ -34,6 +34,266 @@ function previewText(value, maxLength = 76) {
   return clean.length > maxLength ? `${clean.slice(0, maxLength).trimEnd()}…` : clean;
 }
 
+const INDICATOR_STOP_WORDS = new Set([
+  'a', 'an', 'and', 'are', 'as', 'at', 'be', 'by', 'for', 'from', 'have', 'in', 'into',
+  'is', 'of', 'on', 'or', 'the', 'to', 'with', 'work', 'working', 'years', 'year', 'ability',
+  'experience', 'including', 'preferred', 'required', 'requirements', 'qualification', 'qualifications',
+]);
+
+const CREDENTIAL_TERM_RE = /\b(?:cpa|p\.?e\.?|rn|pmp|j\.?d\.?|m\.?d\.?|cissp|cism|cisa|ccna|ccnp|security\+|network\+|a\+|ocp|oca|mba|ph\.?d\.?|doctorate|bachelor|master|associate|license|licensed|certif(?:ied|ication)|clearance|public trust|ts\/?sci)\b/i;
+
+function searchText(value) {
+  return String(value || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9+#.]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function searchTerms(value) {
+  return [...new Set(searchText(value).split(' ').filter((term) => (
+    term && !INDICATOR_STOP_WORDS.has(term) && (term.length >= 3 || /[+#.]/.test(term))
+  )))];
+}
+
+function matchesSearchText(haystack, needle) {
+  const hay = searchText(haystack);
+  const phrase = searchText(needle);
+  if (!hay || !phrase) return false;
+  if (hay.includes(phrase)) return true;
+  const terms = searchTerms(needle);
+  if (!terms.length) return false;
+  const matched = terms.filter((term) => hay.includes(term));
+  return matched.length >= Math.max(1, Math.ceil(terms.length * 0.6));
+}
+
+function uniqueValues(values) {
+  const seen = new Set();
+  return values.filter((value) => {
+    if (!hasValue(value)) return false;
+    const key = searchText(value);
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+function resumeSearchCorpus(extraction) {
+  const jobs = Array.isArray(extraction?.experience) ? extraction.experience : [];
+  return [
+    extraction?.name,
+    extraction?.target_position_title,
+    extraction?.executive_summary,
+    extraction?.cred,
+    ...(Array.isArray(extraction?.skills) ? extraction.skills : []),
+    ...(Array.isArray(extraction?.education) ? extraction.education : []),
+    ...(Array.isArray(extraction?.clearances) ? extraction.clearances : []),
+    ...(Array.isArray(extraction?.certifications) ? extraction.certifications : []),
+    ...jobs.flatMap((job) => [job?.job, job?.company, job?.date_range, ...(Array.isArray(job?.descriptions) ? job.descriptions : [])]),
+  ].filter(hasValue).join(' ');
+}
+
+function latestResumeJob(jobs) {
+  return jobs
+    .map((job, index) => {
+      const dates = [...String(job?.date_range || '').matchAll(/\b(?:19|20)\d{2}\b/g)].map((match) => Number(match[0]));
+      const dateText = String(job?.date_range || '').toLowerCase();
+      const score = /\b(?:present|current|now)\b/.test(dateText)
+        ? 999999 - index
+        : ((dates[dates.length - 1] || 0) * 100) - index;
+      return { job, score };
+    })
+    .filter(({ job }) => hasJobValue(job))
+    .sort((left, right) => right.score - left.score)[0]?.job || null;
+}
+
+function seniorityLevel(title) {
+  const value = searchText(title);
+  if (!value) return null;
+  if (/\b(?:chief|c suite|vp|vice president|director|head)\b/.test(value)) return 5;
+  if (/\b(?:principal|manager|supervisor)\b/.test(value)) return 4;
+  if (/\b(?:senior|sr|lead)\b/.test(value)) return 3;
+  if (/\b(?:associate)\b/.test(value)) return 1;
+  if (/\b(?:junior|jr|entry|intern|trainee)\b/.test(value)) return 0;
+  return 2;
+}
+
+function indicatorTone(score) {
+  if (score === null) return { tone: 'pending', status: 'Awaiting job' };
+  if (score >= 80) return { tone: 'good', status: 'Strong' };
+  if (score >= 50) return { tone: 'review', status: 'Review' };
+  return { tone: 'needs', status: 'Needs review' };
+}
+
+function buildResumeIndicators(extraction, targetAnalysis, fileName) {
+  const jobs = Array.isArray(extraction?.experience) ? extraction.experience : [];
+  const skills = Array.isArray(extraction?.skills) ? extraction.skills : [];
+  const education = Array.isArray(extraction?.education) ? extraction.education : [];
+  const certifications = Array.isArray(extraction?.certifications) ? extraction.certifications : [];
+  const clearances = Array.isArray(extraction?.clearances) ? extraction.clearances : [];
+  const corpus = resumeSearchCorpus(extraction);
+  const latestJob = latestResumeJob(jobs);
+  const latestJobCorpus = latestJob
+    ? [latestJob.job, latestJob.company, latestJob.date_range, ...(latestJob.descriptions || [])].filter(hasValue).join(' ')
+    : '';
+  const targetSkills = uniqueValues((Array.isArray(targetAnalysis?.skills) ? targetAnalysis.skills : []).map((skill) => skill?.name));
+
+  const parsingFields = [
+    ['name', extraction?.name || [extraction?.name_first, extraction?.name_last].filter(hasValue).join(' ')],
+    ['title', extraction?.target_position_title || latestJob?.job],
+    ['employer', jobs.some((job) => hasValue(job?.company))],
+    ['dates', jobs.some((job) => hasValue(job?.date_range))],
+    ['skills', skills.length > 0],
+    ['education', education.length > 0],
+    ['credentials', hasValue(extraction?.cred) || certifications.length > 0 || clearances.length > 0],
+  ];
+  const parsedCount = parsingFields.filter(([, value]) => hasValue(value)).length;
+  const missingFields = parsingFields.filter(([, value]) => !hasValue(value)).map(([label]) => label);
+  const parsingScore = Math.round((parsedCount / parsingFields.length) * 100);
+
+  const indicators = [{
+    label: 'Parsing compatibility',
+    score: parsingScore,
+    detail: `${parsedCount}/${parsingFields.length} core fields detected${missingFields.length ? ` · Review ${missingFields.join(', ')}` : ''}. Text extraction cannot verify graphics or visual-only content in columns, headers, or footers${fileName ? ` · ${fileName}` : ''}.`,
+  }];
+
+  if (!targetAnalysis) {
+    indicators.push({
+      label: 'Hard requirements',
+      score: null,
+      detail: 'Analyze a target job to compare degree, certification or license, location, work authorization, and years of experience.',
+    });
+  } else {
+    const requirements = uniqueValues([
+      ...(Array.isArray(targetAnalysis.qual) ? targetAnalysis.qual : []),
+      ...(Array.isArray(targetAnalysis.skills_min) ? targetAnalysis.skills_min : []),
+    ]);
+    if (!requirements.length) {
+      indicators.push({ label: 'Hard requirements', score: null, detail: 'No explicit minimum requirements were extracted from the target job; verify the posting manually.' });
+    } else {
+      const matched = requirements.filter((requirement) => matchesSearchText(corpus, requirement));
+      const missing = requirements.filter((requirement) => !matchesSearchText(corpus, requirement));
+      indicators.push({
+        label: 'Hard requirements',
+        score: Math.round((matched.length / requirements.length) * 100),
+        detail: `${matched.length}/${requirements.length} extracted minimum requirements have resume evidence${missing.length ? ` · Review ${missing.slice(0, 2).map(previewText).join('; ')}` : ''}. Location, work authorization, and years still need confirmation.`,
+      });
+    }
+  }
+
+  if (!targetAnalysis || !targetSkills.length) {
+    indicators.push({
+      label: 'Keyword matching',
+      score: null,
+      detail: targetAnalysis ? 'No structured ATS keywords were extracted from the target job.' : 'Analyze a target job to compare exact and related ATS keywords with this resume.',
+    });
+    indicators.push({
+      label: 'Context + recency',
+      score: null,
+      detail: 'Analyze a target job to check whether keywords appear in recent experience with supporting results.',
+    });
+  } else {
+    const matched = targetSkills.filter((skill) => matchesSearchText(corpus, skill));
+    const contextual = targetSkills.filter((skill) => jobs.some((job) => matchesSearchText(
+      [job?.job, job?.company, ...(job?.descriptions || [])].filter(hasValue).join(' '),
+      skill,
+    )));
+    const recent = latestJob && targetSkills.filter((skill) => matchesSearchText(latestJobCorpus, skill));
+    indicators.push({
+      label: 'Keyword matching',
+      score: Math.round((matched.length / targetSkills.length) * 100),
+      detail: `${matched.length}/${targetSkills.length} target keywords found in imported resume fields.`,
+    });
+    const contextualCount = contextual.length;
+    const recentCount = recent ? recent.length : 0;
+    indicators.push({
+      label: 'Context + recency',
+      score: Math.round(((contextualCount / targetSkills.length) * 70) + ((recentCount / targetSkills.length) * 30)),
+      detail: `${contextualCount}/${targetSkills.length} keywords appear in job experience; ${recentCount}/${targetSkills.length} appear in the most recent dated role.`,
+    });
+  }
+
+  if (!targetAnalysis?.title) {
+    indicators.push({ label: 'Title/seniority alignment', score: null, detail: 'Analyze a target job to compare its title and seniority with the most recent resume role.' });
+  } else {
+    const resumeTitle = latestJob?.job || extraction?.target_position_title || '';
+    if (!resumeTitle) {
+      indicators.push({ label: 'Title/seniority alignment', score: 0, detail: `Target title: ${targetAnalysis.title} · No resume title was detected.` });
+    } else {
+      const targetTerms = searchTerms(targetAnalysis.title);
+      const resumeTerms = new Set(searchTerms(resumeTitle));
+      const overlap = targetTerms.filter((term) => resumeTerms.has(term)).length;
+      const lexicalScore = targetTerms.length ? overlap / targetTerms.length : 0;
+      const targetLevel = seniorityLevel(targetAnalysis.title);
+      const resumeLevel = seniorityLevel(resumeTitle);
+      const seniorityScore = targetLevel !== null && resumeLevel !== null && Math.abs(targetLevel - resumeLevel) <= 1 ? 1 : 0;
+      const score = Math.round((lexicalScore * 70) + (seniorityScore * 30));
+      indicators.push({
+        label: 'Title/seniority alignment',
+        score,
+        detail: `Target: ${targetAnalysis.title} · Resume: ${resumeTitle}${targetLevel !== null && resumeLevel !== null && Math.abs(targetLevel - resumeLevel) > 1 ? ' · Seniority levels differ; review.' : '.'}`,
+      });
+    }
+  }
+
+  const credentialEntries = uniqueValues([
+    extraction?.cred,
+    ...certifications,
+    ...clearances,
+  ]);
+  const credentialCorpus = [...credentialEntries, ...education].join(' ');
+  const requiredCredentials = targetAnalysis
+    ? uniqueValues([
+      ...(Array.isArray(targetAnalysis.qual) ? targetAnalysis.qual : []),
+      ...(Array.isArray(targetAnalysis.skills_min) ? targetAnalysis.skills_min : []),
+    ]).filter((item) => CREDENTIAL_TERM_RE.test(item))
+    : [];
+  if (requiredCredentials.length) {
+    const matched = requiredCredentials.filter((requirement) => matchesSearchText(credentialCorpus, requirement));
+    indicators.push({
+      label: 'Credentials',
+      score: Math.round((matched.length / requiredCredentials.length) * 100),
+      detail: `${matched.length}/${requiredCredentials.length} credential or degree requirements have matching resume evidence${credentialEntries.length ? ` · Detected: ${credentialEntries.slice(0, 3).join(', ')}` : ''}.`,
+    });
+  } else if (credentialEntries.length) {
+    indicators.push({
+      label: 'Credentials',
+      score: 100,
+      detail: `Detected ${credentialEntries.length} credential, certification, license, or clearance entr${credentialEntries.length === 1 ? 'y' : 'ies'}: ${credentialEntries.slice(0, 3).join(', ')}.`,
+    });
+  } else {
+    indicators.push({ label: 'Credentials', score: 0, detail: 'No credential, certification, license, or clearance entry was detected.' });
+  }
+
+  return indicators.map((indicator) => ({ ...indicator, ...indicatorTone(indicator.score) }));
+}
+
+function ResumeAtsIndicators({ extraction, targetAnalysis, fileName }) {
+  const indicators = buildResumeIndicators(extraction, targetAnalysis, fileName);
+  return (
+    <section className="resume-indicators" aria-label="ATS readiness checklist">
+      <div className="resume-indicators__header">
+        <div>
+          <h3>ATS readiness checklist</h3>
+          <p className="muted">Screening signals from the imported resume. Job comparisons appear after a target job is analyzed.</p>
+        </div>
+      </div>
+      <div className="resume-indicators__grid">
+        {indicators.map((indicator) => (
+          <article className={`resume-indicator resume-indicator--${indicator.tone}`} key={indicator.label}>
+            <div className="resume-indicator__heading">
+              <span className="resume-indicator__icon" aria-hidden="true">{indicator.tone === 'good' ? '✓' : indicator.tone === 'pending' ? '·' : '!'}</span>
+              <h4>{indicator.label}</h4>
+              <span className="resume-indicator__status">{indicator.score !== null ? `${indicator.score}% · ` : ''}{indicator.status}</span>
+            </div>
+            <p>{indicator.detail}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function needsBrowserCapture(analysis) {
   if (!analysis || analysis.mode !== 'deterministic') return false;
   const fields = [analysis.title, analysis.location, analysis.type, analysis.work, analysis.task, analysis.pay]
@@ -584,6 +844,8 @@ export default function App() {
 
           {extraction && (
             <div className="extraction-content">
+              <ResumeAtsIndicators extraction={extraction} targetAnalysis={targetAnalysis} fileName={resume?.name} />
+
               <details className="extract-block contact-block collapsible-section" data-field="contact">
                 <summary><span>Contact Information</span><ExpansionIndicator /></summary>
                 <div className="collapsible-content">
