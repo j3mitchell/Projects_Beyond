@@ -353,45 +353,43 @@ function ResumeAtsIndicators({ extraction, targetAnalysis, fileName }) {
   const grade = calculateAtsGrade(indicators);
   const gradeTone = indicatorTone(grade.score);
   return (
-    <section className="resume-indicators" aria-label="ATS readiness checklist">
-      <div className="resume-indicators__header">
-        <div>
-          <h3>ATS readiness checklist</h3>
-          <p className="muted">Screening signals from the imported resume. Job comparisons appear after a target job is analyzed.</p>
+    <details className="resume-indicators collapsible-section" aria-label="ATS readiness checklist" open>
+      <summary><span>ATS readiness checklist</span><ExpansionIndicator /></summary>
+      <div className="resume-indicators__content">
+        <p className="muted">Screening signals from the imported resume. Job comparisons appear after a target job is analyzed.</p>
+        <div className={`resume-grade resume-grade--${gradeTone.tone}`}>
+          <div className="resume-grade__heading">
+            <span>ATS compatibility / compliance</span>
+            <strong>{grade.score}%</strong>
+          </div>
+          <div className="resume-grade__meter" role="progressbar" aria-label="ATS compatibility and compliance grade" aria-valuemin="0" aria-valuemax="100" aria-valuenow={grade.score}>
+            <span style={{ width: `${grade.score}%` }} />
+          </div>
+          <p>{grade.scoredCount}/{indicators.length} checks scored{grade.pendingCount ? ` · ${grade.pendingCount} awaiting target-job data` : ''}.</p>
+        </div>
+        <div className="resume-indicators__grid">
+          {indicators.map((indicator) => (
+            <article className={`resume-indicator resume-indicator--${indicator.tone}`} key={indicator.label}>
+              <div className="resume-indicator__heading">
+                <span className="resume-indicator__icon" aria-hidden="true">{indicator.tone === 'good' ? '✓' : indicator.tone === 'pending' ? '·' : '!'}</span>
+                <h4>{indicator.label}</h4>
+                <span className="resume-indicator__status">{indicator.score !== null ? `${indicator.score}% · ` : ''}{indicator.status}</span>
+              </div>
+              <p>{indicator.detail}</p>
+              {indicator.subitems?.length > 0 && <ul className="resume-indicator__subitems">
+                {indicator.subitems.map((item, index) => {
+                  const subitem = typeof item === 'string' ? { text: item, tone: 'review' } : item;
+                  return <li key={`${indicator.label}-subitem-${index}`} className={`resume-indicator__subitem resume-indicator__subitem--${subitem.tone}`}>
+                    <span aria-hidden="true">{subitem.tone === 'good' ? '✓' : subitem.tone === 'pending' ? '·' : '!'}</span>
+                    {subitem.text}
+                  </li>;
+                })}
+              </ul>}
+            </article>
+          ))}
         </div>
       </div>
-      <div className={`resume-grade resume-grade--${gradeTone.tone}`}>
-        <div className="resume-grade__heading">
-          <span>ATS compatibility / compliance</span>
-          <strong>{grade.score}%</strong>
-        </div>
-        <div className="resume-grade__meter" role="progressbar" aria-label="ATS compatibility and compliance grade" aria-valuemin="0" aria-valuemax="100" aria-valuenow={grade.score}>
-          <span style={{ width: `${grade.score}%` }} />
-        </div>
-        <p>{grade.scoredCount}/{indicators.length} checks scored{grade.pendingCount ? ` · ${grade.pendingCount} awaiting target-job data` : ''}.</p>
-      </div>
-      <div className="resume-indicators__grid">
-        {indicators.map((indicator) => (
-          <article className={`resume-indicator resume-indicator--${indicator.tone}`} key={indicator.label}>
-            <div className="resume-indicator__heading">
-              <span className="resume-indicator__icon" aria-hidden="true">{indicator.tone === 'good' ? '✓' : indicator.tone === 'pending' ? '·' : '!'}</span>
-              <h4>{indicator.label}</h4>
-              <span className="resume-indicator__status">{indicator.score !== null ? `${indicator.score}% · ` : ''}{indicator.status}</span>
-            </div>
-            <p>{indicator.detail}</p>
-            {indicator.subitems?.length > 0 && <ul className="resume-indicator__subitems">
-              {indicator.subitems.map((item, index) => {
-                const subitem = typeof item === 'string' ? { text: item, tone: 'review' } : item;
-                return <li key={`${indicator.label}-subitem-${index}`} className={`resume-indicator__subitem resume-indicator__subitem--${subitem.tone}`}>
-                  <span aria-hidden="true">{subitem.tone === 'good' ? '✓' : subitem.tone === 'pending' ? '·' : '!'}</span>
-                  {subitem.text}
-                </li>;
-              })}
-            </ul>}
-          </article>
-        ))}
-      </div>
-    </section>
+    </details>
   );
 }
 
