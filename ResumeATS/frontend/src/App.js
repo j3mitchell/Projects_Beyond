@@ -247,6 +247,7 @@ export default function App() {
   const fallbackKeywords = Array.isArray(data?.keywords)
     ? data.keywords.map((item) => item?.keyword).filter(hasValue)
     : [];
+  const atsKeywordItems = atsKeywords.length ? atsKeywords : fallbackKeywords;
   const statusText = access === 'checking'
     ? 'Checking access…'
     : access === 'locked'
@@ -693,11 +694,11 @@ export default function App() {
             </div>}
           </>
         )}
-        {targetAnalysis && <PreviewSkills
+        {atsKeywordItems.length > 0 && <PreviewSkills
           title="ATS Keywords"
           field="ats-keywords"
           itemPrefix="keyword"
-          items={atsKeywords.length ? atsKeywords : fallbackKeywords}
+          items={atsKeywordItems}
         />}
       </section>
       </div>
