@@ -298,6 +298,16 @@ def _oracle_hcm_page(raw: bytes, source_url: str) -> dict | None:
         items = payload.get("items", []) if isinstance(payload, dict) else []
         item = items[0] if isinstance(items, list) and items and isinstance(items[0], dict) else None
         if not item:
+            # Some Oracle requisitions return an empty REST collection while
+            # still publishing the job title and description in the page
+            # shell's metadata. Preserve those fields rather than falling
+            # through to generic accessibility copy.
+            metadata_title = soup.find("meta", attrs={"property": "og:title"})
+            metadata_description = soup.find("meta", attrs={"property": "og:description"})
+            if metadata_title and metadata_description and len(_compact_text(metadata_description.get("content", ""))) >= 100:
+                page = _page_fields(raw, source_url)
+                page.setdefault("metadata", {})["render_mode"] = "oracle-hcm-metadata"
+                return page
             return None
 
         def field(*names: str) -> str:
@@ -516,7 +526,10 @@ def _page_fields(raw: bytes, source_url: str = "", iframe_depth: int = 0) -> dic
 
     page_title = soup.title.get_text(" ", strip=True) if soup.title else ""
 
-    title = structured_title or str(dom_fields.get("title") or "") or metadata.get("og_title", "") or "Job Opportunity"
+    # Recruiting shells often put an accessibility notice in their first
+    # heading. The OpenGraph title is the job identity and should win over
+    # that generic DOM heading when structured data is absent.
+    title = structured_title or metadata.get("og_title", "") or str(dom_fields.get("title") or "") or "Job Opportunity"
     company = structured_company
     if not company:
         company = str(dom_fields.get("company") or "")
@@ -550,6 +563,7 @@ def _page_fields(raw: bytes, source_url: str = "", iframe_depth: int = 0) -> dic
             title = heading_text
     company = company or metadata.get("site_name", "")
     dom_text = str(dom_fields.get("text") or "")
+    metadata_description = metadata.get("og_description", "") or metadata.get("description", "")
     description = dom_text[:MAX_ANALYSIS_TEXT]
     structured_text = ""
     if structured_description:
@@ -563,6 +577,13 @@ def _page_fields(raw: bytes, source_url: str = "", iframe_depth: int = 0) -> dic
         description = structured_text[:MAX_ANALYSIS_TEXT]
     if not structured_text:
         structured_text = dom_text
+    if metadata_description and (
+        len(description) < 100
+        or re.search(r"\b(?:view more jobs|accessibility assistance|accommodation for a disability)\b", description, re.I)
+    ):
+        # Keep useful metadata when the visible DOM contains only shell copy,
+        # navigation, or an accessibility notice.
+        description = metadata_description[:MAX_ANALYSIS_TEXT]
     if dom_fields.get("location"):
         metadata["dom_location"] = str(dom_fields["location"])[:200]
     if len(description) < 100:
@@ -570,7 +591,7 @@ def _page_fields(raw: bytes, source_url: str = "", iframe_depth: int = 0) -> dic
     # Keep visible page text available for fields that vendors omit from
     # JSON-LD, especially salary and workplace details.
     visible_text = dom_text[:MAX_ANALYSIS_TEXT]
-    field_text = "\n".join(value for value in (structured_text, visible_text) if value)
+    field_text = "\n".join(value for value in (structured_text, visible_text, metadata_description) if value)
     job_fields = _extract_job_fields(structured, structured_text, field_text, metadata)
     return {"source_url": source_url, "title": title or "Job Opportunity", "company": company,
             "summary": description, "raw_text": field_text[:MAX_ANALYSIS_TEXT], "metadata": metadata, **job_fields}

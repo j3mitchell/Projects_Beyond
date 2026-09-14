@@ -236,6 +236,31 @@ class PlatformAPITests(unittest.TestCase):
         get.assert_called_once()
         self.assertIn('recruitingCEJobRequisitionDetails', get.call_args.args[0])
 
+    def test_oracle_empty_api_uses_job_metadata_over_accessibility_shell(self):
+        description = (
+            "Optimizer group develops Oracle database query optimization systems. "
+            "The role designs SQL execution plans and improves database performance "
+            "for enterprise customers."
+        )
+        shell = f'''<html><head><base href="/en/sites/jobsearch"
+        data-apibaseurl="https://jobs.example.oraclecloud.com:443"
+        data-sitenumber="CX_45001"><meta property="og:site_name" content="Oracle">
+        <meta property="og:title" content="Database Developer-SQL, Kernel, and Query Optimizer Developer">
+        <meta property="og:description" content="{description}"></head>
+        <body><main><h2>If you require accessibility assistance or accommodation for a disability at any point, let us know.</h2>
+        <p>View More Jobs This job is no longer available.</p></main></body></html>'''.encode()
+        response = Mock(status_code=200, content=b'{"items": []}')
+        response.json.return_value = {"items": []}
+        with patch('app.job_source.fetch_public_html', return_value=shell), \
+             patch('app.job_source.requests.get', return_value=response), \
+             patch('app.job_source._is_public_hostname', return_value=True):
+            analysis = analyze_job('https://careers.example.com/en/sites/jobsearch/job/340996/', 'deterministic')
+        self.assertEqual(analysis['title'], 'Database Developer-SQL, Kernel, and Query Optimizer Developer')
+        self.assertEqual(analysis['company'], 'Oracle')
+        self.assertEqual(analysis['summary'], description)
+        self.assertEqual(analysis['metadata']['render_mode'], 'oracle-hcm-metadata')
+        self.assertNotIn('accessibility assistance', analysis['summary'].casefold())
+
     def test_fetch_public_html_requests_decoded_content(self):
         response = Mock(status=200, headers={})
         response.read.return_value = b'<html><main>' + (b'job description ' * 20) + b'</main></html>'
