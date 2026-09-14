@@ -118,8 +118,8 @@ function seniorityLevel(title) {
   return 2;
 }
 
-function indicatorTone(score) {
-  if (score === null) return { tone: 'pending', status: 'Awaiting job' };
+function indicatorTone(score, pendingStatus = 'Awaiting job') {
+  if (score === null) return { tone: 'pending', status: pendingStatus };
   if (score >= 80) return { tone: 'good', status: 'Strong' };
   if (score >= 50) return { tone: 'review', status: 'Review' };
   return { tone: 'needs', status: 'Needs review' };
@@ -169,7 +169,7 @@ function buildResumeIndicators(extraction, targetAnalysis, fileName) {
       ...(Array.isArray(targetAnalysis.skills_min) ? targetAnalysis.skills_min : []),
     ]);
     if (!requirements.length) {
-      indicators.push({ label: 'Hard requirements', score: null, detail: 'No explicit minimum requirements were extracted from the target job; verify the posting manually.' });
+      indicators.push({ label: 'Hard requirements', score: null, pendingStatus: 'Unavailable', detail: 'No explicit minimum requirements were extracted from the target job; verify the posting manually.' });
     } else {
       const matched = requirements.filter((requirement) => matchesSearchText(corpus, requirement));
       const missing = requirements.filter((requirement) => !matchesSearchText(corpus, requirement));
@@ -185,11 +185,13 @@ function buildResumeIndicators(extraction, targetAnalysis, fileName) {
     indicators.push({
       label: 'Keyword matching',
       score: null,
+      pendingStatus: targetAnalysis ? 'Unavailable' : 'Awaiting job',
       detail: targetAnalysis ? 'No structured ATS keywords were extracted from the target job.' : 'Analyze a target job to compare exact and related ATS keywords with this resume.',
     });
     indicators.push({
       label: 'Context + recency',
       score: null,
+      pendingStatus: targetAnalysis ? 'Unavailable' : 'Awaiting job',
       detail: 'Analyze a target job to check whether keywords appear in recent experience with supporting results.',
     });
   } else {
@@ -214,7 +216,7 @@ function buildResumeIndicators(extraction, targetAnalysis, fileName) {
   }
 
   if (!targetAnalysis?.title) {
-    indicators.push({ label: 'Title/seniority alignment', score: null, detail: 'Analyze a target job to compare its title and seniority with the most recent resume role.' });
+    indicators.push({ label: 'Title/seniority alignment', score: null, pendingStatus: targetAnalysis ? 'Unavailable' : 'Awaiting job', detail: 'Analyze a target job to compare its title and seniority with the most recent resume role.' });
   } else {
     const resumeTitle = latestJob?.job || extraction?.target_position_title || '';
     if (!resumeTitle) {
@@ -265,7 +267,7 @@ function buildResumeIndicators(extraction, targetAnalysis, fileName) {
     indicators.push({ label: 'Credentials', score: 0, detail: 'No credential, certification, license, or clearance entry was detected.' });
   }
 
-  return indicators.map((indicator) => ({ ...indicator, ...indicatorTone(indicator.score) }));
+  return indicators.map((indicator) => ({ ...indicator, ...indicatorTone(indicator.score, indicator.pendingStatus) }));
 }
 
 function ResumeAtsIndicators({ extraction, targetAnalysis, fileName }) {
