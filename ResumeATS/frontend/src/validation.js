@@ -90,6 +90,7 @@ export const generateResponseSchema = z.object({
   preview: z.string(),
   thumbnail: z.string(),
   files: z.record(z.string()),
+  changes: z.array(z.string()).default([]),
   keywords: z.array(z.object({ keyword: z.string(), status: z.enum(['present', 'review']) })).default([]),
   analysis: z.object({
     mode: z.enum(['deterministic', 'ai']),
@@ -105,6 +106,16 @@ export const generateResponseSchema = z.object({
     qual: z.array(z.string()).default([]),
     skills_min: z.array(z.string()).default([]),
     skills_max: z.array(z.string()).default([]),
+    requirements: z.array(z.object({
+      kind: z.enum(['required', 'preferred', 'responsibility']),
+      text: z.string(),
+      evidence: z.string(),
+    })).default([]),
+    ranked_categories: z.record(z.array(z.object({
+      skill: z.string(), priority: z.number(), rank: z.number(),
+      requirement: z.enum(['required', 'preferred']), evidence: z.array(z.string()),
+    }))).default({}),
+    ats_keywords: z.record(z.number().int().positive()).default({}),
     pay: z.string().default(''),
     summary: z.string(),
     raw_text: z.string(),

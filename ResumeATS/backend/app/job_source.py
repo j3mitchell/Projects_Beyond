@@ -15,6 +15,7 @@ import urllib3
 from bs4 import BeautifulSoup
 import certifi
 from fastapi import HTTPException
+from app.job_requirements import extract_requirements
 
 MAX_PAGE_BYTES = 2 * 1024 * 1024
 MAX_ANALYSIS_TEXT = 30000
@@ -1007,6 +1008,7 @@ def _normalise_ai_result(content: object, page: dict) -> dict:
         return result or _relevant_list(page.get(name, []))
 
     return {"mode": "ai", "source_url": page.get("source_url", ""),
+            "requirements": extract_requirements(page.get("raw_text", "")),
             "title": str(content.get("title") or page.get("title") or "Job Opportunity")[:200],
             "company": str(content.get("company") or page.get("company") or "")[:200],
             "industry": str(content.get("industry") or page.get("industry") or "general")[:100],
@@ -1229,12 +1231,20 @@ def analyze_job_text(description: str, mode: str = "deterministic") -> dict:
     clean_description = description.strip()[:MAX_ANALYSIS_TEXT]
     page = {"source_url": "", "title": "Target Role", "company": "", "summary": clean_description,
             "raw_text": clean_description, "metadata": {}}
+    # Explicit pasted labels are evidence; a guessed title from the first
+    # sentence is not. Preserve a missing identity when no label is supplied.
+    for field, labels in (("title", r"job title|position title|title"),
+                          ("company", r"company|employer|organization")):
+        match = re.search(r"^(?:" + labels + r")\s*:\s*(.+)$", clean_description, re.I | re.M)
+        if match:
+            page[field] = match.group(1).strip()[:200]
     page.update(_extract_job_fields({}, "", clean_description, {}))
     if mode == "ai":
         return _ai_analyze(page)
     if mode != "deterministic":
         raise HTTPException(400, "Choose Deterministic or AI job analysis.")
     page.update({"mode": "deterministic", "industry": _infer_industry(page["raw_text"]), "skills": _rank_taxonomy_skills(page["raw_text"])})
+    page["requirements"] = extract_requirements(clean_description)
     return page
 
 
@@ -1273,6 +1283,7 @@ def analyze_job(url: str, mode: str = "deterministic") -> dict:
     if mode == "ai":
         return _ai_analyze(page)
     page.update({"mode": "deterministic", "industry": _infer_industry(page["raw_text"]), "skills": _rank_taxonomy_skills(page["raw_text"])})
+    page["requirements"] = extract_requirements(page["summary"])
     return page
 
 
