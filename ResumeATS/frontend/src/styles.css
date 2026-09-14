@@ -355,7 +355,9 @@ button:disabled { opacity: .52; cursor: not-allowed; }
   color: #fff;
   font-weight: 700;
 }
-.form-action button:hover { background: #3f67ad; }
+.form-action button:disabled { opacity: 1; background: var(--accent-blue); color: #fff; }
+.form-action button:not(:disabled) { background: #274a86; }
+.form-action button:not(:disabled):hover { background: #1f356f; }
 
 .meta { color: #3f5561; font: 500 .9rem/1.3 "IBM Plex Sans", "Segoe UI", sans-serif; }
 .preview {
