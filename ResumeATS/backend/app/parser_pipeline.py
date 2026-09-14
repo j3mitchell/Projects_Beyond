@@ -7,7 +7,7 @@ from typing import Literal
 
 from app import main as base
 from app.classifier import classifier
-from app.contracts import ResumeEducation, ResumeExtractionResponse, ResumeJob
+from app.contracts import ResumeClearance, ResumeEducation, ResumeExtractionResponse, ResumeJob
 from app.organization_aliases import ORGANIZATION_ALIASES
 
 PARSER_VERSION = "pipeline-v4-record-boundaries"
@@ -107,7 +107,7 @@ CONTRACT_SPLIT_RE = re.compile(r"\s+(?:SME\s+)?Contract\s*:\s*", re.I)
 DOTTED_ACRONYM_RE = re.compile(r"(?<![A-Za-z])(?:[A-Za-z]\.){2,}(?![A-Za-z])")
 
 CLEARANCE_RE = re.compile(
-    r"\b(?:clearance|public trust|secret|top secret|ts/?sci|sci|polygraph|counterintelligence polygraph|"
+    r"\b(?:clearance|public trust|secret|top secret|ts[-/\s]?sci|sci|polygraph|counterintelligence polygraph|"
     r"full scope polygraph|q clearance|l clearance|dod secret|dod top secret)\b",
     re.I,
 )
@@ -894,6 +894,113 @@ def _extract_education(lines: list[str]) -> list[ResumeEducation]:
     )][:12]
 
 
+CLEARANCE_LEVEL_RE = re.compile(
+    r"\b(?P<level>"
+    r"top\s+secret(?:\s*[/\-]\s*(?:sci|sensitive\s+compartmented\s+information))?"
+    r"|ts\s*[/\-\s]\s*sci"
+    r"|public\s+trust"
+    r"|sensitive\s+compartmented\s+information"
+    r"|secret"
+    r"|confidential"
+    r"|sci"
+    r"|(?:q|l)(?=\s+clearance)"
+    r")\b(?:\s+clearance)?",
+    re.I,
+)
+CLEARANCE_AGENCY_RE = re.compile(
+    r"\b(?:agency|sponsor|sponsoring\s+agency|issued\s+(?:by|through)|"
+    r"adjudicated\s+(?:by|through)|granted\s+(?:by|through)|held\s+(?:by|through))"
+    r"\s*[:\-]?\s*(?P<agency>[A-Za-z0-9][^,;|\[\]\n]*)",
+    re.I,
+)
+CLEARANCE_YEAR_RE = re.compile(r"\b(?:19|20)\d{2}\b")
+CLEARANCE_STATUS_PATTERNS = (
+    ("processing", re.compile(r"\b(?:processing|in\s+process|pending|under\s+review|submitted|adjudication\s+pending)\b", re.I)),
+    ("expired", re.compile(r"\b(?:expired|inactive|revoked|lapsed|suspended|denied|cancelled|canceled)\b", re.I)),
+    ("active", re.compile(r"\b(?:active|current|valid|unexpired|granted|adjudicated)\b", re.I)),
+)
+
+
+def _normalize_clearance_level(value: str) -> str:
+    clean = re.sub(r"\s+", " ", (value or "")).strip().lower()
+    clean = re.sub(r"\s+clearance$", "", clean)
+    if re.search(r"(?:top\s+secret.*(?:sci|sensitive\s+compartmented)|ts\s*[/\-\s]\s*sci)", clean):
+        return "TS/SCI"
+    if clean.startswith("top secret"):
+        return "Top Secret"
+    if clean.startswith("public trust"):
+        return "Public Trust"
+    if "sensitive compartmented" in clean or clean == "sci":
+        return "SCI"
+    if clean.startswith("secret"):
+        return "Secret"
+    if clean.startswith("confidential"):
+        return "Confidential"
+    if clean in {"q", "l"}:
+        return clean.upper()
+    return (value or "").strip()
+
+
+def _clean_clearance_agency(value: str) -> str:
+    clean = _strip_bullet(value)
+    clean = re.sub(
+        r"^\s*(?:agency|sponsor|sponsoring\s+agency|issued\s+(?:by|through)|"
+        r"adjudicated\s+(?:by|through)|granted\s+(?:by|through)|held\s+(?:by|through))\s*[:\-]?\s*",
+        "",
+        clean,
+        flags=re.I,
+    )
+    clean = re.split(
+        r"\s*(?:\[|\||;|,?\s+(?:as\s+of|status|date|issued|expires?)\b|"
+        r",?\s+(?:in|on)\s+(?:(?:0?[1-9]|1[0-2])[/.-])?(?:19|20)\d{2}\b)",
+        clean,
+        maxsplit=1,
+        flags=re.I,
+    )[0]
+    return re.sub(r"\s+", " ", clean).strip(" .,:;–—-")
+
+
+def _clearance_status(value: str) -> str:
+    for status, pattern in CLEARANCE_STATUS_PATTERNS:
+        if pattern.search(value or ""):
+            return status
+    return ""
+
+
+def _clearance_entry(value: str) -> ResumeClearance:
+    text = " ".join(_strip_bullet(value).split())
+    level_match = CLEARANCE_LEVEL_RE.search(text)
+    agency_match = CLEARANCE_AGENCY_RE.search(text)
+    years = CLEARANCE_YEAR_RE.findall(text)
+    return ResumeClearance(
+        level=_normalize_clearance_level(level_match.group("level") if level_match else ""),
+        agency=_clean_clearance_agency(agency_match.group("agency")) if agency_match else "",
+        date=years[-1] if years else "",
+        status=_clearance_status(text),
+    )
+
+
+def _extract_clearances(lines: list[str]) -> list[ResumeClearance]:
+    entries: list[ResumeClearance] = []
+    seen: set[tuple[str, str, str, str]] = set()
+    for line in lines[:30]:
+        clean = _strip_bullet(line)
+        if not clean:
+            continue
+        parts = [clean]
+        candidate_parts = [part.strip() for part in re.split(r"[;|]", clean) if part.strip()]
+        if len(candidate_parts) > 1 and sum(bool(CLEARANCE_LEVEL_RE.search(part)) for part in candidate_parts) >= 2:
+            parts = candidate_parts
+        for part in parts:
+            entry = _clearance_entry(part)
+            key = (entry.level.lower(), entry.agency.lower(), entry.date, entry.status)
+            if not any((entry.level, entry.agency, entry.date, entry.status)) or key in seen:
+                continue
+            seen.add(key)
+            entries.append(entry)
+    return entries[:20]
+
+
 def _extract_simple_items(lines: list[str], matcher: re.Pattern[str] | None = None) -> list[str]:
     items: list[str] = []
     seen: set[str] = set()
@@ -962,7 +1069,7 @@ class ResumeParserPipeline:
             skills=_extract_skills(sections["skills"]),
             experience=response_jobs,
             education=_extract_education(sections["education"]),
-            clearances=_extract_simple_items(sections["clearances"], CLEARANCE_RE),
+            clearances=_extract_clearances(sections["clearances"]),
             certifications=_extract_simple_items(sections["certifications"], CERTIFICATION_RE),
         )
 

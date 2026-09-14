@@ -64,6 +64,13 @@ export const extractedEducationSchema = z.object({
   date: z.string().regex(/^\d{4}$/).or(z.literal('')).default(''),
 });
 
+export const extractedClearanceSchema = z.object({
+  level: z.string().trim().max(120).default(''),
+  agency: z.string().trim().max(200).default(''),
+  date: z.string().regex(/^\d{4}$/).or(z.literal('')).default(''),
+  status: z.enum(['active', 'expired', 'processing', '']).default(''),
+});
+
 export const extractedResumeJobSchema = z.object({
   number: z.number().int().positive(),
   job: z.string().trim().min(1).max(150),
@@ -89,7 +96,7 @@ export const resumeExtractionSchema = z.object({
   skills: z.array(z.string().trim().min(1).max(120)),
   experience: z.array(extractedResumeJobSchema),
   education: z.array(z.union([extractedEducationSchema, extractedSectionItemSchema])).default([]),
-  clearances: z.array(extractedSectionItemSchema).default([]),
+  clearances: z.array(z.union([extractedClearanceSchema, extractedSectionItemSchema])).default([]),
   certifications: z.array(extractedSectionItemSchema).default([]),
 });
 

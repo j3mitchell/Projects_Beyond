@@ -127,6 +127,13 @@ function educationText(value) {
     .join(' ');
 }
 
+function clearanceText(value) {
+  if (typeof value === 'string') return value;
+  return [value?.level, value?.agency, value?.date, value?.status]
+    .filter(hasValue)
+    .join(' ');
+}
+
 function resumeSearchCorpus(extraction) {
   const jobs = Array.isArray(extraction?.experience) ? extraction.experience : [];
   return [
@@ -136,7 +143,7 @@ function resumeSearchCorpus(extraction) {
     extraction?.cred,
     ...(Array.isArray(extraction?.skills) ? extraction.skills : []),
     ...(Array.isArray(extraction?.education) ? extraction.education.map(educationText) : []),
-    ...(Array.isArray(extraction?.clearances) ? extraction.clearances : []),
+    ...(Array.isArray(extraction?.clearances) ? extraction.clearances.map(clearanceText) : []),
     ...(Array.isArray(extraction?.certifications) ? extraction.certifications : []),
     ...jobs.flatMap((job) => [job?.job, job?.company, job?.date_range, ...(Array.isArray(job?.descriptions) ? job.descriptions : [])]),
   ].filter(hasValue).join(' ');
@@ -358,7 +365,7 @@ function buildResumeIndicators(extraction, targetAnalysis, fileName) {
   const credentialEntries = uniqueValues([
     extraction?.cred,
     ...certifications,
-    ...clearances,
+    ...clearances.map(clearanceText),
   ]);
   const credentialCorpus = [...credentialEntries, ...education.map(educationText)].join(' ');
   const requiredCredentials = targetAnalysis
@@ -519,6 +526,35 @@ function PreviewEducation({ items }) {
                   <PreviewValue label={`[minor${number}]`} field={`education.${index}.minor`} value={education.minor} />
                   <PreviewValue label={`[status${number}]`} field={`education.${index}.status`} value={education.status} />
                   <PreviewValue label={`[date${number}]`} field={`education.${index}.date`} value={education.date} />
+                </div>
+              </article>
+            );
+          })}
+        </div> : <p className="muted">Not detected</p>}
+      </div>
+    </details>
+  );
+}
+
+function PreviewClearances({ items }) {
+  const values = Array.isArray(items) ? items : [];
+  return (
+    <details className="extract-block preview-list-block collapsible-section" data-field="clearances">
+      <summary><span>Clearances</span><ExpansionIndicator /></summary>
+      <div className="collapsible-content preview-list-content">
+        {values.length ? <div className="clearance-list">
+          {values.map((item, index) => {
+            const clearance = typeof item === 'string' ? { level: item } : (item || {});
+            const number = String(index + 1).padStart(2, '0');
+            const heading = clearance.level || clearance.agency || `Clearance ${index + 1}`;
+            return (
+              <article className="clearance-entry" key={`clearance-${index}`}>
+                <div className="clearance-entry__heading"><span className="variable-label">[clr{number}]</span><strong>{heading}</strong></div>
+                <div className="clearance-entry__fields">
+                  <PreviewValue label={`[level${number}]`} field={`clearances.${index}.level`} value={clearance.level} />
+                  <PreviewValue label={`[agency${number}]`} field={`clearances.${index}.agency`} value={clearance.agency} />
+                  <PreviewValue label={`[date${number}]`} field={`clearances.${index}.date`} value={clearance.date} />
+                  <PreviewValue label={`[status${number}]`} field={`clearances.${index}.status`} value={clearance.status} />
                 </div>
               </article>
             );
@@ -1141,7 +1177,7 @@ export default function App() {
               </details>
 
               <PreviewEducation items={education} />
-              <PreviewList title="Clearances" prefix="clr" items={clearances} field="clearances" />
+              <PreviewClearances items={clearances} />
               <PreviewList title="Certifications" prefix="cert" items={certifications} field="certifications" />
 
               {hasValue(targetPositionTitle) && <details className="extract-block target-title-block collapsible-section" data-field="target_position_title">

@@ -81,6 +81,22 @@ class ResumeParserPipelineTests(unittest.TestCase):
         self.assertEqual(result.education[1].status, "in progress")
         self.assertEqual(result.education[1].date, "2027")
 
+    def test_clearances_are_split_into_level_agency_date_and_status(self):
+        result = pipeline.parse(
+            "CLEARANCES:\n"
+            "TS-SCI: issued by TSA-DHS [as of 6/2015], status: INACTIVE.\n"
+            "Secret clearance | Agency: DHS | 2020 | Processing\n"
+        )
+        self.assertEqual(len(result.clearances), 2)
+        self.assertEqual(result.clearances[0].level, "TS/SCI")
+        self.assertEqual(result.clearances[0].agency, "TSA-DHS")
+        self.assertEqual(result.clearances[0].date, "2015")
+        self.assertEqual(result.clearances[0].status, "expired")
+        self.assertEqual(result.clearances[1].level, "Secret")
+        self.assertEqual(result.clearances[1].agency, "DHS")
+        self.assertEqual(result.clearances[1].date, "2020")
+        self.assertEqual(result.clearances[1].status, "processing")
+
 
 if __name__ == "__main__":
     unittest.main()
