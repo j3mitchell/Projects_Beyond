@@ -20,8 +20,6 @@ from app.contracts import ResumeExtractionResponse
 from app.job_source import analyze_job, analyze_job_text
 from app.parser_pipeline import pipeline
 from app.resume_io import SUPPORTED_INPUT_EXTENSIONS, read_resume_text
-from app.resume_generator import generate_resume as tailor_resume
-from app.skill_priority import rank_job_skills
 
 APP_VERSION = "platform-v1"
 MAX_UPLOAD = 10 * 1024 * 1024
@@ -117,20 +115,6 @@ class RankedSkill(BaseModel):
     source: str
 
 
-class JobRequirement(BaseModel):
-    kind: Literal["required", "preferred", "responsibility"]
-    text: str
-    evidence: str
-
-
-class PrioritySkill(BaseModel):
-    skill: str
-    priority: int = Field(ge=0, le=100)
-    rank: int = Field(ge=1)
-    requirement: Literal['required', 'preferred']
-    evidence: list[str]
-
-
 class JobAnalysisResponse(BaseModel):
     mode: Literal["deterministic", "ai"]
     source_url: str = ""
@@ -150,15 +134,11 @@ class JobAnalysisResponse(BaseModel):
     raw_text: str
     metadata: dict[str, str] = Field(default_factory=dict)
     skills: list[RankedSkill] = Field(default_factory=list)
-    requirements: list[JobRequirement] = Field(default_factory=list)
-    ranked_categories: dict[str, list[PrioritySkill]] = Field(default_factory=dict)
-    ats_keywords: dict[str, int] = Field(default_factory=dict)
 
 
 class GenerateResponse(legacy.GenerateResponse):
     keywords: list[dict[str, str]] = Field(default_factory=list)
     analysis: JobAnalysisResponse | None = None
-    changes: list[str] = Field(default_factory=list)
 
 
 @app.post("/generate", response_model=GenerateResponse)
@@ -188,16 +168,19 @@ async def generate_resume(
     else:
         raise HTTPException(400, "Enter a job URL or paste the job description.")
     title = analysis["title"]
-    analysis.update(rank_job_skills(analysis))
     company = analysis["company"]
+    description = analysis["summary"]
     # Keep the applicant's factual content intact. Keyword suggestions belong
     # beside the resume and must never become invented qualifications.
-    generated = tailor_resume(text, analysis)
-    preview = generated["preview"]
-    keywords = generated["keywords"]
+    preview = "\n".join(line.rstrip() for line in text.strip().splitlines())
+    suggested = [skill["name"] for skill in analysis.get("skills", []) if skill.get("name")]
+    if not suggested:
+        suggested = legacy._extract_top_keywords(description)
+    keywords = [{"keyword": word, "status": "present" if word.lower() in text.lower() else "review"}
+                for word in suggested]
     return GenerateResponse(job_title=title, company=company, preview=preview,
                             thumbnail="\n".join(preview.splitlines()[:6]), files={}, keywords=keywords,
-                            analysis=analysis, changes=generated["changes"])
+                            analysis=analysis)
 
 
 class ExportRequest(BaseModel):

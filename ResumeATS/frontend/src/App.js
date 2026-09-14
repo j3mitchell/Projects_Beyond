@@ -161,38 +161,10 @@ function TargetJobPreview({ analysis }) {
       <PreviewValue label="[type]" field="target.type" value={analysis.type} />
       <PreviewValue label="[work]" field="target.work" value={analysis.work} />
       <PreviewValue label="[task]" field="target.task" value={analysis.task} />
-      {Object.keys(analysis.ranked_categories || {}).length > 0 ? <>
-        {[
-          ['credentials', '[cred]'],
-          ['qualifications_min', '[skMin]'],
-          ['preferred_max', '[skMax]'],
-        ].map(([category, label]) => <div className="preview-field preview-field-list" key={category}>
-          <span className="variable-label">{label}</span>
-          {analysis.ranked_categories[category]?.length ? <ul className="extract-list">
-            {analysis.ranked_categories[category].map(item => <li key={item.skill} title={item.evidence.join('\n')}>
-              {item.skill} <span className="variable-label">({item.rank})</span>
-            </li>)}
-          </ul> : <span className="muted">Not detected</span>}
-        </div>)}
-        <details className="collapsible-section">
-          <summary>ATS keyword priority dictionary <ExpansionIndicator /></summary>
-          <p className="muted">Rank 1 is highest. ResumeATS priorities use requirement wording and repeated evidence; these are not employer ATS scores.</p>
-          <pre style={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', maxHeight: '112px', overflowY: 'auto' }}>{JSON.stringify(analysis.ats_keywords, null, 2)}</pre>
-        </details>
-      </> : <>
-        <PreviewLabeledList label="[qual]" field="target.qualifications" items={analysis.qual} itemPrefix="sMin" />
-        <PreviewLabeledList label="[skMin]" field="target.skMin" items={analysis.skills_min} itemPrefix="skMin" />
-        <PreviewLabeledList label="[skMax]" field="target.skMax" items={analysis.skills_max} itemPrefix="skMax" />
-      </>}
+      <PreviewLabeledList label="[qual]" field="target.qualifications" items={analysis.qual} itemPrefix="sMin" />
+      <PreviewLabeledList label="[skMin]" field="target.skMin" items={analysis.skills_min} itemPrefix="skMin" />
+      <PreviewLabeledList label="[skMax]" field="target.skMax" items={analysis.skills_max} itemPrefix="skMax" />
       <CompensationValue value={analysis.pay} />
-      {analysis.requirements?.length > 0 && <details className="collapsible-section">
-        <summary>Full job requirements <ExpansionIndicator /></summary>
-        <ul className="extract-list">
-          {analysis.requirements.map((item, index) => (
-            <li key={`requirement-${index}`}><strong>{item.kind}:</strong> {item.text}</li>
-          ))}
-        </ul>
-      </details>}
       <PreviewValue label="[desc]" field="target.desc" value={description} multiline />
       {needsBrowserCapture(analysis) && (
         <p className="browser-capture-hint" role="status">
@@ -579,7 +551,7 @@ export default function App() {
             </select>
           </label>
 
-          <button disabled={loading || extracting || (!resume && !jobUrl.trim() && !jobDescription.trim())}>{loading ? 'Preparing…' : resume ? 'Generate resume' : 'Analyze job'}</button>
+          <button disabled={loading || extracting || (!resume && !jobUrl.trim() && !jobDescription.trim())}>{loading ? 'Preparing…' : resume ? 'Prepare resume' : 'Analyze job'}</button>
           {browserCaptureNeeded && jobUrl.trim() && !jobDescription.trim() && (
             <section className="browser-capture-panel" aria-label="Browser capture fallback">
               <strong>Browser fallback activated.</strong>
@@ -706,7 +678,6 @@ export default function App() {
             {resume && data.keywords.length > 0 && <div className="keyword-panel" aria-label="Job keyword review">
               {data.keywords.map(({ keyword, status }) => <span className="skill-chip" key={keyword}>{keyword} · {status === 'present' ? 'in resume' : 'review'}</span>)}
             </div>}
-            {data.changes?.map((change, index) => <p className="muted" key={`change-${index}`}>{change}</p>)}
             {data.preview ? <label>Editable resume preview
               <textarea className="preview" value={preview} maxLength={100000} onChange={(e) => setPreview(e.target.value)} />
             </label> : <p className="muted">No resume uploaded. The target job extraction is shown above.</p>}

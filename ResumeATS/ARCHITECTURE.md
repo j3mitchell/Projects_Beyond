@@ -10,9 +10,6 @@ ResumeATS uses a stable API entrypoint and an explicit parsing pipeline. Version
 - `backend/app/classifier.py` — O*NET + spaCy classification services
 - `backend/app/organization_aliases.py` — organization acronym/alias normalization
 - `backend/app/main.py` — legacy resume-generation helpers retained behind the API boundary
-- `backend/app/job_requirements.py` — full source-backed requirements, separate from compact display snippets
-- `backend/app/resume_generator.py` — source-preserving bullet prioritization and literal keyword coverage
-- `backend/app/skill_priority.py` — category rankings and the job-specific ATS keyword priority dictionary
 - `frontend/src/validation.js` — Zod frontend contract validation
 
 Job analysis tiers are explicit: Deterministic is the free, explainable path;
@@ -43,20 +40,5 @@ migration fallback.
 - The parser leaves uncertain fields blank rather than inventing values.
 
 ## Stability rule
-
-The current generator prioritizes contiguous bullet groups using literal job-skill
-matches. It preserves all source lines and employer boundaries; it does not yet
-rewrite summaries or accomplishments. Unknown layouts remain intact. Full job
-requirements are returned with required/preferred/responsibility categories and
-source evidence; the older compact display fields remain separate.
-
-Job analysis includes `ranked_categories` for credentials, qualifications_min,
-and preferred_max. Rank 1 is highest within each category. Priority starts at 80
-for required items, 90 for explicit mandatory wording, and 40 for preferred
-items; additional distinct evidence adds up to 9 points. Source order breaks
-ties. Credentials preserve full requirement wording and required/preferred
-status. `ats_keywords` maps each keyword to its overall priority rank as a
-simple `skill: priority` dictionary. These are internal ResumeATS priorities,
-not scores provided by an employer's ATS.
 
 New parsing behavior belongs in `parser_pipeline.py` or classifier services. Do not create `main_vN.py` wrapper modules for parser changes.
