@@ -125,6 +125,28 @@ function indicatorTone(score, pendingStatus = 'Awaiting job') {
   return { tone: 'needs', status: 'Needs review' };
 }
 
+const INDICATOR_WEIGHTS = {
+  'Parsing compatibility': 30,
+  'Hard requirements': 20,
+  'Keyword matching': 20,
+  'Context + recency': 15,
+  'Title/seniority alignment': 10,
+  Credentials: 5,
+};
+
+function calculateAtsGrade(indicators) {
+  const scored = indicators.filter((indicator) => indicator.score !== null);
+  const totalWeight = scored.reduce((sum, indicator) => sum + (INDICATOR_WEIGHTS[indicator.label] || 0), 0);
+  const weightedScore = scored.reduce((sum, indicator) => (
+    sum + (indicator.score * (INDICATOR_WEIGHTS[indicator.label] || 0))
+  ), 0);
+  return {
+    score: totalWeight ? Math.round(weightedScore / totalWeight) : 0,
+    scoredCount: scored.length,
+    pendingCount: indicators.length - scored.length,
+  };
+}
+
 function buildResumeIndicators(extraction, targetAnalysis, fileName) {
   const jobs = Array.isArray(extraction?.experience) ? extraction.experience : [];
   const skills = Array.isArray(extraction?.skills) ? extraction.skills : [];
@@ -150,11 +172,16 @@ function buildResumeIndicators(extraction, targetAnalysis, fileName) {
   const parsedCount = parsingFields.filter(([, value]) => hasValue(value)).length;
   const missingFields = parsingFields.filter(([, value]) => !hasValue(value)).map(([label]) => label);
   const parsingScore = Math.round((parsedCount / parsingFields.length) * 100);
+  const parsingSubitems = parsingFields.map(([label, value]) => ({
+    text: `${label}: ${hasValue(value) ? 'detected' : 'not detected'}`,
+    tone: hasValue(value) ? 'good' : 'needs',
+  }));
 
   const indicators = [{
     label: 'Parsing compatibility',
     score: parsingScore,
     detail: `${parsedCount}/${parsingFields.length} core fields detected${missingFields.length ? ` · Review ${missingFields.join(', ')}` : ''}. Text extraction cannot verify graphics or visual-only content in columns, headers, or footers${fileName ? ` · ${fileName}` : ''}.`,
+    subitems: parsingSubitems,
   }];
 
   if (!targetAnalysis) {
@@ -162,6 +189,11 @@ function buildResumeIndicators(extraction, targetAnalysis, fileName) {
       label: 'Hard requirements',
       score: null,
       detail: 'Analyze a target job to compare degree, certification or license, location, work authorization, and years of experience.',
+      subitems: [
+        { text: 'Degree or education requirement: awaiting job', tone: 'pending' },
+        { text: 'Certification or license: awaiting job', tone: 'pending' },
+        { text: 'Location, authorization, and years: awaiting job', tone: 'pending' },
+      ],
     });
   } else {
     const requirements = uniqueValues([
@@ -169,7 +201,13 @@ function buildResumeIndicators(extraction, targetAnalysis, fileName) {
       ...(Array.isArray(targetAnalysis.skills_min) ? targetAnalysis.skills_min : []),
     ]);
     if (!requirements.length) {
-      indicators.push({ label: 'Hard requirements', score: null, pendingStatus: 'Unavailable', detail: 'No explicit minimum requirements were extracted from the target job; verify the posting manually.' });
+      indicators.push({
+        label: 'Hard requirements',
+        score: null,
+        pendingStatus: 'Unavailable',
+        detail: 'No explicit minimum requirements were extracted from the target job; verify the posting manually.',
+        subitems: [{ text: 'No minimum requirement lines available from the target job', tone: 'pending' }],
+      });
     } else {
       const matched = requirements.filter((requirement) => matchesSearchText(corpus, requirement));
       const missing = requirements.filter((requirement) => !matchesSearchText(corpus, requirement));
@@ -177,6 +215,10 @@ function buildResumeIndicators(extraction, targetAnalysis, fileName) {
         label: 'Hard requirements',
         score: Math.round((matched.length / requirements.length) * 100),
         detail: `${matched.length}/${requirements.length} extracted minimum requirements have resume evidence${missing.length ? ` · Review ${missing.slice(0, 2).map(previewText).join('; ')}` : ''}. Location, work authorization, and years still need confirmation.`,
+        subitems: [
+          ...matched.slice(0, 6).map((requirement) => ({ text: `Matched: ${previewText(requirement)}`, tone: 'good' })),
+          ...missing.slice(0, 6).map((requirement) => ({ text: `Review: ${previewText(requirement)}`, tone: 'needs' })),
+        ],
       });
     }
   }
@@ -187,12 +229,14 @@ function buildResumeIndicators(extraction, targetAnalysis, fileName) {
       score: null,
       pendingStatus: targetAnalysis ? 'Unavailable' : 'Awaiting job',
       detail: targetAnalysis ? 'No structured ATS keywords were extracted from the target job.' : 'Analyze a target job to compare exact and related ATS keywords with this resume.',
+      subitems: [{ text: targetAnalysis ? 'No structured keywords available' : 'Target job analysis required', tone: 'pending' }],
     });
     indicators.push({
       label: 'Context + recency',
       score: null,
       pendingStatus: targetAnalysis ? 'Unavailable' : 'Awaiting job',
       detail: 'Analyze a target job to check whether keywords appear in recent experience with supporting results.',
+      subitems: [{ text: 'Requires target keywords and dated job experience', tone: 'pending' }],
     });
   } else {
     const matched = targetSkills.filter((skill) => matchesSearchText(corpus, skill));
@@ -205,6 +249,10 @@ function buildResumeIndicators(extraction, targetAnalysis, fileName) {
       label: 'Keyword matching',
       score: Math.round((matched.length / targetSkills.length) * 100),
       detail: `${matched.length}/${targetSkills.length} target keywords found in imported resume fields.`,
+      subitems: [
+        ...matched.slice(0, 8).map((skill) => ({ text: `Matched: ${skill}`, tone: 'good' })),
+        ...targetSkills.filter((skill) => !matched.includes(skill)).slice(0, 8).map((skill) => ({ text: `Review: ${skill}`, tone: 'needs' })),
+      ],
     });
     const contextualCount = contextual.length;
     const recentCount = recent ? recent.length : 0;
@@ -212,15 +260,30 @@ function buildResumeIndicators(extraction, targetAnalysis, fileName) {
       label: 'Context + recency',
       score: Math.round(((contextualCount / targetSkills.length) * 70) + ((recentCount / targetSkills.length) * 30)),
       detail: `${contextualCount}/${targetSkills.length} keywords appear in job experience; ${recentCount}/${targetSkills.length} appear in the most recent dated role.`,
+      subitems: [
+        { text: `Experience context: ${contextualCount}/${targetSkills.length} keywords`, tone: contextualCount ? 'good' : 'needs' },
+        { text: `Most recent dated role: ${recentCount}/${targetSkills.length} keywords`, tone: recentCount ? 'good' : 'needs' },
+      ],
     });
   }
 
   if (!targetAnalysis?.title) {
-    indicators.push({ label: 'Title/seniority alignment', score: null, pendingStatus: targetAnalysis ? 'Unavailable' : 'Awaiting job', detail: 'Analyze a target job to compare its title and seniority with the most recent resume role.' });
+    indicators.push({
+      label: 'Title/seniority alignment',
+      score: null,
+      pendingStatus: targetAnalysis ? 'Unavailable' : 'Awaiting job',
+      detail: 'Analyze a target job to compare its title and seniority with the most recent resume role.',
+      subitems: [{ text: targetAnalysis ? 'Target title not available' : 'Target job analysis required', tone: 'pending' }],
+    });
   } else {
     const resumeTitle = latestJob?.job || extraction?.target_position_title || '';
     if (!resumeTitle) {
-      indicators.push({ label: 'Title/seniority alignment', score: 0, detail: `Target title: ${targetAnalysis.title} · No resume title was detected.` });
+      indicators.push({
+        label: 'Title/seniority alignment',
+        score: 0,
+        detail: `Target title: ${targetAnalysis.title} · No resume title was detected.`,
+        subitems: [{ text: 'Resume title: not detected', tone: 'needs' }],
+      });
     } else {
       const targetTerms = searchTerms(targetAnalysis.title);
       const resumeTerms = new Set(searchTerms(resumeTitle));
@@ -234,6 +297,11 @@ function buildResumeIndicators(extraction, targetAnalysis, fileName) {
         label: 'Title/seniority alignment',
         score,
         detail: `Target: ${targetAnalysis.title} · Resume: ${resumeTitle}${targetLevel !== null && resumeLevel !== null && Math.abs(targetLevel - resumeLevel) > 1 ? ' · Seniority levels differ; review.' : '.'}`,
+        subitems: [
+          { text: `Target title: ${targetAnalysis.title}`, tone: 'pending' },
+          { text: `Resume title: ${resumeTitle}`, tone: lexicalScore >= 0.5 ? 'good' : 'needs' },
+          { text: `Seniority: ${targetLevel !== null && resumeLevel !== null && Math.abs(targetLevel - resumeLevel) <= 1 ? 'aligned' : 'review'}`, tone: targetLevel !== null && resumeLevel !== null && Math.abs(targetLevel - resumeLevel) <= 1 ? 'good' : 'needs' },
+        ],
       });
     }
   }
@@ -256,15 +324,25 @@ function buildResumeIndicators(extraction, targetAnalysis, fileName) {
       label: 'Credentials',
       score: Math.round((matched.length / requiredCredentials.length) * 100),
       detail: `${matched.length}/${requiredCredentials.length} credential or degree requirements have matching resume evidence${credentialEntries.length ? ` · Detected: ${credentialEntries.slice(0, 3).join(', ')}` : ''}.`,
+      subitems: [
+        ...matched.slice(0, 6).map((requirement) => ({ text: `Matched: ${previewText(requirement)}`, tone: 'good' })),
+        ...requiredCredentials.filter((requirement) => !matched.includes(requirement)).slice(0, 6).map((requirement) => ({ text: `Review: ${previewText(requirement)}`, tone: 'needs' })),
+      ],
     });
   } else if (credentialEntries.length) {
     indicators.push({
       label: 'Credentials',
       score: 100,
       detail: `Detected ${credentialEntries.length} credential, certification, license, or clearance entr${credentialEntries.length === 1 ? 'y' : 'ies'}: ${credentialEntries.slice(0, 3).join(', ')}.`,
+      subitems: credentialEntries.slice(0, 8).map((entry) => ({ text: `Detected: ${entry}`, tone: 'good' })),
     });
   } else {
-    indicators.push({ label: 'Credentials', score: 0, detail: 'No credential, certification, license, or clearance entry was detected.' });
+    indicators.push({
+      label: 'Credentials',
+      score: 0,
+      detail: 'No credential, certification, license, or clearance entry was detected.',
+      subitems: [{ text: 'No credential evidence detected', tone: 'needs' }],
+    });
   }
 
   return indicators.map((indicator) => ({ ...indicator, ...indicatorTone(indicator.score, indicator.pendingStatus) }));
@@ -272,6 +350,8 @@ function buildResumeIndicators(extraction, targetAnalysis, fileName) {
 
 function ResumeAtsIndicators({ extraction, targetAnalysis, fileName }) {
   const indicators = buildResumeIndicators(extraction, targetAnalysis, fileName);
+  const grade = calculateAtsGrade(indicators);
+  const gradeTone = indicatorTone(grade.score);
   return (
     <section className="resume-indicators" aria-label="ATS readiness checklist">
       <div className="resume-indicators__header">
@@ -279,6 +359,16 @@ function ResumeAtsIndicators({ extraction, targetAnalysis, fileName }) {
           <h3>ATS readiness checklist</h3>
           <p className="muted">Screening signals from the imported resume. Job comparisons appear after a target job is analyzed.</p>
         </div>
+      </div>
+      <div className={`resume-grade resume-grade--${gradeTone.tone}`}>
+        <div className="resume-grade__heading">
+          <span>ATS compatibility / compliance</span>
+          <strong>{grade.score}%</strong>
+        </div>
+        <div className="resume-grade__meter" role="progressbar" aria-label="ATS compatibility and compliance grade" aria-valuemin="0" aria-valuemax="100" aria-valuenow={grade.score}>
+          <span style={{ width: `${grade.score}%` }} />
+        </div>
+        <p>{grade.scoredCount}/{indicators.length} checks scored{grade.pendingCount ? ` · ${grade.pendingCount} awaiting target-job data` : ''}.</p>
       </div>
       <div className="resume-indicators__grid">
         {indicators.map((indicator) => (
@@ -289,6 +379,15 @@ function ResumeAtsIndicators({ extraction, targetAnalysis, fileName }) {
               <span className="resume-indicator__status">{indicator.score !== null ? `${indicator.score}% · ` : ''}{indicator.status}</span>
             </div>
             <p>{indicator.detail}</p>
+            {indicator.subitems?.length > 0 && <ul className="resume-indicator__subitems">
+              {indicator.subitems.map((item, index) => {
+                const subitem = typeof item === 'string' ? { text: item, tone: 'review' } : item;
+                return <li key={`${indicator.label}-subitem-${index}`} className={`resume-indicator__subitem resume-indicator__subitem--${subitem.tone}`}>
+                  <span aria-hidden="true">{subitem.tone === 'good' ? '✓' : subitem.tone === 'pending' ? '·' : '!'}</span>
+                  {subitem.text}
+                </li>;
+              })}
+            </ul>}
           </article>
         ))}
       </div>
