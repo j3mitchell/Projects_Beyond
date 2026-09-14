@@ -632,6 +632,7 @@ export default function App() {
   const [outputFormat, setOutputFormat] = useState('all');
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [loadingAction, setLoadingAction] = useState('');
   const [error, setError] = useState('');
   const [extraction, setExtraction] = useState(null);
   const [extracting, setExtracting] = useState(false);
@@ -695,7 +696,7 @@ export default function App() {
         : extracting
           ? 'Extracting resume…'
           : loading
-            ? 'Preparing preview…'
+            ? loadingAction === 'analyze' ? 'Analyzing job…' : 'Preparing preview…'
             : 'Ready';
   const statusProgress = access !== 'ready'
     ? access === 'checking' ? 20 : 0
@@ -719,8 +720,8 @@ export default function App() {
     });
   }
 
-  async function handleResumeChange(e) {
-    const requestId = ++extractionRequest.current;
+  function handleResumeChange(e) {
+    ++extractionRequest.current;
     const file = e.target.files?.[0] || null;
     setResume(null);
     setExtraction(null);
@@ -739,10 +740,21 @@ export default function App() {
     }
 
     setResume(file);
+    setCaptureNotice('Resume selected. Click Import resume to extract its fields.');
+  }
+
+  async function handleImportResume() {
+    if (!resume || extracting) {
+      if (!resume) setExtractError('Choose a resume file before importing it.');
+      return;
+    }
+
+    const requestId = ++extractionRequest.current;
     setExtracting(true);
+    setExtractError('');
     try {
       const form = new FormData();
-      form.append('resume', file);
+      form.append('resume', resume);
 
       const resp = await apiFetch('/extract', { method: 'POST', body: form });
 
@@ -760,9 +772,9 @@ export default function App() {
     }
   }
 
-  async function generateJob({ jobUrlValue = jobUrl, jobDescriptionValue = jobDescription, captureSourceUrl = '' } = {}) {
+  async function generateJob({ jobUrlValue = jobUrl, jobDescriptionValue = jobDescription, resumeValue = resume, captureSourceUrl = '', action = 'analyze' } = {}) {
     const validation = generationFormSchema.safeParse({
-      resume,
+      resume: resumeValue,
       jobUrl: jobUrlValue,
       jobDescription: jobDescriptionValue,
       outputFormat,
@@ -776,6 +788,7 @@ export default function App() {
 
     const validated = validation.data;
     setLoading(true);
+    setLoadingAction(action);
     setError('');
     setCaptureNotice(captureSourceUrl ? 'Browser page captured. Analyzing the pasted job description…' : '');
     try {
@@ -808,12 +821,25 @@ export default function App() {
       setError(`Generation failed: ${err.message}`);
     } finally {
       setLoading(false);
+      setLoadingAction('');
     }
+  }
+
+  async function analyzeJob() {
+    await generateJob({ resumeValue: null, action: 'analyze' });
+  }
+
+  async function prepareResume() {
+    if (!resume) {
+      setError('Choose a resume file before preparing the resume.');
+      return;
+    }
+    await generateJob({ resumeValue: resume, action: 'prepare' });
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
-    await generateJob();
+    await analyzeJob();
   }
 
   async function handleCapturedJob(payload) {
@@ -822,7 +848,7 @@ export default function App() {
     setJobDescription(text);
     setJobUrl(String(payload?.sourceUrl || '').trim());
     setCaptureNotice('Browser page captured. Analyzing the pasted job description…');
-    await generateJob({ jobUrlValue: '', jobDescriptionValue: text, captureSourceUrl: payload?.sourceUrl || '' });
+    await generateJob({ jobUrlValue: '', jobDescriptionValue: text, resumeValue: null, captureSourceUrl: payload?.sourceUrl || '', action: 'analyze' });
   }
 
   useEffect(() => {
@@ -944,7 +970,7 @@ export default function App() {
         <form onSubmit={handleSubmit} className="form">
           <label>
             Resume file (optional for job extraction)
-            <input type="file" accept=".docx,.pdf,.txt,.md,.rtf,.html,.htm,.doc,.odt,.json,.xml,.pages,.zip" disabled={loading} onChange={handleResumeChange} />
+            <input type="file" accept=".docx,.pdf,.txt,.md,.rtf,.html,.htm,.doc,.odt,.json,.xml,.pages,.zip" disabled={loading || extracting} onChange={handleResumeChange} />
           </label>
 
           <label>
@@ -996,7 +1022,17 @@ export default function App() {
             </select>
           </label>
 
-          <button disabled={loading || extracting || (!resume && !jobUrl.trim() && !jobDescription.trim())}>{loading ? 'Preparing…' : resume ? 'Prepare resume' : 'Analyze job'}</button>
+          <div className="form-actions" role="group" aria-label="ResumeATS actions">
+            <button type="button" disabled={loading || extracting || (!jobUrl.trim() && !jobDescription.trim())} onClick={analyzeJob}>
+              {loadingAction === 'analyze' ? 'Analyzing…' : 'Analyze job'}
+            </button>
+            <button type="button" disabled={loading || extracting || !resume || (!jobUrl.trim() && !jobDescription.trim())} onClick={prepareResume}>
+              {loadingAction === 'prepare' ? 'Preparing…' : 'Prepare resume'}
+            </button>
+            <button type="button" disabled={loading || extracting || !resume} onClick={handleImportResume}>
+              {extracting ? 'Importing…' : 'Import resume'}
+            </button>
+          </div>
           {browserCaptureNeeded && jobUrl.trim() && !jobDescription.trim() && (
             <section className="browser-capture-panel" aria-label="Browser capture fallback">
               <strong>Browser fallback activated.</strong>
