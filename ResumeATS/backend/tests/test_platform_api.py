@@ -253,13 +253,44 @@ class PlatformAPITests(unittest.TestCase):
         response.json.return_value = {"items": []}
         with patch('app.job_source.fetch_public_html', return_value=shell), \
              patch('app.job_source.requests.get', return_value=response), \
-             patch('app.job_source._is_public_hostname', return_value=True):
+             patch('app.job_source._is_public_hostname', return_value=True), \
+             patch('app.job_source.render_public_html', side_effect=RuntimeError('browser unavailable')):
             analysis = analyze_job('https://careers.example.com/en/sites/jobsearch/job/340996/', 'deterministic')
         self.assertEqual(analysis['title'], 'Database Developer-SQL, Kernel, and Query Optimizer Developer')
         self.assertEqual(analysis['company'], 'Oracle')
         self.assertEqual(analysis['summary'], description)
         self.assertEqual(analysis['metadata']['render_mode'], 'oracle-hcm-metadata')
         self.assertNotIn('accessibility assistance', analysis['summary'].casefold())
+
+    def test_oracle_metadata_falls_back_to_visible_browser_posting(self):
+        description = "Optimizer group develops Oracle database query optimization systems. " * 3
+        shell = f'''<html><head><base href="/en/sites/jobsearch"
+        data-apibaseurl="https://jobs.example.oraclecloud.com:443"
+        data-sitenumber="CX_45001"><meta property="og:site_name" content="Oracle">
+        <meta property="og:title" content="Database Developer-SQL, Kernel, and Query Optimizer Developer">
+        <meta property="og:description" content="{description}"></head>
+        <body><main><h2>If you require accessibility assistance or accommodation for a disability at any point, let us know.</h2>
+        <p>View More Jobs This job is no longer available.</p></main></body></html>'''.encode()
+        rendered = b'''<html><head><title>Database Developer | Oracle</title>
+        <meta property="og:site_name" content="Oracle"><meta property="og:title" content="Database Developer-SQL, Kernel, and Query Optimizer Developer"></head>
+        <body><main><h1>Database Developer-SQL, Kernel, and Query Optimizer Developer</h1>
+        <h2>Job Description</h2><p>Develop advanced Oracle database query optimizer features and services.</p>
+        <h2>Qualifications</h2><ol><li>6+ years of industry experience.</li><li>Knowledge of SQL databases.</li>
+        <li>Systems programming experience.</li><li>Kernel software development.</li></ol>
+        <h2>Preferred Qualifications</h2><ol><li>Knowledge of SQL query optimization.</li></ol>
+        <h2>Responsibilities</h2><p>Research, design, and develop database optimizer software.</p></main></body></html>'''
+        response = Mock(status_code=200, content=b'{"items": []}')
+        response.json.return_value = {"items": []}
+        with patch('app.job_source.fetch_public_html', return_value=shell), \
+             patch('app.job_source.requests.get', return_value=response), \
+             patch('app.job_source._is_public_hostname', return_value=True), \
+             patch('app.job_source.render_public_html', return_value=rendered) as render:
+            analysis = analyze_job('https://careers.example.com/en/sites/jobsearch/job/340996/', 'deterministic')
+        render.assert_called_once_with('https://careers.example.com/en/sites/jobsearch/job/340996/')
+        self.assertEqual(analysis['metadata']['render_mode'], 'browser-fallback')
+        self.assertTrue(analysis['qual'])
+        self.assertTrue(analysis['skills_max'])
+        self.assertIn('SQL', [skill['name'] for skill in analysis['skills']])
 
     def test_fetch_public_html_requests_decoded_content(self):
         response = Mock(status=200, headers={})

@@ -651,7 +651,7 @@ function TargetJobPreview({ analysis }) {
       <PreviewValue label="[desc]" field="target.desc" value={description} multiline />
       {needsBrowserCapture(analysis) && (
         <p className="browser-capture-hint" role="status">
-          Deterministic extraction was incomplete. On the job page, choose the ResumeATS Capture extension; it will send the visible listing to Paste Job Description and analyze it automatically.
+          Deterministic extraction was incomplete. Copy the visible posting into “Or paste the job description,” then click Analyze job. The ResumeATS Capture extension can do this automatically.
         </p>
       )}
       {skills.length > 0 && <details className="target-job-skills collapsible-section" open={analysis.skills_min?.length === 0 && analysis.skills_max?.length === 0}>

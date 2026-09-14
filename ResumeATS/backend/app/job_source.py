@@ -678,6 +678,7 @@ def _is_heading_or_label(value: str) -> bool:
         "what you bring", "security clearance", "details", "education requirements", "category", "clearance", "location",
         "telecommute", "qualifications here s what you need", "minimum skills", "must have", "preferred qualifications",
         "our commitment to you overview of benefits", "working conditions", "pay range", "position information",
+        "highly desirable",
         "salary range", "hiring salary range", "criteria", "essential duties", "knowledge", "skills", "abilities",
         "knowledge skills and abilities", "job requirements", "physical requirements", "other requirements",
         "accommodations", "posting detail information", "posting specific questions", "applicant documents",
@@ -897,7 +898,7 @@ def _extract_job_fields(structured: dict[str, object], structured_text: str, raw
     task = _under_word_limit(next((line for line in task_lines if not _is_heading_or_label(line) and not line.casefold().startswith("other duties")), ""), maximum=6)
     qualifications = _section_items(
         lines, ("requirements", "qualifications here s what you need", "qualifications", "basic qualifications", "required qualifications", "minimum qualifications", "what you'll bring", "what you bring"),
-        ("minimum skills", "required skills", "preferred qualifications", "preferred skills", "desired qualifications", "criteria", "job requirements", "security clearance", "our commitment", "benefits", "working conditions", "pay range", "salary", "compensation", "location", "work location", "details"),
+        ("minimum skills", "required skills", "preferred qualifications", "preferred skills", "desired qualifications", "highly desirable", "responsibilities", "criteria", "job requirements", "security clearance", "our commitment", "benefits", "working conditions", "pay range", "salary", "compensation", "location", "work location", "details"),
         ("intended to provide a general overview", "however, due to", "candidates should demonstrate", "requirements for"),
     )
     minimum_skills = _section_items(lines, ("minimum skills", "required skills", "must have"), ("preferred qualifications", "preferred skills", "desired qualifications", "criteria", "job requirements", "our commitment", "benefits", "working conditions", "pay range", "salary", "compensation", "location", "work location", "details"))
@@ -927,7 +928,7 @@ def _extract_job_fields(structured: dict[str, object], structured_text: str, raw
             minimum_skills = _short_list([*minimum_skills, *basic_items])
     if len(minimum_skills) < 6 and knowledge_skills:
         minimum_skills = _short_list([*minimum_skills, *knowledge_skills])
-    preferred_skills = _section_items(lines, ("preferred qualifications", "preferred skills", "desired qualifications"), ("security clearance", "responsibilities", "criteria", "job requirements", "our commitment", "benefits", "working conditions", "pay range", "salary", "compensation", "location", "work location", "details"))
+    preferred_skills = _section_items(lines, ("preferred qualifications", "preferred skills", "desired qualifications", "highly desirable"), ("security clearance", "responsibilities", "criteria", "job requirements", "our commitment", "benefits", "working conditions", "pay range", "salary", "compensation", "location", "work location", "details"))
     if not preferred_skills and knowledge_skills:
         preferred_skills = _short_list(knowledge_skills)
 
@@ -1259,6 +1260,16 @@ def analyze_job_text(description: str, mode: str = "deterministic") -> dict:
     return page
 
 
+def _page_signal_score(page: dict | None) -> int:
+    if not page:
+        return 0
+    scalar_fields = ("title", "company", "location", "type", "work", "task", "pay")
+    list_fields = ("qual", "skills_min", "skills_max")
+    return sum(bool(_compact_text(page.get(field, ""))) for field in scalar_fields) + sum(
+        min(len(page.get(field, [])), 6) for field in list_fields if isinstance(page.get(field), list)
+    )
+
+
 def analyze_job(url: str, mode: str = "deterministic") -> dict:
     if mode not in {"deterministic", "ai"}:
         raise HTTPException(400, "Choose Deterministic or AI job analysis.")
@@ -1269,6 +1280,20 @@ def analyze_job(url: str, mode: str = "deterministic") -> dict:
         # tag. Use it before browser rendering so those pages resolve quickly
         # and with the complete posting instead of the empty app shell.
         page = _oracle_hcm_page(raw, url) or _page_fields(raw, url)
+        # An empty Oracle requisition API response can still leave useful
+        # social metadata behind. That metadata is enough to identify the job
+        # but not enough to extract qualifications, responsibilities, or the
+        # full skill set. Render the visible page before accepting that partial
+        # result, and keep the richer page when the browser finds it.
+        if page.get("metadata", {}).get("render_mode") == "oracle-hcm-metadata":
+            try:
+                rendered = render_public_html(url)
+                rendered_page = _oracle_hcm_page(rendered, url) or _page_fields(rendered, url)
+                if _page_signal_score(rendered_page) > _page_signal_score(page):
+                    rendered_page.setdefault("metadata", {})["render_mode"] = "browser-fallback"
+                    page = rendered_page
+            except Exception as exc:
+                logging.getLogger(__name__).info("Oracle browser fallback unavailable: %s", type(exc).__name__)
     except HTTPException as original_error:
         detail = str(original_error.detail)
         # Most modern recruiting platforms build the posting with client-side
