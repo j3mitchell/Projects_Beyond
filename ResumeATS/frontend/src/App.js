@@ -146,54 +146,9 @@ function PreviewSkills({ items }) {
   );
 }
 
-function RelatedSkillsKeywords({ analysis }) {
-  if (!analysis) return null;
-  const categories = [
-    ['credentials', 'Credentials'],
-    ['qualifications_min', 'Qualifications (min)'],
-    ['preferred_max', 'Preferred (max)'],
-  ];
-  const ranked = analysis.ranked_categories || {};
-  const hasRanked = categories.some(([category]) => ranked[category]?.length);
-  const dictionary = Object.entries(analysis.ats_keywords || {});
-  if (!hasRanked && !dictionary.length) return null;
-  return (
-    <details className="extract-block related-skills-panel collapsible-section" open>
-      <summary><span>Relevant skills &amp; ATS keywords</span><ExpansionIndicator /></summary>
-      <div className="collapsible-content preview-list-content">
-        <p className="muted">Rank 1 is highest within each category. Priority reflects job requirement wording and repeated evidence.</p>
-        <div className="related-skills-groups">
-          {categories.map(([category, label]) => ranked[category]?.length > 0 && (
-            <div className="related-skills-group" key={category}>
-              <span className="skills-view-label">{label}</span>
-              <ul className="extract-list preview-list">
-                {ranked[category].map((item) => (
-                  <li key={`${category}-${item.skill}`} title={item.evidence?.join('\n')}>
-                    {item.skill} <span className="variable-label">({item.rank})</span>
-                    <span className="related-skill-priority">priority {item.priority}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-        {dictionary.length > 0 && <details className="related-keyword-dictionary collapsible-section">
-          <summary><span>Keyword priority dictionary</span><ExpansionIndicator /></summary>
-          <div className="collapsible-content">
-            <ul className="extract-list preview-list">
-              {dictionary.map(([skill, priority]) => (
-                <li key={skill}>{skill} <span className="variable-label">({priority})</span></li>
-              ))}
-            </ul>
-          </div>
-        </details>}
-      </div>
-    </details>
-  );
-}
-
 function TargetJobPreview({ analysis }) {
   if (!analysis) return null;
+  const skills = Array.isArray(analysis.skills) ? analysis.skills.filter((skill) => hasValue(skill?.name)) : [];
   const description = analysis.description || analysis.work || analysis.summary || analysis.raw_text;
   return (
     <section className="target-job-preview" aria-label="Target job extraction">
@@ -206,6 +161,29 @@ function TargetJobPreview({ analysis }) {
       <PreviewValue label="[type]" field="target.type" value={analysis.type} />
       <PreviewValue label="[work]" field="target.work" value={analysis.work} />
       <PreviewValue label="[task]" field="target.task" value={analysis.task} />
+      {Object.keys(analysis.ranked_categories || {}).length > 0 ? <>
+        {[
+          ['credentials', '[cred]'],
+          ['qualifications_min', '[skMin]'],
+          ['preferred_max', '[skMax]'],
+        ].map(([category, label]) => <div className="preview-field preview-field-list" key={category}>
+          <span className="variable-label">{label}</span>
+          {analysis.ranked_categories[category]?.length ? <ul className="extract-list">
+            {analysis.ranked_categories[category].map(item => <li key={item.skill} title={item.evidence.join('\n')}>
+              {item.skill} <span className="variable-label">({item.rank})</span>
+            </li>)}
+          </ul> : <span className="muted">Not detected</span>}
+        </div>)}
+        <details className="collapsible-section">
+          <summary>ATS keyword priority dictionary <ExpansionIndicator /></summary>
+          <p className="muted">Rank 1 is highest. ResumeATS priorities use requirement wording and repeated evidence; these are not employer ATS scores.</p>
+          <pre style={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', maxHeight: '112px', overflowY: 'auto' }}>{JSON.stringify(analysis.ats_keywords, null, 2)}</pre>
+        </details>
+      </> : <>
+        <PreviewLabeledList label="[qual]" field="target.qualifications" items={analysis.qual} itemPrefix="sMin" />
+        <PreviewLabeledList label="[skMin]" field="target.skMin" items={analysis.skills_min} itemPrefix="skMin" />
+        <PreviewLabeledList label="[skMax]" field="target.skMax" items={analysis.skills_max} itemPrefix="skMax" />
+      </>}
       <CompensationValue value={analysis.pay} />
       {analysis.requirements?.length > 0 && <details className="collapsible-section">
         <summary>Full job requirements <ExpansionIndicator /></summary>
@@ -221,6 +199,16 @@ function TargetJobPreview({ analysis }) {
           Deterministic extraction was incomplete. On the job page, choose the ResumeATS Capture extension; it will send the visible listing to Paste Job Description and analyze it automatically.
         </p>
       )}
+      {skills.length > 0 && <details className="target-job-skills collapsible-section" open={analysis.skills_min?.length === 0 && analysis.skills_max?.length === 0}>
+        <summary><span>Ranked skills</span><ExpansionIndicator /></summary>
+        <div className="collapsible-content">
+          <ul className="extract-list">
+            {skills.map((skill, index) => (
+              <li key={`${skill.name}-${index}`}><span className="variable-label">[skill{index + 1}]</span> {skill.name}</li>
+            ))}
+          </ul>
+        </div>
+      </details>}
     </section>
   );
 }
@@ -715,6 +703,9 @@ export default function App() {
         {data && (
           <>
             {resume && <p className="muted">Your original facts are preserved. Add suggested keywords only when they accurately describe your experience.</p>}
+            {resume && data.keywords.length > 0 && <div className="keyword-panel" aria-label="Job keyword review">
+              {data.keywords.map(({ keyword, status }) => <span className="skill-chip" key={keyword}>{keyword} · {status === 'present' ? 'in resume' : 'review'}</span>)}
+            </div>}
             {data.changes?.map((change, index) => <p className="muted" key={`change-${index}`}>{change}</p>)}
             {data.preview ? <label>Editable resume preview
               <textarea className="preview" value={preview} maxLength={100000} onChange={(e) => setPreview(e.target.value)} />
@@ -728,7 +719,6 @@ export default function App() {
             </div>}
           </>
         )}
-        <RelatedSkillsKeywords analysis={targetAnalysis} />
       </section>
       </div>
     </main>
