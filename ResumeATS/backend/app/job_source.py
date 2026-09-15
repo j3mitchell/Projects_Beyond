@@ -1045,7 +1045,8 @@ def _extract_job_fields(structured: dict[str, object], structured_text: str, raw
         ("key responsibilities", "responsibilities", "what you'll do", "your impact", "duties", "essential functions", "essential duties"),
         ("requirements", "qualifications", "minimum skills", "preferred qualifications", "preferred skills", "job requirements", "pay range", "details"),
     )
-    task = _under_word_limit(next((line for line in task_lines if not _is_heading_or_label(line) and not line.casefold().startswith("other duties")), ""), maximum=6)
+    task_source = next((line for line in task_lines if not _is_heading_or_label(line) and not line.casefold().startswith("other duties")), "")
+    task = _under_word_limit(re.sub(r"^[-–—•▪‣*]\s*", "", task_source), maximum=6)
     qualifications = _section_items(
         lines, ("requirements", "qualifications here s what you need", "qualifications", "basic qualifications", "required qualifications", "minimum qualifications", "what you'll bring", "what you bring"),
         ("minimum skills", "required skills", "preferred qualifications", "preferred skills", "desired qualifications", "highly desirable", "knowledge skills and abilities", "knowledge skills abilities", "responsibilities", "criteria", "job requirements", "security clearance", "our commitment", "benefits", "working conditions", "pay range", "salary", "compensation", "location", "work location", "details"),
@@ -1418,13 +1419,80 @@ def _ai_analyze(page: dict) -> dict:
     return _openai_analyze(page)
 
 
-def analyze_job_text(description: str, mode: str = "deterministic") -> dict:
+def _clean_pasted_job_text(description: str, source_url: str = "") -> tuple[str, str, str, str, dict[str, str]]:
+    """Normalize copied Markdown and recover identity fields before parsing."""
+    source = description.replace("\u00a0", " ")
+    lines = [line.rstrip() for line in source.splitlines()]
+    title = ""
+    for line in lines:
+        match = re.match(r"^#\s+(.+?)\s*$", line.strip())
+        if match:
+            title = _compact_text(match.group(1))
+            break
+
+    locations: list[str] = []
+    workplace = ""
+    quoted_metadata = next((line.strip()[1:].strip() for line in lines if line.strip().startswith(">")), "")
+    quoted_parts = [_compact_text(part) for part in quoted_metadata.split("·") if _compact_text(part)]
+    quoted_company = quoted_parts[0] if quoted_parts else ""
+    quoted_location = quoted_parts[1] if len(quoted_parts) > 1 else ""
+    if quoted_location and re.search(r"\b(?:United States|USA)\s*$", quoted_location, re.I):
+        locations.append(quoted_location)
+    cleaned: list[str] = []
+    for line in lines:
+        stripped = line.strip()
+        if not stripped:
+            cleaned.append("")
+            continue
+        if stripped.startswith(">"):
+            # Workable's copied metadata line duplicates the title/company
+            # header. Keep its identity fields, but do not let it become
+            # description or keyword evidence.
+            continue
+        if re.match(r"^\[\s*\*{0,2}(?:overview|application|view website|view all jobs|help|accessibility)\b", stripped, re.I):
+            continue
+        if re.search(r"powered by\s+\[?\*{0,2}workable", stripped, re.I):
+            continue
+        location = _compact_text(stripped)
+        if re.fullmatch(r"[A-Z][A-Za-z .'-]+,\s*(?:[A-Z][A-Za-z .'-]+,\s*)?(?:United States|USA)", location):
+            if location.casefold() not in {item.casefold() for item in locations}:
+                locations.append(location)
+        workplace_match = re.fullmatch(r"\*{0,2}(?:workplace\s*:\s*)?(on[-_ ]?site|remote|hybrid)\*{0,2}", stripped, re.I)
+        if workplace_match:
+            workplace = WORK_TYPE_LABELS.get(workplace_match.group(1).casefold().replace("_", " "), workplace_match.group(1).title())
+        normalized_line = re.sub(r"\*\*(.+?)\*\*", r"\1", line)
+        normalized_line = re.sub(r"\[([^\]]+)\]\([^)]*\)", r"\1", normalized_line)
+        cleaned.append(normalized_line)
+
+    company = ""
+    for candidate in (source, source_url):
+        match = re.search(r"https?://apply\.workable\.com/([^/\s)]+)/(?:(?:j)|(?:jobs/view))/", candidate, re.I)
+        if match:
+            company = re.sub(r"[-_]+", " ", match.group(1)).strip().title()
+            break
+    company = company or quoted_company
+    metadata: dict[str, str] = {}
+    if locations:
+        metadata["dom_location"] = " · ".join(locations)[:200]
+    if title:
+        metadata["structured_title"] = title[:200]
+    if company:
+        metadata["structured_company"] = company[:200]
+    if workplace:
+        metadata["pasted_workplace"] = workplace
+    return "\n".join(cleaned).strip(), title, company, workplace, metadata
+
+
+def analyze_job_text(description: str, mode: str = "deterministic", source_url: str = "") -> dict:
     if len(description.strip()) < 100:
         raise HTTPException(400, "Paste at least 100 characters of the job description.")
-    clean_description = description.strip()[:MAX_ANALYSIS_TEXT]
-    page = {"source_url": "", "title": "Target Role", "company": "", "summary": clean_description,
-            "raw_text": clean_description, "metadata": {}}
-    page.update(_extract_job_fields({}, "", clean_description, {}))
+    clean_description, pasted_title, pasted_company, pasted_workplace, metadata = _clean_pasted_job_text(description.strip(), source_url)
+    clean_description = clean_description[:MAX_ANALYSIS_TEXT]
+    page = {"source_url": source_url.strip(), "title": pasted_title or "Target Role", "company": pasted_company,
+            "summary": clean_description, "raw_text": clean_description, "metadata": metadata}
+    page.update(_extract_job_fields({}, "", clean_description, metadata))
+    if pasted_workplace:
+        page["type"] = pasted_workplace
     if mode == "ai":
         return _ai_analyze(page)
     if mode != "deterministic":

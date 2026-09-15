@@ -483,6 +483,57 @@ Salary and health benefits.
         self.assertIn('Open Database Connectivity', skill_names)
         self.assertIn('Database Schema', skill_names)
 
+    def test_pasted_workable_markdown_preserves_identity_locations_and_keywords(self):
+        text = '''# Database Engineer (DE)
+
+**On-site**
+
+Fort Meade, Maryland, United States
+
+Columbia, Maryland, United States
+
+[**Overview**](https://apply.workable.com/avint/j/829FDCE349/)[**Application**](https://apply.workable.com/avint/j/829FDCE349/apply/)
+
+## Description
+
+The Database Engineer provides technical expertise in database design, development, implementation, information storage and retrieval, and data flow/analysis. This role develops relational and/or object-oriented databases, parser software, and database loading software.
+
+Key responsibilities include:
+
+- Designing database structures aligned with overall system architecture.
+- Translating requirements into usable database schemas, ad hoc queries, scripts, and macros.
+- Building and maintaining complex systems using Open Database Connectivity (ODBC), SQL Server, and cloud-based storage/retrieval.
+
+## Requirements
+
+**Experience**: Minimum **10 years** in programs and contracts of similar scope, type, and complexity; at least **7 years** developing SQL Server database architecture.
+
+**Education**: Bachelor's degree in an IT discipline from an accredited institution.
+
+**Certifications:**
+
+- **DoD 8570 IAT Level II** (or higher).
+- **LENEL Certified Expert (LCE)** with a concentration in databases.
+
+[**View website**](http://www.avintllc.com/)
+[**View all jobs**](https://apply.workable.com/avint/)
+[**Help**](https://jobseekers.workable.com/hc/en)
+[**Accessibility**](https://workable.com/web-accessibility-statement)Powered by[**Workable**](https://jobs.workable.com/)
+'''
+        analysis = analyze_job_text(text, 'deterministic', 'https://apply.workable.com/avint/j/829FDCE349/')
+        self.assertEqual(analysis['title'], 'Database Engineer (DE)')
+        self.assertEqual(analysis['company'], 'Avint')
+        self.assertEqual(analysis['location'], 'Fort Meade, Maryland, United States · Columbia, Maryland, United States')
+        self.assertEqual(analysis['type'], 'On-Site')
+        self.assertEqual(analysis['task'], 'Designing database structures aligned with overall…')
+        self.assertTrue(all(markup not in item for item in analysis['qual'] for markup in ('**', '[', '](')))
+        self.assertNotIn('View website', analysis['raw_text'])
+        self.assertNotIn('Powered by Workable', analysis['raw_text'])
+        skill_names = [skill['name'] for skill in analysis['skills']]
+        self.assertIn('SQL Server', skill_names)
+        self.assertIn('Open Database Connectivity', skill_names)
+        self.assertIn('LENEL Certified Expert', skill_names)
+
     def test_generic_semantic_job_markup_extracts_sections(self):
         html = b'''<html><head><title>Data Platform Engineer</title></head><body>
         <article><h1>Data Platform Engineer</h1><p class="employer">Northstar Systems</p>

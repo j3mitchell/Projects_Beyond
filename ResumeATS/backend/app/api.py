@@ -162,7 +162,7 @@ async def generate_resume(
         raise HTTPException(403, "AI job analysis is available to paid members. Choose Deterministic or upgrade your membership.")
     text = await read_upload(resume) if resume is not None else ""
     if job_description.strip():
-        analysis = await run_in_threadpool(analyze_job_text, job_description.strip(), job_model)
+        analysis = await run_in_threadpool(analyze_job_text, job_description.strip(), job_model, job_url.strip())
     elif job_url.strip():
         analysis = await run_in_threadpool(analyze_job, job_url.strip(), job_model)
     else:
