@@ -7,8 +7,8 @@ import logging
 import os
 import re
 import socket
-from html import unescape
-from urllib.parse import quote, urljoin, urlsplit, urlparse
+from html import escape, unescape
+from urllib.parse import quote, urljoin, urlsplit, urlparse, urlunsplit
 
 import requests
 import urllib3
@@ -109,6 +109,34 @@ SKILL_TAXONOMY = {
     "Online Learning": ("online", "online modalities"),
     "Remote Instruction": ("remote instruction",),
     "Hybrid Instruction": ("hybrid instruction",),
+    # Database engineering and government-program terms that frequently
+    # carry more ATS weight than broad labels such as "SQL" alone.
+    "SQL Server": ("sql server",),
+    "Database Architecture": ("database architecture",),
+    "Database Administration": ("database administration",),
+    "Database Schema": ("database schema", "database schemas", "schemas"),
+    "Relational Databases": ("relational database", "relational databases"),
+    "Object-Oriented Databases": ("object-oriented database", "object oriented database"),
+    "Data Flow": ("data flow",),
+    "Information Storage and Retrieval": ("information storage and retrieval", "storage/retrieval"),
+    "System Architecture": ("system architecture",),
+    "Ad Hoc Queries": ("ad hoc queries", "ad hoc query"),
+    "Scripting": ("scripts", "scripting"),
+    "Open Database Connectivity": ("open database connectivity", "odbc"),
+    "Macros": ("macros",),
+    "Messaging Protocols": ("messaging protocols",),
+    "Java Messaging": ("java messaging",),
+    "RabbitMQ": ("rabbitmq",),
+    "System Performance": ("system performance", "response times"),
+    "Optimization": ("optimization", "optimizations"),
+    "Maintenance": ("maintenance",),
+    "Requirements Analysis": ("requirements analysis", "translating requirements", "requirements into"),
+    "Software Development": ("software development", "software engineering"),
+    "Cloud Storage": ("cloud-based storage", "cloud storage"),
+    "Security Controls": ("security", "domain controls"),
+    "Acceptance Testing": ("acceptance testing", "system acceptance testing"),
+    "DoD 8570": ("dod 8570",),
+    "LENEL Certified Expert": ("lenel certified expert", "lce"),
 }
 
 WORK_TYPE_LABELS = {
@@ -195,6 +223,90 @@ def fetch_public_html(url: str) -> bytes:
                 response.close()
             pool.close()
     raise HTTPException(400, "This job page redirects too many times. Paste the job description instead.")
+
+
+def _workable_markdown_url(source_url: str) -> str:
+    """Return Workable's public Markdown URL for an apply-page URL."""
+    parsed = urlsplit(source_url)
+    match = re.search(r"/([^/]+)/j/([^/?#]+)", parsed.path or "", re.I)
+    if not match:
+        match = re.search(r"/([^/]+)/jobs/view/([^/?#]+)", parsed.path or "", re.I)
+    if not match or not (parsed.hostname or "").casefold().endswith("workable.com"):
+        return ""
+    return urlunsplit((parsed.scheme, parsed.netloc, f"/{match.group(1)}/jobs/view/{match.group(2)}.md", "", ""))
+
+
+def _workable_markdown_html(markdown: bytes) -> bytes:
+    """Convert Workable's small public Markdown format into semantic HTML."""
+    text = markdown.decode("utf-8", "replace")
+    lines = text.splitlines()
+    title = next((line[2:].strip() for line in lines if line.startswith("# ")), "")
+    metadata_line = next((line[2:].strip() for line in lines if line.startswith("> ")), "")
+    metadata_parts = [part.strip() for part in metadata_line.split("·")]
+    company = metadata_parts[0] if metadata_parts else ""
+    location = metadata_parts[1] if len(metadata_parts) > 1 else ""
+    workplace = ""
+    for line in lines:
+        match = re.match(r"\*\*Workplace:\*\*\s*(.+)", line.strip(), re.I)
+        if match:
+            workplace = _compact_text(match.group(1)).replace("_", " ")
+            break
+
+    def inline_markup(value: str) -> str:
+        clean = escape(value, quote=False)
+        clean = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", clean)
+        clean = re.sub(r"\[([^\]]+)\]\([^)]*\)", r"\1", clean)
+        return clean
+
+    html_parts = ["<html><head><title>", escape(title), "</title>"]
+    if title or company:
+        structured = {
+            "@context": "https://schema.org",
+            "@type": "JobPosting",
+            "title": title,
+            "hiringOrganization": {"@type": "Organization", "name": company},
+            "jobLocation": {"@type": "Place", "address": {"addressLocality": location}},
+            "jobLocationType": workplace,
+        }
+        html_parts.extend(["<script type=\"application/ld+json\">", json.dumps(structured), "</script>"])
+    html_parts.append("</head><body>")
+    if title:
+        html_parts.extend(["<h1>", escape(title), "</h1>"])
+    if company:
+        html_parts.extend(["<p class=\"company\">", escape(company), "</p>"])
+    if location:
+        html_parts.extend(["<p class=\"location\">", escape(location), "</p>"])
+    if workplace:
+        html_parts.extend(["<p class=\"workplace\"><strong>Workplace:</strong> ", escape(workplace), "</p>"])
+
+    in_list = False
+    for raw_line in lines:
+        line = raw_line.strip()
+        if not line or line.startswith("# ") or line.startswith("> ") or line.startswith("**Workplace:") or line == "---" or line.startswith("_"):
+            if in_list:
+                html_parts.append("</ul>")
+                in_list = False
+            continue
+        if line.startswith("## "):
+            if in_list:
+                html_parts.append("</ul>")
+                in_list = False
+            html_parts.extend(["<h2>", inline_markup(line[3:].strip()), "</h2>"])
+        elif re.match(r"[-*]\s+", line):
+            if not in_list:
+                html_parts.append("<ul>")
+                in_list = True
+            item = re.sub(r"^[-*]\s+", "", line)
+            html_parts.extend(["<li>", inline_markup(item), "</li>"])
+        else:
+            if in_list:
+                html_parts.append("</ul>")
+                in_list = False
+            html_parts.extend(["<p>", inline_markup(line), "</p>"])
+    if in_list:
+        html_parts.append("</ul>")
+    html_parts.append("</body></html>")
+    return "".join(html_parts).encode("utf-8")
 
 
 def render_public_html(url: str) -> bytes:
@@ -1335,48 +1447,63 @@ def analyze_job(url: str, mode: str = "deterministic") -> dict:
     if mode not in {"deterministic", "ai"}:
         raise HTTPException(400, "Choose Deterministic or AI job analysis.")
     raw = None
-    try:
-        raw = fetch_public_html(url)
-        # Oracle Recruiting Cloud exposes its tenant API in the shell's base
-        # tag. Use it before browser rendering so those pages resolve quickly
-        # and with the complete posting instead of the empty app shell.
-        page = _oracle_hcm_page(raw, url) or _page_fields(raw, url)
-        # An empty Oracle requisition API response can still leave useful
-        # social metadata behind. That metadata is enough to identify the job
-        # but not enough to extract qualifications, responsibilities, or the
-        # full skill set. Render the visible page before accepting that partial
-        # result, and keep the richer page when the browser finds it.
-        if page.get("metadata", {}).get("render_mode") == "oracle-hcm-metadata":
+    page = None
+    workable_markdown_url = _workable_markdown_url(url)
+    if workable_markdown_url:
+        # Workable exposes a stable Markdown representation even when its
+        # browser shell renders only navigation to non-browser clients. Prefer
+        # that complete source so company, location, requirements, and all
+        # responsibilities survive deterministic extraction.
+        try:
+            markdown = fetch_public_html(workable_markdown_url)
+            page = _page_fields(_workable_markdown_html(markdown), url)
+            page.setdefault("metadata", {})["render_mode"] = "workable-markdown"
+            page["metadata"]["workable_markdown_url"] = workable_markdown_url[:1000]
+        except Exception as exc:
+            logging.getLogger(__name__).info("Workable Markdown fallback unavailable: %s", type(exc).__name__)
+    if page is None:
+        try:
+            raw = fetch_public_html(url)
+            # Oracle Recruiting Cloud exposes its tenant API in the shell's base
+            # tag. Use it before browser rendering so those pages resolve quickly
+            # and with the complete posting instead of the empty app shell.
+            page = _oracle_hcm_page(raw, url) or _page_fields(raw, url)
+            # An empty Oracle requisition API response can still leave useful
+            # social metadata behind. That metadata is enough to identify the job
+            # but not enough to extract qualifications, responsibilities, or the
+            # full skill set. Render the visible page before accepting that partial
+            # result, and keep the richer page when the browser finds it.
+            if page.get("metadata", {}).get("render_mode") == "oracle-hcm-metadata":
+                try:
+                    rendered = render_public_html(url)
+                    rendered_page = _oracle_hcm_page(rendered, url) or _page_fields(rendered, url)
+                    if _page_signal_score(rendered_page) > _page_signal_score(page):
+                        rendered_page.setdefault("metadata", {})["render_mode"] = "browser-fallback"
+                        page = rendered_page
+                except Exception as exc:
+                    logging.getLogger(__name__).info("Oracle browser fallback unavailable: %s", type(exc).__name__)
+        except HTTPException as original_error:
+            detail = str(original_error.detail)
+            # Most modern recruiting platforms build the posting with client-side
+            # JavaScript. Retry those extraction failures in a server-side browser
+            # so the user does not need to copy the page or install an extension.
+            browser_fallback_errors = (
+                "No readable job description",
+                "job site blocked the request",
+                "Unable to load this job page",
+                "job page redirects too many times",
+            )
+            if original_error.status_code != 400 or not any(message in detail for message in browser_fallback_errors):
+                raise
             try:
                 rendered = render_public_html(url)
-                rendered_page = _oracle_hcm_page(rendered, url) or _page_fields(rendered, url)
-                if _page_signal_score(rendered_page) > _page_signal_score(page):
-                    rendered_page.setdefault("metadata", {})["render_mode"] = "browser-fallback"
-                    page = rendered_page
-            except Exception as exc:
-                logging.getLogger(__name__).info("Oracle browser fallback unavailable: %s", type(exc).__name__)
-    except HTTPException as original_error:
-        detail = str(original_error.detail)
-        # Most modern recruiting platforms build the posting with client-side
-        # JavaScript. Retry those extraction failures in a server-side browser
-        # so the user does not need to copy the page or install an extension.
-        browser_fallback_errors = (
-            "No readable job description",
-            "job site blocked the request",
-            "Unable to load this job page",
-            "job page redirects too many times",
-        )
-        if original_error.status_code != 400 or not any(message in detail for message in browser_fallback_errors):
-            raise
-        try:
-            rendered = render_public_html(url)
-            page = _oracle_hcm_page(rendered, url) or _page_fields(rendered, url)
-            if page.get("metadata", {}).get("render_mode") != "oracle-hcm-api":
-                page.setdefault("metadata", {})["render_mode"] = "browser-fallback"
-        except Exception:
-            # Keep the deterministic error users already understand when the
-            # optional browser runtime also cannot access the source page.
-            raise original_error
+                page = _oracle_hcm_page(rendered, url) or _page_fields(rendered, url)
+                if page.get("metadata", {}).get("render_mode") != "oracle-hcm-api":
+                    page.setdefault("metadata", {})["render_mode"] = "browser-fallback"
+            except Exception:
+                # Keep the deterministic error users already understand when the
+                # optional browser runtime also cannot access the source page.
+                raise original_error
     if mode == "ai":
         return _ai_analyze(page)
     page.update({"mode": "deterministic", "industry": _infer_industry(page["raw_text"]), "skills": _rank_taxonomy_skills(page["raw_text"])})

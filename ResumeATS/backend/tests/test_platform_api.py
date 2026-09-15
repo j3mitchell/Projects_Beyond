@@ -436,6 +436,53 @@ class PlatformAPITests(unittest.TestCase):
             self.assertNotIn('accommodation', values)
             self.assertFalse(any(item.strip().casefold() in {'yes', 'no'} for item in analysis[field]))
 
+    def test_workable_markdown_preserves_location_and_job_details(self):
+        markdown = '''# Database Engineer (DE)
+
+> Avint · Fort Meade, United States · — · Posted 2025-12-12
+
+**Workplace:** on_site
+
+## Description
+
+The Database Engineer provides technical expertise in database design, development, implementation, information storage and retrieval, and data flow/analysis. This role develops relational and/or object-oriented databases, parser software, and database loading software.
+
+Key responsibilities include:
+
+-   Designing database structures aligned with overall system architecture.
+-   Translating requirements into usable database schemas, ad hoc queries, scripts, and macros.
+-   Building systems using Open Database Connectivity (ODBC), SQL Server, and cloud-based storage.
+
+## Requirements
+
+**Experience**: Minimum 10 years developing SQL Server database architecture.
+
+**Education**: Bachelor's degree in an IT discipline from an accredited institution.
+
+**Certifications:**
+
+-   DoD 8570 IAT Level II (or higher).
+-   LENEL Certified Expert (LCE) with a concentration in databases.
+
+## Benefits
+
+Salary and health benefits.
+'''.encode('utf-8')
+        with patch('app.job_source.fetch_public_html', return_value=markdown) as fetch:
+            analysis = analyze_job('https://apply.workable.com/avint/j/829FDCE349/', 'deterministic')
+        fetch.assert_called_once_with('https://apply.workable.com/avint/jobs/view/829FDCE349.md')
+        self.assertEqual(analysis['metadata']['render_mode'], 'workable-markdown')
+        self.assertEqual(analysis['title'], 'Database Engineer (DE)')
+        self.assertEqual(analysis['company'], 'Avint')
+        self.assertEqual(analysis['location'], 'Fort Meade, United States')
+        self.assertEqual(analysis['type'], 'On-Site')
+        self.assertTrue(analysis['task'])
+        self.assertTrue(any(item.startswith("Education : Bachelor's degree") for item in analysis['qual']))
+        skill_names = [skill['name'] for skill in analysis['skills']]
+        self.assertIn('SQL Server', skill_names)
+        self.assertIn('Open Database Connectivity', skill_names)
+        self.assertIn('Database Schema', skill_names)
+
     def test_generic_semantic_job_markup_extracts_sections(self):
         html = b'''<html><head><title>Data Platform Engineer</title></head><body>
         <article><h1>Data Platform Engineer</h1><p class="employer">Northstar Systems</p>
