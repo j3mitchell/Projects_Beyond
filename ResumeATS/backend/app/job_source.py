@@ -1457,7 +1457,7 @@ def _clean_pasted_job_text(description: str, source_url: str = "") -> tuple[str,
         if re.fullmatch(r"[A-Z][A-Za-z .'-]+,\s*(?:[A-Z][A-Za-z .'-]+,\s*)?(?:United States|USA)", location):
             if location.casefold() not in {item.casefold() for item in locations}:
                 locations.append(location)
-        workplace_match = re.fullmatch(r"\*{0,2}(?:workplace\s*:\s*)?(on[-_ ]?site|remote|hybrid)\*{0,2}", stripped, re.I)
+        workplace_match = re.fullmatch(r"\*{0,2}\s*(?:workplace\s*:?\s*\*{0,2}\s*)?(on[-_ ]?site|remote|hybrid)\s*\*{0,2}", stripped, re.I)
         if workplace_match:
             workplace = WORK_TYPE_LABELS.get(workplace_match.group(1).casefold().replace("_", " "), workplace_match.group(1).title())
         normalized_line = re.sub(r"\*\*(.+?)\*\*", r"\1", line)

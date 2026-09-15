@@ -534,6 +534,12 @@ Key responsibilities include:
         self.assertIn('Open Database Connectivity', skill_names)
         self.assertIn('LENEL Certified Expert', skill_names)
 
+        workable_copy = text.replace('**On-site**', '> Avint · Fort Meade, United States · — · Posted 2025-12-12\n\n**Workplace:** on_site')
+        metadata_analysis = analyze_job_text(workable_copy, 'deterministic')
+        self.assertEqual(metadata_analysis['company'], 'Avint')
+        self.assertEqual(metadata_analysis['location'], 'Fort Meade, United States · Fort Meade, Maryland, United States · Columbia, Maryland, United States')
+        self.assertEqual(metadata_analysis['type'], 'On-Site')
+
     def test_generic_semantic_job_markup_extracts_sections(self):
         html = b'''<html><head><title>Data Platform Engineer</title></head><body>
         <article><h1>Data Platform Engineer</h1><p class="employer">Northstar Systems</p>
