@@ -10,7 +10,7 @@ from app.classifier import classifier
 from app.contracts import ResumeClearance, ResumeEducation, ResumeExtractionResponse, ResumeJob
 from app.organization_aliases import ORGANIZATION_ALIASES
 
-PARSER_VERSION = "pipeline-v4-record-boundaries"
+PARSER_VERSION = "pipeline-v6-generic-layout"
 
 EntityKind = Literal["title", "company", "description", "location", "unknown"]
 
@@ -29,7 +29,7 @@ TITLE_MODIFIERS = {
     "systems", "system", "network", "security", "cyber", "technical", "technology", "it", "enterprise",
     "business", "program", "project", "product", "operations", "infrastructure", "platform", "solutions",
     "digital", "analytics", "engineering", "development", "information", "machine", "learning", "ai",
-    "financial", "logistics", "sharepoint", "accounting",
+    "financial", "logistics", "sharepoint", "accounting", "support",
 }
 
 STATE_CODES = {
@@ -52,10 +52,10 @@ SECTION_ALIASES = {
     },
     "experience": {
         "experience", "professional experience", "work experience", "employment history",
-        "career experience", "professional history", "employment experience",
+        "career experience", "professional history", "employment experience", "employment",
     },
     "education": {
-        "education", "academic background", "academic experience", "training and education",
+        "education", "academic background", "academic experience", "training and education", "education and training",
     },
     "clearances": {
         "clearance", "clearances", "security clearance", "security clearances", "active clearance",
@@ -63,7 +63,8 @@ SECTION_ALIASES = {
     },
     "certifications": {
         "certification", "certifications", "professional certifications", "technical certifications",
-        "licenses and certifications", "licenses & certifications", "credentials", "certificates",
+        "licenses and certifications", "licenses & certifications", "certifications and licenses", "certifications & licenses",
+        "licenses", "professional credentials", "credentials", "certificates",
     },
 }
 
@@ -117,6 +118,17 @@ CERTIFICATION_RE = re.compile(
     r"comptia|six sigma|safe|togaf)\b",
     re.I,
 )
+CREDENTIAL_TOKEN_RE = re.compile(
+    r"(?<![A-Za-z0-9])(?:cpa|p\.?e\.?|r\.?n\.?|pmp|cissp|cism|cisa|ccna|ccnp|itil|ocp|oca|mba|ph\.?d\.?|"
+    r"comptia|security\+|network\+|a\+|six\s+sigma|scrum\s+master|safe|togaf|aws\s+certified|"
+    r"azure\s+certified|oracle\s+certified|certified|certification|certificate|licensed|license)(?![A-Za-z0-9])",
+    re.I,
+)
+CREDENTIAL_REQUIREMENT_RE = re.compile(
+    r"\b(?:required|required to|must have|preferred|prefer|eligible for|ability to obtain|"
+    r"will obtain|seek(?:ing)?|looking for|candidate(?:s)? (?:must|should)|years? of experience)\b",
+    re.I,
+)
 EDUCATION_RE = re.compile(
     r"\b(?:bachelor|master|associate|doctor|doctorate|ph\.?d|mba|b\.?s\.?|b\.?a\.?|m\.?s\.?|m\.?a\.?|"
     r"degree|university|college|institute|school|major|minor|gpa|graduat)\b",
@@ -147,6 +159,24 @@ def _normalize_line(value: str) -> str:
     value = re.sub(r"[ \f\v]+", " ", value)
     value = re.sub(r"\s*\|\s*", " | ", value)
     return value.strip()
+
+
+def _normalized_resume_lines(text: str) -> list[str]:
+    """Normalize extracted text while restoring boundaries lost to rule lines.
+
+    Word and PDF converters often append a visual divider (underscores,
+    dashes, or equals signs) to the previous paragraph. Treat long runs as
+    structural separators so the following section heading remains visible to
+    the section detector without changing ordinary hyphenated content.
+    """
+    lines: list[str] = []
+    for raw_line in (text or "").splitlines():
+        normalized = _normalize_line(raw_line)
+        if not normalized:
+            continue
+        normalized = re.sub(r"(?:_{5,}|={5,}|-{5,})", "\n", normalized)
+        lines.extend(part for part in (_normalize_line(item) for item in normalized.splitlines()) if part)
+    return lines
 
 
 def _strip_bullet(value: str) -> str:
@@ -207,8 +237,7 @@ def _route_compound_line(line: str, sections: tuple[str, ...]) -> str:
 
 
 def _resume_sections(text: str) -> tuple[list[str], dict[str, list[str]]]:
-    lines = [_normalize_line(line) for line in text.splitlines()]
-    lines = [line for line in lines if line]
+    lines = _normalized_resume_lines(text)
     sections = {name: [] for name in SECTION_ALIASES}
     current: tuple[str, ...] | None = None
     preamble: list[str] = []
@@ -309,7 +338,11 @@ def _strict_title_fallback(value: str) -> bool:
     words = [word for word in words if word]
     if not words or len(words) > 14:
         return False
-    if words[0] in ACTION_VERBS or any(word in ACTION_VERBS for word in words):
+    # A title may contain a verb-derived noun such as "Support" (for
+    # example, "Database Administrator / Application Support"). Reject
+    # action-led sentences and multi-action prose, while allowing one such
+    # term when the rest of the line has a clear role noun.
+    if words[0] in ACTION_VERBS or sum(word in ACTION_VERBS for word in words) > 1:
         return False
 
     noun_ing = {"engineering", "marketing", "accounting", "consulting", "banking", "training"}
@@ -560,18 +593,52 @@ def _extract_jobs_with_anchors(lines: list[str], anchors: list[int]) -> list[Job
                     anchor_company = candidate
 
         title, title_index, contractor = _find_title_in_block(block_lines)
+        if not title and anchor > 0:
+            # Many ATS exports place the role title above the employer/date
+            # line, while others place it below. If the date anchor has no
+            # title in its block, inspect the immediately preceding lines for
+            # the same strong title signal used by the forward parser.
+            for previous_index in range(anchor - 1, max(-1, anchor - 4), -1):
+                candidate = classify_title(lines[previous_index])
+                if candidate.kind == "title":
+                    title = candidate
+                    title_index = -1
+                    break
         if not title:
             continue
+
+        if not anchor_company and title_index == -1:
+            # A compact title-before-employer/date layout may put the employer
+            # one or two lines before the title. Use the same conservative
+            # company classifier in that context, without treating arbitrary
+            # preamble prose as an employer.
+            for previous_index in range(anchor - 1, max(-1, anchor - 4), -1):
+                previous = _strip_bullet(lines[previous_index])
+                if not previous or classify_title(previous).kind == "title":
+                    continue
+                candidate = _company_from_header(previous, structural=True)
+                if candidate:
+                    anchor_company = candidate
+                    break
 
         company = _recover_company(anchor_company, block_lines, contractor)
 
         body_start = max(1, title_index + 1)
         descriptions: list[str] = []
-        for line in block_lines[body_start:]:
+        for relative_index, line in enumerate(block_lines[body_start:], start=body_start):
             clean = _strip_bullet(line)
             if not clean or TITLE_LABEL_RE.match(clean) or COMPANY_LABEL_RE.match(clean):
                 continue
+            if re.fullmatch(r"earlier\s+experience", clean, re.I):
+                break
             if _has_job_date(clean):
+                continue
+            # In title-before-employer layouts, the next role title sits at
+            # the end of this block immediately before the next dated anchor.
+            # It belongs to the next record, not to the current description.
+            if (relative_index == len(block_lines) - 1
+                    and position + 1 < len(anchors)
+                    and classify_title(clean).kind == "title"):
                 continue
             descriptions.append(clean)
 
@@ -643,6 +710,26 @@ def _extract_summary(lines: list[str]) -> str:
     return " ".join(_strip_bullet(line) for line in lines[:8] if _strip_bullet(line)).strip()
 
 
+def _extract_preamble_summary(lines: list[str]) -> str:
+    """Recover a header profile when a resume omits a Summary heading."""
+    candidates = []
+    for line in lines:
+        clean = _strip_bullet(line)
+        if not clean or EMAIL_RE.search(clean) or PHONE_RE.search(clean) or _location_like(clean):
+            continue
+        if _single_section_name(clean) or classify_title(clean).kind == "title":
+            continue
+        summary_signal = re.search(
+            r"\b(?:professional|experienced|expertise|speciali[sz]|background|proven|"
+            r"years? of|knowledge|skilled|responsible for|focused on|results?)\b",
+            clean,
+            re.I,
+        )
+        if len(clean.split()) >= 10 and (re.search(r"[.!?]$", clean) or summary_signal):
+            candidates.append(clean)
+    return " ".join(candidates[:3]).strip()
+
+
 def _clean_contact_value(value: str) -> str:
     return value.strip().strip(".,;:()[]<>")
 
@@ -653,7 +740,10 @@ def _clean_phone_value(value: str) -> str:
 
 def _contact_fragments(lines: list[str]) -> list[str]:
     fragments: list[str] = []
-    for line in lines[:20]:
+    # Headers can be expanded into several lines by PDF columns or DOCX
+    # tables. Scan a bounded but generous preamble window instead of assuming
+    # contact fields always occupy the first few lines.
+    for line in lines[:50]:
         clean = _strip_bullet(line)
         if not clean:
             continue
@@ -739,9 +829,14 @@ def _extract_credentials(lines: list[str]) -> str:
     """Collect professional credential lines for the single ``[cred]`` field."""
     values: list[str] = []
     seen: set[str] = set()
-    for line in lines[:30]:
+    for line in lines:
         clean = _strip_bullet(line)
-        if not clean or not CERTIFICATION_RE.search(clean):
+        if not clean or not CREDENTIAL_TOKEN_RE.search(clean):
+            continue
+        # A job requirement can mention a certification without proving that
+        # the applicant holds it. Keep explicit credential evidence while
+        # excluding requirement prose when the credential is found globally.
+        if CREDENTIAL_REQUIREMENT_RE.search(clean):
             continue
         key = clean.lower()
         if key not in seen:
@@ -753,7 +848,7 @@ def _extract_credentials(lines: list[str]) -> str:
 def _extract_skills(lines: list[str]) -> list[str]:
     skills: list[str] = []
     seen: set[str] = set()
-    for line in lines[:30]:
+    for line in lines:
         clean = _strip_bullet(line)
         if ":" in clean:
             _, payload = clean.split(":", 1)
@@ -876,7 +971,7 @@ def _education_entry(lines: list[str]) -> ResumeEducation:
 def _extract_education(lines: list[str]) -> list[ResumeEducation]:
     entries: list[list[str]] = []
     current: list[str] = []
-    for line in lines[:30]:
+    for line in lines:
         clean = _strip_bullet(line)
         if not clean:
             continue
@@ -983,7 +1078,7 @@ def _clearance_entry(value: str) -> ResumeClearance:
 def _extract_clearances(lines: list[str]) -> list[ResumeClearance]:
     entries: list[ResumeClearance] = []
     seen: set[tuple[str, str, str, str]] = set()
-    for line in lines[:30]:
+    for line in lines:
         clean = _strip_bullet(line)
         if not clean:
             continue
@@ -1004,7 +1099,7 @@ def _extract_clearances(lines: list[str]) -> list[ResumeClearance]:
 def _extract_simple_items(lines: list[str], matcher: re.Pattern[str] | None = None) -> list[str]:
     items: list[str] = []
     seen: set[str] = set()
-    for line in lines[:30]:
+    for line in lines:
         clean = _strip_bullet(line)
         if not clean:
             continue
@@ -1026,13 +1121,22 @@ def _target_title(preamble: list[str], jobs: list[JobBlock]) -> str:
         r"^(?:target(?:ed)?\s+(?:position|role|title)|desired\s+(?:position|role))\s*[:\-]\s*(.+)$",
         re.I,
     )
-    for line in preamble[:15]:
+    for line in preamble[:40]:
         match = target_rx.match(_strip_bullet(line))
         if match:
             candidate = classify_title(match.group(1))
             if candidate.kind == "title":
                 return candidate.text
-    return jobs[0].title if jobs else ""
+    if jobs:
+        return jobs[0].title
+    # A resume can include a current/professional title in the header without
+    # an explicit Target Title label. Use the same conservative classifier as
+    # job records so names, locations, and summary sentences are not promoted.
+    for line in preamble[:40]:
+        candidate = classify_title(line)
+        if candidate.kind == "title":
+            return candidate.text
+    return ""
 
 
 class ResumeParserPipeline:
@@ -1047,8 +1151,28 @@ class ResumeParserPipeline:
     version = PARSER_VERSION
 
     def parse(self, text: str) -> ResumeExtractionResponse:
+        all_lines = _normalized_resume_lines(text)
         preamble, sections = _resume_sections(text)
         jobs = extract_jobs(sections["experience"])
+
+        # Clearance entries are often placed under "Additional Information"
+        # or alongside the contact header instead of a dedicated section. Use
+        # explicit clearance-level evidence from the normalized document as a
+        # fallback, while excluding requirement language that describes a job
+        # rather than the applicant's own credential.
+        clearance_lines = list(sections["clearances"])
+        for line in all_lines:
+            if not CLEARANCE_LEVEL_RE.search(line):
+                continue
+            # "Secret Service" and similar organization names contain a
+            # clearance-level word without describing an applicant clearance.
+            # Require a credential/status signal around the level before using
+            # an out-of-section line as clearance evidence.
+            if not re.search(r"\b(?:clearance|polygraph|sci|inactive|active|current|valid|expired|revoked|adjudicated|issued|status)\b", line, re.I):
+                continue
+            if re.search(r"\b(?:required|required to|must have|eligible for|ability to obtain|will obtain)\b", line, re.I):
+                continue
+            clearance_lines.append(line)
 
         response_jobs = [
             ResumeJob(
@@ -1063,13 +1187,17 @@ class ResumeParserPipeline:
 
         return ResumeExtractionResponse(
             **_extract_contact(preamble),
-            cred=_extract_credentials(preamble + sections["certifications"]),
+            # Credentials may be listed in a header, an additional-information
+            # block, or a combined education/certification table. Scan the
+            # normalized document with requirement-language filtering rather
+            # than relying on one heading or the first 30 lines.
+            cred=_extract_credentials(all_lines),
             target_position_title=_target_title(preamble, jobs),
-            executive_summary=_extract_summary(sections["executive_summary"]),
+            executive_summary=_extract_summary(sections["executive_summary"]) or _extract_preamble_summary(preamble),
             skills=_extract_skills(sections["skills"]),
             experience=response_jobs,
             education=_extract_education(sections["education"]),
-            clearances=_extract_clearances(sections["clearances"]),
+            clearances=_extract_clearances(clearance_lines),
             certifications=_extract_simple_items(sections["certifications"], CERTIFICATION_RE),
         )
 

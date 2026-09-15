@@ -77,6 +77,62 @@ class LayoutAwareResumeParserTests(unittest.TestCase):
         self.assertNotIn("Furnished upon request", " ".join(result.experience[-1].descriptions))
         self.assertEqual(result.target_position_title, "Database Consultant")
 
+    def test_varied_title_before_employer_layout_restores_resume_signals(self):
+        text = """Alex Morgan
+        Richmond, VA
+        alex.morgan@example.com
+        ________________________________
+        Senior Data Analyst / Application Support
+        Data analyst with more than eight years supporting secure data platforms and reporting.
+        Core Skills
+        SQL Server
+        Data modeling
+        Professional Experience
+        Senior Data Analyst / Application Support
+        Northstar Systems | 2021 - Present
+        - Build and maintain reporting data models.
+        - Improve query performance for enterprise users.
+        Data Analyst
+        Acme Research | 2017 - 2021
+        - Analyze operational data and publish dashboards.
+        Additional Information
+        Top Secret clearance (Inactive)
+        """
+        result = pipeline.parse(text)
+
+        self.assertEqual(result.target_position_title, "Senior Data Analyst / Application Support")
+        self.assertGreaterEqual(len(result.experience), 2)
+        self.assertEqual(result.experience[0].company, "Northstar Systems")
+        self.assertEqual(result.experience[0].date_range, "2021 - Present")
+        self.assertEqual(result.experience[1].company, "Acme Research")
+        self.assertEqual(result.experience[1].date_range, "2017 - 2021")
+        self.assertEqual(result.executive_summary, "Data analyst with more than eight years supporting secure data platforms and reporting.")
+        self.assertEqual(result.clearances[0].level, "Top Secret")
+        self.assertEqual(result.clearances[0].status, "expired")
+
+    def test_unheaded_credentials_are_detected_without_requirement_false_positive(self):
+        text = """Jordan Lee
+        Senior Security Engineer
+        CISSP, Security+, and active PMP credentials.
+        Experience with secure cloud platforms.
+        Professional Experience
+        Security Engineer
+        Northwind Labs | 2020 - Present
+        Built identity controls.
+        """
+        result = pipeline.parse(text)
+
+        self.assertIn("CISSP", result.cred)
+        self.assertIn("Security+", result.cred)
+        self.assertIn("PMP", result.cred)
+
+        requirement = pipeline.parse(
+            "Jordan Lee\nSenior Security Engineer\n"
+            "Professional Experience\nSecurity Engineer\nNorthwind Labs | 2020 - Present\n"
+            "PMP certification required for this role.\n"
+        )
+        self.assertEqual(requirement.cred, "")
+
     def test_readable_resume_formats(self):
         html = b"<html><body><h1>Jane Example</h1><p>Database Engineer</p><script>ignore this</script></body></html>"
         self.assertIn("Jane Example", read_resume_text(SimpleNamespace(filename="resume.html"), html))

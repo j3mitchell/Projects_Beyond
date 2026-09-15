@@ -42,6 +42,27 @@ const INDICATOR_STOP_WORDS = new Set([
 
 const CREDENTIAL_TERM_RE = /\b(?:cpa|p\.?e\.?|rn|pmp|j\.?d\.?|m\.?d\.?|cissp|cism|cisa|ccna|ccnp|security\+|network\+|a\+|ocp|oca|mba|ph\.?d\.?|doctorate|bachelor|master|associate|license|licensed|certif(?:ied|ication)|clearance|public trust|polygraph|top secret|secret|ts[-\s/]?sci)\b/i;
 
+const NUMBER_WORDS = {
+  one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10,
+  eleven: 11, twelve: 12, thirteen: 13, fourteen: 14, fifteen: 15, sixteen: 16, twenty: 20,
+};
+
+function experienceYears(value) {
+  const text = String(value || '');
+  let maximum = 0;
+  const numeric = /\b(\d{1,2})(?:\+|\s*or\s*more)?\s*(?:years?|yrs?)\b/gi;
+  for (const match of text.matchAll(numeric)) maximum = Math.max(maximum, Number(match[1]));
+  const written = new RegExp(`\\b(${Object.keys(NUMBER_WORDS).join('|')})\\s+(?:years?|yrs?)\\b`, 'gi');
+  for (const match of text.matchAll(written)) maximum = Math.max(maximum, NUMBER_WORDS[match[1].toLowerCase()] || 0);
+  const ranges = /\b((?:19|20)\d{2})\s*(?:-|–|—|to)\s*(present|current|now|(?:19|20)\d{2})\b/gi;
+  for (const match of text.matchAll(ranges)) {
+    const start = Number(match[1]);
+    const end = /^(?:present|current|now)$/i.test(match[2]) ? new Date().getFullYear() : Number(match[2]);
+    if (end >= start) maximum = Math.max(maximum, end - start);
+  }
+  return maximum;
+}
+
 function searchText(value) {
   return String(value || '')
     .toLowerCase()
@@ -71,6 +92,11 @@ function credentialEvidenceStatus(requirement, evidence) {
   const requirementText = String(requirement || '').toLowerCase();
   const evidenceText = String(evidence || '').toLowerCase();
   if (!requirementText || !evidenceText) return 'missing';
+
+  const requiredYears = experienceYears(requirementText);
+  const degreeRequirement = /(?:bachelor|master|associate|doctorate|doctoral|ph\.?\s*d\.?|mba|j\.?\s*d\.?|degree)\b/.test(requirementText);
+  const experienceAlternative = /\b(?:substitute|in lieu|equivalent|instead)\b/.test(requirementText);
+  if (requiredYears > 0 && (!degreeRequirement || experienceAlternative) && experienceYears(evidenceText) >= requiredYears) return 'good';
 
   const degreeGroups = [
     [/(?:bachelor|b\.?\s*s\.?|b\.?\s*a\.?|undergraduate)/, /(?:bachelor|b\.?\s*s\.?|b\.?\s*a\.?|undergraduate)/],
