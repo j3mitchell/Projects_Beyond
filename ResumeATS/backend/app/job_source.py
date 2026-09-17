@@ -19,7 +19,11 @@ from fastapi import HTTPException
 MAX_PAGE_BYTES = 2 * 1024 * 1024
 MAX_ANALYSIS_TEXT = 30000
 MAX_RENDERED_PAGE_BYTES = 8 * 1024 * 1024
+# Most recruiting shells settle quickly, but Oracle's Candidate Experience
+# app loads the requisition after its initial shell and can take several
+# seconds before location, requirements, and compensation are in the DOM.
 RENDER_WAIT_MS = 1800
+ORACLE_RENDER_WAIT_MS = 20000
 
 REQUEST_HEADERS = {
     "User-Agent": (
@@ -332,13 +336,8 @@ def render_public_html(url: str) -> bytes:
                 launch_options["channel"] = "chrome"
             browser = playwright.chromium.launch(**launch_options)
             context = browser.new_context(
-                user_agent=REQUEST_HEADERS["User-Agent"],
                 locale="en-US",
                 viewport={"width": 1280, "height": 1200},
-                extra_http_headers={
-                    "Accept-Language": REQUEST_HEADERS["Accept-Language"],
-                    "Upgrade-Insecure-Requests": REQUEST_HEADERS["Upgrade-Insecure-Requests"],
-                },
             )
             page = context.new_page()
 
@@ -370,6 +369,11 @@ def render_public_html(url: str) -> bytes:
                     page.wait_for_load_state("networkidle", timeout=6000)
                 except PlaywrightTimeoutError:
                     logging.getLogger(__name__).info("Job page kept loading; capturing rendered state")
+                if page.locator("base[data-apibaseurl]").count():
+                    page.wait_for_function(
+                        "() => document.body && (document.body.classList.contains('app-loaded') || !document.body.classList.contains('app-loading'))",
+                        timeout=ORACLE_RENDER_WAIT_MS,
+                    )
                 page.wait_for_timeout(RENDER_WAIT_MS)
                 rendered = page.content()
                 if len(rendered.encode("utf-8")) > MAX_RENDERED_PAGE_BYTES:
@@ -612,6 +616,12 @@ def _dom_job_fields(soup: BeautifulSoup) -> dict[str, str | BeautifulSoup]:
 
 def _page_fields(raw: bytes, source_url: str = "", iframe_depth: int = 0) -> dict:
     soup = BeautifulSoup(raw, "html.parser")
+    visible = BeautifulSoup(raw, "html.parser")
+    for node in visible.select('script, style, template, noscript, [hidden], [aria-hidden="true"]'):
+        node.decompose()
+    expired = re.compile(r"^(?:this (?:job|position|posting) is no longer available|this (?:job|position) has (?:expired|been filled)|job (?:is )?no longer available)[.!]?$", re.I)
+    if any(expired.fullmatch(line.strip()) for line in visible.stripped_strings):
+        raise HTTPException(410, "This job listing is no longer available at the source. Paste a saved copy of the full job description to analyze it.")
     dom_fields = _dom_job_fields(soup)
     metadata: dict[str, str] = {}
     for key, selector, attribute in (
@@ -1060,6 +1070,12 @@ def _extract_job_fields(structured: dict[str, object], structured_text: str, raw
     minimum_skills = _section_items(lines, ("minimum skills", "required skills", "must have"), ("preferred qualifications", "preferred skills", "desired qualifications", "criteria", "job requirements", "our commitment", "benefits", "working conditions", "pay range", "salary", "compensation", "location", "work location", "details"))
     if not minimum_skills:
         minimum_skills = _requirement_skill_items(lines)
+    # Many postings publish all mandatory evidence under a single
+    # ``Requirements`` or ``Qualifications`` heading rather than adding a
+    # separate minimum-skills subsection. Those items are still hard gates;
+    # retain them in the minimum bucket so URL and pasted analyses agree.
+    if not minimum_skills and qualifications:
+        minimum_skills = _short_list([item for item in qualifications if not re.search(r"\b(?:preferred|preference|desirable)\b", item, re.I)])
     knowledge_skills = _knowledge_skill_items(lines)
     if not minimum_skills:
         basic_items = [
@@ -1544,12 +1560,18 @@ def analyze_job(url: str, mode: str = "deterministic") -> dict:
             if page.get("metadata", {}).get("render_mode") == "oracle-hcm-metadata":
                 try:
                     rendered = render_public_html(url)
-                    rendered_page = _oracle_hcm_page(rendered, url) or _page_fields(rendered, url)
+                    rendered_page = _page_fields(rendered, url)
                     if _page_signal_score(rendered_page) > _page_signal_score(page):
                         rendered_page.setdefault("metadata", {})["render_mode"] = "browser-fallback"
                         page = rendered_page
+                except HTTPException as exc:
+                    if exc.status_code == 410:
+                        raise
+                    logging.getLogger(__name__).info("Oracle browser extraction unavailable: %s", exc.detail)
                 except Exception as exc:
                     logging.getLogger(__name__).info("Oracle browser fallback unavailable: %s", type(exc).__name__)
+                if page.get("metadata", {}).get("render_mode") == "oracle-hcm-metadata":
+                    raise HTTPException(422, "Only the job's preview could be retrieved; the full posting could not be verified. Paste the full job description to analyze its requirements, location, and salary.")
         except HTTPException as original_error:
             detail = str(original_error.detail)
             # Most modern recruiting platforms build the posting with client-side
